@@ -1,0 +1,9 @@
+[submodule "dependencies/glfw"]
+	path = dependencies/glfw
+	url = git@github.com:glfw/glfw.git
+[submodule "dependencies/epsilon"]
+	path = dependencies/epsilon
+	url = git@github.com:Jojendersie/Epsilon-Intersection.git
+[submodule "dependencies/glew"]
+	path = dependencies/glew
+	url = git@github.com:Perlmint/glew-cmake.git
