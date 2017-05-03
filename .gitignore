@@ -1,6 +1,7 @@
 /Debug
 /Release
 /x64
+/win32
 
 *.suo
 *.user
@@ -17,6 +18,16 @@
 *.log
 *.cxx
 *.bin
-CMakeFiles/
+*.sln
+*.vcxproj
+*.filters
+*.db
+*.cmake
 
-config.json
+bin/
+.vs/
+lib/
+wimp_s.dir/
+
+CMakeCache.txt
+CMakeFiles/
