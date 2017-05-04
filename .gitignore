@@ -28,6 +28,7 @@ bin/
 .vs/
 lib/
 wimp_s.dir/
+epsilon.dir/
 
 CMakeCache.txt
 CMakeFiles/
