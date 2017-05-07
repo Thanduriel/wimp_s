@@ -28,6 +28,8 @@ GroupSources(src)
 
 # needs to be known to link with the libraries
 add_executable(wimp_s ${SOURCE_FILES})
+# navigation should always start from root
+include_directories("src")
 
 set(GLFW_BUILD_DOCS OFF CACHE BOOL "" FORCE)
 set(GLFW_BUILD_TESTS OFF CACHE BOOL "" FORCE)
@@ -39,7 +41,7 @@ target_link_libraries (wimp_s glfw)
 
 add_subdirectory ("dependencies/glew/build/cmake")
 include_directories("dependencies/glew/include")
-target_link_libraries (wimp_s glew)
+target_link_libraries (wimp_s glew_s) # use static version
 
 find_package(OpenGL REQUIRED)
 target_link_libraries(wimp_s ${OPENGL_gl_LIBRARY})
@@ -48,3 +50,7 @@ include_directories("dependencies/epsilon/include")
 file(GLOB SOURCE_FILES_EPSILON "dependencies/epsilon/src/*.cpp")
 add_library(epsilon ${SOURCE_FILES_EPSILON})
 target_link_libraries (wimp_s epsilon)
+
+#add_subdirectory("dependencies/JoFileLib")
+#include_directories("dependencies/JoFileLib/include")
+#target_link_libraries(wimp_s jofile)

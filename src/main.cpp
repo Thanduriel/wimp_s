@@ -1,8 +1,10 @@
-#include "ei/vector.hpp"
+#include "game.hpp"
 
 int main()
 {
-	ei::Vec2 vec;
+	Game game;
+
+	game.Run();
 
 	return 0;
 }
