@@ -1,4 +1,7 @@
 #include "mainstate.hpp"
+#include "../graphic/mesh.hpp"
+#include "../graphic/core/device.hpp"
+#include "../graphic/resources.hpp"
 
 namespace GameStates {
 
@@ -9,6 +12,9 @@ namespace GameStates {
 
 	void MainState::Draw(float _deltaTime)
 	{
+		static Graphic::Mesh mesh;
 
+		Graphic::Device::SetEffect(Graphic::Resources::GetEffect(Graphic::Effects::MESH));
+		mesh.Draw();
 	}
 }

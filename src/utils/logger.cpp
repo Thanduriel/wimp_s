@@ -17,6 +17,8 @@ namespace Logger {
 	// ********************************************************************* //
 	Logger::~Logger()
 	{
+		if (!m_policy) return;
+		
 		m_policy->Write( GetTimeString() );
 		m_policy->Write( " Closing Logger\n" );
 
@@ -25,6 +27,7 @@ namespace Logger {
 		delete m_policy;
 		m_policy = nullptr;
 		m_mutex.unlock();
+
 	}
 	
 	// ********************************************************************* //

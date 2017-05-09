@@ -4,6 +4,7 @@
 #include "graphic/core/device.hpp"
 #include "gamestates/mainstate.hpp"
 #include "graphic/core/texture.hpp"
+#include "graphic/resources.hpp"
 
 #include "utils/loggerinit.hpp"
 
@@ -26,6 +27,11 @@ Game::Game()
 		Framebuffer::Attachment(m_sceneDepthTexture));
 }
 
+Game::~Game()
+{
+	Graphic::Resources::Unload();
+}
+
 void Game::Run()
 {
 	using namespace GameStates;
@@ -45,8 +51,11 @@ void Game::Run()
 		current.Process(d.count());
 
 		// rendering
-		Graphic::Device::BindFramebuffer(m_sceneFramebuffer);
+		// use hardware backbuffer for now
+		Graphic::Device::BindFramebuffer( nullptr );
+		Graphic::Device::Clear(0.f, 0.f, 0.f);
 		current.Draw(d.count());
+
 		// Present if not closed
 		glfwSwapBuffers(Graphic::Device::GetWindow());
 
