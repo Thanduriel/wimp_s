@@ -1,8 +1,23 @@
 #include "actor.hpp"
 
-namespace Core {
+namespace Game {
 
 	using namespace ei;
+
+	Actor::Actor(const ei::Vec3& _position, const ei::Quaternion& _rotation)
+		: m_position(_position),
+		m_rotation(_rotation)
+	{
+		UpdateMatrices();
+	}
+
+	void Actor::UpdateMatrices()
+	{
+		m_rotationMatrix = rotation(m_rotation);
+		m_inverseRotationMatrix = transpose(m_rotationMatrix);
+
+		m_transformation = translation(m_position) * Mat4x4(m_rotationMatrix);
+	}
 
 	void DynamicActor::Process(float _deltaTime)
 	{
@@ -30,5 +45,7 @@ namespace Core {
 		deltaRot.k = theta[2] * s;
 
 		Rotate(deltaRot);
+
+		UpdateMatrices();
 	}
 }

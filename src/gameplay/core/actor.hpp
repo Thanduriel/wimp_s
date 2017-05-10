@@ -2,33 +2,47 @@
 
 #include "ei/vector.hpp"
 
-namespace Core {
+namespace Game {
 
 	class Actor
 	{
 	public:
+		Actor() : m_position(0.f), m_rotation(ei::qidentity()) { UpdateMatrices(); }
+		Actor(const ei::Vec3& _position, const ei::Quaternion& _rotation);
+
 		// Access Position
-		void SetPosition(const ei::Vec3& _position) { m_position = _position; }
+		void SetPosition(const ei::Vec3& _position) { m_position = _position; UpdateMatrices(); }
 		const ei::Vec3& GetPosition() const { return m_position; }
 		void Translate(const ei::Vec3& _position) { m_position += _position; }
 
 		// Rotate around the given rotation.
-		void Rotate(const ei::Quaternion& _rotation) { m_rotation = _rotation * m_rotation; }
+		void Rotate(const ei::Quaternion& _rotation) { m_rotation = _rotation * m_rotation; UpdateMatrices(); }
+
+		ei::Mat4x4 GetTransformation() const { return m_transformation; }
 
 		virtual void Process(float _deltaTime) {};
-		virtual void Draw(float _deltaTime) {}; // might not work with an efficient renderer
+		virtual void Draw() {};
 
 		bool CanTick() const { return m_canTick; }
 	protected:
+		void UpdateMatrices();
+
 		bool m_canTick;
 
 		ei::Vec3 m_position;
 		ei::Quaternion m_rotation;
+
+		// transformation matrices for convinience
+		ei::Mat3x3 m_rotationMatrix;
+		ei::Mat3x3 m_inverseRotationMatrix;
+		ei::Mat4x4 m_transformation;
 	};
 
 	class DynamicActor : public Actor
 	{
 	public:
+		using Actor::Actor;
+
 		// Access Velocity
 		void SetVelocity(const ei::Vec3& _velocity) { m_velocity = _velocity; }
 		const ei::Vec3& GetVelocity() const { return m_velocity; }

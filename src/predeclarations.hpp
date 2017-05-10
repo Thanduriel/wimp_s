@@ -11,7 +11,7 @@
 struct GLFWwindow;
 
 // General classes without scopes
-class Game;
+
 
 
 namespace Graphic {

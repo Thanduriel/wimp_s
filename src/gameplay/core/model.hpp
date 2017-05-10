@@ -3,10 +3,11 @@
 #include "actor.hpp"
 #include "graphic/mesh.hpp"
 
-namespace Core {
+namespace Game {
 
 	class Model : public DynamicActor, Graphic::Mesh
 	{
-
+	public:
+		void Draw() override;
 	};
 }

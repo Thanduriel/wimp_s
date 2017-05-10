@@ -16,6 +16,7 @@ namespace Graphic {
 	{
 		GLOBAL = 0,
 		CAMERA = 1,
+		OBJECT_MESH,
 		COUNT
 	};
 

@@ -12,9 +12,9 @@ namespace Graphic {
 //		m_vertices.SetNumVertices(3);
 
 		Vertex* vertex = (Vertex*)malloc(6 * sizeof(Vertex));
-		vertex[0].position = Vec3(-1.f, -1.f, 0.f);
-		vertex[1].position = Vec3(1.f, -1.f, 0.f);
-		vertex[2].position = Vec3(0.f, 1.f, 0.f);
+		vertex[0].position = Vec3(-1.f, -1.f, 0.6f);
+		vertex[1].position = Vec3(1.f, -1.f, 0.6f);
+		vertex[2].position = Vec3(0.f, 1.f, 0.6f);
 
 		m_vertices.GetBuffer(0)->SetData((void*&)vertex, 3 * sizeof(Vertex));
 	}

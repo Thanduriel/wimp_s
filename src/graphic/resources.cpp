@@ -35,29 +35,35 @@ namespace Graphic {
 	// ****************************************************** //
 	Graphic::UniformBuffer& Resources::GetUBO(UniformBuffers _ubo)
 	{
-		if (uniformBuffers[(int)_ubo]) return *uniformBuffers[(int)_ubo];
+		int ind = (int)_ubo;
+		if (uniformBuffers[ind]) return *uniformBuffers[ind];
 
 		// Not loaded yet
 		switch (_ubo)
 		{
 		case UniformBuffers::GLOBAL: {
-			uniformBuffers[(int)_ubo] = new UniformBuffer("Global");
-			uniformBuffers[(int)_ubo]->AddAttribute("Aspect", Graphic::UniformBuffer::ATTRIBUTE_TYPE::FLOAT);
-			uniformBuffers[(int)_ubo]->AddAttribute("Width", Graphic::UniformBuffer::ATTRIBUTE_TYPE::FLOAT);
-			uniformBuffers[(int)_ubo]->AddAttribute("Height", Graphic::UniformBuffer::ATTRIBUTE_TYPE::FLOAT);
-			uniformBuffers[(int)_ubo]->AddAttribute("InvWidth", Graphic::UniformBuffer::ATTRIBUTE_TYPE::FLOAT);
-			uniformBuffers[(int)_ubo]->AddAttribute("InvHeight", Graphic::UniformBuffer::ATTRIBUTE_TYPE::FLOAT);
-			uniformBuffers[(int)_ubo]->AddAttribute("Time", Graphic::UniformBuffer::ATTRIBUTE_TYPE::FLOAT);
+			uniformBuffers[ind] = new UniformBuffer("Global");
+			uniformBuffers[ind]->AddAttribute("Aspect", Graphic::UniformBuffer::ATTRIBUTE_TYPE::FLOAT);
+			uniformBuffers[ind]->AddAttribute("Width", Graphic::UniformBuffer::ATTRIBUTE_TYPE::FLOAT);
+			uniformBuffers[ind]->AddAttribute("Height", Graphic::UniformBuffer::ATTRIBUTE_TYPE::FLOAT);
+			uniformBuffers[ind]->AddAttribute("InvWidth", Graphic::UniformBuffer::ATTRIBUTE_TYPE::FLOAT);
+			uniformBuffers[ind]->AddAttribute("InvHeight", Graphic::UniformBuffer::ATTRIBUTE_TYPE::FLOAT);
+			uniformBuffers[ind]->AddAttribute("Time", Graphic::UniformBuffer::ATTRIBUTE_TYPE::FLOAT);
 			ei::IVec2 size = Graphic::Device::GetBackbufferSize();
-			(*uniformBuffers[(int)_ubo])["Aspect"] = Graphic::Device::GetAspectRatio();
-			(*uniformBuffers[(int)_ubo])["Width"] = (float)size[0];
-			(*uniformBuffers[(int)_ubo])["Height"] = (float)size[1];
-			(*uniformBuffers[(int)_ubo])["InvWidth"] = 1.0f / size[0];
-			(*uniformBuffers[(int)_ubo])["InvHeight"] = 1.0f / size[1];
+			(*uniformBuffers[ind])["Aspect"] = Graphic::Device::GetAspectRatio();
+			(*uniformBuffers[ind])["Width"] = (float)size[0];
+			(*uniformBuffers[ind])["Height"] = (float)size[1];
+			(*uniformBuffers[ind])["InvWidth"] = 1.0f / size[0];
+			(*uniformBuffers[ind])["InvHeight"] = 1.0f / size[1];
 			break; }
 		case UniformBuffers::CAMERA:
-			uniformBuffers[(int)_ubo] = new UniformBuffer("Camera");
-			uniformBuffers[(int)_ubo]->AddAttribute("ViewProjection", Graphic::UniformBuffer::ATTRIBUTE_TYPE::MATRIX);
+			uniformBuffers[ind] = new UniformBuffer("Camera");
+			uniformBuffers[ind]->AddAttribute("ViewProjection", Graphic::UniformBuffer::ATTRIBUTE_TYPE::MATRIX);
+			break;
+
+		case UniformBuffers::OBJECT_MESH:
+			uniformBuffers[ind] = new UniformBuffer("Object");
+			uniformBuffers[ind]->AddAttribute("c_ModelViewProjection", UniformBuffer::ATTRIBUTE_TYPE::MATRIX);
 			break;
 		default:
 			Assert(false, "This uniform buffer is not implemented.");
