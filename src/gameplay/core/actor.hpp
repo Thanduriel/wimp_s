@@ -41,7 +41,7 @@ namespace Game {
 	class DynamicActor : public Actor
 	{
 	public:
-		using Actor::Actor;
+		DynamicActor(const ei::Vec3& _position, const ei::Quaternion& _rotation);
 
 		// Access Velocity
 		void SetVelocity(const ei::Vec3& _velocity) { m_velocity = _velocity; }

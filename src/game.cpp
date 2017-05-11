@@ -17,14 +17,14 @@ Game::Game()
 	int screenHeight = 768;
 	Graphic::Device::Initialize(screenWidth, screenHeight, false);
 
-	m_gameStates.emplace_back(new GameStates::MainState());
-
 	m_sceneColorTexture = new Texture(Graphic::Device::GetBackbufferSize()[0], Device::GetBackbufferSize()[1],
 		Texture::Format(4, 8, Texture::Format::ChannelType::UINT));
 	m_sceneDepthTexture = new Texture(Graphic::Device::GetBackbufferSize()[0], Device::GetBackbufferSize()[1],
 		Texture::Format(1, 32, Texture::Format::ChannelType::FLOAT, Texture::Format::FormatType::DEPTH));
 	m_sceneFramebuffer = new Framebuffer(Framebuffer::Attachment(m_sceneColorTexture), 
 		Framebuffer::Attachment(m_sceneDepthTexture));
+
+	m_gameStates.emplace_back(new GameStates::MainState());
 }
 
 Game::~Game()

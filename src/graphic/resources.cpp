@@ -12,16 +12,19 @@ namespace Graphic {
 	// ****************************************************** //
 	Effect& Resources::GetEffect(Effects _effect)
 	{
-		if (effects[(int)_effect]) return *effects[(int)_effect];
+		int ind = (int)_effect;
+		if (effects[ind]) return *effects[ind];
 
 		// load new shader
 		switch (_effect)
 		{
 		case Effects::MESH:
-			effects[(int)_effect] = new Effect("shader/mesh.vs", "shader/mesh.ps");
-			effects[(int)_effect]->SetBlendState(BlendState(BlendState::BLEND_OPERATION::ADD, BlendState::BLEND::SRC_ALPHA, BlendState::BLEND::ONE));
-			effects[(int)_effect]->SetDepthStencilState(DepthStencilState(Graphic::DepthStencilState::COMPARISON_FUNC::ALWAYS, false));
-		//	effects[(int)_effect]->BindUniformBuffer(GetUbo(UniformBuffers::GLOBAL));
+			effects[ind] = new Effect("shader/mesh.vs", "shader/mesh.ps");
+			effects[ind]->SetBlendState(BlendState(BlendState::BLEND_OPERATION::MAX, BlendState::BLEND::SRC_ALPHA, BlendState::BLEND::ONE));
+			effects[ind]->SetDepthStencilState(DepthStencilState(Graphic::DepthStencilState::COMPARISON_FUNC::LESS, true));
+			// the exapmle cube has all faces inverted
+			effects[ind]->SetRasterizerState(RasterizerState(RasterizerState::CULL_MODE::FRONT, RasterizerState::FILL_MODE::SOLID));
+		//	effects[ind]->BindUniformBuffer(GetUbo(UniformBuffers::GLOBAL));
 			break;
 
 		default:
@@ -29,7 +32,7 @@ namespace Graphic {
 			break;
 		}
 
-		return *effects[(int)_effect];
+		return *effects[ind];
 	}
 
 	// ****************************************************** //

@@ -8,9 +8,8 @@ namespace Game {
 	void Model::Draw()
 	{
 		Graphic::UniformBuffer& objectConstants = Graphic::Resources::GetUBO(Graphic::UniformBuffers::OBJECT_MESH);
-		
 		ei::Mat4x4 modelViewProjection = Control::g_camera.GetViewProjection() * m_transformation;
-		objectConstants["c_ModelViewProjection"] = modelViewProjection;
+		objectConstants["c_ModelViewProjection"] = transpose(modelViewProjection);
 		objectConstants.Commit();
 
 		Mesh::Draw();

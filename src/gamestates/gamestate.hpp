@@ -5,7 +5,7 @@ namespace GameStates {
 	class GameState
 	{
 	public:
-
+		GameState() : m_isFinished(false), m_newState(nullptr) {}
 		virtual ~GameState() {};
 
 		virtual void Process(float _deltaTime) = 0;

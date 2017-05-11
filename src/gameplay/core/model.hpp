@@ -8,6 +8,8 @@ namespace Game {
 	class Model : public DynamicActor, Graphic::Mesh
 	{
 	public:
+		using DynamicActor::DynamicActor;
+
 		void Draw() override;
 	};
 }
