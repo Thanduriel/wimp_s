@@ -1,7 +1,12 @@
 #pragma once
 
+#ifndef GLEW_STATIC
 #define GLEW_STATIC
+#endif // !GLEW_STATIC
+
+#ifndef GLFW_INCLUDE_GLU
 #define GLFW_INCLUDE_GLU
+#endif
 
 #include "GL/glew.h"
 #include "GLFW/glfw3.h"
@@ -66,40 +71,11 @@ namespace Details
 namespace Details
 {
 	// GL call helper. The advantage of template function instead of a mere macro is that it can also be used in conditions!
-	// The whole thing would be of course much easier with variadic templates. But MSVC <=120 lacking support forces us to do this.
-	template<typename GlFunction, typename Arg0>
-	GLResult CheckedGLCall(const char* openGLFunctionName, GlFunction openGLFunction, Arg0 arg0) __GL_CALL_HANDLING(openGLFunctionName, openGLFunction, arg0);
-	template<typename GlFunction, typename Arg0, typename Arg1>
-	GLResult CheckedGLCall(const char* openGLFunctionName, GlFunction openGLFunction, Arg0 arg0, Arg1 arg1) __GL_CALL_HANDLING(openGLFunctionName, openGLFunction, arg0, arg1);
-	template<typename GlFunction, typename Arg0, typename Arg1, typename Arg2>
-	GLResult CheckedGLCall(const char* openGLFunctionName, GlFunction openGLFunction, Arg0 arg0, Arg1 arg1, Arg2 arg2) __GL_CALL_HANDLING(openGLFunctionName, openGLFunction, arg0, arg1, arg2);
-	template<typename GlFunction, typename Arg0, typename Arg1, typename Arg2, typename Arg3>
-	GLResult CheckedGLCall(const char* openGLFunctionName, GlFunction openGLFunction, Arg0 arg0, Arg1 arg1, Arg2 arg2, Arg3 arg3) __GL_CALL_HANDLING(openGLFunctionName, openGLFunction, arg0, arg1, arg2, arg3);
-	template<typename GlFunction, typename Arg0, typename Arg1, typename Arg2, typename Arg3, typename Arg4>
-	GLResult CheckedGLCall(const char* openGLFunctionName, GlFunction openGLFunction, Arg0 arg0, Arg1 arg1, Arg2 arg2, Arg3 arg3, Arg4 arg4) __GL_CALL_HANDLING(openGLFunctionName, openGLFunction, arg0, arg1, arg2, arg3, arg4);
-	template<typename GlFunction, typename Arg0, typename Arg1, typename Arg2, typename Arg3, typename Arg4, typename Arg5>
-	GLResult CheckedGLCall(const char* openGLFunctionName, GlFunction openGLFunction, Arg0 arg0, Arg1 arg1, Arg2 arg2, Arg3 arg3, Arg4 arg4, Arg5 arg5) __GL_CALL_HANDLING(openGLFunctionName, openGLFunction, arg0, arg1, arg2, arg3, arg4, arg5);
-	template<typename GlFunction, typename Arg0, typename Arg1, typename Arg2, typename Arg3, typename Arg4, typename Arg5, typename Arg6>
-	GLResult CheckedGLCall(const char* openGLFunctionName, GlFunction openGLFunction, Arg0 arg0, Arg1 arg1, Arg2 arg2, Arg3 arg3, Arg4 arg4, Arg5 arg5, Arg6 arg6) __GL_CALL_HANDLING(openGLFunctionName, openGLFunction, arg0, arg1, arg2, arg3, arg4, arg5, arg6);
-	template<typename GlFunction, typename Arg0, typename Arg1, typename Arg2, typename Arg3, typename Arg4, typename Arg5, typename Arg6, typename Arg7>
-	GLResult CheckedGLCall(const char* openGLFunctionName, GlFunction openGLFunction, Arg0 arg0, Arg1 arg1, Arg2 arg2, Arg3 arg3, Arg4 arg4, Arg5 arg5, Arg6 arg6, Arg7 arg7) __GL_CALL_HANDLING(openGLFunctionName, openGLFunction, arg0, arg1, arg2, arg3, arg4, arg5, arg6, arg7);
-	template<typename GlFunction, typename Arg0, typename Arg1, typename Arg2, typename Arg3, typename Arg4, typename Arg5, typename Arg6, typename Arg7, typename Arg8>
-	GLResult CheckedGLCall(const char* openGLFunctionName, GlFunction openGLFunction, Arg0 arg0, Arg1 arg1, Arg2 arg2, Arg3 arg3, Arg4 arg4, Arg5 arg5, Arg6 arg6, Arg7 arg7, Arg8 arg8) __GL_CALL_HANDLING(openGLFunctionName, openGLFunction, arg0, arg1, arg2, arg3, arg4, arg5, arg6, arg7, arg8);
-	template<typename GlFunction, typename Arg0, typename Arg1, typename Arg2, typename Arg3, typename Arg4, typename Arg5, typename Arg6, typename Arg7, typename Arg8, typename Arg9>
-	GLResult CheckedGLCall(const char* openGLFunctionName, GlFunction openGLFunction, Arg0 arg0, Arg1 arg1, Arg2 arg2, Arg3 arg3, Arg4 arg4, Arg5 arg5, Arg6 arg6, Arg7 arg7, Arg8 arg8, Arg9 arg9) __GL_CALL_HANDLING(openGLFunctionName, openGLFunction, arg0, arg1, arg2, arg3, arg4, arg5, arg6, arg7, arg8, arg9);
-	template<typename GlFunction, typename Arg0, typename Arg1, typename Arg2, typename Arg3, typename Arg4, typename Arg5, typename Arg6, typename Arg7, typename Arg8, typename Arg9, typename Arg10>
-	GLResult CheckedGLCall(const char* openGLFunctionName, GlFunction openGLFunction, Arg0 arg0, Arg1 arg1, Arg2 arg2, Arg3 arg3, Arg4 arg4, Arg5 arg5, Arg6 arg6, Arg7 arg7, Arg8 arg8, Arg9 arg9, Arg10 arg10) __GL_CALL_HANDLING(openGLFunctionName, openGLFunction, arg0, arg1, arg2, arg3, arg4, arg5, arg6, arg7, arg8, arg9, arg10);
+	template<typename GlFunction, typename... Args>
+	GLResult CheckedGLCall(const char* openGLFunctionName, GlFunction openGLFunction, Args... args) __GL_CALL_HANDLING(openGLFunctionName, openGLFunction, args...);
 
-
-	template<typename GlFunction>
-	GLuint CheckedGLCall_Ret(const char* openGLFunctionName, GlFunction openGLFunction) __GL_CALL_HANDLING_RET(openGLFunctionName, openGLFunction);
-	template<typename GlFunction, typename Arg0>
-	GLuint CheckedGLCall_Ret(const char* openGLFunctionName, GlFunction openGLFunction, Arg0 arg0) __GL_CALL_HANDLING_RET(openGLFunctionName, openGLFunction, arg0);
-	template<typename GlFunction, typename Arg0, typename Arg1>
-	GLuint CheckedGLCall_Ret(const char* openGLFunctionName, GlFunction openGLFunction, Arg0 arg0, Arg1 arg1) __GL_CALL_HANDLING_RET(openGLFunctionName, openGLFunction, arg0, arg1);
-	template<typename GlFunction, typename Arg0, typename Arg1, typename Arg2>
-	GLuint CheckedGLCall_Ret(const char* openGLFunctionName, GlFunction openGLFunction, Arg0 arg0, Arg1 arg1, Arg2 arg2) __GL_CALL_HANDLING_RET(openGLFunctionName, openGLFunction, arg0, arg1, arg2);
-
+	template<typename GlFunction, typename... Args>
+	GLuint CheckedGLCall_Ret(const char* openGLFunctionName, GlFunction openGLFunction, Args... args) __GL_CALL_HANDLING_RET(openGLFunctionName, openGLFunction, args...);
 }
 
 // Remove internal call handling helper macro.

@@ -60,9 +60,13 @@ void Game::Run()
 		glfwSwapBuffers(Graphic::Device::GetWindow());
 
 		// state managment with a stack
-		GameState* newState = current.GetNewState();
+		GameState* newState = current.FetchNewState();
 		if (current.IsFinished()) m_gameStates.pop_back();
 		if (newState) m_gameStates.emplace_back(newState);
+
+		// todo: move this when general input handling is implemented
+		if (m_gameStates.size() && glfwGetKey(Graphic::Device::GetWindow(), GLFW_KEY_ESCAPE)) 
+			m_gameStates.pop_back();
 
 		glfwPollEvents();
 		if (glfwWindowShouldClose(Graphic::Device::GetWindow())) m_gameStates.clear();

@@ -4,6 +4,10 @@
 
 namespace Game {
 
+	/* Actor *************************************
+	 * Basic class for objects that exist in the world.
+	 */
+
 	class Actor
 	{
 	public:
@@ -18,7 +22,8 @@ namespace Game {
 		// Rotate around the given rotation.
 		void Rotate(const ei::Quaternion& _rotation) { m_rotation = _rotation * m_rotation; UpdateMatrices(); }
 
-		ei::Mat4x4 GetTransformation() const { return m_transformation; }
+		// This matrix transforms modelspace -> worldspace
+		const ei::Mat4x4& GetTransformation() const { return m_transformation; }
 
 		virtual void Process(float _deltaTime) {};
 		virtual void Draw() {};
@@ -38,6 +43,10 @@ namespace Game {
 		ei::Mat4x4 m_transformation;
 	};
 
+
+	/* DynamicActor ***********************************
+	 * An actor that can have momentum.
+	 */
 	class DynamicActor : public Actor
 	{
 	public:
@@ -53,6 +62,6 @@ namespace Game {
 		void Process(float _deltaTime) override;
 	private:
 		ei::Vec3 m_velocity;
-		ei::Vec3 m_angularVelocity;
+		ei::Vec3 m_angularVelocity; // the length is the rotation speed
 	};
 }
