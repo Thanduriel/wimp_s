@@ -18,10 +18,13 @@ namespace GameStates {
 		model->SetVelocity(Vec3(0.f, 0.f, 2.f));
 	}
 
+	MainState::~MainState()
+	{
+		delete model;
+	}
+
 	void MainState::Process(float _deltaTime)
 	{
-	//	Control::g_camera.SetAngularVelocity(ei::Vec3(1.f));
-	//	Control::g_camera.Translate(ei::Vec3(0.f, 0.f, _deltaTime));
 		Control::g_camera.Process(_deltaTime);
 		model->Process(_deltaTime);
 	}

@@ -12,6 +12,7 @@ namespace GameStates{
 	{
 	public:
 		MainState();
+		~MainState();
 
 		void Process(float _deltaTime) override;
 		void Draw(float _deltaTime) override;

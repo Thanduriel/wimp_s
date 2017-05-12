@@ -13,8 +13,8 @@ using namespace Graphic;
 Game::Game()
 {
 	// create context
-	int screenWidth = 1366;
-	int screenHeight = 768;
+	const int screenWidth = 1366;
+	const int screenHeight = 768;
 	Graphic::Device::Initialize(screenWidth, screenHeight, false);
 
 	m_sceneColorTexture = new Texture(Graphic::Device::GetBackbufferSize()[0], Device::GetBackbufferSize()[1],
