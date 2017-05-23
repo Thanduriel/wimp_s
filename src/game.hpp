@@ -4,11 +4,11 @@
 #include "graphic/core/framebuffer.hpp"
 #include "gamestates/gamestate.hpp"
 
-class Game
+class Wimp_s
 {
 public:
-	Game();
-	~Game();
+	Wimp_s();
+	~Wimp_s();
 
 	void Run();
 private:

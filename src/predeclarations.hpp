@@ -30,12 +30,12 @@ namespace Graphic {
 
 } // namespace Graphic
 
-namespace Input {
+namespace Control {
 	class Camera;
-	class Manager;
+	class InputManager;
 
 	enum struct VirtualKey;
-} // namespace Input
+} // namespace Control
 
 namespace ei {
 	template<typename T, uint M, uint N>

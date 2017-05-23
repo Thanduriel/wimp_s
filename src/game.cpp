@@ -10,7 +10,7 @@
 
 using namespace Graphic;
 
-Game::Game()
+Wimp_s::Wimp_s()
 {
 	// create context
 	const int screenWidth = 1366;
@@ -27,12 +27,12 @@ Game::Game()
 	m_gameStates.emplace_back(new GameStates::MainState());
 }
 
-Game::~Game()
+Wimp_s::~Wimp_s()
 {
 	Graphic::Resources::Unload();
 }
 
-void Game::Run()
+void Wimp_s::Run()
 {
 	using namespace GameStates;
 	using namespace std::chrono;

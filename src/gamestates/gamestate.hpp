@@ -16,12 +16,28 @@ namespace GameStates {
 		// Called every frame to handle rendering.
 		virtual void Draw(float _deltaTime) = 0;
 
+		// input handling
+		void MouseMove(float _dx, float _dy) {}
+		void Scroll(float _dx, float _dy) {}
+		void KeyDown(int _key, int _modifiers) {}
+		void KeyRelease(int _key) {}
+		void KeyClick(int _key) {}
+		void KeyDoubleClick(int _key) {}
+
 		// Returns a newly created state.
 		GameState* FetchNewState() { return m_newState; m_newState = nullptr; }
 		bool IsFinished() const { return m_isFinished; }
 	private:
 		bool m_isFinished;
 		GameState* m_newState;
+	};
+
+	template<typename HudT>
+	class GameStateHT : public GameState
+	{
+	public:
+	protected:
+		HudT m_hud;
 	};
 
 }

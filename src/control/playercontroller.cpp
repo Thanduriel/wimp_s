@@ -6,7 +6,7 @@ namespace Control
 {
 	using namespace ei;
 
-	PlayerController g_player(Vec3(0.f), qidentity());
+	PlayerController* g_player;
 
 	void PlayerController::Process(float _deltaTime)
 	{

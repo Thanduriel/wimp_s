@@ -5,7 +5,7 @@ int main()
 {
 	Jo::Logger::g_logger.Initialize(new Jo::Logger::FilePolicy("run.log"));
 
-	Game game;
+	Wimp_s game;
 	game.Run();
 
 	return 0;

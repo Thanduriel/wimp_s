@@ -17,7 +17,6 @@
 // Define this macro to safe all preprocessed shaders in the given location with generic file endings that are suitable for the glsllang parser
 //#define SHADER_CODE_DUMP_PATH "processedshaderdump/"
 
-
 namespace Graphic {
 
 	/// \param fileIndex	This will used as second parameter for each #line macro. It is a kind of file identifier.
@@ -26,7 +25,7 @@ namespace Graphic {
 	{
 		// open file
 		std::ifstream file(_shaderFilename.c_str());
-		if (file.bad())
+		if (file.bad() || file.fail())
 		{
 			LOG_ERROR("Unable to open shader file " + _shaderFilename);
 			return "";

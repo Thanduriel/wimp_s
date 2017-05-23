@@ -3,11 +3,17 @@
 #include "utils/assert.hpp"
 #include "core/uniformbuffer.hpp"
 #include "core/device.hpp"
+#include "core/texture.hpp"
+#include "graphic/interface/font.hpp"
+#include "jofilelib.hpp"
 
 namespace Graphic {
 
-	Graphic::Effect* Resources::effects[];
-	Graphic::UniformBuffer* Resources::uniformBuffers[];
+	Effect* Resources::effects[];
+	UniformBuffer* Resources::uniformBuffers[];
+	SamplerState* Resources::samplers[];
+	Font* Resources::fonts[];
+	Jo::Files::MetaFileWrapper* Resources::textureMap;
 
 	// ****************************************************** //
 	Effect& Resources::GetEffect(Effects _effect)
@@ -25,6 +31,12 @@ namespace Graphic {
 			// the exapmle cube has all faces inverted
 			effects[ind]->SetRasterizerState(RasterizerState(RasterizerState::CULL_MODE::FRONT, RasterizerState::FILL_MODE::SOLID));
 		//	effects[ind]->BindUniformBuffer(GetUbo(UniformBuffers::GLOBAL));
+			break;
+		case Effects::TEXTURE_2DQUAD:
+			effects[(int)_effect] = new Effect("shader/screentex.vs", "shader/screentex.ps", "shader/screentex.gs");
+			effects[(int)_effect]->SetBlendState(BlendState(Graphic::BlendState::BLEND_OPERATION::ADD, Graphic::BlendState::BLEND::SRC_ALPHA, Graphic::BlendState::BLEND::ONE));
+			effects[(int)_effect]->SetDepthStencilState(DepthStencilState(Graphic::DepthStencilState::COMPARISON_FUNC::ALWAYS, false));
+			effects[(int)_effect]->BindTexture("u_screenTex", 7, GetSamplerState(SamplerStates::LINEAR));
 			break;
 
 		default:
@@ -74,6 +86,61 @@ namespace Graphic {
 		}
 
 		return *uniformBuffers[(int)_ubo];
+	}
+
+	// ********************************************************************* //
+	Graphic::SamplerState& Resources::GetSamplerState(SamplerStates _state)
+	{
+		int ind = (int)_state;
+		if (samplers[ind]) return *samplers[ind];
+
+		// Not loaded yet
+		switch (_state)
+		{
+		case SamplerStates::POINT:
+			samplers[ind] = new SamplerState(Graphic::SamplerState::EDGE_TREATMENT::WRAP, Graphic::SamplerState::SAMPLE::POINT,
+				Graphic::SamplerState::SAMPLE::POINT, Graphic::SamplerState::SAMPLE::POINT);
+			break;
+		case SamplerStates::LINEAR_NOMIPMAP:
+			samplers[ind] = new SamplerState(Graphic::SamplerState::EDGE_TREATMENT::WRAP, Graphic::SamplerState::SAMPLE::LINEAR,
+				Graphic::SamplerState::SAMPLE::LINEAR, Graphic::SamplerState::SAMPLE::POINT);
+			break;
+		case SamplerStates::LINEAR:
+			samplers[ind] = new SamplerState(Graphic::SamplerState::EDGE_TREATMENT::WRAP, Graphic::SamplerState::SAMPLE::LINEAR,
+				Graphic::SamplerState::SAMPLE::LINEAR, Graphic::SamplerState::SAMPLE::LINEAR);
+			break;
+		}
+
+		return *samplers[(int)_state];
+	}
+
+	// ****************************************************** //
+	Graphic::Font& Resources::GetFont(Fonts _font)
+	{
+		if (fonts[(int)_font]) return *fonts[(int)_font];
+
+		// Not loaded yet
+		switch (_font)
+		{
+		case Fonts::DEFAULT:
+			fonts[(int)_font] = new Graphic::Font("arial");
+			break;
+		}
+
+		return *fonts[(int)_font];
+	}
+
+	// ****************************************************** //
+	Jo::Files::MetaFileWrapper& Resources::GetTextureMap()
+	{
+		if (!textureMap)
+		{
+			//test screen tex
+			Jo::Files::HDDFile file("texture/combined.sraw");
+			textureMap = new Jo::Files::MetaFileWrapper(file, Jo::Files::Format::SRAW);
+		}
+
+		return *textureMap;
 	}
 
 	// ****************************************************** //

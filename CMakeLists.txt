@@ -51,6 +51,9 @@ file(GLOB SOURCE_FILES_EPSILON "dependencies/epsilon/src/*.cpp")
 add_library(epsilon ${SOURCE_FILES_EPSILON})
 target_link_libraries (wimp_s epsilon)
 
-#add_subdirectory("dependencies/JoFileLib")
-#include_directories("dependencies/JoFileLib/include")
-#target_link_libraries(wimp_s jofile)
+# You can define two import-locations: one for debug and one for release.
+#set_target_properties( jofilelib PROPERTIES IMPORTED_LOCATION dependencies/jofilelib/debug )
+include_directories("dependencies/jofilelib/include")
+target_link_libraries (wimp_s 
+	debug dependencies/JoFileLib/lib/Debug/jofile
+	optimized dependencies/JoFileLib/lib/Release/jofile)

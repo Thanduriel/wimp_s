@@ -1,4 +1,4 @@
-//#include <jofilelib.hpp>
+#include <jofilelib.hpp>
 #include "texture.hpp"
 #include "opengl.hpp"
 #include <ei/elementarytypes.hpp>
@@ -122,7 +122,7 @@ Texture::Texture( const std::string& _fileName ) :
 	m_numMipLevels(1),
 	m_format(1, 8, Format::ChannelType::INT)
 {
-/*	GL_CALL(glGenTextures, 1, &m_textureID);
+	GL_CALL(glGenTextures, 1, &m_textureID);
 
 	m_bindingPoint = GL_TEXTURE_2D;	// TODO switch
 	GL_CALL(glBindTexture, m_bindingPoint, m_textureID); // Todo: Tell device that a texture has changed
@@ -153,7 +153,7 @@ Texture::Texture( const std::string& _fileName ) :
 
 	GL_CALL(glGenerateMipmap, m_bindingPoint);
 
-	GL_CALL(glBindTexture, m_bindingPoint, 0); // Todo: Tell device that a texture has changed*/
+	GL_CALL(glBindTexture, m_bindingPoint, 0); // Todo: Tell device that a texture has changed
 }
 
 

@@ -1,5 +1,6 @@
 #pragma once
 
+#include "graphic/interface/hud.hpp"
 #include "gamestate.hpp"
 
 namespace GameStates{
@@ -8,7 +9,7 @@ namespace GameStates{
 	 * The state in wich the actual game runs.
 	 */
 
-	class MainState : public GameState
+	class MainState : public GameStateHT<Graphic::Hud>
 	{
 	public:
 		MainState();

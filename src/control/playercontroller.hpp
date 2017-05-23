@@ -35,5 +35,5 @@ namespace Control
 		void HandleInput(float _deltaTime);
 	};
 
-	extern PlayerController g_player; //global actor controlled by the player
+	extern PlayerController* g_player; //global actor controlled by the player
 }
