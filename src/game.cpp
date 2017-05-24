@@ -5,6 +5,7 @@
 #include "gamestates/mainstate.hpp"
 #include "graphic/core/texture.hpp"
 #include "graphic/resources.hpp"
+#include "control/input.hpp"
 
 #include "utils/loggerinit.hpp"
 
@@ -23,6 +24,9 @@ Wimp_s::Wimp_s()
 		Texture::Format(1, 32, Texture::Format::ChannelType::FLOAT, Texture::Format::FormatType::DEPTH));
 	m_sceneFramebuffer = new Framebuffer(Framebuffer::Attachment(m_sceneColorTexture), 
 		Framebuffer::Attachment(m_sceneDepthTexture));
+
+	Jo::Files::MetaFileWrapper config;
+	Control::InputManager::Initialize(Graphic::Device::GetWindow(), config.RootNode);//config[std::string("Input")]
 
 	m_gameStates.emplace_back(new GameStates::MainState());
 }
@@ -67,6 +71,7 @@ void Wimp_s::Run()
 		// todo: move this when general input handling is implemented
 		if (m_gameStates.size() && glfwGetKey(Graphic::Device::GetWindow(), GLFW_KEY_ESCAPE)) 
 			m_gameStates.pop_back();
+		if (m_gameStates.size()) Control::InputManager::SetGameState(m_gameStates.back().get());
 
 		glfwPollEvents();
 		if (glfwWindowShouldClose(Graphic::Device::GetWindow())) m_gameStates.clear();

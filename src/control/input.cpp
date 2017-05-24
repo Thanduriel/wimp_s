@@ -87,7 +87,7 @@ namespace Control {
 		InputManagerInstance.m_justEntered = false;
 		// Do a mouse move event.
 		if( InputManagerInstance.m_gameState )
-			InputManagerInstance.m_gameState->MouseMove( dx, dy );
+			InputManagerInstance.m_gameState->MouseMove( (float)dx, (float)dy );
 	}
 
 	// ********************************************************************* //
@@ -100,7 +100,7 @@ namespace Control {
 	// ********************************************************************* //
 	void InputManager::ScrollFun(GLFWwindow *, double _dx, double _dy)
 	{
-		InputManagerInstance.m_gameState->Scroll( _dx, _dy );
+		InputManagerInstance.m_gameState->Scroll( (float)_dx, (float)_dy );
 	}
 
 	// ********************************************************************* //

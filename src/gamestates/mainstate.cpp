@@ -40,4 +40,32 @@ namespace GameStates {
 
 		m_hud.Draw(_deltaTime);
 	}
+
+	// ******************************************************* //
+	void MainState::MouseMove(float _dx, float _dy)  
+	{ 
+		m_hud.MouseMove(_dx, _dy);
+
+		Control::g_player->MouseMove(_dx, _dy);
+	}
+	void MainState::Scroll(float _dx, float _dy)  
+	{ 
+		if (m_hud.Scroll(_dx, _dy)) return;
+	}
+	void MainState::KeyDown(int _key, int _modifiers)  
+	{ 
+		if(m_hud.KeyDown(_key, _modifiers)) return; 
+	}
+	void MainState::KeyRelease(int _key)  
+	{ 
+//		if(m_hud.KeyRelease(_key)) return; 
+	}
+	void MainState::KeyClick(int _key)  
+	{ 
+//		if(m_hud.KeyClick(_key)) return; 
+	}
+	void MainState::KeyDoubleClick(int _key)  
+	{ 
+//		if (m_hud.KeyDoubleClick(_key)) return;
+	}
 }

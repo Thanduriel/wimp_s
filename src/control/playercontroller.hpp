@@ -17,6 +17,8 @@ namespace Control
 		// The basic processing method called once per frame
 		void Process(float _deltaTime);
 
+		void MouseMove(float _dx, float _dy);
+
 		// Setter and getter for the mouse sensitivity
 		void SetMouseSensitivity(const Vec2& _sensitivity) { m_mouseSensitivity = _sensitivity; };
 		const Vec2& GetMouseSensitivity() const { return m_mouseSensitivity; };
@@ -31,6 +33,7 @@ namespace Control
 		Vec2 m_yAcceleration;
 		Vec2 m_zAcceleration;
 
+		Vec2 m_mouseMovement;
 		// Control the input of the player
 		void HandleInput(float _deltaTime);
 	};

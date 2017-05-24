@@ -17,12 +17,12 @@ namespace GameStates {
 		virtual void Draw(float _deltaTime) = 0;
 
 		// input handling
-		void MouseMove(float _dx, float _dy) {}
-		void Scroll(float _dx, float _dy) {}
-		void KeyDown(int _key, int _modifiers) {}
-		void KeyRelease(int _key) {}
-		void KeyClick(int _key) {}
-		void KeyDoubleClick(int _key) {}
+		virtual void MouseMove(float _dx, float _dy) {}
+		virtual void Scroll(float _dx, float _dy) {}
+		virtual void KeyDown(int _key, int _modifiers) {}
+		virtual void KeyRelease(int _key) {}
+		virtual void KeyClick(int _key) {}
+		virtual void KeyDoubleClick(int _key) {}
 
 		// Returns a newly created state.
 		GameState* FetchNewState() { return m_newState; m_newState = nullptr; }
@@ -32,7 +32,7 @@ namespace GameStates {
 		GameState* m_newState;
 	};
 
-	template<typename HudT>
+	template<typename HudT = Graphic::Hud, typename = std::enable_if< std::is_base_of<Graphic::Hud, HudT>::value >::type>
 	class GameStateHT : public GameState
 	{
 	public:

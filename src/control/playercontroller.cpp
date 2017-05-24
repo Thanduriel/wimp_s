@@ -16,6 +16,12 @@ namespace Control
 		Game::DynamicActor::Process(_deltaTime);
 	}
 
+	void PlayerController::MouseMove(float _dx, float _dy)
+	{
+		m_mouseMovement = Vec2(_dx, _dy);
+	}
+
+	// ************************************************************ //
 	void PlayerController::HandleInput(float _deltaTime)
 	{
 		Vec3 velocity(0.f);
@@ -35,18 +41,13 @@ namespace Control
 		SetVelocity(m_rotationMatrix * velocity);
 
 		// mouse rotation
-		double x, y;
-		glfwGetCursorPos(Graphic::Device::GetWindow(), &x, &y);
+		if (m_mouseMovement.x + m_mouseMovement.y == 0.f) return;
 
-		if (x + y == 0.f) return;
-		IVec2 size = Graphic::Device::GetBackbufferSize() / 2;
-
-		float dx = m_mouseSensitivity.x * _deltaTime * float(x - size.x);
-		float dy = m_mouseSensitivity.y * _deltaTime * float(y - size.y);
-
-		glfwSetCursorPos(Graphic::Device::GetWindow(), size.x, size.y);
+		float dx = m_mouseSensitivity.x * _deltaTime * m_mouseMovement.x;
+		float dy = m_mouseSensitivity.y * _deltaTime * m_mouseMovement.y;
 
 		// this rotation needs to be inverted
-		m_rotation *= Quaternion(dy, dx, 0.f);
+		Rotate(Quaternion(dx, dy, 0.f));
+		m_mouseMovement = Vec2(0.f);
 	}
 }

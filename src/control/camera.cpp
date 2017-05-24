@@ -57,7 +57,7 @@ namespace Control {
 		float dx = 0.5f * _deltaTime * float(x - size.x);
 		float dy = 0.5f * _deltaTime * float(y - size.y);
 		
-		glfwSetCursorPos(Graphic::Device::GetWindow(), size.x, size.y);
+	//	glfwSetCursorPos(Graphic::Device::GetWindow(), size.x, size.y);
 
 		// this rotation needs to be inverted
 		m_rotation *= Quaternion(dy, dx, 0.f);
