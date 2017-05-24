@@ -24,6 +24,8 @@ namespace Control {
 
 		// The view projection of this camera that transforms worldspace -> cameraspace.
 		const ei::Mat4x4& GetViewProjection() const { return m_viewProjection; }
+
+		void Attach(const Game::Actor& _target) { m_mode = Mode::Follow; m_target = &_target; };
 	private:
 		void ProcessFreeMove(float _deltaTime);
 
@@ -31,6 +33,7 @@ namespace Control {
 		ei::Mat4x4 m_viewProjection;
 
 		Mode m_mode;
+		const Game::Actor* m_target;
 	};
 
 	extern Camera g_camera; // global default camera used for scene rendering

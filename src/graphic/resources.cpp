@@ -30,11 +30,11 @@ namespace Graphic {
 			effects[ind]->SetDepthStencilState(DepthStencilState(Graphic::DepthStencilState::COMPARISON_FUNC::LESS, true));
 			// the exapmle cube has all faces inverted
 			effects[ind]->SetRasterizerState(RasterizerState(RasterizerState::CULL_MODE::FRONT, RasterizerState::FILL_MODE::SOLID));
-		//	effects[ind]->BindUniformBuffer(GetUbo(UniformBuffers::GLOBAL));
+			effects[ind]->BindUniformBuffer(GetUBO(UniformBuffers::OBJECT_MESH));
 			break;
 		case Effects::TEXTURE_2DQUAD:
 			effects[(int)_effect] = new Effect("shader/screentex.vs", "shader/screentex.ps", "shader/screentex.gs");
-			effects[(int)_effect]->SetBlendState(BlendState(Graphic::BlendState::BLEND_OPERATION::ADD, Graphic::BlendState::BLEND::SRC_ALPHA, Graphic::BlendState::BLEND::ONE));
+			effects[(int)_effect]->SetBlendState(BlendState(Graphic::BlendState::BLEND_OPERATION::ADD, Graphic::BlendState::BLEND::SRC_ALPHA, Graphic::BlendState::BLEND::INV_SRC_ALPHA));
 			effects[(int)_effect]->SetDepthStencilState(DepthStencilState(Graphic::DepthStencilState::COMPARISON_FUNC::ALWAYS, false));
 			effects[(int)_effect]->BindTexture("u_screenTex", 7, GetSamplerState(SamplerStates::LINEAR));
 			break;

@@ -9,9 +9,8 @@ namespace Game {
 	{
 		Graphic::UniformBuffer& objectConstants = Graphic::Resources::GetUBO(Graphic::UniformBuffers::OBJECT_MESH);
 		ei::Mat4x4 modelViewProjection = Control::g_camera.GetViewProjection() * m_transformation;
-		// transpose should not be necessary here
+		// openGl expects a different matrix format
 		objectConstants["c_ModelViewProjection"] = transpose(modelViewProjection);
-		objectConstants.Commit();
 
 		Mesh::Draw();
 	}

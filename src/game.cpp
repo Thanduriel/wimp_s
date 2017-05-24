@@ -71,9 +71,11 @@ void Wimp_s::Run()
 		// todo: move this when general input handling is implemented
 		if (m_gameStates.size() && glfwGetKey(Graphic::Device::GetWindow(), GLFW_KEY_ESCAPE)) 
 			m_gameStates.pop_back();
-		if (m_gameStates.size()) Control::InputManager::SetGameState(m_gameStates.back().get());
-
-		glfwPollEvents();
+		if (m_gameStates.size())
+		{
+			Control::InputManager::SetGameState(m_gameStates.back().get());
+			glfwPollEvents();
+		}
 		if (glfwWindowShouldClose(Graphic::Device::GetWindow())) m_gameStates.clear();
 	}
 }

@@ -15,7 +15,8 @@ namespace GameStates {
 	MainState::MainState()
 	{
 		Control::g_player = new Control::PlayerController(Vec3(0.f), qidentity());
-		
+	//	Control::g_camera.Attach(*Control::g_player);
+
 		auto& label = m_hud.GetDebugLabel();
 		label.SetText("Let there be strings!");
 
@@ -38,6 +39,7 @@ namespace GameStates {
 		Graphic::Device::SetEffect(Graphic::Resources::GetEffect(Graphic::Effects::MESH));
 		Control::g_player->Draw();
 
+		m_hud.GetDebugLabel().SetText(std::to_string(_deltaTime));
 		m_hud.Draw(_deltaTime);
 	}
 

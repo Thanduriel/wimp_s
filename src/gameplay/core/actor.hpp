@@ -21,6 +21,7 @@ namespace Game {
 
 		// Rotate around the given rotation.
 		void Rotate(const ei::Quaternion& _rotation) { m_rotation = _rotation * m_rotation; UpdateMatrices(); }
+		const ei::Quaternion& GetRotation() const { return m_rotation; }
 
 		// This matrix transforms modelspace -> worldspace
 		const ei::Mat4x4& GetTransformation() const { return m_transformation; }
