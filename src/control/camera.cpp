@@ -1,6 +1,8 @@
 #include "camera.hpp"
 #include "graphic/core/device.hpp"
 #include "graphic/core/opengl.hpp"
+#include "graphic/resources.hpp"
+#include "graphic/core/uniformbuffer.hpp"
 
 namespace Control {
 
@@ -36,6 +38,9 @@ namespace Control {
 		// update view projection to make sure that it is always up to date
 		// the order here is important
 		m_viewProjection = m_projection * Mat4x4(m_inverseRotationMatrix) *  translation(-m_position);
+
+		// update ubo
+		UpdateUbo(Graphic::Resources::GetUBO(Graphic::UniformBuffers::CAMERA));
 	}
 
 	void Camera::ProcessFreeMove(float _deltaTime)
@@ -66,5 +71,12 @@ namespace Control {
 
 		// this rotation needs to be inverted
 		m_rotation *= Quaternion(dy, dx, 0.f);
+	}
+
+	using namespace Graphic;
+	void Camera::UpdateUbo(UniformBuffer& _ubo)
+	{
+		_ubo["Projection"] = Vec4(m_projection(0, 0), m_projection(1, 1), m_projection(2, 2), m_projection(2, 3));
+		_ubo["CameraRotation"] = ei::Mat4x4(m_inverseRotationMatrix);
 	}
 }

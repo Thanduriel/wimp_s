@@ -2,6 +2,10 @@
 
 #include "gameplay/core/actor.hpp"
 
+namespace Graphic{
+	class UniformBuffer;
+}
+
 namespace Control {
 
 	/* Camera ***************************************
@@ -26,6 +30,8 @@ namespace Control {
 		const ei::Mat4x4& GetViewProjection() const { return m_viewProjection; }
 
 		void Attach(const Game::Actor& _target) { m_mode = Mode::Follow; m_target = &_target; };
+
+		void UpdateUbo(Graphic::UniformBuffer& _ubo);
 	private:
 		void ProcessFreeMove(float _deltaTime);
 

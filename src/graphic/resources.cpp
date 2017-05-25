@@ -26,7 +26,7 @@ namespace Graphic {
 		{
 		case Effects::MESH:
 			effects[ind] = new Effect("shader/mesh.vs", "shader/mesh.ps");
-			effects[ind]->SetBlendState(BlendState(BlendState::BLEND_OPERATION::MAX, BlendState::BLEND::SRC_ALPHA, BlendState::BLEND::ONE));
+			effects[ind]->SetBlendState(BlendState(BlendState::BLEND_OPERATION::DISABLE, BlendState::BLEND::SRC_ALPHA, BlendState::BLEND::ONE));
 			effects[ind]->SetDepthStencilState(DepthStencilState(Graphic::DepthStencilState::COMPARISON_FUNC::LESS, true));
 			// the exapmle cube has all faces inverted
 			effects[ind]->SetRasterizerState(RasterizerState(RasterizerState::CULL_MODE::FRONT, RasterizerState::FILL_MODE::SOLID));
@@ -38,7 +38,12 @@ namespace Graphic {
 			effects[(int)_effect]->SetDepthStencilState(DepthStencilState(Graphic::DepthStencilState::COMPARISON_FUNC::ALWAYS, false));
 			effects[(int)_effect]->BindTexture("u_screenTex", 7, GetSamplerState(SamplerStates::LINEAR));
 			break;
-
+		case Effects::BACKGROUNDSTAR:
+			effects[ind] = new Effect("shader/backgroundstar.vs", "shader/backgroundstar.ps", "shader/backgroundstar.gs");
+			effects[ind]->SetBlendState(BlendState(Graphic::BlendState::BLEND_OPERATION::ADD, Graphic::BlendState::BLEND::SRC_ALPHA, Graphic::BlendState::BLEND::ONE));
+			effects[ind]->SetDepthStencilState(DepthStencilState(Graphic::DepthStencilState::COMPARISON_FUNC::ALWAYS, false));
+			effects[ind]->BindUniformBuffer(GetUBO(UniformBuffers::CAMERA));
+			break;
 		default:
 			Assert(false, "This effect is not implemented.");
 			break;
@@ -73,7 +78,17 @@ namespace Graphic {
 			break; }
 		case UniformBuffers::CAMERA:
 			uniformBuffers[ind] = new UniformBuffer("Camera");
-			uniformBuffers[ind]->AddAttribute("ViewProjection", Graphic::UniformBuffer::ATTRIBUTE_TYPE::MATRIX);
+			// The projection matrix is very sparse. That can be used
+			// explicitly to reduce constant buffer size and arithmetic
+			// instructions in shader:
+			// x 0 0 0
+			// 0 y 0 0
+			// 0 0 z 1
+			// 0 0 w 0
+			// The projection vector contains (x, y, z, w)
+			// Usage: vec4(pos.xyz * proj.xyz + vec3(0,0,proj.w), pos.z)
+			uniformBuffers[ind]->AddAttribute("Projection", Graphic::UniformBuffer::ATTRIBUTE_TYPE::VEC4);
+			uniformBuffers[ind]->AddAttribute("CameraRotation", Graphic::UniformBuffer::ATTRIBUTE_TYPE::MATRIX);
 			break;
 
 		case UniformBuffers::OBJECT_MESH:

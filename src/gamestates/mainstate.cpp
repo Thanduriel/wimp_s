@@ -13,6 +13,7 @@ namespace GameStates {
 	using namespace Graphic;
 
 	MainState::MainState()
+		: m_starbackground(2000, 20000.f, 14000)
 	{
 		Control::g_player = new Control::PlayerController(Vec3(0.f), qidentity());
 	//	Control::g_camera.Attach(*Control::g_player);
@@ -36,6 +37,8 @@ namespace GameStates {
 
 	void MainState::Draw(float _deltaTime)
 	{
+		m_starbackground.Draw();
+
 		Graphic::Device::SetEffect(Graphic::Resources::GetEffect(Graphic::Effects::MESH));
 		Control::g_player->Draw();
 

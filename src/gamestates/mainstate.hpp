@@ -2,6 +2,7 @@
 
 #include "graphic/interface/hud.hpp"
 #include "gamestate.hpp"
+#include "graphic/effects/starbackground.hpp"
 
 namespace GameStates{
 
@@ -24,5 +25,8 @@ namespace GameStates{
 		void KeyRelease(int _key) override;
 		void KeyClick(int _key) override;
 		void KeyDoubleClick(int _key) override;
+
+	private:
+		Graphic::Starbackground m_starbackground;
 	};
 }
