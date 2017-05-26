@@ -42,7 +42,7 @@ namespace GameStates {
 		Graphic::Device::SetEffect(Graphic::Resources::GetEffect(Graphic::Effects::MESH));
 		Control::g_player->Draw();
 
-		m_hud.GetDebugLabel().SetText(std::to_string(_deltaTime));
+		m_hud.GetDebugLabel().SetText("abcdefg012345{}"/*std::to_string(_deltaTime)*/);
 		m_hud.Draw(_deltaTime);
 	}
 

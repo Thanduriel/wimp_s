@@ -138,7 +138,7 @@ namespace Graphic {
 		switch (_font)
 		{
 		case Fonts::DEFAULT:
-			fonts[(int)_font] = new Graphic::Font("arial");
+			fonts[(int)_font] = new Graphic::Font("Iosevka_Medium");
 			break;
 		}
 
@@ -163,5 +163,16 @@ namespace Graphic {
 	{
 		for (int i = 0; i < (int)Effects::COUNT; ++i)
 			delete effects[i];
+
+		for (int i = 0; i < (int)UniformBuffers::COUNT; ++i)
+			if(uniformBuffers[i]) delete uniformBuffers[i];
+
+		for (int i = 0; i < (int)SamplerStates::COUNT; ++i)
+			if (samplers[i]) delete samplers[i];
+
+		for (int i = 0; i < (int)Fonts::COUNT; ++i)
+			if (fonts[i]) delete fonts[i];
+
+		if (textureMap) delete textureMap;
 	}
 }
