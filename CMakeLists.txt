@@ -35,6 +35,10 @@ set(GLFW_BUILD_DOCS OFF CACHE BOOL "" FORCE)
 set(GLFW_BUILD_TESTS OFF CACHE BOOL "" FORCE)
 set(GLFW_BUILD_EXAMPLES OFF CACHE BOOL "" FORCE)
 
+add_subdirectory("dependencies/assimp")
+include_directories("dependencies/assimp/include")
+target_link_libraries(wimp_s assimp)
+
 add_subdirectory ("dependencies/glfw")
 include_directories("dependencies/glfw/include")
 target_link_libraries (wimp_s glfw)

@@ -7,3 +7,8 @@
 [submodule "dependencies/glew"]
 	path = dependencies/glew
 	url = git@github.com:Perlmint/glew-cmake.git
+[submodule "dependencies/assimp"]
+	
+	path = dependencies/assimp
+
+	url = https://github.com/assimp/assimp
