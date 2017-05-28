@@ -44,6 +44,12 @@ namespace Graphic {
 			effects[ind]->SetDepthStencilState(DepthStencilState(Graphic::DepthStencilState::COMPARISON_FUNC::ALWAYS, false));
 			effects[ind]->BindUniformBuffer(GetUBO(UniformBuffers::CAMERA));
 			break;
+		case Effects::LINES:
+			effects[ind] = new Effect("shader/lines.vs", "shader/lines.ps", "shader/lines.gs");
+			effects[ind]->SetBlendState(BlendState(BlendState::BLEND_OPERATION::ADD, BlendState::BLEND::SRC_ALPHA, BlendState::BLEND::ONE));
+			effects[ind]->SetDepthStencilState(DepthStencilState(Graphic::DepthStencilState::COMPARISON_FUNC::LESS, false));
+			effects[ind]->BindUniformBuffer(GetUBO(UniformBuffers::OBJECT_LINES));
+			break;
 		default:
 			Assert(false, "This effect is not implemented.");
 			break;
@@ -94,6 +100,12 @@ namespace Graphic {
 		case UniformBuffers::OBJECT_MESH:
 			uniformBuffers[ind] = new UniformBuffer("Object");
 			uniformBuffers[ind]->AddAttribute("c_ModelViewProjection", UniformBuffer::ATTRIBUTE_TYPE::MATRIX);
+			break;
+		case UniformBuffers::OBJECT_LINES:
+			uniformBuffers[ind] = new UniformBuffer("Object");
+			uniformBuffers[ind]->AddAttribute("c_WorldViewProjection", UniformBuffer::ATTRIBUTE_TYPE::MATRIX);
+			uniformBuffers[ind]->AddAttribute("c_Color", UniformBuffer::ATTRIBUTE_TYPE::VEC4);
+			uniformBuffers[ind]->AddAttribute("c_Thickness", UniformBuffer::ATTRIBUTE_TYPE::FLOAT);
 			break;
 		default:
 			Assert(false, "This uniform buffer is not implemented.");

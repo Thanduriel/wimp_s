@@ -6,15 +6,20 @@
 #include "control/camera.hpp"
 #include "control/playercontroller.hpp"
 #include "graphic/interface/pixelcoords.hpp"
+#include "gameplay/elements/grid.hpp"
 
 namespace GameStates {
 
 	using namespace ei;
 	using namespace Graphic;
 
+	// test stuff
+	Game::Grid* grid;
+
 	MainState::MainState()
 		: m_starbackground(2000, 20000.f, 14000)
 	{
+		grid = new Game::Grid(ei::Vec3(0.f), ei::qidentity(), Utils::Color32F(0.f, 1.f, 0.f, 0.6f), 2.f, 2.f);
 		Control::g_player = new Control::PlayerController(Vec3(0.f), qidentity());
 	//	Control::g_camera.Attach(*Control::g_player);
 
@@ -41,6 +46,7 @@ namespace GameStates {
 
 		Graphic::Device::SetEffect(Graphic::Resources::GetEffect(Graphic::Effects::MESH));
 		Control::g_player->Draw();
+		grid->Draw();
 
 		m_hud.GetDebugLabel().SetText("abcdefg012345{}"/*std::to_string(_deltaTime)*/);
 		m_hud.Draw(_deltaTime);

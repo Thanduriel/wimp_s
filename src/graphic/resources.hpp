@@ -17,6 +17,7 @@ namespace Graphic {
 //		PARTICLES,
 		TEXTURE_2DQUAD,
 		TEXT,
+		LINES,
 		COUNT
 	};
 
@@ -26,6 +27,7 @@ namespace Graphic {
 		GLOBAL = 0,
 		CAMERA = 1,
 		OBJECT_MESH,
+		OBJECT_LINES,
 		COUNT
 	};
 

@@ -1,0 +1,12 @@
+#version 330 core
+
+in vec2 gs_TexCoord;
+in vec4 gs_Color;
+
+out vec4 color;
+
+void main()
+{
+	float fadeShort = max(0, 1 - gs_TexCoord.y * gs_TexCoord.y);
+	color =  gs_Color * fadeShort;
+}
