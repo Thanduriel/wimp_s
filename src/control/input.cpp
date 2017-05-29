@@ -4,6 +4,7 @@
 #include "utils/assert.hpp"
 #include "GLFW/glfw3.h"
 #include "gamestates/gamestate.hpp"
+#include "game.hpp"
 
 using namespace std;
 using namespace GameStates;
@@ -12,7 +13,7 @@ namespace Control {
 
 	static InputManager InputManagerInstance;
 
-	float TimeSinceProgramStart() { return 0.f; }
+	float TimeSinceProgramStart() { return Wimp_s::GetGameTime(); }
 
 	// ********************************************************************* //
 	void InputManager::Initialize( GLFWwindow* _window, Jo::Files::MetaFileWrapper::Node& _keyConfig )
@@ -46,6 +47,11 @@ namespace Control {
 		InputManagerInstance.m_gameState = _gameState;
 	}
 
+	// ********************************************************************* //
+	bool InputManager::IsKeyPressed(int _key)
+	{
+		return GLFW_PRESS == glfwGetKey(InputManagerInstance.m_window, _key);
+	}
 
 	// ********************************************************************* //
 	bool InputManager::IsVirtualKeyPressed( VirtualKey _key )
@@ -122,7 +128,7 @@ namespace Control {
 				// Check for a click
 				float now = (float)TimeSinceProgramStart();
 				auto& keyInfo = InputManagerInstance.m_keyInfos[_key];
-				if( now - keyInfo.lastDown < 0.1f )
+				if( now - keyInfo.lastDown < 0.2f )
 				{
 					// Simple or double click?
 					if( now - keyInfo.lastRelease < 0.25f ) {

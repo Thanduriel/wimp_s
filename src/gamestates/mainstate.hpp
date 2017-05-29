@@ -4,6 +4,10 @@
 #include "gamestate.hpp"
 #include "graphic/effects/starbackground.hpp"
 
+namespace Control {
+	class PlayerController;
+}
+
 namespace GameStates{
 
 	/* MainState *******************************
@@ -28,5 +32,6 @@ namespace GameStates{
 
 	private:
 		Graphic::Starbackground m_starbackground;
+		Control::PlayerController* m_playerController;
 	};
 }

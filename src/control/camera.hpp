@@ -1,5 +1,6 @@
 #pragma once
 
+#include "ei/3dtypes.hpp"
 #include "gameplay/core/actor.hpp"
 
 namespace Graphic{
@@ -30,8 +31,13 @@ namespace Control {
 		const ei::Mat4x4& GetViewProjection() const { return m_viewProjection; }
 
 		void Attach(const Game::Actor& _target) { m_mode = Mode::Follow; m_target = &_target; };
+		void FixRotation(const ei::Quaternion& _rotation) { m_mode = Mode::Tactical; SetRotation(_rotation); }
+		void Detach();
 
 		void UpdateUbo(Graphic::UniformBuffer& _ubo);
+
+		// Returns a ray from the camera that goes through the given point.
+		ei::Ray GetRay(const ei::Vec2& _screenSpaceCoordinate) const;
 	private:
 		void ProcessFreeMove(float _deltaTime);
 

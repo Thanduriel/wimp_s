@@ -11,6 +11,8 @@
 
 using namespace Graphic;
 
+float Wimp_s::m_gameTime;
+
 Wimp_s::Wimp_s()
 {
 	// create context
@@ -49,6 +51,7 @@ void Wimp_s::Run()
 		steady_clock::time_point end = steady_clock::now();
 		duration<float> d = duration_cast<duration<float>>(end - begin);
 		begin = end;
+		m_gameTime += d.count();
 
 		GameState& current = *m_gameStates.back();
 

@@ -72,6 +72,10 @@ namespace Control {
 	// Ingame hard coded keys. They are mapped by a configuration file.
 	// It is even possible that the keys are mapped to more than one key.
 	enum struct VirtualKey {
+		MoveForward,
+		MoveBackward,
+		MoveLeft,
+		MoveRight
 	};
 
 	/// \brief Takes the glfw input and converts it to a printable character

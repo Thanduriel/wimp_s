@@ -43,6 +43,7 @@ namespace Control {
 		UpdateUbo(Graphic::Resources::GetUBO(Graphic::UniformBuffers::CAMERA));
 	}
 
+	// ******************************************************************* //
 	void Camera::ProcessFreeMove(float _deltaTime)
 	{
 		Vec3 velocity(0.f);
@@ -73,10 +74,34 @@ namespace Control {
 		m_rotation *= Quaternion(dy, dx, 0.f);
 	}
 
+	void Camera::Detach()
+	{
+		m_mode = Mode::Free;
+		// center cursor to prevent the first rotation
+		IVec2 size = Graphic::Device::GetBackbufferSize() / 2;
+		glfwSetCursorPos(Graphic::Device::GetWindow(), size.x, size.y);
+	}
+
 	using namespace Graphic;
 	void Camera::UpdateUbo(UniformBuffer& _ubo)
 	{
 		_ubo["Projection"] = Vec4(m_projection(0, 0), m_projection(1, 1), m_projection(2, 2), m_projection(2, 3));
 		_ubo["CameraRotation"] = ei::Mat4x4(m_inverseRotationMatrix);
+	}
+
+	// ******************************************************************* //
+	ei::Ray Camera::GetRay(const ei::Vec2& _screenSpaceCoordinate) const
+	{
+		Ray ray;
+		// Compute view space position of a point on the near plane
+		Vec3 nearPoint = ei::Vec3(1.f / m_projection(0, 0) * _screenSpaceCoordinate[0],
+			1.f / m_projection(1, 1) * _screenSpaceCoordinate[1],
+			1.0f);	// 1.0 result of inverse project of any coordinate
+					// Division by 
+		// perform inverse transformation (these are already inverse)
+		nearPoint = m_rotationMatrix * nearPoint;
+		ray.origin = m_position - nearPoint;
+		ray.direction = normalize(nearPoint);
+		return ray;
 	}
 }
