@@ -71,7 +71,7 @@ namespace Graphic {
 
 		/// \brief Sets the Position on the screen.
 		void SetPosition(ei::Vec2 _screenPos);
-		const ei::Vec2& GetPosition() const { return m_position; };
+		const ei::Vec2 GetPosition() const { return m_position; };
 
 		/// \brief Sets the default size of the Textrender which gets used while no control char overrides it
 		void SetDefaultSize(float _size);

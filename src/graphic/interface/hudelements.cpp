@@ -72,7 +72,7 @@ namespace Graphic
 		m_btnDefault(_name+"Default", _position, _size, _def, _anchor),
 		m_btnOver(_name + "Over", _position, _size, _def, _anchor),
 		m_btnDown(_name + "Down", _position, _size, _def, _anchor),
-		m_caption(Vec2(0.f), Anchor(), _font),
+		m_caption(Vec2(0.f), Anchor(DefinitionPoint::TopLeft, this), _font),
 		m_autoCenter(true)
 	{
 		SetVisible(false); 
@@ -134,41 +134,16 @@ namespace Graphic
 	// ************************************************************************ //
 	void Button::SetCaption(const std::string& _caption)
 	{
-		int len = (int)_caption.length();
-		int lineCount = 1;
-		int charCount = 0;
-		int charCountMax = 0;
-		for(int i = 0; i < len; i++)
-		{
-			charCount++;
-			if(_caption[i] == '\n')
-			{
-				if(charCountMax < charCount)
-					charCountMax = charCount;
-				charCount = 0;
-				lineCount++;
-			}
-		}
-
-		//if the text contains no linebreaks
-		if(!charCountMax) charCountMax = charCount;
-
 		Vec2 captionDim = m_caption.GetCharSize();
-
-		// in case that the text is to large in any direction scale it down
-		float ySize = captionDim[1] * lineCount + captionDim[1] * 0.2f;
-		if (captionDim[0] * charCountMax * m_caption.GetDefaultSize() >= m_size[0] || ySize >= m_size[1])
-		{
-			m_caption.SetDefaultSize(min( (float)(m_size[0] / (captionDim[0] * charCountMax)),
-				(float)(m_size[1] / ySize)));
-		}
 
 		//set the (new) caption first to rebuild the buffer
 		m_caption.SetText(_caption);
+		m_caption.SetRectangle(m_size);
 
 		// center in both directions
-		m_caption.SetPosition(m_position+Vec2(!m_autoCenter[0] ? 0.f : ((m_size[0] - captionDim[0] * charCountMax * m_caption.GetDefaultSize()) / 2.f),
-			!m_autoCenter[1] ? 0.f : (-m_size[1] / (float)lineCount * 0.5f)));//- captionDim[1] * m_caption.GetMaxSize() * 0.45f
+		Vec2 rect = m_caption.GetRectangle();//captionDim[0] * charCountMax * m_caption.GetDefaultSize()
+		m_caption.SetPosition(Vec2(!m_autoCenter[0] ? 0.f : ((m_size[0] - rect.x) * 0.5f),
+			!m_autoCenter[1] ? 0.f : (-m_size[1]  + rect.y) * 0.5f));//- captionDim[1] * m_caption.GetMaxSize() * 0.45f
 
 	}
 

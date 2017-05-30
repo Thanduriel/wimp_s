@@ -72,11 +72,8 @@ namespace Graphic
 
 	void TextRender::SetPosition(Vec2 _screenPos)
 	{ 
-		m_position = _screenPos;
+		ScreenPosition::SetPosition(_screenPos);
 		RenewBuffer();
-//		CharacterVertex* CharVertex = (CharacterVertex*)m_characters.Get( 0 );
-//		for( int i=0; i<m_text.length(); i++)
-//			CharVertex[i].position += CharVertex[i].position - _screenPos; 
 	}
 
 	void TextRender::SetDefaultSize(float _size)
@@ -192,7 +189,7 @@ namespace Graphic
 		//reset the previous build
 		m_characters.Clear();
 		auto vbGuard = m_characters.GetBuffer(0);
-		m_sizeMax = m_size / 2.0f;
+		m_sizeMax = m_size;
 		m_color = m_colorD;
 		m_size = m_sizeD;
 		Vec2 currentPos = m_position;

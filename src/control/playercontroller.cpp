@@ -57,6 +57,7 @@ namespace Control
 				g_camera.FixRotation(ei::Quaternion(Vec3(1.f, 0.f, 0.f), angle));
 				// shift the camera back so that the player is in the center
 				g_camera.SetPosition(m_model->GetPosition() + Vec3(0.f, 32.f, - 32.f / tan(angle)));
+				m_grid.SetPosition(m_model->GetPosition());
 			}
 			else
 			{

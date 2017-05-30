@@ -35,6 +35,10 @@ namespace GameStates {
 		auto& label = m_hud.GetDebugLabel();
 		label.SetText("Let there be strings!");
 
+		auto& btn0 = m_hud.CreateScreenElement<Graphic::Button>("menuBtn", Vec2(0.f, 0.f), Vec2(0.f),
+			DefinitionPoint::BotRight, ScreenPosition::Anchor(DefinitionPoint::BotRight, &m_hud), "button");
+		btn0.Scale(Vec2(0.65f));
+
 		ScreenOverlay* el = &m_hud.CreateScreenElement<ScreenTexture>("simpleWindow", PixelCoord(50, 100));
 		el->Scale(Vec2(0.33f));
 	}
@@ -65,7 +69,7 @@ namespace GameStates {
 		model2->Draw();
 		grid->Draw();
 
-		m_hud.GetDebugLabel().SetText("abcdefg012345{}"/*std::to_string(_deltaTime)*/);
+		m_hud.GetDebugLabel().SetText(std::to_string(_deltaTime));
 		m_hud.Draw(_deltaTime);
 	}
 
@@ -88,7 +92,7 @@ namespace GameStates {
 	}
 	void MainState::KeyRelease(int _key)  
 	{ 
-//		if(m_hud.KeyRelease(_key)) return; 
+		if(m_hud.KeyUp(_key, 0)) return; 
 	}
 	void MainState::KeyClick(int _key)  
 	{ 

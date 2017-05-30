@@ -96,6 +96,6 @@ namespace Graphic{
 		int y = (int)m_definitionPoint / 3;
 
 		m_position += Vec2(-x * 0.5f * m_size.x,
-			-y * 0.5f * m_size.y);
+			y * 0.5f * m_size.y);
 	}
 }

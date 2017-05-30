@@ -7,7 +7,7 @@
 namespace Graphic{
 
 
-	enum DefinitionPoint
+	enum struct DefinitionPoint
 	{
 		TopLeft,
 		TopMid,
