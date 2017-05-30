@@ -35,7 +35,14 @@ Wimp_s::Wimp_s()
 
 Wimp_s::~Wimp_s()
 {
+	Control::InputManager::Close();
+
+	delete m_sceneColorTexture;
+	delete m_sceneDepthTexture;
+	delete m_sceneFramebuffer;
 	Graphic::Resources::Unload();
+
+	Device::Exit();
 }
 
 void Wimp_s::Run()
