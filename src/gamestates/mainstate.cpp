@@ -26,11 +26,11 @@ namespace GameStates {
 		: m_starbackground(2000, 20000.f, 14000)
 	{
 		grid = new Game::Grid(ei::Vec3(0.f), ei::qidentity(), Utils::Color32F(0.f, 1.f, 0.f, 0.6f), 2.f, 2.f);
-		model = new Model(Vec3(0.f), qidentity());
+		model = new Model("models/spaceship.fbx",Vec3(0.f), qidentity());
 		m_playerController = new Control::PlayerController(*model, *grid);
 	//	Control::g_camera.Attach(*Control::g_player);
 
-		model2 = new Model(Vec3(1.f,0.f,1.f), qidentity());
+		model2 = new Model("models/spaceship.fbx",Vec3(1.f,0.f,1.f), qidentity());
 
 		auto& label = m_hud.GetDebugLabel();
 		label.SetText("Let there be strings!");

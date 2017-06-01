@@ -4,7 +4,7 @@
 #include "control/camera.hpp"
 
 namespace Game {
-
+	
 	void Model::Draw()
 	{
 		Graphic::UniformBuffer& objectConstants = Graphic::Resources::GetUBO(Graphic::UniformBuffers::OBJECT_MESH);

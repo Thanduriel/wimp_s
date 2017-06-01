@@ -1,12 +1,15 @@
 #include "mesh.hpp"
 #include "core/device.hpp"
+#include <assimp/Importer.hpp>      // C++ importer interface
+#include <assimp/scene.h>           // Output data structure
+#include <assimp/postprocess.h>     // Post processing flags
 
 namespace Graphic {
 
 	using namespace ei;
 
 	
-	Mesh::Mesh()
+	Mesh::Mesh(const std::string& _pFile)
 		: m_vertices(VertexArrayBuffer::PrimitiveType::TRIANGLE_LIST,
 		{ {VertexAttribute::VEC3, 0}, {VertexAttribute::VEC3, 1}, {VertexAttribute::VEC2, 2} })
 	{
@@ -88,10 +91,102 @@ namespace Graphic {
 		vertex[35].normal = Vec3(0.982f, 0.099f, 0.879);
 
 		m_vertices.GetBuffer(0)->SetData((void*&)vertex, 36 * sizeof(Vertex));
+		//ImportModel(_pFile);
+	}
+
+	bool Mesh::ImportModel(const std::string& _pFile)
+	{
+		// Create an instance of the Importer class
+		Assimp::Importer importer;
+		// And have it read the given file with some example postprocessing
+		// Usually - if speed is not the most important aspect for you - you'll 
+		// propably to request more postprocessing than we do in this example.
+		const aiScene* scene = importer.ReadFile(_pFile,
+			aiProcess_GenNormals |
+			aiProcess_CalcTangentSpace |
+			aiProcess_Triangulate |
+			aiProcess_JoinIdenticalVertices |
+			aiProcess_OptimizeMeshes |+
+			aiProcess_SortByPType);
+
+		// If the import failed, report it
+		if (!scene)
+		{	
+			// TODO: implement error logging 
+			//DoTheErrorLogging(importer.GetErrorString());
+			return false;
+		}
+		// Now we can access the file's contents. 
+		SceneProcessing(scene);
+		// We're done. Everything will be cleaned up by the importer destructor
+		return true;
+	}
+
+	void Mesh::SceneProcessing(const aiScene* _scene) 
+	{
+		unsigned int totalVertexNum = 0;
+		int totalMaterialNum = 0;
+		Vec3 vertex;
+		Vec3 normal;
+		Vec2 textureC;
+		Vertex* v;
+		
+		for (unsigned int i = 0; i < _scene->mNumMeshes; i++) // count all vertices in all meshes
+		{
+			aiMesh *mesh = _scene->mMeshes[i];
+			totalVertexNum += mesh->mNumVertices;
+			
+			if (mesh->mMaterialIndex >= 0) 
+			{
+				totalMaterialNum++;
+			}
+		}
+		
+		v = (Vertex*)malloc(totalVertexNum * sizeof(Vertex)); //allocate memory of total number of vertices
+		
+		for (unsigned int i = 0; i < _scene->mNumMeshes; i++) // iterate through every mesh in the root node
+		{
+			aiMesh *mesh = _scene->mMeshes[i];
+			
+				for (unsigned int j = 0; j < mesh->mNumVertices; j++) // process vertex positions, normals and texture coordinates
+				{
+					vertex.x = mesh->mVertices[i].x;
+					vertex.y = mesh->mVertices[i].y;
+					vertex.z = mesh->mVertices[i].z;
+					v[j].position = vertex;
+
+					vertex.x = mesh->mNormals[i].x;
+					vertex.y = mesh->mNormals[i].y;
+					vertex.z = mesh->mNormals[i].z;
+					v[j].normal = vertex;
+
+					if (mesh->mTextureCoords[0]) // does the mesh contain texture coordinates?
+					{
+						vertex.x = mesh->mTextureCoords[0][j].x;
+						vertex.y = mesh->mTextureCoords[0][j].y;
+						v[j].textureCoords = textureC;
+					}
+					else
+						v[j].textureCoords = Vec2(0.0f, 0.0f);
+
+					
+					// TODO: implement texture loading
+					if (mesh->mMaterialIndex >= 0)
+					{
+						aiMaterial *material = _scene->mMaterials[mesh->mMaterialIndex];
+					}
+				}
+			if (totalMaterialNum > 1)
+			{
+				break;
+			}
+		}
+		m_vertices.GetBuffer(0)->SetData((void*&)vertex, totalVertexNum * sizeof(Vertex)); // set m_vertices with all vertex data (position,normal,texturecoords)
 	}
 
 	void Mesh::Draw()
 	{
 		Device::DrawVertices(m_vertices, 0, m_vertices.GetNumVertices());
+		
 	}
 }

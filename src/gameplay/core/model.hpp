@@ -14,7 +14,9 @@ namespace Game {
 	{
 	public:
 
-		Model(const Vec3 &_position, const Quaternion &_rotation) : DynamicActor(_position, _rotation) {};
+		
+		Model(const std::string& _pFile, const Vec3 &_position, const Quaternion &_rotation) : DynamicActor(_position, _rotation), Mesh(_pFile) {};
+		
 
 		void Draw() override;
 	};

@@ -2,6 +2,7 @@
 
 #include "core/texture.hpp"
 #include "core/vertexbuffer.hpp"
+#include <assimp/Importer.hpp>
 
 namespace Graphic {
 
@@ -9,6 +10,7 @@ namespace Graphic {
 	{
 	public:
 		Mesh();
+		Mesh(const std::string& _pFile);
 
 		void Draw();
 	private:
@@ -18,7 +20,9 @@ namespace Graphic {
 			ei::Vec3 normal;
 			ei::Vec2 textureCoords;
 		};
-	//	Texture m_texture;
+		//Texture m_texture;
 		VertexArrayBuffer m_vertices;
+		bool ImportModel(const std::string& _pFile);
+		void SceneProcessing(const aiScene* _scene);
 	};
 }
