@@ -20,8 +20,6 @@ namespace Game {
 		}
 		for (float iz = -_radius; iz < _radius - _resolutionZ; iz += _resolutionZ)
 			m_lineRenderer.Add(ei::Vec3(ix, 0.f, iz), ei::Vec3(ix, 0.f, iz + _resolutionZ));
-
-		m_lineRenderer.Commit();
 	}
 
 	void Grid::Draw()

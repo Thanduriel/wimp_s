@@ -35,6 +35,8 @@ namespace GameStates {
 	//	Control::g_camera.Attach(*Control::g_player);
 
 		model2 = new Model("models/spaceship.fbx",Vec3(1.f,0.f,1.f), qidentity());
+		model2->SetAngularVelocity(Vec3(1.f));
+		model2->SetVelocity(Vec3(1.f, 0.f, 1.f));
 
 		auto& label = m_hud.GetDebugLabel();
 		label.SetText("Let there be strings!");
@@ -63,6 +65,7 @@ namespace GameStates {
 		Control::g_camera.Process(_deltaTime);
 		m_playerController->Process(_deltaTime);
 		model->Process(_deltaTime);
+		model2->Process(_deltaTime);
 	}
 
 	void MainState::Draw(float _deltaTime)
@@ -85,7 +88,7 @@ namespace GameStates {
 		Device::DrawFullscreen();
 
 		// the hud should be drawn last
-		m_hud.GetDebugLabel().SetText(std::to_string(_deltaTime));
+		m_hud.GetDebugLabel().SetText("fps: <c 000 255 100 255>" + std::to_string(_deltaTime) + "</c>");
 		m_hud.Draw(_deltaTime);
 	}
 

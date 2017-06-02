@@ -8,6 +8,8 @@ uniform sampler2D screenTex;
 
 out vec4 fragColor;
 
+#include "../globalubo.glsl"
+
 // params
 const float eventHorizon = 0.7f;
 const float gradient = 0.f;
@@ -28,7 +30,7 @@ void main()
 	else
 	{
 		// window space -> uv
-		vec2 coord = ((gl_FragCoord.xy) / vec2(1366.0,768.0));
+		vec2 coord = ((gl_FragCoord.xy) / vec2(c_fBBWidth, c_fBBHeight));
 		vec2 dir = coord - gs_center;
 		float len = length(dir);
 		float ratio = len / radius;

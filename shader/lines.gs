@@ -19,17 +19,8 @@ layout(triangle_strip, max_vertices = OUT_VERTS) out;
 
 void main()
 {
-/*	gl_Position = vec4(-1.f, -1.f, 0.f, 1.f);
-	EmitVertex();
-	gl_Position = vec4(1.f, -1.f, 0.f, 1.f);
-	EmitVertex();
-	gl_Position = vec4(-1.f, 1.f, 0.f, 1.f);
-	EmitVertex();
-	gl_Position = vec4(1.f, 1.f, 0.f, 1.f);
-	EmitVertex();
-	EndPrimitive();*/
-	vec4 l1 = c_mModelViewProjection * vs_position[0];
-	vec4 l2 = c_mModelViewProjection * vs_position[1];
+	vec4 l1 = vs_position[0] * c_mModelViewProjection ;
+	vec4 l2 = vs_position[1] * c_mModelViewProjection;
 	
 	// Do a manual clipping.
 	float threshold = -5.0; // TODO: use nearplane

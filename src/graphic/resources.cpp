@@ -33,10 +33,10 @@ namespace Graphic {
 			effects[ind]->BindUniformBuffer(GetUBO(UniformBuffers::SIMPLE_OBJECT));
 			break;
 		case Effects::TEXTURE_2DQUAD:
-			effects[(int)_effect] = new Effect("shader/screentex.vs", "shader/screentex.ps", "shader/screentex.gs");
-			effects[(int)_effect]->SetBlendState(BlendState(Graphic::BlendState::BLEND_OPERATION::ADD, Graphic::BlendState::BLEND::SRC_ALPHA, Graphic::BlendState::BLEND::INV_SRC_ALPHA));
-			effects[(int)_effect]->SetDepthStencilState(DepthStencilState(Graphic::DepthStencilState::COMPARISON_FUNC::ALWAYS, false));
-			effects[(int)_effect]->BindTexture("u_screenTex", 7, GetSamplerState(SamplerStates::LINEAR));
+			effects[ind] = new Effect("shader/screentex.vs", "shader/screentex.ps", "shader/screentex.gs");
+			effects[ind]->SetBlendState(BlendState(Graphic::BlendState::BLEND_OPERATION::ADD, Graphic::BlendState::BLEND::SRC_ALPHA, Graphic::BlendState::BLEND::INV_SRC_ALPHA));
+			effects[ind]->SetDepthStencilState(DepthStencilState(Graphic::DepthStencilState::COMPARISON_FUNC::ALWAYS, false));
+			effects[ind]->BindTexture("u_screenTex", 7, GetSamplerState(SamplerStates::LINEAR));
 			break;
 		case Effects::BACKGROUNDSTAR:
 			effects[ind] = new Effect("shader/backgroundstar.vs", "shader/backgroundstar.ps", "shader/backgroundstar.gs");
