@@ -20,20 +20,24 @@ layout(triangle_strip, max_vertices = 4) out;
 void main(void)
 {
 	vec4 position = vec4(vs_out_Position[0].xyz, 1) * c_mWorldViewProjection;
-	gs_center = position.xy;
+	vec2 center = position.xy / position.w * 0.5 + 0.5;
 	
 	float size = vs_out_Radius[0];
 	gs_texCoord = vec2(-1.0, -1.0);
 	gl_Position = position + vec4(-size, -size * c_fAspect, 0, 0);
+	gs_center = center;
 	EmitVertex();
 	gs_texCoord = vec2(1.0, -1.0);
 	gl_Position = position + vec4( size, -size * c_fAspect, 0, 0);
+	gs_center = center;
 	EmitVertex();
 	gs_texCoord = vec2(-1.0, 1.0);
 	gl_Position = position + vec4(-size,  size * c_fAspect, 0, 0);
+	gs_center = center;
 	EmitVertex();
 	gs_texCoord = vec2(1.0, 1.0);
 	gl_Position = position + vec4( size,  size * c_fAspect, 0, 0);
+	gs_center = center;
 	EmitVertex();
 	EndPrimitive();
 }
