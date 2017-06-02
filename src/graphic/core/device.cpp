@@ -114,6 +114,33 @@ namespace Graphic {
 		return width / float(height);
 	}
 
+	// ******************************************************** //
+	struct ScreenTriVertex
+	{
+		float position[2];
+	};
+
+	class ScreenTriangle : public VertexArrayBuffer
+	{
+	public:
+		ScreenTriangle()
+			: VertexArrayBuffer(VertexArrayBuffer::PrimitiveType::TRIANGLE_LIST, { { VertexAttribute::VEC2, 11 } })
+		{
+			ScreenTriVertex* screenTriangle = (ScreenTriVertex*)malloc(3 * sizeof(screenTriangle));
+			screenTriangle[0].position[0] = -1.0f;
+			screenTriangle[0].position[1] = -1.0f;
+			screenTriangle[1].position[0] = 3.0f;
+			screenTriangle[1].position[1] = -1.0f;
+			screenTriangle[2].position[0] = -1.0f;
+			screenTriangle[2].position[1] = 3.0f;
+
+			GetBuffer(0)->SetData((void*&)screenTriangle, sizeof(ScreenTriVertex) * 3);
+		}
+	};
+	ScreenTriangle* screenTriangle;
+	
+
+	// ******************************************************** //
 	void Device::Initialize( int _width, int _height, bool _fullScreen )
 	{
 		// Create a new window with GLFW
@@ -159,11 +186,15 @@ namespace Graphic {
 
 		// Uses standard counterclockwise culling
 		GL_CALL(glFrontFace, GL_CCW);
+
+		screenTriangle = new ScreenTriangle();
 	}
 
 
 	void Device::Exit()
 	{
+		delete screenTriangle;
+
 		glfwDestroyWindow(g_Device.m_window);
 		glfwTerminate();
 	}
@@ -338,5 +369,10 @@ namespace Graphic {
 			GL_CALL(glDrawArraysInstanced, unsigned(_buffer.GetPrimitiveType()), _from, _count, _buffer.GetNumInstances());
 		else
 			GL_CALL(glDrawArrays, unsigned(_buffer.GetPrimitiveType()), _from, _count);
+	}
+
+	void Device::DrawFullscreen()
+	{
+		DrawVertices(*screenTriangle, 0, 3);
 	}
 };

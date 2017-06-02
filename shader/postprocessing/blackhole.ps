@@ -1,0 +1,62 @@
+#version 330
+
+in vec4 gl_FragCoord;
+in vec2 gs_texCoord;
+in vec2 gs_center;
+
+uniform sampler2D screenTex;
+
+out vec4 fragColor;
+
+// params
+const float eventHorizon = 0.7f;
+const float gradient = 0.f;
+const float scale = 1.f / (1.f-eventHorizon);
+
+const float quotient = (eventHorizon-1.0)*(eventHorizon-1.0);
+const float a = (-gradient*eventHorizon + gradient - 1.0) /quotient;
+const float b = (gradient*(eventHorizon*eventHorizon-1.0)+2.0) / quotient;
+const float c = (eventHorizon*(-gradient*eventHorizon+gradient+eventHorizon-2.0))/quotient;
+
+void main()
+{
+	float radius = sqrt(dot(gs_texCoord, gs_texCoord));
+	if(radius >= 1.0) discard;
+	
+	if(radius < eventHorizon)
+		fragColor.rgb = vec3(0,0,0);
+	else
+	{
+		// window space -> screen space
+		vec2 coord = gl_FragCoord.xy;
+		coord.x *= 1.0/1366;
+		coord.y *= 1.0/768;
+	//	coord *= 2.0;
+		coord -= vec2(1,1);
+		vec2 dir = gs_center - coord;
+		float ratio = length(dir) / radius;
+		dir = normalize(dir);
+	//	coord = gs_center - dir * radius * ratio;
+		// linear
+	//	fragColor.rgb = texture(screenTex, (gs_center - dir * ratio * (scale*radius - scale * eventHorizon)).xy).rgb;
+		// quadratic
+	/*	vec2 texC2 = gl_FragCoord.xy / 1366.0;
+		vec2 center = gs_center;
+		center = center / 1366.0;
+		coord = mix(texC2, center,
+               (1.0 / (distance((texC2 * 2.0 - center * 2.0) * 10.0 * 0.5 + center, center) - 1.0)));*/
+		coord = mix(gs_center, coord, a*radius*radius + b*radius + c);//gs_center - ratio * dir * (a*radius*radius + b*radius + c);
+		fragColor.rgb = texture(screenTex, coord).rgb ;
+	/*				+ textureOffset(screenTex, coord, ivec2(0,2)).rgb
+					+ textureOffset(screenTex, coord, ivec2(2,2)).rgb
+					+ textureOffset(screenTex, coord, ivec2(2,0)).rgb
+					+ textureOffset(screenTex, coord, ivec2(0,-2)).rgb
+					+ textureOffset(screenTex, coord, ivec2(-2,-2)).rgb
+					+ textureOffset(screenTex, coord, ivec2(-2,2)).rgb
+					+ textureOffset(screenTex, coord, ivec2(-2,0)).rgb
+					+ textureOffset(screenTex, coord, ivec2(2,-2)).rgb;*/
+		fragColor.rgb *= 1.0 / 1.0;
+	//	fragColor.rgb = texture(screenTex, gs_center - dir * radius * ratio).rgb;
+	}
+	fragColor.a = 1;
+}

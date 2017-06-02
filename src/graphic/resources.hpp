@@ -18,6 +18,8 @@ namespace Graphic {
 		TEXTURE_2DQUAD,
 		TEXT,
 		LINES,
+		SCREEN_OUTPUT,
+		BLACKHOLE,
 		COUNT
 	};
 
@@ -26,7 +28,7 @@ namespace Graphic {
 	{
 		GLOBAL = 0,
 		CAMERA = 1,
-		OBJECT_MESH,
+		SIMPLE_OBJECT,
 		OBJECT_LINES,
 		COUNT
 	};

@@ -12,14 +12,15 @@ namespace Control
 {
 	using namespace ei;
 
-	PlayerController::PlayerController(Game::Model& _model, Game::Grid& _grid)
+	PlayerController::PlayerController(Game::Model& _model, Game::Grid& _grid, Game::Actor& _indicator)
 		: m_model(&_model),
 		m_mouseSensitivity(0.5f), 
 		m_xAcceleration(20.f, -20.f), 
 		m_yAcceleration(20.f, -20.f), 
 		m_zAcceleration(20.f, -20.f),
 		m_targetingMode(TargetingMode::Normal),
-		m_grid(_grid)
+		m_grid(_grid),
+		m_indicator(_indicator)
 	{};
 
 	void PlayerController::Process(float _deltaTime)
@@ -36,7 +37,7 @@ namespace Control
 			Plane plane(Vec3(0.f, 1.f, 0.f), pos);
 			Ray ray = g_camera.GetRay(InputManager::GetCursorPosScreenSpace());
 			float d = dot((pos - ray.origin), plane.n) / dot(ray.direction, plane.n);
-			m_model->SetPosition(ray.origin + d * ray.direction);
+			m_indicator.SetPosition(ray.origin + d * ray.direction);
 		}
 	}
 

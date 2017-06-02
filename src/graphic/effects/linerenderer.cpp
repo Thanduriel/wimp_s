@@ -31,7 +31,7 @@ namespace Graphic {
 		Device::SetEffect(Resources::GetEffect(Effects::LINES));
 
 		UniformBuffer& ubo = Resources::GetUBO(UniformBuffers::OBJECT_LINES);
-		ubo["c_WorldViewProjection"] = _worldViewProjection;
+		ubo["c_WorldViewProjection"] = transpose(_worldViewProjection);
 		ubo["c_Color"] = m_color;
 		ubo["c_Thickness"] = m_thickness;
 

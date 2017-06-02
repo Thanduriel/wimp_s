@@ -28,9 +28,9 @@ namespace Graphic {
 			effects[ind] = new Effect("shader/mesh.vs", "shader/mesh.ps");
 			effects[ind]->SetBlendState(BlendState(BlendState::BLEND_OPERATION::DISABLE, BlendState::BLEND::SRC_ALPHA, BlendState::BLEND::ONE));
 			effects[ind]->SetDepthStencilState(DepthStencilState(Graphic::DepthStencilState::COMPARISON_FUNC::LESS, true));
-			// the exapmle cube has all faces inverted
+			// the example cube has all faces inverted
 			effects[ind]->SetRasterizerState(RasterizerState(RasterizerState::CULL_MODE::FRONT, RasterizerState::FILL_MODE::SOLID));
-			effects[ind]->BindUniformBuffer(GetUBO(UniformBuffers::OBJECT_MESH));
+			effects[ind]->BindUniformBuffer(GetUBO(UniformBuffers::SIMPLE_OBJECT));
 			break;
 		case Effects::TEXTURE_2DQUAD:
 			effects[(int)_effect] = new Effect("shader/screentex.vs", "shader/screentex.ps", "shader/screentex.gs");
@@ -49,6 +49,21 @@ namespace Graphic {
 			effects[ind]->SetBlendState(BlendState(BlendState::BLEND_OPERATION::ADD, BlendState::BLEND::SRC_ALPHA, BlendState::BLEND::ONE));
 			effects[ind]->SetDepthStencilState(DepthStencilState(Graphic::DepthStencilState::COMPARISON_FUNC::LESS, false));
 			effects[ind]->BindUniformBuffer(GetUBO(UniformBuffers::OBJECT_LINES));
+			break;
+		case Effects::SCREEN_OUTPUT:
+			effects[ind] = new Effect("shader/fullscreentri.vs", "shader/output.ps");
+			effects[ind]->SetRasterizerState(RasterizerState(RasterizerState::CULL_MODE::NONE, RasterizerState::FILL_MODE::SOLID));
+			effects[ind]->SetDepthStencilState(DepthStencilState(DepthStencilState::COMPARISON_FUNC::ALWAYS, false));
+			effects[ind]->BindUniformBuffer(Resources::GetUBO(UniformBuffers::GLOBAL));
+			effects[ind]->BindTexture("screenTex", 0, Resources::GetSamplerState(SamplerStates::POINT));
+			break;
+		case Effects::BLACKHOLE:
+			effects[ind] = new Effect("shader/postprocessing/blackhole.vs", "shader/postprocessing/blackhole.ps", "shader/postprocessing/blackhole.gs");
+			effects[ind]->SetBlendState(BlendState(Graphic::BlendState::BLEND_OPERATION::DISABLE, Graphic::BlendState::BLEND::SRC_ALPHA, Graphic::BlendState::BLEND::ONE));
+			effects[ind]->SetDepthStencilState(DepthStencilState(Graphic::DepthStencilState::COMPARISON_FUNC::ALWAYS, false));
+			effects[ind]->BindUniformBuffer(GetUBO(UniformBuffers::SIMPLE_OBJECT));
+			effects[ind]->BindUniformBuffer(GetUBO(UniformBuffers::GLOBAL));
+			effects[ind]->BindTexture("screenTex", 0, Resources::GetSamplerState(SamplerStates::LINEAR));
 			break;
 		default:
 			Assert(false, "This effect is not implemented.");
@@ -97,9 +112,9 @@ namespace Graphic {
 			uniformBuffers[ind]->AddAttribute("CameraRotation", Graphic::UniformBuffer::ATTRIBUTE_TYPE::MATRIX);
 			break;
 
-		case UniformBuffers::OBJECT_MESH:
+		case UniformBuffers::SIMPLE_OBJECT:
 			uniformBuffers[ind] = new UniformBuffer("Object");
-			uniformBuffers[ind]->AddAttribute("c_ModelViewProjection", UniformBuffer::ATTRIBUTE_TYPE::MATRIX);
+			uniformBuffers[ind]->AddAttribute("c_WorldViewProjection", UniformBuffer::ATTRIBUTE_TYPE::MATRIX);
 			break;
 		case UniformBuffers::OBJECT_LINES:
 			uniformBuffers[ind] = new UniformBuffer("Object");

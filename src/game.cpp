@@ -66,7 +66,7 @@ void Wimp_s::Run()
 
 		// rendering
 		// use hardware backbuffer for now
-		Graphic::Device::BindFramebuffer( nullptr );
+		Graphic::Device::BindFramebuffer( m_sceneFramebuffer );
 		Graphic::Device::Clear(0.f, 0.f, 0.f);
 		current.Draw(d.count());
 

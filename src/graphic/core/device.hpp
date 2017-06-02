@@ -70,6 +70,8 @@ namespace Graphic {
 		///		is made instead.
 		static void DrawVertices( const VertexArrayBuffer& _buffer, int _from, int _count );
 
+		// A draw call that draws a screen aligned triangle.
+		static void DrawFullscreen();
 	private:
 		GLFWwindow* m_window;		///< Reference to the one window created during Initialize()
 

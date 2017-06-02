@@ -3,6 +3,7 @@
 namespace Game {
 	class Grid;
 	class Model;
+	class Actor;
 }
 
 namespace Control
@@ -16,7 +17,7 @@ namespace Control
 	{
 	public:
 
-		PlayerController(Game::Model& _model, Game::Grid& _grid);
+		PlayerController(Game::Model& _model, Game::Grid& _grid, Game::Actor& _indicator);
 
 		// The basic processing method called once per frame
 		void Process(float _deltaTime);
@@ -49,5 +50,6 @@ namespace Control
 
 		Game::Model* m_model;
 		Game::Grid& m_grid;
+		Game::Actor& m_indicator;
 	};
 }

@@ -9,6 +9,7 @@
 
 #include "graphic/interface/pixelcoords.hpp"
 #include "gameplay/elements/grid.hpp"
+#include "gameplay/elements/blackhole.hpp"
 
 namespace GameStates {
 
@@ -21,13 +22,16 @@ namespace GameStates {
 	Game::Grid* grid;
 	Game::Model* model;
 	Game::Model* model2;
+	Game::BlackHole* blackHole;
+
 
 	MainState::MainState()
 		: m_starbackground(2000, 20000.f, 14000)
 	{
+		blackHole = new BlackHole(ei::Vec3(-5.f), ei::qidentity());
 		grid = new Game::Grid(ei::Vec3(0.f), ei::qidentity(), Utils::Color32F(0.f, 1.f, 0.f, 0.6f), 2.f, 2.f);
-		model = new Model("models/spaceship.fbx",Vec3(0.f), qidentity());
-		m_playerController = new Control::PlayerController(*model, *grid);
+		model = new Model("models/spaceship.fbx", Vec3(0.f), qidentity());
+		m_playerController = new Control::PlayerController(*model, *grid, *blackHole);
 	//	Control::g_camera.Attach(*Control::g_player);
 
 		model2 = new Model("models/spaceship.fbx",Vec3(1.f,0.f,1.f), qidentity());
@@ -51,6 +55,7 @@ namespace GameStates {
 		delete model;
 		delete model2;
 		delete grid;
+		delete blackHole;
 	}
 
 	void MainState::Process(float _deltaTime)
@@ -65,10 +70,21 @@ namespace GameStates {
 		m_starbackground.Draw();
 
 		Graphic::Device::SetEffect(Graphic::Resources::GetEffect(Graphic::Effects::MESH));
+
+		// test stuff
 		model->Draw();
 		model2->Draw();
 		grid->Draw();
+		blackHole->Draw();
 
+		// render the framebuffer to the hardwarebackbuffer
+		Texture& tex = *Device::GetCurrentFramebufferBinding()->GetColorAttachments().begin()->pTexture;
+		Device::BindFramebuffer(nullptr);
+		Device::SetEffect(Graphic::Resources::GetEffect(Effects::SCREEN_OUTPUT));
+		Device::SetTexture(tex, 0);
+		Device::DrawFullscreen();
+
+		// the hud should be drawn last
 		m_hud.GetDebugLabel().SetText(std::to_string(_deltaTime));
 		m_hud.Draw(_deltaTime);
 	}

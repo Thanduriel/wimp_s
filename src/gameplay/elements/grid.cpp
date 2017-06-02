@@ -26,6 +26,6 @@ namespace Game {
 
 	void Grid::Draw()
 	{
-		m_lineRenderer.Draw(transpose(Control::g_camera.GetViewProjection() * m_transformation));
+		m_lineRenderer.Draw(Control::g_camera.GetViewProjection() * m_transformation);
 	}
 }
