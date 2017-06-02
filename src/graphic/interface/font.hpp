@@ -66,8 +66,8 @@ namespace Graphic {
 		void SetText(const std::string& _text);
 		const std::string& GetText() const {return m_text;};
 
-		bool IsActive() const { return m_active; }
-		void SetActive(bool _active) { m_active = _active; }
+		bool IsVisible() const { return m_visible; }
+		void SetVisible(bool _visible) { m_visible = _visible; }
 
 		/// \brief Sets the Position on the screen.
 		void SetPosition(ei::Vec2 _screenPos);
@@ -94,12 +94,18 @@ namespace Graphic {
 
 	private:
 		void RenewBuffer();
-		/// \brief resolves control chars and applies them
+
+		typedef std::string::iterator strIterator;
+		/// \brief Resolves control chars and applies them.
 		/// \param [in] _start index of '<' in m_text
-		int CntrlChr(int _i);
+		bool CntrlChr(strIterator& _i);
+
+		// Advances the iterator looking for a number ['0','9'] preceded by spaces.
+		// If no number was found zero is returned.
+		int ParseInt(strIterator& _ind);
 		const Font& m_font;	///< Reference to the used font.
 		std::string m_text;
-		bool m_active;
+		bool m_visible;
 
 		VertexArrayBuffer m_characters;
 		Utils::Color8U m_color, m_colorD;

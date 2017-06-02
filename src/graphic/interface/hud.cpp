@@ -70,7 +70,7 @@ namespace Graphic
 		Device::DrawVertices( m_characters, 0, m_characters.GetNumVertices()-1 );
 
 		for(int i = (int)m_textRenders.size() - 1; i >= 0; --i)
-			if(m_textRenders[i]->IsActive()) m_textRenders[i]->Draw();
+			if(m_textRenders[i]->IsVisible()) m_textRenders[i]->Draw();
 
 		//draw every subhud(container)
 		for (size_t i = m_subHuds.size(); i-- > 0;)

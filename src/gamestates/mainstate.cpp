@@ -88,7 +88,7 @@ namespace GameStates {
 		Device::DrawFullscreen();
 
 		// the hud should be drawn last
-		m_hud.GetDebugLabel().SetText("fps: <c 000 255 100 255>" + std::to_string(_deltaTime) + "</c>");
+		m_hud.GetDebugLabel().SetText("fps: <c 0 255 100><<" + std::to_string(_deltaTime) + "</c>");
 		m_hud.Draw(_deltaTime);
 	}
 

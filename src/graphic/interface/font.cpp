@@ -51,7 +51,7 @@ namespace Graphic
 		m_sizeD(_scale),
 		m_colorD((uint8)255,(uint8)255,(uint8)255,(uint8)255),
 		m_thicknessD(0.7f),
-		m_active(true),
+		m_visible(true),
 		m_sizeMax(0)
 	{
 		m_size = m_sizeD;
@@ -148,26 +148,29 @@ namespace Graphic
 	}
 
 	// ***************************************************** //
-	int TextRender::CntrlChr(int _i)
+	bool TextRender::CntrlChr(strIterator& _it)
 	{
-		int jmpCount = 0;
-		switch (m_text[_i+1])
+		++_it;
+
+		switch (*_it)
 		{
-		case 's': m_size = (uint8)(m_text[_i+3]*100+m_text[_i+4]*10+m_text[_i+5]-208) * 12.5f / 255.f;
-			jmpCount = 5;
+		case 's': m_size = ParseInt(_it) * 12.5f / 255.f;
 			break;
-		case 't': m_thickness =(uint8) (m_text[_i+3]*100+m_text[_i+4]*10+m_text[_i+5]-208) * 6.25f / 255.f;
-			jmpCount = 5;
+		case 't': m_thickness =(uint8) ParseInt(_it) * 6.25f / 255.f;
 			break;
-		case 'c': //m_color = Utils::Color32F((uint8)m_text[_i+2],(uint8)m_text[_i+3],(uint8)m_text[_i+4],(uint8)m_text[_i+5]));
-			m_color = Utils::Color8U(
-				(uint8)(m_text[_i+3]*100+m_text[_i+4]*10+m_text[_i+5]-208), //offset: '0'(0x30) -> 0x00 5328 % 256
-				(uint8)(m_text[_i+7]*100+m_text[_i+8]*10+m_text[_i+9]-208),
-				(uint8)(m_text[_i+11]*100+m_text[_i+12]*10+m_text[_i+13]-208),
-				(uint8)(m_text[_i+15]*100+m_text[_i+16]*10+m_text[_i+17]-208));
-			jmpCount = 17;
+		case 'c': 
+		{
+			++_it;
+			uint8 r = ParseInt(_it);
+			uint8 g = ParseInt(_it);
+			uint8 b = ParseInt(_it);
+			uint8 a = ParseInt(_it);
+			m_color = Utils::Color8U(r, g, b, a ? a : 255);
 			break;
-		case '/': switch (m_text[_i+2]) //statement closed, return to default values
+		}
+		case '/': 
+			++_it;
+			switch (*_it) //statement closed, return to default values
 			{
 			case 's' : m_size = m_sizeD; 
 				break;
@@ -176,14 +179,30 @@ namespace Graphic
 			case 't' : m_thickness = m_thicknessD; 
 				break;
 			};
-			jmpCount = 2;
 			break;
+		default: --_it;  return true;
 		}
 		//count chars till the formating end: '>'
-		while(m_text[_i+(jmpCount++)] != '>');
-		return jmpCount;
+		while(*_it != '>') ++_it;
+		return false;
 	}
 
+	// ***************************************************** //
+	int TextRender::ParseInt(strIterator& _it)
+	{
+		while (*_it == ' ') ++_it;
+
+		int res = 0;
+		while (*_it >= '0' && *_it <= '9')
+		{
+			res *= 10;
+			res += (int)*_it - 0x30;
+			++_it;
+		}
+		return res;
+	}
+
+	// ***************************************************** //
 	void TextRender::RenewBuffer()
 	{
 		//reset the previous build
@@ -197,33 +216,44 @@ namespace Graphic
 		currentPos.y -= m_charSize[1] * m_sizeMax; 
 
 		float maxExpanseX = currentPos[0];
+		bool ignoreCntr = false;
 
-		for(size_t i = 0; i<m_text.length(); i++)
+		for(auto it = m_text.begin(); it != m_text.end(); ++it)
 		{
 			CharacterVertex CV;
 			CV.scale = m_size; 
-			CV.size = m_font.m_sizeTable[(unsigned char)m_text[i]];
-			CV.texCoord = m_font.m_coordTable[(unsigned char)m_text[i]];
+			CV.size = m_font.m_sizeTable[(unsigned char)*it];
+			CV.texCoord = m_font.m_coordTable[(unsigned char)*it];
 			CV.position = currentPos;
 			CV.thickness = m_thickness;
 			CV.color = m_color.RGBA();
 
 			//line break
-			if(m_text[i] == '\n')
+			if(*it == '\n')
 			{
 				if (currentPos[0] > maxExpanseX) maxExpanseX = currentPos[0];
 				currentPos[0] = m_position[0]; 
 				//m_screenRatio already contains the chars y size because its constant for every char
 				currentPos[1] -= m_charSize[1] * m_sizeMax;//offset to lower line space
 			}
-			else if(m_text[i] == '<') { i += CntrlChr((int)i)-1; continue;} 
-			else currentPos[0] += m_font.m_sizeTable[(unsigned char)m_text[i]][0]*m_size;  
+			else if(*it == '<')
+			{
+				if (ignoreCntr)
+				{
+					ignoreCntr = false;
+					currentPos[0] += m_font.m_sizeTable[(unsigned char)*it][0] * m_size;
+				} else {
+					ignoreCntr = CntrlChr(it);
+					continue;
+				}
+			} 
+			else currentPos[0]  += m_font.m_sizeTable[(unsigned char)*it][0] * m_size;
 
  			vbGuard->Add(CV);
 
 			//save the greatest size that gets used in the text
 			//after checking for cntrl chars
-			if(m_size > m_sizeMax && m_text[i] != ' ') m_sizeMax = m_size;
+			if(m_size > m_sizeMax && *it != ' ') m_sizeMax = m_size;
 		}
 
 		//when no line break happened
