@@ -34,6 +34,7 @@ include_directories("src")
 set(GLFW_BUILD_DOCS OFF CACHE BOOL "" FORCE)
 set(GLFW_BUILD_TESTS OFF CACHE BOOL "" FORCE)
 set(GLFW_BUILD_EXAMPLES OFF CACHE BOOL "" FORCE)
+set(BUILD_SHARED_LIBS OFF CACHE BOOL "" FORCE)
 
 add_subdirectory("dependencies/assimp")
 include_directories("dependencies/assimp/include")
@@ -52,7 +53,7 @@ target_link_libraries(wimp_s ${OPENGL_gl_LIBRARY})
 
 include_directories("dependencies/epsilon/include")
 file(GLOB SOURCE_FILES_EPSILON "dependencies/epsilon/src/*.cpp")
-add_library(epsilon ${SOURCE_FILES_EPSILON})
+add_library(epsilon STATIC ${SOURCE_FILES_EPSILON})
 target_link_libraries (wimp_s epsilon)
 
 # You can define two import-locations: one for debug and one for release.
