@@ -73,6 +73,9 @@ void Wimp_s::Run()
 		// Present if not closed
 		glfwSwapBuffers(Graphic::Device::GetWindow());
 
+		// delete all marked actors in the scene
+		current.Dispose();
+
 		// state managment with a stack
 		GameState* newState = current.FetchNewState();
 		if (current.IsFinished()) m_gameStates.pop_back();

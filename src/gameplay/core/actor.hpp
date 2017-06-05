@@ -11,7 +11,7 @@ namespace Game {
 	class Actor
 	{
 	public:
-		Actor() : m_position(0.f), m_rotation(ei::qidentity()) { UpdateMatrices(); }
+		Actor() : m_position(0.f), m_rotation(ei::qidentity()), m_destroyed(false) { UpdateMatrices(); }
 		Actor(const ei::Vec3& _position, const ei::Quaternion& _rotation);
 
 		// Access Position
@@ -26,6 +26,11 @@ namespace Game {
 
 		// This matrix transforms modelspace -> worldspace
 		const ei::Mat4x4& GetTransformation() const { return m_transformation; }
+
+		// Destroys the object
+		void Destroy();
+		// Is object to be destroyed?
+		bool IsDestroyed() { return m_destroyed; }
 
 		virtual void Process(float _deltaTime) {};
 		virtual void Draw() {};
@@ -43,6 +48,9 @@ namespace Game {
 		ei::Mat3x3 m_rotationMatrix;
 		ei::Mat3x3 m_inverseRotationMatrix;
 		ei::Mat4x4 m_transformation;
+
+		// shows if the object is to be destroyed
+		bool m_destroyed;
 	};
 
 

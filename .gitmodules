@@ -12,3 +12,6 @@
 	path = dependencies/assimp
 
 	url = https://github.com/assimp/assimp
+[submodule "dependencies/glew-cmake"]
+	path = dependencies/glew-cmake
+	url = https://github.com/Perlmint/glew-cmake.git

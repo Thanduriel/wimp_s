@@ -16,6 +16,9 @@ namespace GameStates {
 		// Called every frame to handle rendering.
 		virtual void Draw(float _deltaTime) = 0;
 
+		// Disposes the as destroyed marked actors.
+		virtual void Dispose() = 0;
+
 		// input handling
 		virtual void MouseMove(float _dx, float _dy) {}
 		virtual void Scroll(float _dx, float _dy) {}

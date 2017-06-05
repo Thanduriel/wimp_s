@@ -14,27 +14,24 @@
 namespace GameStates {
 
 	using namespace ei;
+	using namespace std;
 	using namespace Graphic;
 	using namespace Control;
 	using namespace Game;
 
-	// test stuff
-	Game::Grid* grid;
-	Game::Model* model;
-	Game::Model* model2;
-	Game::BlackHole* blackHole;
-
+	//Actor vector (lol rhyme)
+	vector<unique_ptr<Actor>> actors;
 
 	MainState::MainState()
 		: m_starbackground(2000, 20000.f, 14000)
 	{
-		blackHole = new BlackHole(ei::Vec3(-5.f), ei::qidentity());
-		grid = new Game::Grid(ei::Vec3(0.f), ei::qidentity(), Utils::Color32F(0.f, 1.f, 0.f, 0.6f), 2.f, 2.f);
-		model = new Model("models/spaceship.fbx", Vec3(0.f), qidentity());
+		unique_ptr<BlackHole> blackHole(new BlackHole(ei::Vec3(-5.f), ei::qidentity()));
+		unique_ptr<Grid> grid(new Game::Grid(ei::Vec3(0.f), ei::qidentity(), Utils::Color32F(0.f, 1.f, 0.f, 0.6f), 2.f, 2.f));
+		unique_ptr<Model> model(new Model("models/spaceship.fbx", Vec3(0.f), qidentity()));
 		m_playerController = new Control::PlayerController(*model, *grid, *blackHole);
 	//	Control::g_camera.Attach(*Control::g_player);
 
-		model2 = new Model("models/spaceship.fbx",Vec3(1.f,0.f,1.f), qidentity());
+		unique_ptr<Model> model2(new Model("models/spaceship.fbx", Vec3(1.f, 0.f, 1.f), qidentity()));
 		model2->SetAngularVelocity(Vec3(1.f));
 		model2->SetVelocity(Vec3(1.f, 0.f, 1.f));
 
@@ -47,25 +44,24 @@ namespace GameStates {
 
 		ScreenOverlay* el = &m_hud.CreateScreenElement<ScreenTexture>("simpleWindow", PixelCoord(50, 100));
 		el->Scale(Vec2(0.33f));
+
+		actors.push_back(move(model));
+		actors.push_back(move(model2));
+		actors.push_back(move(grid));
+		actors.push_back(move(blackHole));
 	}
 
 	MainState::~MainState()
 	{
 		delete m_playerController;
-
-		// test stuff
-		delete model;
-		delete model2;
-		delete grid;
-		delete blackHole;
 	}
 
 	void MainState::Process(float _deltaTime)
 	{
 		Control::g_camera.Process(_deltaTime);
 		m_playerController->Process(_deltaTime);
-		model->Process(_deltaTime);
-		model2->Process(_deltaTime);
+		for (int i = 0; i < actors.size(); i++)
+			actors[i]->Process(_deltaTime);
 	}
 
 	void MainState::Draw(float _deltaTime)
@@ -74,11 +70,8 @@ namespace GameStates {
 
 		Graphic::Device::SetEffect(Graphic::Resources::GetEffect(Graphic::Effects::MESH));
 
-		// test stuff
-		model->Draw();
-		model2->Draw();
-		grid->Draw();
-		blackHole->Draw();
+		for (int i = 0; i < actors.size(); i++)
+			actors[i]->Draw();
 
 		// render the framebuffer to the hardwarebackbuffer
 		Texture& tex = *Device::GetCurrentFramebufferBinding()->GetColorAttachments().begin()->pTexture;
@@ -90,6 +83,18 @@ namespace GameStates {
 		// the hud should be drawn last
 		m_hud.GetDebugLabel().SetText("fps: <c 0 255 100><<" + std::to_string(_deltaTime) + "</c>");
 		m_hud.Draw(_deltaTime);
+	}
+
+	void MainState::Dispose()
+	{
+		for (int i = 0; i < actors.size(); i++)
+		{
+			if (actors[i]->IsDestroyed())
+			{
+				swap(actors[i], actors.back());
+				actors.resize(actors.size() - 1);
+			}
+		}
 	}
 
 	// ******************************************************* //

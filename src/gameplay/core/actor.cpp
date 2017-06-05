@@ -6,7 +6,8 @@ namespace Game {
 
 	Actor::Actor(const ei::Vec3& _position, const ei::Quaternion& _rotation)
 		: m_position(_position),
-		m_rotation(_rotation)
+		m_rotation(_rotation),
+		m_destroyed(false)
 	{
 		UpdateMatrices();
 	}
@@ -17,6 +18,11 @@ namespace Game {
 		m_inverseRotationMatrix = transpose(m_rotationMatrix);
 
 		m_transformation = translation(m_position) * Mat4x4(m_rotationMatrix);
+	}
+
+	void Actor::Destroy()
+	{
+		m_destroyed = true;
 	}
 
 	DynamicActor::DynamicActor(const ei::Vec3& _position, const ei::Quaternion& _rotation)
