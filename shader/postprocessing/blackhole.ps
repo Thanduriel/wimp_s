@@ -11,7 +11,7 @@ out vec4 fragColor;
 #include "../globalubo.glsl"
 
 // params
-const float eventHorizon = 0.7f;
+const float eventHorizon = 0.75f;
 const float gradient = 0.f;
 const float scale = 1.f / (1.f-eventHorizon);
 
@@ -34,21 +34,15 @@ void main()
 		vec2 dir = coord - gs_center;
 		float len = length(dir);
 		float ratio = len / radius;
-		dir = dir / len;
+		dir /= len;
+	//	dir.y = -abs(dir.y);
 		// linear
-	//	fragColor.rgb = texture(screenTex, (gs_center - dir * ratio * (scale*radius - scale * eventHorizon)).xy).rgb;
+	//	fragColor.rgb = texture(screenTex, (gs_center + dir * ratio * (scale*radius - scale * eventHorizon)).xy).rgb;
 		// quadratic
 		coord = gs_center + ratio * dir * (a*radius*radius + b*radius + c);
+	//	ivec2 texelCoord = ivec2(floor(coord.x * c_fBBWidth), floor(coord.y * c_fBBHeight));
+	//	fragColor.rgb = texelFetch(screenTex, texelCoord,0).rgb;
 		fragColor.rgb = texture(screenTex, coord).rgb;
-	/*				+ textureOffset(screenTex, coord, ivec2(0,2)).rgb
-					+ textureOffset(screenTex, coord, ivec2(2,2)).rgb
-					+ textureOffset(screenTex, coord, ivec2(2,0)).rgb
-					+ textureOffset(screenTex, coord, ivec2(0,-2)).rgb
-					+ textureOffset(screenTex, coord, ivec2(-2,-2)).rgb
-					+ textureOffset(screenTex, coord, ivec2(-2,2)).rgb
-					+ textureOffset(screenTex, coord, ivec2(-2,0)).rgb
-					+ textureOffset(screenTex, coord, ivec2(2,-2)).rgb;
-		fragColor.rgb *= 1.0 / 9.0;*/
 	}
 	fragColor.a = 1.0;
 }

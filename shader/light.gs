@@ -21,7 +21,7 @@ layout(triangle_strip, max_vertices = 4) out;
 void main(void)
 {
 	vec4 position = vec4(vs_out_Position[0].xyz, 1) * c_mViewProjection;
-	vec4 center = position;
+	vec4 center = position / position.w;
 	
 	float size = vs_out_Radius[0];
 	gs_texCoord = vec2(-1.0, -1.0);

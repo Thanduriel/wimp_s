@@ -30,6 +30,7 @@ namespace GameStates {
 		unique_ptr<Grid> grid(new Game::Grid(ei::Vec3(0.f), ei::qidentity(), Utils::Color32F(0.f, 1.f, 0.f, 0.6f), 2.f, 2.f));
 		unique_ptr<Model> model(new Model("models/spaceship.fbx", Vec3(0.f), qidentity()));
 		m_playerController = new Control::PlayerController(*model, *grid, *blackHole);
+		pointLight = new PointLight(Vec3(0.f), 1.f, Utils::Color8U(255_uc, 255_uc, 0_uc));
 	//	Control::g_camera.Attach(*Control::g_player);
 
 		unique_ptr<Model> model2(new Model("models/spaceship.fbx", Vec3(1.f, 0.f, 1.f), qidentity()));
@@ -54,6 +55,7 @@ namespace GameStates {
 
 	MainState::~MainState()
 	{
+		delete pointLight;
 		delete m_playerController;
 	}
 
@@ -63,7 +65,11 @@ namespace GameStates {
 		m_playerController->Process(_deltaTime);
 		for (int i = 0; i < m_actors.size(); i++)
 			m_actors[i]->Process(_deltaTime);
-	//	pointLight->Process(_deltaTime);
+
+		static float t = 0.f;
+		t += _deltaTime;
+		pointLight->SetPosition(ei::Vec3(cos(t),sin(t), 0.f));
+		pointLight->Process(_deltaTime);
 	}
 
 	void MainState::Draw(float _deltaTime)
@@ -76,6 +82,8 @@ namespace GameStates {
 		for (int i = 0; i < m_actors.size(); i++)
 			m_actors[i]->Draw();
 
+		LightSystem::Draw();
+
 		// render the framebuffer to the hardwarebackbuffer
 		Texture& tex = *Device::GetCurrentFramebufferBinding()->GetColorAttachments().begin()->pTexture;
 		Device::BindFramebuffer(nullptr);
@@ -84,20 +92,17 @@ namespace GameStates {
 		Device::DrawFullscreen();
 
 		// the hud should be drawn last
-		m_hud.GetDebugLabel().SetText("fps: <c 0 255 100><<" + std::to_string(_deltaTime) + "</c>");
+		m_hud.GetDebugLabel().SetText("ft: <c 0 255 100><<" + std::to_string(_deltaTime) + "</c>");
 		m_hud.Draw(_deltaTime);
 	}
 
 	void MainState::Dispose()
 	{
-		for (int i = 0; i < m_actors.size(); i++)
+		auto it = std::remove_if(m_actors.begin(), m_actors.end(), [](const unique_ptr<Actor>& _actor)
 		{
-			if (m_actors[i]->IsDestroyed())
-			{
-				swap(m_actors[i], m_actors.back());
-				m_actors.resize(m_actors.size() - 1);
-			}
-		}
+			return _actor->IsDestroyed();
+		});
+		m_actors.erase(it, m_actors.end());
 	}
 
 	// ******************************************************* //
