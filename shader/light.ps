@@ -1,0 +1,24 @@
+#version 330
+
+in vec4 gl_FragCoord;
+in vec2 gs_texCoord;
+in vec4 gs_center;
+
+uniform sampler2D screenTex;
+uniform sampler2D depthTex;
+
+out vec4 fragColor;
+
+#include "globalubo.glsl"
+
+
+void main()
+{
+	float radius = sqrt(dot(gs_texCoord, gs_texCoord));
+//	if(radius >= 1.0) discard;
+	
+	vec2 coord = ((gl_FragCoord.xy) / vec2(c_fBBWidth, c_fBBHeight));
+//	if(texture(depthTex, coord).x < gs_center.z) discard;
+	
+	fragColor = vec4(1,1,1,texture(depthTex, coord).x);//min(1,1.0 - radius)
+}

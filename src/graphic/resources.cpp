@@ -32,6 +32,16 @@ namespace Graphic {
 			effects[ind]->SetRasterizerState(RasterizerState(RasterizerState::CULL_MODE::FRONT, RasterizerState::FILL_MODE::SOLID));
 			effects[ind]->BindUniformBuffer(GetUBO(UniformBuffers::SIMPLE_OBJECT));
 			break;
+		case Effects::DEFFERED_LIGHT:
+			effects[ind] = new Effect("shader/light.vs", "shader/light.ps", "shader/light.gs");
+			effects[ind]->SetBlendState(BlendState(Graphic::BlendState::BLEND_OPERATION::ADD, Graphic::BlendState::BLEND::SRC_ALPHA, Graphic::BlendState::BLEND::ONE));
+			effects[ind]->SetDepthStencilState(DepthStencilState(Graphic::DepthStencilState::COMPARISON_FUNC::ALWAYS, false));
+			effects[ind]->BindTexture("screenTex", 0, Resources::GetSamplerState(SamplerStates::POINT));
+			effects[ind]->BindTexture("depthBufferTex", 1, Resources::GetSamplerState(SamplerStates::POINT));
+		//	effects[ind]->BindTexture("normalTex", 2, Resources::GetSamplerState(SamplerStates::POINT));
+			effects[ind]->BindUniformBuffer(GetUBO(UniformBuffers::SIMPLE_OBJECT));
+			effects[ind]->BindUniformBuffer(GetUBO(UniformBuffers::GLOBAL));
+			break;
 		case Effects::TEXTURE_2DQUAD:
 			effects[ind] = new Effect("shader/screentex.vs", "shader/screentex.ps", "shader/screentex.gs");
 			effects[ind]->SetBlendState(BlendState(Graphic::BlendState::BLEND_OPERATION::ADD, Graphic::BlendState::BLEND::SRC_ALPHA, Graphic::BlendState::BLEND::INV_SRC_ALPHA));
@@ -63,7 +73,7 @@ namespace Graphic {
 			effects[ind]->SetDepthStencilState(DepthStencilState(Graphic::DepthStencilState::COMPARISON_FUNC::ALWAYS, false));
 			effects[ind]->BindUniformBuffer(GetUBO(UniformBuffers::SIMPLE_OBJECT));
 			effects[ind]->BindUniformBuffer(GetUBO(UniformBuffers::GLOBAL));
-			effects[ind]->BindTexture("screenTex", 0, Resources::GetSamplerState(SamplerStates::LINEAR));
+			effects[ind]->BindTexture("screenTex", 0, Resources::GetSamplerState(SamplerStates::POINT));
 			break;
 		default:
 			Assert(false, "This effect is not implemented.");

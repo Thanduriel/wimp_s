@@ -3,6 +3,10 @@
 #include "graphic/interface/hud.hpp"
 #include "gamestate.hpp"
 #include "graphic/effects/starbackground.hpp"
+#include "gameplay/core/actor.hpp"
+
+#include <vector>
+#include <memory>
 
 namespace Control {
 	class PlayerController;
@@ -34,5 +38,9 @@ namespace GameStates{
 	private:
 		Graphic::Starbackground m_starbackground;
 		Control::PlayerController* m_playerController;
+
+		//Actor vector (lol rhyme)
+		// todo move this to a management class
+		std::vector<std::unique_ptr<Game::Actor>> m_actors;
 	};
 }

@@ -4,6 +4,9 @@
 #include "../predeclarations.hpp"
 #include <cstdint>
 
+// literal to call the correct constructor of Color8U
+inline uint8 operator""_uc(unsigned long long _arg) { return static_cast<uint8>(_arg); }
+
 namespace Utils {
 
 	struct HSV: public ei::Vec3 {};
@@ -101,8 +104,7 @@ namespace Utils {
 	};
 
 
-
-
+	
 	/// \brief 32Bit color class for storage.
 	/// \details This class is for read only purposes only. For any operation
 	///		on colors or to get derived attributes convert it to Color32F (cast

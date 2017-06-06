@@ -1,5 +1,6 @@
 #include "pathutils.hpp"
 #include "assert.hpp"
+#include "utils/logger.hpp"
 
 namespace PathUtils
 {
@@ -37,10 +38,11 @@ namespace PathUtils
 				size_t slashBefore = searchResult - 2;
 				for (; slashBefore > 0; --slashBefore)
 				{
-					if (canonicalizedPath[slashBefore-1] == '/')
+					if (canonicalizedPath[slashBefore - 1] == '/')
 						break;
 				}
 				--slashBefore;
+				if(slashBefore >= canonicalizedPath.length()) LOG_ERROR("Could not find file: " + canonicalizedPath);
 				canonicalizedPath.erase(slashBefore, searchResult - slashBefore + 2);
 				searchResult -= searchResult - slashBefore;
 			}

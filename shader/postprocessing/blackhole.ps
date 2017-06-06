@@ -29,7 +29,7 @@ void main()
 		fragColor.rgb = vec3(0,0,0);
 	else
 	{
-		// window space -> uv
+		// window space -> uv coords
 		vec2 coord = ((gl_FragCoord.xy) / vec2(c_fBBWidth, c_fBBHeight));
 		vec2 dir = coord - gs_center;
 		float len = length(dir);
@@ -39,7 +39,7 @@ void main()
 	//	fragColor.rgb = texture(screenTex, (gs_center - dir * ratio * (scale*radius - scale * eventHorizon)).xy).rgb;
 		// quadratic
 		coord = gs_center + ratio * dir * (a*radius*radius + b*radius + c);
-		fragColor.rgb = texture(screenTex, coord).rgb ;
+		fragColor.rgb = texture(screenTex, coord).rgb;
 	/*				+ textureOffset(screenTex, coord, ivec2(0,2)).rgb
 					+ textureOffset(screenTex, coord, ivec2(2,2)).rgb
 					+ textureOffset(screenTex, coord, ivec2(2,0)).rgb
@@ -47,8 +47,8 @@ void main()
 					+ textureOffset(screenTex, coord, ivec2(-2,-2)).rgb
 					+ textureOffset(screenTex, coord, ivec2(-2,2)).rgb
 					+ textureOffset(screenTex, coord, ivec2(-2,0)).rgb
-					+ textureOffset(screenTex, coord, ivec2(2,-2)).rgb;*/
-	//	fragColor.rgb *= 1.0 / 1.0;
+					+ textureOffset(screenTex, coord, ivec2(2,-2)).rgb;
+		fragColor.rgb *= 1.0 / 9.0;*/
 	}
-	fragColor.a = 1;
+	fragColor.a = 1.0;
 }

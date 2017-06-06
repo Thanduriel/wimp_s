@@ -12,7 +12,7 @@ namespace Graphic {
 
 	enum struct Effects {
 		MESH,
-//		DEFFERED_LIGHT,
+		DEFFERED_LIGHT,
 		BACKGROUNDSTAR,
 //		PARTICLES,
 		TEXTURE_2DQUAD,

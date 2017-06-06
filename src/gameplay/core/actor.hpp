@@ -13,6 +13,7 @@ namespace Game {
 	public:
 		Actor() : m_position(0.f), m_rotation(ei::qidentity()), m_destroyed(false) { UpdateMatrices(); }
 		Actor(const ei::Vec3& _position, const ei::Quaternion& _rotation);
+		virtual ~Actor() {}
 
 		// Access Position
 		void SetPosition(const ei::Vec3& _position) { m_position = _position; UpdateMatrices(); }

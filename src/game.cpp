@@ -6,6 +6,7 @@
 #include "graphic/core/texture.hpp"
 #include "graphic/resources.hpp"
 #include "control/input.hpp"
+#include "graphic/effects/lightsystem.hpp"
 
 #include "utils/loggerinit.hpp"
 
@@ -30,12 +31,15 @@ Wimp_s::Wimp_s()
 	Jo::Files::MetaFileWrapper config;
 	Control::InputManager::Initialize(Graphic::Device::GetWindow(), config.RootNode);//config[std::string("Input")]
 
+	LightSystem::Initialize();
+
 	m_gameStates.emplace_back(new GameStates::MainState());
 }
 
 Wimp_s::~Wimp_s()
 {
 	Control::InputManager::Close();
+	LightSystem::Close();
 
 	delete m_sceneColorTexture;
 	delete m_sceneDepthTexture;

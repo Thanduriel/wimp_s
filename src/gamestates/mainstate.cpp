@@ -6,10 +6,12 @@
 #include "control/camera.hpp"
 #include "control/playercontroller.hpp"
 #include "control/input.hpp"
+#include "graphic/effects/lightsystem.hpp"
 
 #include "graphic/interface/pixelcoords.hpp"
 #include "gameplay/elements/grid.hpp"
 #include "gameplay/elements/blackhole.hpp"
+#include "gameplay/elements/light.hpp"
 
 namespace GameStates {
 
@@ -19,8 +21,7 @@ namespace GameStates {
 	using namespace Control;
 	using namespace Game;
 
-	//Actor vector (lol rhyme)
-	vector<unique_ptr<Actor>> actors;
+	Game::PointLight* pointLight;
 
 	MainState::MainState()
 		: m_starbackground(2000, 20000.f, 14000)
@@ -45,10 +46,10 @@ namespace GameStates {
 		ScreenOverlay* el = &m_hud.CreateScreenElement<ScreenTexture>("simpleWindow", PixelCoord(50, 100));
 		el->Scale(Vec2(0.33f));
 
-		actors.push_back(move(model));
-		actors.push_back(move(model2));
-		actors.push_back(move(grid));
-		actors.push_back(move(blackHole));
+		m_actors.push_back(move(model));
+		m_actors.push_back(move(model2));
+		m_actors.push_back(move(grid));
+		m_actors.push_back(move(blackHole));
 	}
 
 	MainState::~MainState()
@@ -60,18 +61,20 @@ namespace GameStates {
 	{
 		Control::g_camera.Process(_deltaTime);
 		m_playerController->Process(_deltaTime);
-		for (int i = 0; i < actors.size(); i++)
-			actors[i]->Process(_deltaTime);
+		for (int i = 0; i < m_actors.size(); i++)
+			m_actors[i]->Process(_deltaTime);
+	//	pointLight->Process(_deltaTime);
 	}
 
 	void MainState::Draw(float _deltaTime)
 	{
+		// todo: structure to enforce the right draw order
 		m_starbackground.Draw();
 
 		Graphic::Device::SetEffect(Graphic::Resources::GetEffect(Graphic::Effects::MESH));
 
-		for (int i = 0; i < actors.size(); i++)
-			actors[i]->Draw();
+		for (int i = 0; i < m_actors.size(); i++)
+			m_actors[i]->Draw();
 
 		// render the framebuffer to the hardwarebackbuffer
 		Texture& tex = *Device::GetCurrentFramebufferBinding()->GetColorAttachments().begin()->pTexture;
@@ -87,12 +90,12 @@ namespace GameStates {
 
 	void MainState::Dispose()
 	{
-		for (int i = 0; i < actors.size(); i++)
+		for (int i = 0; i < m_actors.size(); i++)
 		{
-			if (actors[i]->IsDestroyed())
+			if (m_actors[i]->IsDestroyed())
 			{
-				swap(actors[i], actors.back());
-				actors.resize(actors.size() - 1);
+				swap(m_actors[i], m_actors.back());
+				m_actors.resize(m_actors.size() - 1);
 			}
 		}
 	}
