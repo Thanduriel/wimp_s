@@ -48,7 +48,7 @@ namespace Graphic {
 		~Framebuffer();
 
 		const std::vector<Attachment>& GetColorAttachments() const		{ return m_colorAttachments; }
-		const Attachment& GetDepthStencilAttachment()					{ return m_depthStencil; }
+		const Attachment& GetDepthStencilAttachment() const					{ return m_depthStencil; }
 
 	private:
 		friend class Device;

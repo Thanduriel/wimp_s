@@ -6,10 +6,12 @@
 #include "control/camera.hpp"
 #include "control/playercontroller.hpp"
 #include "control/input.hpp"
+#include "graphic/effects/lightsystem.hpp"
 
 #include "graphic/interface/pixelcoords.hpp"
 #include "gameplay/elements/grid.hpp"
 #include "gameplay/elements/blackhole.hpp"
+#include "gameplay/elements/light.hpp"
 
 namespace GameStates {
 
@@ -19,8 +21,7 @@ namespace GameStates {
 	using namespace Control;
 	using namespace Game;
 
-	//Actor vector (lol rhyme)
-	vector<unique_ptr<Actor>> actors;
+	Game::PointLight* pointLight;
 
 	MainState::MainState()
 		: m_starbackground(2000, 20000.f, 14000)
@@ -30,6 +31,7 @@ namespace GameStates {
 		unique_ptr<Model> model(new Model("models/spaceship.fbx", Vec3(0.f), qidentity()));
 		m_playerController = new Control::PlayerController(*model, *grid, *blackHole);
 		Control::g_camera.Attach(*model);
+		pointLight = new PointLight(Vec3(0.f), 1.f, Utils::Color8U(255_uc, 255_uc, 0_uc));
 
 		unique_ptr<Model> model2(new Model("models/spaceship.fbx", Vec3(1.f, 0.f, 1.f), qidentity()));
 		model2->SetAngularVelocity(Vec3(1.f));
@@ -45,14 +47,15 @@ namespace GameStates {
 		ScreenOverlay* el = &m_hud.CreateScreenElement<ScreenTexture>("simpleWindow", PixelCoord(50, 100));
 		el->Scale(Vec2(0.33f));
 
-		actors.push_back(move(model));
-		actors.push_back(move(model2));
-		actors.push_back(move(grid));
-		actors.push_back(move(blackHole));
+		m_actors.push_back(move(model));
+		m_actors.push_back(move(model2));
+		m_actors.push_back(move(grid));
+		m_actors.push_back(move(blackHole));
 	}
 
 	MainState::~MainState()
 	{
+		delete pointLight;
 		delete m_playerController;
 	}
 
@@ -60,18 +63,26 @@ namespace GameStates {
 	{
 		Control::g_camera.Process(_deltaTime);
 		m_playerController->Process(_deltaTime);
-		for (int i = 0; i < actors.size(); i++)
-			actors[i]->Process(_deltaTime);
+		for (int i = 0; i < m_actors.size(); i++)
+			m_actors[i]->Process(_deltaTime);
+
+		static float t = 0.f;
+		t += _deltaTime;
+		pointLight->SetPosition(ei::Vec3(cos(t),sin(t), 0.f));
+		pointLight->Process(_deltaTime);
 	}
 
 	void MainState::Draw(float _deltaTime)
 	{
+		// todo: structure to enforce the right draw order
 		m_starbackground.Draw();
 
 		Graphic::Device::SetEffect(Graphic::Resources::GetEffect(Graphic::Effects::MESH));
 
-		for (int i = 0; i < actors.size(); i++)
-			actors[i]->Draw();
+		for (int i = 0; i < m_actors.size(); i++)
+			m_actors[i]->Draw();
+
+		LightSystem::Draw();
 
 		// render the framebuffer to the hardwarebackbuffer
 		Texture& tex = *Device::GetCurrentFramebufferBinding()->GetColorAttachments().begin()->pTexture;
@@ -81,20 +92,17 @@ namespace GameStates {
 		Device::DrawFullscreen();
 
 		// the hud should be drawn last
-		m_hud.GetDebugLabel().SetText("fps: <c 0 255 100><<" + std::to_string(_deltaTime) + "</c>");
+		m_hud.GetDebugLabel().SetText("ft: <c 0 255 100><<" + std::to_string(_deltaTime) + "</c>");
 		m_hud.Draw(_deltaTime);
 	}
 
 	void MainState::Dispose()
 	{
-		for (int i = 0; i < actors.size(); i++)
+		auto it = std::remove_if(m_actors.begin(), m_actors.end(), [](const unique_ptr<Actor>& _actor)
 		{
-			if (actors[i]->IsDestroyed())
-			{
-				swap(actors[i], actors.back());
-				actors.resize(actors.size() - 1);
-			}
-		}
+			return _actor->IsDestroyed();
+		});
+		m_actors.erase(it, m_actors.end());
 	}
 
 	// ******************************************************* //
