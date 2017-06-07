@@ -14,10 +14,10 @@ namespace Control
 
 	PlayerController::PlayerController(Game::Model& _model, Game::Grid& _grid, Game::Actor& _indicator)
 		: m_model(&_model),
-		m_mouseSensitivity(0.5f), 
-		m_xAcceleration(20.f, -20.f), 
-		m_yAcceleration(20.f, -20.f), 
-		m_zAcceleration(20.f, -20.f),
+		m_mouseSensitivity(10.0f), 
+		m_xForce(20.f, -20.f), 
+		m_yForce(20.f, -20.f), 
+		m_zForce(20.f, -20.f),
 		m_targetingMode(TargetingMode::Normal),
 		m_grid(_grid),
 		m_indicator(_indicator)
@@ -93,21 +93,28 @@ namespace Control
 				camVel.x += tacticalCamSpeed;
 			g_camera.Translate(camVel * _deltaTime);
 		}
-	/*	Vec3 velocity(0.f);
-		// basic movement (no intertia yet)
-		if (glfwGetKey(Graphic::Device::GetWindow(), GLFW_KEY_W))
-			velocity[2] += m_zAcceleration[0];
-		if (glfwGetKey(Graphic::Device::GetWindow(), GLFW_KEY_S))
-			velocity[2] += m_zAcceleration[1];
-		if (glfwGetKey(Graphic::Device::GetWindow(), GLFW_KEY_D))
-			velocity[0] += m_xAcceleration[0];
-		if (glfwGetKey(Graphic::Device::GetWindow(), GLFW_KEY_A))
-			velocity[0] += m_xAcceleration[1];
-		if (glfwGetKey(Graphic::Device::GetWindow(), GLFW_KEY_SPACE))
-			velocity[1] += m_yAcceleration[0];
-		if (glfwGetKey(Graphic::Device::GetWindow(), GLFW_KEY_LEFT_SHIFT))
-			velocity[1] += m_yAcceleration[1];
-		SetVelocity(m_rotationMatrix * velocity);*/
+		else
+		{
+			Vec3 force(0.0f);
+			if (glfwGetKey(Graphic::Device::GetWindow(), GLFW_KEY_W))
+				force[2] += m_zForce[0];
+			if (glfwGetKey(Graphic::Device::GetWindow(), GLFW_KEY_S))
+				force[2] += m_zForce[1];
+			if (glfwGetKey(Graphic::Device::GetWindow(), GLFW_KEY_D))
+				force[0] += m_xForce[0];
+			if (glfwGetKey(Graphic::Device::GetWindow(), GLFW_KEY_A))
+				force[0] += m_xForce[1];
+			if (glfwGetKey(Graphic::Device::GetWindow(), GLFW_KEY_SPACE))
+				force[1] += m_yForce[0];
+			if (glfwGetKey(Graphic::Device::GetWindow(), GLFW_KEY_LEFT_SHIFT))
+				force[1] += m_yForce[1];
+			// since we have newtons second axiom: F = m * a => a = F / m
+			Vec3 acceleration = force / m_model->GetWeight();
+			// and since delta_v = a * delta_t
+			Vec3 deltaVelocity = acceleration * _deltaTime;
+			// Apply the velocity to the player ship
+			m_model->SetVelocity(m_model->GetVelocity() + deltaVelocity);
+		}
 
 		// mouse rotation
 		if (m_mouseMovement.x + m_mouseMovement.y == 0.f) return;

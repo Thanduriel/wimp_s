@@ -29,7 +29,7 @@ namespace GameStates {
 		unique_ptr<Grid> grid(new Game::Grid(ei::Vec3(0.f), ei::qidentity(), Utils::Color32F(0.f, 1.f, 0.f, 0.6f), 2.f, 2.f));
 		unique_ptr<Model> model(new Model("models/spaceship.fbx", Vec3(0.f), qidentity()));
 		m_playerController = new Control::PlayerController(*model, *grid, *blackHole);
-	//	Control::g_camera.Attach(*Control::g_player);
+		Control::g_camera.Attach(*model);
 
 		unique_ptr<Model> model2(new Model("models/spaceship.fbx", Vec3(1.f, 0.f, 1.f), qidentity()));
 		model2->SetAngularVelocity(Vec3(1.f));

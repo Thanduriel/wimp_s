@@ -39,10 +39,10 @@ namespace Control
 		// The sensitivity of the mouse... duh
 		Vec2 m_mouseSensitivity;
 
-		// The acceleration in each direction
-		Vec2 m_xAcceleration;
-		Vec2 m_yAcceleration;
-		Vec2 m_zAcceleration;
+		// The thrust force in each direction
+		Vec2 m_xForce;
+		Vec2 m_yForce;
+		Vec2 m_zForce;
 
 		Vec2 m_mouseMovement;
 		// Control the input of the player

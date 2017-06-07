@@ -14,7 +14,7 @@ namespace Control {
 		: DynamicActor(_position, _rotation),
 		m_projection(ei::perspectiveGL(_fov, _aspectRatio, 0.1f, 50000.f)),
 		m_viewProjection( ),
-		m_mode(Mode::Free)
+		m_mode(Mode::Follow)
 	{
 	}
 
@@ -26,8 +26,11 @@ namespace Control {
 			break;
 		case Mode::Follow:
 			// not tested, do not use
-			m_position = Vec3(m_target->GetTransformation() * Vec4(0.f, 0.f, -5.f, 1.f));
-			m_rotation = m_target->GetRotation();
+			if (m_target)
+			{
+				m_position = Vec3(m_target->GetTransformation() * Vec4(0.f, 0.f, -10.f, 1.f));
+				m_rotation = m_target->GetRotation();
+			}
 			break;
 		default:
 			break;

@@ -69,9 +69,14 @@ namespace Game {
 		void SetAngularVelocity(const ei::Vec3& _angVel) { m_angularVelocity = _angVel; }
 		const ei::Vec3& GetAngularVelocity() const { return m_angularVelocity; }
 
+		// Access weight
+		void SetWeight(const float _weight) { m_weight = _weight; }
+		float GetWeight() const { return m_weight; }
+
 		void Process(float _deltaTime) override;
 	private:
 		ei::Vec3 m_velocity;
 		ei::Vec3 m_angularVelocity; // the length is the rotation speed
+		float m_weight;
 	};
 }
