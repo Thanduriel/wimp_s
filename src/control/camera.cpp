@@ -12,6 +12,7 @@ namespace Control {
 
 	Camera::Camera(const Vec3& _position, const Quaternion& _rotation, float _fov, float _aspectRatio)
 		: DynamicActor(_position, _rotation),
+		m_fov(_fov),
 		m_projection(ei::perspectiveGL(_fov, _aspectRatio, 0.1f, 50000.f)),
 		m_viewProjection( ),
 		m_mode(Mode::Follow)
@@ -89,6 +90,8 @@ namespace Control {
 	void Camera::UpdateUbo(UniformBuffer& _ubo)
 	{
 		_ubo["Projection"] = Vec4(m_projection(0, 0), m_projection(1, 1), m_projection(2, 2), m_projection(2, 3));
+		_ubo["InverseProjection"] = Vec4(1.0f / m_projection(0, 0), 1.0f / m_projection(1, 1), 1.0f / m_projection(2, 2), -m_projection(2, 3) / m_projection(2, 2));
+		_ubo["NearPlaneSize"] = Vec4(tan(m_fov) * Device::GetAspectRatio(), tan(m_fov), tan(m_fov/2.f) * Device::GetAspectRatio(), tan(m_fov/2.f));
 		_ubo["CameraRotation"] = ei::Mat4x4(m_inverseRotationMatrix);
 	}
 

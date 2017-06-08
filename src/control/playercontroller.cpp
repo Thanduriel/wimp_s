@@ -113,7 +113,7 @@ namespace Control
 			// and since delta_v = a * delta_t
 			Vec3 deltaVelocity = acceleration * _deltaTime;
 			// Apply the velocity to the player ship
-			m_model->SetVelocity(m_model->GetVelocity() + deltaVelocity);
+	//		m_model->SetVelocity(m_model->GetVelocity() + deltaVelocity);
 		}
 
 		// mouse rotation

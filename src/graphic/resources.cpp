@@ -41,6 +41,7 @@ namespace Graphic {
 		//	effects[ind]->BindTexture("normalTex", 2, Resources::GetSamplerState(SamplerStates::POINT));
 			effects[ind]->BindUniformBuffer(GetUBO(UniformBuffers::SIMPLE_OBJECT));
 			effects[ind]->BindUniformBuffer(GetUBO(UniformBuffers::GLOBAL));
+			effects[ind]->BindUniformBuffer(GetUBO(UniformBuffers::CAMERA));
 			break;
 		case Effects::TEXTURE_2DQUAD:
 			effects[ind] = new Effect("shader/screentex.vs", "shader/screentex.ps", "shader/screentex.gs");
@@ -119,6 +120,9 @@ namespace Graphic {
 			// The projection vector contains (x, y, z, w)
 			// Usage: vec4(pos.xyz * proj.xyz + vec3(0,0,proj.w), pos.z)
 			uniformBuffers[ind]->AddAttribute("Projection", Graphic::UniformBuffer::ATTRIBUTE_TYPE::VEC4);
+			uniformBuffers[ind]->AddAttribute("InverseProjection", Graphic::UniformBuffer::ATTRIBUTE_TYPE::VEC4);
+			// zw are respective half size
+			uniformBuffers[ind]->AddAttribute("NearPlaneSize", Graphic::UniformBuffer::ATTRIBUTE_TYPE::VEC4);
 			uniformBuffers[ind]->AddAttribute("CameraRotation", Graphic::UniformBuffer::ATTRIBUTE_TYPE::MATRIX);
 			break;
 

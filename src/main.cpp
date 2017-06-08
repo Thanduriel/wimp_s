@@ -6,6 +6,24 @@
 #include <crtdbg.h>
 #endif
 
+template<typename T>
+struct RefCount
+{
+	size_t count;
+	T* ptr;
+};
+
+template<typename T, typename...Args>
+std::shared_ptr<T> make_shared(Args&&... _args)
+{
+	auto rawPtr = malloc(sizeof(T) + sizeof(RefCount));
+	auto objP = new (ptr + sizeof(RefCount)) T(std::forward<Args>(_args)...);
+	RefCount<T>& refCount = *reinterpret_cast<RefCount<T>*>(ptr);
+	refCount.ptr = objP;
+
+	return std::shared_ptr(refCount);
+}
+
 int main()
 {
 #if defined(DEBUG) || defined(_DEBUG)

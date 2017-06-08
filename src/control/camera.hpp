@@ -41,6 +41,7 @@ namespace Control {
 	private:
 		void ProcessFreeMove(float _deltaTime);
 
+		float m_fov;
 		ei::Mat4x4 m_projection;
 		ei::Mat4x4 m_viewProjection;
 

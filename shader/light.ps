@@ -1,8 +1,9 @@
 #version 330
 
-in vec4 gl_FragCoord;
 in vec2 gs_texCoord;
 in vec4 gs_center;
+in vec3 gs_eyeDirection;
+in float gs_radius;
 
 uniform sampler2D screenTex;
 uniform sampler2D depthTex;
@@ -10,26 +11,21 @@ uniform sampler2D depthTex;
 out vec4 fragColor;
 
 #include "globalubo.glsl"
+#include "cameraubo.glsl"
 
-vec4 calcNDCFromWindow(vec3 windowSpace)
+vec4 CalcEyeFromWindow(in float windowZ, in vec3 eyeDirection)
 {
-	vec3 ndcPos;
-	ndcPos.xy = windowSpace.xy / vec2(c_fBBWidth, c_fBBHeight) * 2.0 - 1.0;
-	ndcPos.z =  (2.0 * windowSpace.z - gl_DepthRange.near - gl_DepthRange.far) /
+  float ndcZ = (2.0 * windowZ - gl_DepthRange.near - gl_DepthRange.far) /
 			(gl_DepthRange.far - gl_DepthRange.near);
-	
-	return vec4(ndcPos,1);
+  float eyeZ = c_vProjection.w / (ndcZ - c_vProjection.z);
+  return vec4(eyeDirection * eyeZ, 1);
 }
 
 void main()
-{
-	float radius = sqrt(dot(gs_texCoord, gs_texCoord));
-//	if(radius >= 1.0) discard;
-	
-	vec2 coord = ((gl_FragCoord.xy) / vec2(c_fBBWidth, c_fBBHeight));
-	
-	vec4 ndc = calcNDCFromWindow(vec3(gl_FragCoord.xy, texture(depthTex, coord).x));
-	if(ndc.z < gs_center.z) discard;
-	
-	fragColor = vec4(1,1,1, min(1,1.0 - radius));//texture(depthTex, coord).x);//min(1,1.0 - radius)
+{	
+	vec4 eyePos = CalcEyeFromWindow(texture(depthTex, gs_texCoord).x, gs_eyeDirection);
+//	if(eyePos.z > gs_center.z) discard;
+	float d = distance(eyePos, gs_center);
+//	if(d > gs_radius * 7.f) discard;
+	fragColor = vec4(1,1,1, 0.15 + (d < gs_radius * 10.f ? 0.75 : 0));
 }
