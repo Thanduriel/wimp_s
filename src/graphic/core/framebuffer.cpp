@@ -33,7 +33,7 @@ void Framebuffer::Initialize(const std::vector<Attachment>& _colorAttachments, b
 {
 	if (_colorAttachments.size() >= GL_MAX_DRAW_BUFFERS)
 	{
-		LOG_ERROR("Too many color attachments for framebuffer!");
+		LOG_ERROR("To many color attachments for framebuffer!");
 	}
 
 	/// \todo Plaster with glGetError function
