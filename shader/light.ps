@@ -25,7 +25,7 @@ void main()
 {	
 	vec4 eyePos = CalcEyeFromWindow(texture(depthTex, gs_texCoord).x, gs_eyeDirection);
 //	if(eyePos.z > gs_center.z) discard;
-	float d = distance(eyePos, gs_center);
+	float d = distance(eyePos.xyz, gs_center.xyz);
 //	if(d > gs_radius * 7.f) discard;
-	fragColor = vec4(1,1,1, 0.15 + (d < gs_radius * 10.f ? 0.75 : 0));
+	fragColor = vec4(1,1,1, 0.15 + (d < gs_radius * 5.f ? 0.75 : 0));
 }

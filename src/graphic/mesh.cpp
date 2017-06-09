@@ -121,6 +121,15 @@ namespace Graphic {
 		return true;
 	}
 
+	template<typename T, unsigned N, typename A>
+	ei::Matrix<T, N, 1>& assign(ei::Matrix<T,N,1>& _lhs, const A& _rhs)
+	{
+		for (unsigned i = 0; i < N; ++i)
+			_lhs[i] = _rhs[i];
+
+		return _lhs;
+	}
+
 	void Mesh::SceneProcessing(const aiScene* _scene) 
 	{
 		unsigned int totalVertexNum = 0;
@@ -141,20 +150,26 @@ namespace Graphic {
 			}
 		}
 		
-		v = (Vertex*)malloc(totalVertexNum * sizeof(Vertex)); //allocate memory of total number of vertices
-		
 		aiMesh *mesh = _scene->mMeshes[0];
-		for (unsigned int j = 0; j < mesh->mNumVertices; j++) // process vertex positions, normals and texture coordinates
+		v = (Vertex*)malloc(mesh->mNumFaces * 3 * sizeof(Vertex)); //allocate memory of total number of vertices
+		
+		for (unsigned int j = 0; j < mesh->mNumFaces; j++) // process vertex positions, normals and texture coordinates
 		{
-			vertex.x = mesh->mVertices[j].x;
-			vertex.y = mesh->mVertices[j].y;
-			vertex.z = mesh->mVertices[j].z;
-			v[j].position = vertex;
+			Assert(mesh->mFaces[j].mNumIndices == 3, "Primitives should only be triangles.");
+			unsigned ind = j * 3;
+			assign(vertex, mesh->mVertices[mesh->mFaces[j].mIndices[0]]);
+			v[ind].position = vertex;
+			assign(vertex, mesh->mVertices[mesh->mFaces[j].mIndices[1]]);
+			v[ind +1].position = vertex;
+			assign(vertex, mesh->mVertices[mesh->mFaces[j].mIndices[2]]);
+			v[ind +2].position = vertex;
 
-			vertex.x = mesh->mNormals[j].x;
-			vertex.y = mesh->mNormals[j].y;
-			vertex.z = mesh->mNormals[j].z;
-			v[j].normal = vertex;
+			assign(vertex, mesh->mNormals[mesh->mFaces[j].mIndices[0]]);
+			v[ind].normal = vertex;
+			assign(vertex, mesh->mNormals[mesh->mFaces[j].mIndices[1]]);
+			v[ind+1].normal = vertex;
+			assign(vertex, mesh->mNormals[mesh->mFaces[j].mIndices[2]]);
+			v[ind+2].normal = vertex;
 
 			if (mesh->mTextureCoords[0]) // does the mesh contain texture coordinates?
 			{
@@ -189,7 +204,7 @@ namespace Graphic {
 			}
 		}
 		
-		m_vertices.GetBuffer(0)->SetData((void*&)v, totalVertexNum * sizeof(Vertex)); // set m_vertices with all vertex data (position,normal,texturecoords)
+		m_vertices.GetBuffer(0)->SetData((void*&)v, mesh->mNumFaces * 3 * sizeof(Vertex)); // set m_vertices with all vertex data (position,normal,texturecoords)
 	}
 
 	void Mesh::Draw()

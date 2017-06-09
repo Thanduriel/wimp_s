@@ -29,7 +29,7 @@ namespace Graphic {
 			effects[ind]->SetBlendState(BlendState(BlendState::BLEND_OPERATION::DISABLE, BlendState::BLEND::SRC_ALPHA, BlendState::BLEND::ONE));
 			effects[ind]->SetDepthStencilState(DepthStencilState(Graphic::DepthStencilState::COMPARISON_FUNC::LESS, true));
 			// the example cube has all faces inverted
-			effects[ind]->SetRasterizerState(RasterizerState(RasterizerState::CULL_MODE::FRONT, RasterizerState::FILL_MODE::SOLID));
+			effects[ind]->SetRasterizerState(RasterizerState(RasterizerState::CULL_MODE::NONE, RasterizerState::FILL_MODE::SOLID));
 			effects[ind]->BindUniformBuffer(GetUBO(UniformBuffers::SIMPLE_OBJECT));
 			break;
 		case Effects::DEFFERED_LIGHT:
@@ -120,6 +120,8 @@ namespace Graphic {
 			// The projection vector contains (x, y, z, w)
 			// Usage: vec4(pos.xyz * proj.xyz + vec3(0,0,proj.w), pos.z)
 			uniformBuffers[ind]->AddAttribute("Projection", Graphic::UniformBuffer::ATTRIBUTE_TYPE::VEC4);
+			// The inverse projection vector contains (1/x, 1/y, 1/z, -w/z)
+			// Usage: pos.xyz * invProj.xyz + vec3(0,0,invProj.w)
 			uniformBuffers[ind]->AddAttribute("InverseProjection", Graphic::UniformBuffer::ATTRIBUTE_TYPE::VEC4);
 			// zw are respective half size
 			uniformBuffers[ind]->AddAttribute("NearPlaneSize", Graphic::UniformBuffer::ATTRIBUTE_TYPE::VEC4);

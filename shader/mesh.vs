@@ -15,6 +15,6 @@ out vec2 vs_out_texCoords;
 void main()
 {
 	gl_Position = vec4(vs_in_position, 1.0) * c_mWorldViewProjection;
-	vs_out_normal =/* c_ModelViewProjection * */ vec4(vs_in_normal, 0.0);
+	vs_out_normal =vec4(vs_in_normal, 0.0) * c_mWorldViewProjection;
 	vs_out_texCoords = vs_in_texCoords;
 }
