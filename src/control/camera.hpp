@@ -32,6 +32,7 @@ namespace Control {
 
 		void Attach(const Game::Actor& _target) { m_mode = Mode::Follow; m_target = &_target; };
 		void FixRotation(const ei::Quaternion& _rotation) { m_mode = Mode::Tactical; SetRotation(_rotation); }
+		void UnfixRotation() { m_mode = Mode::Follow; };
 		void Detach();
 
 		void UpdateUbo(Graphic::UniformBuffer& _ubo);
@@ -46,6 +47,7 @@ namespace Control {
 
 		Mode m_mode;
 		const Game::Actor* m_target;
+		const float m_distanceToTarget;
 	};
 
 	extern Camera g_camera; // global default camera used for scene rendering

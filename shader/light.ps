@@ -18,7 +18,7 @@ vec4 calcNDCFromWindow(vec3 windowSpace)
 	ndcPos.z =  (2.0 * windowSpace.z - gl_DepthRange.near - gl_DepthRange.far) /
 			(gl_DepthRange.far - gl_DepthRange.near);
 	
-	return ndcPos;
+	return vec4(ndcPos, 1);
 }
 
 void main()

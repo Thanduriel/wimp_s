@@ -64,7 +64,7 @@ namespace Control
 			{
 				m_targetingMode = TargetingMode::Normal;
 				m_mouseMovement = Vec2(0.f);
-				g_camera.Detach();
+				g_camera.UnfixRotation();
 			}
 		}
 	}
@@ -96,18 +96,22 @@ namespace Control
 		else
 		{
 			Vec3 force(0.0f);
+			Mat3x3 modelRotation = ei::rotation(m_model->GetRotation());
+			Vec3 forward = modelRotation * Vec3(0.0f, 0.0f, 1.0f);
+			Vec3 left = modelRotation * Vec3(1.0f, 0.0f, 0.0f);
+			Vec3 up = modelRotation * Vec3(0.0f, 1.0f, 0.0f);
 			if (glfwGetKey(Graphic::Device::GetWindow(), GLFW_KEY_W))
-				force[2] += m_zForce[0];
+				force += forward * m_zForce[0];
 			if (glfwGetKey(Graphic::Device::GetWindow(), GLFW_KEY_S))
-				force[2] += m_zForce[1];
+				force += forward * m_zForce[1];
 			if (glfwGetKey(Graphic::Device::GetWindow(), GLFW_KEY_D))
-				force[0] += m_xForce[0];
+				force += left * m_xForce[0];
 			if (glfwGetKey(Graphic::Device::GetWindow(), GLFW_KEY_A))
-				force[0] += m_xForce[1];
+				force += left * m_xForce[1];
 			if (glfwGetKey(Graphic::Device::GetWindow(), GLFW_KEY_SPACE))
-				force[1] += m_yForce[0];
+				force += up * m_yForce[0];
 			if (glfwGetKey(Graphic::Device::GetWindow(), GLFW_KEY_LEFT_SHIFT))
-				force[1] += m_yForce[1];
+				force += up * m_yForce[1];
 			// since we have newtons second axiom: F = m * a => a = F / m
 			Vec3 acceleration = force / m_model->GetWeight();
 			// and since delta_v = a * delta_t
@@ -122,8 +126,13 @@ namespace Control
 		float dx = m_mouseSensitivity.x * _deltaTime * m_mouseMovement.x;
 		float dy = m_mouseSensitivity.y * _deltaTime * m_mouseMovement.y;
 
-		// this rotation needs to be inverted
-		m_model->Rotate(Quaternion(dx, dy, 0.f));
+		// somehow always has a z-axis rotation from the startup
+		// todo: fix the z-axis rotation
+		m_model->Rotate(Quaternion(0.0f, dx, 0.0f));
+		Vec3 localX = ei::rotation(m_model->GetRotation()) * Vec3(1.0f, 0.0f, 0.0f);
+		localX /= ei::len(localX);
+		localX *= dy;
+		m_model->Rotate(Quaternion(localX.x, localX.y, localX.z));
 		m_mouseMovement = Vec2(0.f);
 	}
 }

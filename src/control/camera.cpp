@@ -14,7 +14,8 @@ namespace Control {
 		: DynamicActor(_position, _rotation),
 		m_projection(ei::perspectiveGL(_fov, _aspectRatio, 0.1f, 50000.f)),
 		m_viewProjection( ),
-		m_mode(Mode::Follow)
+		m_mode(Mode::Follow),
+		m_distanceToTarget(10.0f)
 	{
 	}
 
@@ -28,7 +29,8 @@ namespace Control {
 			// not tested, do not use
 			if (m_target)
 			{
-				m_position = Vec3(m_target->GetTransformation() * Vec4(0.f, 0.f, -10.f, 1.f));
+				float smoothDistanceToTarget = ei::lerp(len(m_position - m_target->GetPosition()), m_distanceToTarget, 0.01f);
+				m_position = Vec3(m_target->GetTransformation() * Vec4(0.f, 0.f, -smoothDistanceToTarget, 1.f));
 				m_rotation = m_target->GetRotation();
 			}
 			break;
