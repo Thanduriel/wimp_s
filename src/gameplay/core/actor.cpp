@@ -25,6 +25,13 @@ namespace Game {
 		m_destroyed = true;
 	}
 
+	void Actor::RotateAroundLocal(const Vec3& axis, const float degrees)
+	{
+		Vec3 localToGlobal = ei::rotation(GetRotation()) * axis;
+		localToGlobal *= degrees;
+		Rotate(Quaternion(localToGlobal.x, localToGlobal.y, localToGlobal.z));
+	}
+
 	DynamicActor::DynamicActor(const ei::Vec3& _position, const ei::Quaternion& _rotation)
 		: Actor(_position, _rotation),
 		m_velocity(0.f),

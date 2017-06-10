@@ -14,10 +14,11 @@ namespace Control
 
 	PlayerController::PlayerController(Game::Model& _model, Game::Grid& _grid, Game::Actor& _indicator)
 		: m_model(&_model),
-		m_mouseSensitivity(10.0f), 
-		m_xForce(20.f, -20.f), 
-		m_yForce(20.f, -20.f), 
+		m_mouseSensitivity(10.0f),
+		m_xForce(20.f, -20.f),
+		m_yForce(20.f, -20.f),
 		m_zForce(20.f, -20.f),
+		m_friction(1.5f),
 		m_targetingMode(TargetingMode::Normal),
 		m_grid(_grid),
 		m_indicator(_indicator)
@@ -27,7 +28,7 @@ namespace Control
 	{
 		// Apply the input to the model
 		HandleInput(_deltaTime);
-		
+
 		if (m_targetingMode == TargetingMode::Tactical)
 		{
 			Vec3 pos = m_grid.GetPosition();
@@ -53,11 +54,11 @@ namespace Control
 		{
 			if (m_targetingMode == TargetingMode::Normal)
 			{
- 				m_targetingMode = TargetingMode::Tactical;
+				m_targetingMode = TargetingMode::Tactical;
 				const float angle = PI / 3.2f;
 				g_camera.FixRotation(ei::Quaternion(Vec3(1.f, 0.f, 0.f), angle));
 				// shift the camera back so that the player is in the center
-				g_camera.SetPosition(m_model->GetPosition() + Vec3(0.f, 32.f, - 32.f / tan(angle)));
+				g_camera.SetPosition(m_model->GetPosition() + Vec3(0.f, 32.f, -32.f / tan(angle)));
 				m_grid.SetPosition(m_model->GetPosition());
 			}
 			else
@@ -116,8 +117,10 @@ namespace Control
 			Vec3 acceleration = force / m_model->GetWeight();
 			// and since delta_v = a * delta_t
 			Vec3 deltaVelocity = acceleration * _deltaTime;
+			// calculate the friction
+			Vec3 friction = m_model->GetVelocity() * m_friction * _deltaTime;
 			// Apply the velocity to the player ship
-	//		m_model->SetVelocity(m_model->GetVelocity() + deltaVelocity);
+			m_model->SetVelocity(m_model->GetVelocity() + deltaVelocity - friction);
 		}
 
 		// mouse rotation
@@ -126,13 +129,9 @@ namespace Control
 		float dx = m_mouseSensitivity.x * _deltaTime * m_mouseMovement.x;
 		float dy = m_mouseSensitivity.y * _deltaTime * m_mouseMovement.y;
 
-		// somehow always has a z-axis rotation from the startup
-		// todo: fix the z-axis rotation
-		m_model->Rotate(Quaternion(0.0f, dx, 0.0f));
-		Vec3 localX = ei::rotation(m_model->GetRotation()) * Vec3(1.0f, 0.0f, 0.0f);
-		localX /= ei::len(localX);
-		localX *= dy;
-		m_model->Rotate(Quaternion(localX.x, localX.y, localX.z));
+		//First yaw, then pitch
+		m_model->Yaw(dx);
+		m_model->Pitch(dy);
 		m_mouseMovement = Vec2(0.f);
 	}
 }

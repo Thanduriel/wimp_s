@@ -25,6 +25,15 @@ namespace Game {
 		const ei::Quaternion& GetRotation() const { return m_rotation; }
 		void Rotate(const ei::Quaternion& _rotation) { m_rotation = _rotation * m_rotation; UpdateMatrices(); }
 
+		//Some local rotation functions
+		void RotateAroundLocal(const ei::Vec3& axis, const float degrees);
+		//Around local x
+		void Pitch(const float degrees) { RotateAroundLocal(ei::Vec3(1.0f, 0.0f, 0.0f), degrees); };
+		//Around local y
+		void Yaw(const float degrees) { RotateAroundLocal(ei::Vec3(0.0f, 1.0f, 0.0f), degrees); };
+		//Around local z
+		void Roll(const float degrees) { RotateAroundLocal(ei::Vec3(0.0f, 0.0f, 1.0f), degrees); };
+
 		// This matrix transforms modelspace -> worldspace
 		const ei::Mat4x4& GetTransformation() const { return m_transformation; }
 

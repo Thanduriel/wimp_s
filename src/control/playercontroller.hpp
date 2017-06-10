@@ -44,6 +44,9 @@ namespace Control
 		Vec2 m_yForce;
 		Vec2 m_zForce;
 
+		// The friction in every direction from 0 to 1/_deltaTime
+		float m_friction;
+
 		Vec2 m_mouseMovement;
 		// Control the input of the player
 		void HandleInput(float _deltaTime);
