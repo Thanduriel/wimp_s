@@ -31,9 +31,8 @@ namespace Graphic {
 
 	void BlackHoleRenderer::Draw(const ei::Mat4x4& _worldViewProjection)
 	{
-		Texture& tex = *Device::GetCurrentFramebufferBinding()->GetColorAttachments().begin()->pTexture;
-
-		Device::SetEffect(Resources::GetEffect(Effects::BLACKHOLE));
+		Texture& tex = *Device::GetLastFrameBufferBinding()->GetColorAttachments().begin()->pTexture;
+		Device::SetEffect(Graphic::Resources::GetEffect(Effects::BLACKHOLE));
 		Device::SetTexture(tex, 0);
 
 		UniformBuffer& ubo = Resources::GetUBO(UniformBuffers::SIMPLE_OBJECT);

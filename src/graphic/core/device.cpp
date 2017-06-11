@@ -276,7 +276,10 @@ namespace Graphic {
 	{
 		unsigned int previousColorTargetCount = 1;
 		if (g_Device.m_BoundFrameBuffer != nullptr)
+		{
 			previousColorTargetCount = (unsigned)g_Device.m_BoundFrameBuffer->m_colorAttachments.size();
+			g_Device.m_lastBoundFrameBuffer = g_Device.m_BoundFrameBuffer;
+		}
 		unsigned int currentColorTargetCount = previousColorTargetCount;
 
 		if (_framebuffer)
@@ -339,6 +342,11 @@ namespace Graphic {
 		return g_Device.m_BoundFrameBuffer;
 	}
 
+	const Framebuffer* Device::GetLastFrameBufferBinding()
+	{
+		return g_Device.m_lastBoundFrameBuffer;
+	}
+
 	void Device::Clear( float _r, float _g, float _b )
 	{
 		GL_CALL(glClearColor, _r, _g, _b, 1.0f);
@@ -352,9 +360,9 @@ namespace Graphic {
 		GL_CALL(glDepthMask, writeDepth);
 	}
 
-	void Device::ClearZ()
+	void Device::ClearZ(float _depth = 1.0f)
 	{
-		GL_CALL(glClearDepth, 1.0f);
+		GL_CALL(glClearDepth, _depth);
 		GL_CALL(glClear, GL_DEPTH_BUFFER_BIT);
 	}
 

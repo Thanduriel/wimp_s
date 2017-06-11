@@ -126,6 +126,7 @@ namespace Graphic {
 			// zw are respective half size
 			uniformBuffers[ind]->AddAttribute("NearPlaneSize", Graphic::UniformBuffer::ATTRIBUTE_TYPE::VEC4);
 			uniformBuffers[ind]->AddAttribute("CameraRotation", Graphic::UniformBuffer::ATTRIBUTE_TYPE::MATRIX);
+			uniformBuffers[ind]->AddAttribute("View", Graphic::UniformBuffer::ATTRIBUTE_TYPE::MATRIX);
 			break;
 
 		case UniformBuffers::SIMPLE_OBJECT:

@@ -52,13 +52,14 @@ namespace Graphic {
 		/// \brief Retrieves currently bound framebuffer.
 		/// \return nullptr if the hardware backbuffer is active.
 		static const Framebuffer* GetCurrentFramebufferBinding();
+		static const Framebuffer* GetLastFrameBufferBinding();
 
 
 		/// \brief Clear current framebuffer/backbuffer.
 		static void Clear( float _r, float _g, float _b );
 
 		/// \brief Clears the z-buffer only
-		static void ClearZ();
+		static void ClearZ(float _depth);
 
 
 
@@ -77,6 +78,10 @@ namespace Graphic {
 
 		/// Currently bound framebuffer object (NULL means backbuffer)
 		const Framebuffer* m_BoundFrameBuffer;
+		
+		/// Last custom framebuffer that was bound.
+		/// Equal to boundFrameBuffer != nullptr
+		const Framebuffer* m_lastBoundFrameBuffer;
 
 		int m_rasterizerState;		///< Hash of the current rasterizer state to optimize unnecessary changes.
 		int m_blendState;			///< Hash of the current blend state used for all render targets.

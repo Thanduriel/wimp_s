@@ -31,11 +31,11 @@ namespace GameStates {
 		unique_ptr<Model> model(new Model("models/spaceship.fbx", Vec3(0.f), qidentity()));
 		m_playerController = new Control::PlayerController(*model, *grid, *blackHole);
 		Control::g_camera.Attach(*model);
-		pointLight = new PointLight(Vec3(0.f), 1.f, Utils::Color8U(255_uc, 255_uc, 0_uc));
+		pointLight = new PointLight(Vec3(0.f), 2.f, Utils::Color8U(255_uc, 255_uc, 0_uc));
 
-		unique_ptr<Model> model2(new Model("models/spaceship.fbx", Vec3(1.f, 0.f, 1.f), qidentity()));
-		model2->SetAngularVelocity(Vec3(1.f));
-		model2->SetVelocity(Vec3(1.f, 0.f, 1.f));
+		unique_ptr<Model> model2(new Model("models/spaceship.fbx", Vec3(5.f, 0.f, 0.f), qidentity()));
+	//	model2->SetAngularVelocity(Vec3(1.f));
+	//	model2->SetVelocity(Vec3(1.f, 0.f, 1.f));
 
 		auto& label = m_hud.GetDebugLabel();
 		label.SetText("Let there be strings!");
@@ -68,7 +68,9 @@ namespace GameStates {
 
 		static float t = 0.f;
 		t += _deltaTime;
-		pointLight->SetPosition(ei::Vec3(cos(t),sin(t), 0.f));
+		
+		Vec4 pos = m_playerController->GetShip().GetTransformation() * Vec4(0.5f, 0.f, 0.f, 1.f);
+		pointLight->SetPosition(ei::Vec3(pos));
 		pointLight->Process(_deltaTime);
 	}
 
@@ -79,17 +81,21 @@ namespace GameStates {
 
 		Graphic::Device::SetEffect(Graphic::Resources::GetEffect(Graphic::Effects::MESH));
 
-		for (int i = 0; i < m_actors.size(); i++)
+		for (int i = 0; i < m_actors.size()-1; i++)
 			m_actors[i]->Draw();
 
 		LightSystem::Draw();
 
 		// render the framebuffer to the hardwarebackbuffer
 		Texture& tex = *Device::GetCurrentFramebufferBinding()->GetColorAttachments().begin()->pTexture;
+
 		Device::BindFramebuffer(nullptr);
 		Device::SetEffect(Graphic::Resources::GetEffect(Effects::SCREEN_OUTPUT));
 		Device::SetTexture(tex, 0);
 		Device::DrawFullscreen();
+
+		// the test blackhole
+		m_actors.back()->Draw();
 
 		// the hud should be drawn last
 		m_hud.GetDebugLabel().SetText("ft: <c 0 255 100><<" + std::to_string(_deltaTime) + "</c>");

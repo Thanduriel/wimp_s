@@ -26,6 +26,8 @@ namespace Control
 		void KeyClick(int _key);
 		void Scroll(float _dx, float _dy);
 
+		const Game::Model& GetShip() const { return *m_model; }
+
 		// Setter and getter for the mouse sensitivity
 		void SetMouseSensitivity(const Vec2& _sensitivity) { m_mouseSensitivity = _sensitivity; };
 		const Vec2& GetMouseSensitivity() const { return m_mouseSensitivity; };

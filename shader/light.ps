@@ -15,7 +15,7 @@ out vec4 fragColor;
 
 vec4 CalcEyeFromWindow(in float windowZ, in vec3 eyeDirection)
 {
-  float ndcZ = (2.0 * windowZ - gl_DepthRange.near - gl_DepthRange.far) /
+  float ndcZ =  (2.0 * windowZ - gl_DepthRange.near - gl_DepthRange.far) /
 			(gl_DepthRange.far - gl_DepthRange.near);
   float eyeZ = c_vProjection.w / (ndcZ - c_vProjection.z);
   return vec4(eyeDirection * eyeZ, 1);
@@ -23,9 +23,11 @@ vec4 CalcEyeFromWindow(in float windowZ, in vec3 eyeDirection)
 
 void main()
 {	
+	const float threshold = 0.1;
+	float fallOff = threshold * gs_radius * gs_radius;
 	vec4 eyePos = CalcEyeFromWindow(texture(depthTex, gs_texCoord).x, gs_eyeDirection);
-//	if(eyePos.z > gs_center.z) discard;
-	float d = distance(eyePos.xyz, gs_center.xyz);
-//	if(d > gs_radius * 7.f) discard;
-	fragColor = vec4(1,1,1, 0.15 + (d < gs_radius * 5.f ? 0.75 : 0));
+	vec4 dif = eyePos - gs_center;
+	
+	float dSqr = dot(dif,dif);
+	fragColor = vec4(1,1,1, clamp(0,1, fallOff / dSqr));
 }
