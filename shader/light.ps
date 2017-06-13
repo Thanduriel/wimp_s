@@ -29,5 +29,6 @@ void main()
 	vec4 dif = eyePos - gs_center;
 	
 	float dSqr = dot(dif,dif);
-	fragColor = vec4(1,1,1, clamp(0,1, fallOff / dSqr));
+//	if(dSqr > gs_radius * gs_radius) discard;
+	fragColor = vec4(1,1,1, clamp(1-sqrt(dSqr)/gs_radius,0, 1));
 }

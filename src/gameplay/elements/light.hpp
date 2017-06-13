@@ -1,17 +1,24 @@
 #pragma once
 
 #include "gameplay/core/actor.hpp"
+#include "component.hpp"
 #include "graphic/effects/lightsystem.hpp"
 
 namespace Game {
-	class PointLight : public Actor
+	class PointLightComponent : public ActorComponent
 	{
 	public:
-		PointLight(const ei::Vec3 _position, float _radius, Utils::Color8U _color);
-		~PointLight();
+		PointLightComponent(Actor& _actor, float _radius, Utils::Color8U _color);
+		~PointLightComponent();
 
-		void Process(float _deltaTime) override;
+		void Draw();
 	private:
 		Graphic::LightHandle m_handle;
+	};
+
+	class PointLight : public Actor, public PointLightComponent
+	{
+	public:
+		PointLight(const ei::Vec3& _position, float _radius, Utils::Color8U _color);
 	};
 }

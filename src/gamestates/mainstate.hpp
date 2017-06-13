@@ -4,6 +4,7 @@
 #include "gamestate.hpp"
 #include "graphic/effects/starbackground.hpp"
 #include "gameplay/core/actor.hpp"
+#include "gameplay/scenegraph.hpp"
 
 #include <vector>
 #include <memory>
@@ -39,6 +40,7 @@ namespace GameStates{
 		Graphic::Starbackground m_starbackground;
 		Control::PlayerController* m_playerController;
 
+		Game::SceneGraph m_sceneGraph;
 		//Actor vector (lol rhyme)
 		// todo move this to a management class
 		std::vector<std::unique_ptr<Game::Actor>> m_actors;

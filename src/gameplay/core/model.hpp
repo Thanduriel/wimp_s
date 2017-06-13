@@ -1,23 +1,25 @@
 #pragma once
 
 #include "actor.hpp"
+#include "../elements/component.hpp"
 #include "graphic/mesh.hpp"
 
 namespace Game {
 
-	using namespace ei;
+	class GeometryComponent : ActorComponent, Graphic::Mesh
+	{
+	public:
+		GeometryComponent(Actor& _actor, const std::string& _pFile);
+
+		void Draw();
+	};
 
 	/* Model *********************************************
 	 * A movable object with an textured mesh attached to it.
 	 */
-	class Model : public DynamicActor, Graphic::Mesh
+	class Model : public DynamicActor, public GeometryComponent
 	{
 	public:
-
-		
-		Model(const std::string& _pFile, const Vec3 &_position, const Quaternion &_rotation) : DynamicActor(_position, _rotation), Mesh(_pFile) {};
-		
-
-		void Draw() override;
+		Model(const std::string& _pFile, const ei::Vec3&_position, const ei::Quaternion&_rotation);
 	};
 }

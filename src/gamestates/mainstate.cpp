@@ -1,7 +1,5 @@
 #include "mainstate.hpp"
 #include "../graphic/mesh.hpp"
-#include "../graphic/core/device.hpp"
-#include "../graphic/resources.hpp"
 #include "gameplay/core/model.hpp"
 #include "control/camera.hpp"
 #include "control/playercontroller.hpp"
@@ -22,18 +20,23 @@ namespace GameStates {
 	using namespace Game;
 
 	Game::PointLight* pointLight;
+	Game::BlackHoleComponent* ptr;
 
 	MainState::MainState()
 		: m_starbackground(2000, 20000.f, 14000)
 	{
-		unique_ptr<BlackHole> blackHole(new BlackHole(ei::Vec3(-5.f), ei::qidentity()));
-		unique_ptr<Grid> grid(new Game::Grid(ei::Vec3(0.f), ei::qidentity(), Utils::Color32F(0.f, 1.f, 0.f, 0.6f), 2.f, 2.f));
-		unique_ptr<Model> model(new Model("models/spaceship.fbx", Vec3(0.f), qidentity()));
+		BlackHole* blackHole = new BlackHole(ei::Vec3(-5.f), 5.f);
+		m_sceneGraph.Add(*blackHole);
+		Grid* grid = new Game::Grid(ei::Vec3(0.f), ei::qidentity(), Utils::Color32F(0.f, 1.f, 0.f, 0.6f), 2.f, 2.f);
+		m_sceneGraph.Add(*grid);
+		Model* model = new Model("models/spaceship.fbx", Vec3(0.f), qidentity());
+		m_sceneGraph.Add(*model);
 		m_playerController = new Control::PlayerController(*model, *grid, *blackHole);
 		Control::g_camera.Attach(*model);
 		pointLight = new PointLight(Vec3(0.f), 2.f, Utils::Color8U(255_uc, 255_uc, 0_uc));
+		m_sceneGraph.Add(*pointLight);
 
-		unique_ptr<Model> model2(new Model("models/spaceship.fbx", Vec3(5.f, 0.f, 0.f), qidentity()));
+		m_sceneGraph.Add(*new Model("models/spaceship.fbx", Vec3(5.f, 0.f, 0.f), qidentity()));
 	//	model2->SetAngularVelocity(Vec3(1.f));
 	//	model2->SetVelocity(Vec3(1.f, 0.f, 1.f));
 
@@ -46,16 +49,10 @@ namespace GameStates {
 
 		ScreenOverlay* el = &m_hud.CreateScreenElement<ScreenTexture>("simpleWindow", PixelCoord(50, 100));
 		el->Scale(Vec2(0.33f));
-
-		m_actors.push_back(move(model));
-		m_actors.push_back(move(model2));
-		m_actors.push_back(move(grid));
-		m_actors.push_back(move(blackHole));
 	}
 
 	MainState::~MainState()
 	{
-		delete pointLight;
 		delete m_playerController;
 	}
 
@@ -63,39 +60,19 @@ namespace GameStates {
 	{
 		Control::g_camera.Process(_deltaTime);
 		m_playerController->Process(_deltaTime);
-		for (int i = 0; i < m_actors.size(); i++)
-			m_actors[i]->Process(_deltaTime);
 
 		static float t = 0.f;
 		t += _deltaTime;
 		
 		Vec4 pos = m_playerController->GetShip().GetTransformation() * Vec4(0.5f, 0.f, 0.f, 1.f);
-		pointLight->SetPosition(ei::Vec3(pos));
-		pointLight->Process(_deltaTime);
+		pointLight->SetPosition(ei::Vec3(cos(t), 0.f, sin(t)));
 	}
 
 	void MainState::Draw(float _deltaTime)
 	{
-		// todo: structure to enforce the right draw order
 		m_starbackground.Draw();
 
-		Graphic::Device::SetEffect(Graphic::Resources::GetEffect(Graphic::Effects::MESH));
-
-		for (int i = 0; i < m_actors.size()-1; i++)
-			m_actors[i]->Draw();
-
-		LightSystem::Draw();
-
-		// render the framebuffer to the hardwarebackbuffer
-		Texture& tex = *Device::GetCurrentFramebufferBinding()->GetColorAttachments().begin()->pTexture;
-
-		Device::BindFramebuffer(nullptr);
-		Device::SetEffect(Graphic::Resources::GetEffect(Effects::SCREEN_OUTPUT));
-		Device::SetTexture(tex, 0);
-		Device::DrawFullscreen();
-
-		// the test blackhole
-		m_actors.back()->Draw();
+		m_sceneGraph.Draw();
 
 		// the hud should be drawn last
 		m_hud.GetDebugLabel().SetText("ft: <c 0 255 100><<" + std::to_string(_deltaTime) + "</c>");
