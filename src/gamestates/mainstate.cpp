@@ -81,11 +81,7 @@ namespace GameStates {
 
 	void MainState::Dispose()
 	{
-		auto it = std::remove_if(m_actors.begin(), m_actors.end(), [](const unique_ptr<Actor>& _actor)
-		{
-			return _actor->IsDestroyed();
-		});
-		m_actors.erase(it, m_actors.end());
+		m_sceneGraph.CleanUp();
 	}
 
 	// ******************************************************* //

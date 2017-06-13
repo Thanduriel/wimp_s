@@ -40,10 +40,9 @@ namespace Game {
 		// Destroys the object
 		void Destroy();
 		// Is object to be destroyed?
-		bool IsDestroyed() { return m_destroyed; }
+		bool IsDestroyed() const { return m_destroyed; }
 
 		virtual void Process(float _deltaTime) {};
-		virtual void Draw() {};
 
 		bool CanTick() const { return m_canTick; }
 	protected:

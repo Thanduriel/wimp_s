@@ -20,9 +20,9 @@ namespace Graphic
 		m_effect.BindTexture( "u_characterTex", 7, Graphic::Resources::GetSamplerState(SamplerStates::LINEAR) );
 		m_effect.BindUniformBuffer( Graphic::Resources::GetUBO(UniformBuffers::GLOBAL) );
 
-		Jo::Files::HDDFile file("texture/"+_fontName+".sraw");
+		Jo::Files::HDDFile file("texture/" + _fontName + ".sraw");
 		Jo::Files::MetaFileWrapper reader( file, Jo::Files::Format::SRAW );
-		std::cout << (int)reader.RootNode.GetType() << std::endl;
+
 		auto& PosX = reader[std::string("positionX")];
 		auto& PosY = reader[std::string("positionY")];
 		auto& sizeX = reader[std::string("sizeX")];
@@ -33,8 +33,6 @@ namespace Graphic
 			m_sizeTable[i] = Vec2((float)sizeX[i],(float)sizeY[i]);
 			// Half pixel offset necessary - otherwise rounding errors in shader
 			m_coordTable[i] = Vec2(float(PosX[i]) + 0.5f/m_texture.Width(),(float)PosY[i]);
-		//	m_sizeTable[i] = Vec2(1-0.01f*i,i*0.01f);//0.1; 0.25
-		//	m_coordTable[i] = Vec2(0.f,0.25f);
 		}
 	}
 

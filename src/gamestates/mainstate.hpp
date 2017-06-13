@@ -41,8 +41,5 @@ namespace GameStates{
 		Control::PlayerController* m_playerController;
 
 		Game::SceneGraph m_sceneGraph;
-		//Actor vector (lol rhyme)
-		// todo move this to a management class
-		std::vector<std::unique_ptr<Game::Actor>> m_actors;
 	};
 }

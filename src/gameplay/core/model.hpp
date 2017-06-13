@@ -6,7 +6,7 @@
 
 namespace Game {
 
-	class GeometryComponent : ActorComponent, Graphic::Mesh
+	class GeometryComponent : public ActorComponent, Graphic::Mesh
 	{
 	public:
 		GeometryComponent(Actor& _actor, const std::string& _pFile);

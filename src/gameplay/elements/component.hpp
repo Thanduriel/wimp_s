@@ -11,16 +11,21 @@ namespace Game {
 	{
 	public:
 		ActorComponent(Actor& _owner) : m_actor(_owner) {}
+
+		const Actor& GetActor() const { return m_actor; }
 	protected:
 		Actor& m_actor;
 	};
 
-/*	template<typename T>
-	class GeometryComponent : public ActorComponent<T> {};
+	// render component that is drawn after lighting.
+	class MarkerComponent : public ActorComponent
+	{
+	public:
+		using ActorComponent::ActorComponent;
 
-	template<typename T>
-	class LightComponent : public ActorComponent<T> {};
-	*/
+		virtual void Draw() = 0;
+	};
+
 	// post processing effects are order dependend
 	class PostProcessComponent : public ActorComponent 
 	{
