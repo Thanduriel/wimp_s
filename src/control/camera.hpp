@@ -20,7 +20,8 @@ namespace Control {
 		{
 			Follow, // attached to an actor, mirror movement and rotation?
 			Free, // move around freely
-			Tactical // fixed rotation
+			Tactical, // fixed rotation
+			MoveTo
 		};
 
 		Camera(const ei::Vec3& _position, const ei::Quaternion& _rotation, float _fov, float _aspectRatio);
@@ -30,9 +31,8 @@ namespace Control {
 		// The view projection of this camera that transforms worldspace -> cameraspace.
 		const ei::Mat4x4& GetViewProjection() const { return m_viewProjection; }
 
-		void Attach(const Game::Actor& _target) { m_mode = Mode::Follow; m_target = &_target; };
-		void FixRotation(const ei::Quaternion& _rotation) { m_mode = Mode::Tactical; SetRotation(_rotation); }
-		void UnfixRotation() { m_mode = Mode::Follow; };
+		void Attach(const Game::Actor& _target);
+		void FixRotation(const ei::Quaternion& _rotation, const ei::Vec3& _position = ei::Vec3(0.f));
 		void Detach();
 
 		void UpdateUbo(Graphic::UniformBuffer& _ubo);
@@ -46,7 +46,10 @@ namespace Control {
 		ei::Mat4x4 m_projection;
 		ei::Mat4x4 m_viewProjection;
 
+		ei::Vec3 m_targetPosition;
+		ei::Quaternion m_targetRotation;
 		Mode m_mode;
+		Mode m_nextMode; // mode after the target position has been reached
 		const Game::Actor* m_target;
 		const float m_distanceToTarget;
 	};

@@ -36,6 +36,8 @@ namespace Game {
 
 		// This matrix transforms modelspace -> worldspace
 		const ei::Mat4x4& GetTransformation() const { return m_transformation; }
+		const ei::Mat3x3& GetRotationMatrix() const { return m_rotationMatrix; }
+		const ei::Mat3x3& GetInverseRotationMatrix() const { return m_inverseRotationMatrix; }
 
 		// Destroys the object
 		void Destroy();

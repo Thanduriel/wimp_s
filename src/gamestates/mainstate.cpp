@@ -58,8 +58,9 @@ namespace GameStates {
 
 	void MainState::Process(float _deltaTime)
 	{
-		Control::g_camera.Process(_deltaTime);
+		m_sceneGraph.Process(_deltaTime);
 		m_playerController->Process(_deltaTime);
+		Control::g_camera.Process(_deltaTime);
 
 		static float t = 0.f;
 		t += _deltaTime;

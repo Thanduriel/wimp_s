@@ -12,6 +12,8 @@ namespace Control
 {
 	using namespace ei;
 
+	const float TACTICALCAM_DIST = 32.f;
+
 	PlayerController::PlayerController(Game::Model& _model, Game::Grid& _grid, Game::Actor& _indicator)
 		: m_model(&_model),
 		m_mouseSensitivity(10.0f),
@@ -32,8 +34,6 @@ namespace Control
 		if (m_targetingMode == TargetingMode::Tactical)
 		{
 			Vec3 pos = m_grid.GetPosition();
-			pos.y = g_camera.GetPosition().y - 32.f;
-			m_grid.SetPosition(pos);
 
 			Plane plane(Vec3(0.f, 1.f, 0.f), pos);
 			Ray ray = g_camera.GetRay(InputManager::GetCursorPosScreenSpace());
@@ -56,23 +56,42 @@ namespace Control
 			{
 				m_targetingMode = TargetingMode::Tactical;
 				const float angle = PI / 3.2f;
-				g_camera.FixRotation(ei::Quaternion(Vec3(1.f, 0.f, 0.f), angle));
+
+				m_tacticalDirSign = m_model->GetPosition().y < g_camera.GetPosition().y ? 1.f : -1.f;
+				Quaternion rot = m_tacticalDirSign < 0.f ? Quaternion(Vec3(0.f, 0.f, 1.f), PI) : qidentity();
 				// shift the camera back so that the player is in the center
-				g_camera.SetPosition(m_model->GetPosition() + Vec3(0.f, 32.f, -32.f / tan(angle)));
+				g_camera.FixRotation(ei::Quaternion(Vec3(1.f, 0.f, 0.f), m_tacticalDirSign * angle) * rot,
+					m_model->GetPosition() + Vec3(0.f, m_tacticalDirSign * TACTICALCAM_DIST, -TACTICALCAM_DIST / tan(angle)));
+				m_model->SetVelocity({});
+		/*		Vec3 shift = m_model->GetRotationMatrix() * Vec3(0.f, 0.f, -1.f);
+				shift.y = 0.f;
+				shift = normalize(shift) * 32.f / tan(angle);
+				shift.y = 32.f;
+				Vec3 pos = m_model->GetPosition() + shift;
+				Vec3 rotAxis = xaxis(m_model->GetRotation());
+				rotAxis.y = 0.f;
+				rotAxis = normalize(rotAxis);
+				g_camera.FixRotation(Quaternion(rotAxis, angle),
+					pos);*/
+		
 				m_grid.SetPosition(m_model->GetPosition());
 			}
 			else
 			{
 				m_targetingMode = TargetingMode::Normal;
 				m_mouseMovement = Vec2(0.f);
-				g_camera.UnfixRotation();
+				g_camera.Attach(*m_model);
 			}
 		}
 	}
 
 	void PlayerController::Scroll(float _dx, float _dy)
 	{
-		if (m_targetingMode == TargetingMode::Tactical) g_camera.Translate(Vec3(0.f, _dy, 0.f));
+		if (m_targetingMode == TargetingMode::Tactical)
+		{
+			g_camera.Translate(Vec3(0.f, _dy, 0.f));
+			m_grid.Translate(Vec3(0.f, _dy, 0.f));
+		}
 	}
 
 	// ************************************************************ //
@@ -89,10 +108,11 @@ namespace Control
 			if (InputManager::IsKeyPressed(GLFW_KEY_S))
 				camVel.z -= tacticalCamSpeed;
 			if (InputManager::IsKeyPressed(GLFW_KEY_A))
-				camVel.x -= tacticalCamSpeed;
+				camVel.x -= tacticalCamSpeed * m_tacticalDirSign;
 			if (InputManager::IsKeyPressed(GLFW_KEY_D))
-				camVel.x += tacticalCamSpeed;
+				camVel.x += tacticalCamSpeed * m_tacticalDirSign;
 			g_camera.Translate(camVel * _deltaTime);
+			m_grid.Translate(camVel * _deltaTime);
 		}
 		else
 		{

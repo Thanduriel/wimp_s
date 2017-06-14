@@ -59,30 +59,4 @@ void main()
 	gs_TexCoord = vec2(tex2, 1.0);
 	EmitVertex();
 	EndPrimitive();
-
-/*	float len = length(vs_position[1].xyz - vs_position[0].xyz) * 0.5;
-	float len2 = length(vs_position[1].xyz - vs_position[0].xyz);
-	float tex1 = 1.0 - len2 / len;
-	float tex2 = length(vs_position[1].xyz - vs_position[0].xyz) / len2 * 2.0 - 1.0;
-	
-	vec4 orth = normalize(vs_position[1] - vs_position[0]);
-	orth = vec4(-orth.y, orth.x,0,0);
-	
-	gs_Color = vs_color[0];
-	gl_Position = vs_position[0] + orth;
-	gs_TexCoord = vec2(tex1, -1.0);
-	EmitVertex();
-	
-	gl_Position = vs_position[0] - orth;
-	gs_TexCoord = vec2(tex1, 1.0);
-	EmitVertex();
-	
-	gl_Position = vs_position[1] - orth;
-	gs_TexCoord = vec2(tex2, -1.0);
-	EmitVertex();
-	
-	gl_Position = vs_position[1] + orth;
-	gs_TexCoord = vec2(tex2, 1.0);
-	EmitVertex();
-	EndPrimitive();*/
 }

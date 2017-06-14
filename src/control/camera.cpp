@@ -10,6 +10,9 @@ namespace Control {
 
 	Camera g_camera(ei::Vec3(0.f), ei::qidentity(), 0.9f, 16.f / 9.f);
 
+	const float MOVEMENT_FACTOR = 20.0f;
+	const float ROTATION_FACTOR = 7.f;
+
 	Camera::Camera(const Vec3& _position, const Quaternion& _rotation, float _fov, float _aspectRatio)
 		: DynamicActor(_position, _rotation),
 		m_fov(_fov),
@@ -20,6 +23,35 @@ namespace Control {
 	{
 	}
 
+	template<typename T>
+	TQuaternion<T> slerpTemp(const TQuaternion<T>& _q0, TQuaternion<T> _q1, T _t) // TESTED
+	{
+		auto dotP = dot(_q0, _q1);
+		if (dotP < 0.f)
+		{
+			_q1 = -_q1;
+			dotP = -dotP;
+		}
+
+		T theta = acos(clamp(dotP, T(-1), T(1)));
+		T so = sin(theta);
+		if (approx(so, T(0)))
+		{
+			// Converges towards linear interpolation for small so
+			return TQuaternion<T>(_q0.i + (_q1.i - _q0.i) * _t,
+				_q0.j + (_q1.j - _q0.j) * _t,
+				_q0.k + (_q1.k - _q0.k) * _t,
+				_q0.r + (_q1.r - _q0.r) * _t);
+		}
+
+		T f0 = sin(theta * (1.0f - _t)) / so;
+		T f1 = sin(theta * _t) / so;
+		return TQuaternion<T>(_q0.i * f0 + _q1.i * f1,
+			_q0.j * f0 + _q1.j * f1,
+			_q0.k * f0 + _q1.k * f1,
+			_q0.r * f0 + _q1.r * f1);
+	}
+
 	void Camera::Process(float _deltaTime)
 	{
 		switch (m_mode){
@@ -27,14 +59,27 @@ namespace Control {
 			ProcessFreeMove(_deltaTime);
 			break;
 		case Mode::Follow:
-			// not tested, do not use
 			if (m_target)
 			{
-				float smoothDistanceToTarget = ei::lerp(len(m_position - m_target->GetPosition()), m_distanceToTarget, 0.01f);
+				m_targetPosition = m_target->GetPosition() + m_target->GetRotationMatrix() * Vec3(0.f,0.f,-m_distanceToTarget);
+				m_targetRotation = m_target->GetRotation();
+
+				// move to the desired configuration
+				float smoothDistanceToTarget = ei::lerp(len(m_position - m_target->GetPosition()), m_distanceToTarget, 0.8f * _deltaTime);
 				m_position = Vec3(m_target->GetTransformation() * Vec4(0.f, 0.f, -smoothDistanceToTarget, 1.f));
-				m_rotation = m_target->GetRotation();
+				m_rotation = m_targetRotation;
 			}
 			break;
+		case Mode::MoveTo:
+		{
+			// move to the desired configuration
+			Vec3 dir = m_targetPosition - m_position;
+			float l = len(dir);
+			float d = MOVEMENT_FACTOR * _deltaTime;
+			m_position = m_position + (d < l ? dir / l * d : dir);
+			if (l > 0.01f) m_rotation = slerpTemp(m_rotation, m_targetRotation, min(1.0f, d / l));
+			else m_mode = m_nextMode;
+		}
 		default:
 			break;
 		}
@@ -47,6 +92,24 @@ namespace Control {
 
 		// update ubo
 		UpdateUbo(Graphic::Resources::GetUBO(Graphic::UniformBuffers::CAMERA));
+	}
+
+	// ******************************************************************* //
+	void Camera::Attach(const Actor& _target)
+	{
+		m_nextMode = Mode::Follow; 
+		m_mode = Mode::MoveTo;
+		m_target = &_target;
+		m_targetPosition = m_target->GetPosition() + m_target->GetRotationMatrix() * Vec3(0.f, 0.f, -m_distanceToTarget);
+		m_targetRotation = m_target->GetRotation();
+	}
+
+	void Camera::FixRotation(const ei::Quaternion& _rotation, const ei::Vec3& _position)
+	{ 
+		m_nextMode = Mode::Tactical; 
+		m_mode = Mode::MoveTo;
+		m_targetRotation = _rotation; 
+		m_targetPosition = _position;
 	}
 
 	// ******************************************************************* //

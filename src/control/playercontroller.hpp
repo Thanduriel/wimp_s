@@ -38,6 +38,8 @@ namespace Control
 			Normal = 0,
 			Tactical = 1
 		} m_targetingMode;
+		float m_tacticalDirSign; // -1 when the grid.y > camera.y
+
 		// The sensitivity of the mouse... duh
 		Vec2 m_mouseSensitivity;
 
