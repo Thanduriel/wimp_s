@@ -17,10 +17,11 @@ namespace Control
 	PlayerController::PlayerController(Game::Model& _model, Game::Grid& _grid, Game::Actor& _indicator)
 		: m_model(&_model),
 		m_mouseSensitivity(10.0f),
-		m_xForce(20.f, -20.f),
-		m_yForce(20.f, -20.f),
-		m_zForce(20.f, -20.f),
+		m_xForce(200.f, -200.f),
+		m_yForce(200.f, -200.f),
+		m_zForce(200.f, -200.f),
 		m_friction(1.5f),
+		m_targetRotation(ei::qidentity()),
 		m_targetingMode(TargetingMode::Normal),
 		m_grid(_grid),
 		m_indicator(_indicator)
@@ -144,14 +145,28 @@ namespace Control
 		}
 
 		// mouse rotation
-		if (m_mouseMovement.x + m_mouseMovement.y == 0.f) return;
+		//if (m_mouseMovement.x + m_mouseMovement.y == 0.f) return;
 
 		float dx = m_mouseSensitivity.x * _deltaTime * m_mouseMovement.x;
 		float dy = m_mouseSensitivity.y * _deltaTime * m_mouseMovement.y;
 
 		//First yaw, then pitch
-		m_model->Yaw(dx);
-		m_model->Pitch(dy);
+		/*m_model->Yaw(dx);
+		m_model->Pitch(dy);*/
+		//Yaw the target rotation
+		Vec3 localY = ei::rotation(m_targetRotation) * Vec3(0.0f, 1.0f, 0.0f);
+		localY *= dx;
+		m_targetRotation = Quaternion(localY.x, localY.y, localY.z) * m_targetRotation;
+
+		//Pitch the target rotation
+		Vec3 localX = ei::rotation(m_targetRotation) * Vec3(1.0f, 0.0f, 0.0f);
+		localX *= dy;
+		m_targetRotation = Quaternion(localX.x, localX.y, localX.z) * m_targetRotation;
+
+		//Calculate the smooth new rotation
+		//todo: try fix jumping from 360 to 0 in slerp function
+		m_model->SetRotation(ei::slerp(m_model->GetRotation(), m_targetRotation, 0.001f));
+
 		m_mouseMovement = Vec2(0.f);
 	}
 }

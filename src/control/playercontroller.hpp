@@ -51,6 +51,9 @@ namespace Control
 		// The friction in every direction from 0 to 1/_deltaTime
 		float m_friction;
 
+		// the target rotation to slerp towards
+		Quaternion m_targetRotation;
+
 		Vec2 m_mouseMovement;
 		// Control the input of the player
 		void HandleInput(float _deltaTime);
