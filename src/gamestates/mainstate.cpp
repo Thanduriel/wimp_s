@@ -66,6 +66,7 @@ namespace GameStates {
 		t += _deltaTime;
 		
 		Vec4 pos = m_playerController->GetShip().GetTransformation() * Vec4(0.5f, 0.f, 0.f, 1.f);
+	//	pointLight->SetPosition(Vec3(pos));
 		pointLight->SetPosition(ei::Vec3(cos(t), 0.f, sin(t)));
 
 		m_sceneGraph.Process(_deltaTime);
@@ -78,7 +79,7 @@ namespace GameStates {
 		m_sceneGraph.Draw();
 
 		// the hud should be drawn last
-		m_hud.GetDebugLabel().SetText("ft: <c 0 255 100><<" + std::to_string(_deltaTime) + "</c>");
+		m_hud.GetDebugLabel().SetText("ft: <c 0 255 100>" + std::to_string(_deltaTime) + "</c>");
 		m_hud.Draw(_deltaTime);
 	}
 

@@ -3,7 +3,9 @@
 in vec2 gs_texCoord;
 in vec4 gs_center;
 in vec3 gs_eyeDirection;
+in vec3 gs_color;
 in float gs_radius;
+in float gs_fallOff;
 
 uniform sampler2D screenTex;
 uniform sampler2D depthTex;
@@ -21,14 +23,17 @@ vec4 CalcEyeFromWindow(in float windowZ, in vec3 eyeDirection)
   return vec4(eyeDirection * eyeZ, 1);
 }
 
+const float threshold = 0.1; // same value as light.gs
+
 void main()
 {	
-	const float threshold = 0.1;
-	float fallOff = threshold * gs_radius * gs_radius;
 	vec4 eyePos = CalcEyeFromWindow(texture(depthTex, gs_texCoord).x, gs_eyeDirection);
 	vec4 dif = eyePos - gs_center;
+	dif.w = 0;
 	
 	float dSqr = dot(dif,dif);
-//	if(dSqr > gs_radius * gs_radius) discard;
-	fragColor = vec4(1,1,1, clamp(1-sqrt(dSqr)/gs_radius,0, 1));
+//	if(sqrt(dSqr) > gs_radius ) discard;
+//	fragColor = vec4(1,1,1, clamp(1-sqrt(dSqr)/gs_radius,0, 1));
+	// intensity falls of ~ 1/r^2. To reach 0 at distance r the function is distorted and shifted
+	fragColor = vec4(gs_color, clamp(1/(gs_fallOff * dSqr) - threshold,0, 1));
 }
