@@ -3,6 +3,7 @@
 #include "graphic/core/opengl.hpp"
 #include "graphic/resources.hpp"
 #include "graphic/core/uniformbuffer.hpp"
+#include "math/extensions.hpp"
 
 namespace Control {
 
@@ -21,35 +22,6 @@ namespace Control {
 		m_mode(Mode::Follow),
 		m_distanceToTarget(10.0f)
 	{
-	}
-
-	template<typename T>
-	TQuaternion<T> slerpTemp(const TQuaternion<T>& _q0, TQuaternion<T> _q1, T _t) // TESTED
-	{
-		auto dotP = dot(_q0, _q1);
-		if (dotP < 0.f)
-		{
-			_q1 = -_q1;
-			dotP = -dotP;
-		}
-
-		T theta = acos(clamp(dotP, T(-1), T(1)));
-		T so = sin(theta);
-		if (approx(so, T(0)))
-		{
-			// Converges towards linear interpolation for small so
-			return TQuaternion<T>(_q0.i + (_q1.i - _q0.i) * _t,
-				_q0.j + (_q1.j - _q0.j) * _t,
-				_q0.k + (_q1.k - _q0.k) * _t,
-				_q0.r + (_q1.r - _q0.r) * _t);
-		}
-
-		T f0 = sin(theta * (1.0f - _t)) / so;
-		T f1 = sin(theta * _t) / so;
-		return TQuaternion<T>(_q0.i * f0 + _q1.i * f1,
-			_q0.j * f0 + _q1.j * f1,
-			_q0.k * f0 + _q1.k * f1,
-			_q0.r * f0 + _q1.r * f1);
 	}
 
 	void Camera::Process(float _deltaTime)
@@ -77,7 +49,7 @@ namespace Control {
 			float l = len(dir);
 			float d = MOVEMENT_FACTOR * _deltaTime;
 			m_position = m_position + (d < l ? dir / l * d : dir);
-			if (l > 0.01f) m_rotation = slerpTemp(m_rotation, m_targetRotation, min(1.0f, d / l));
+			if (l > 0.01f) m_rotation = slerpLess(m_rotation, m_targetRotation, min(1.0f, d / l));
 			else m_mode = m_nextMode;
 		}
 		default:

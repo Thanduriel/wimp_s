@@ -6,7 +6,7 @@
 #include "gameplay/elements/grid.hpp"
 #include "gameplay/core/model.hpp"
 #include "ei/3dintersection.hpp"
-
+#include "gameplay/elements/component.hpp"
 
 namespace Control
 {
@@ -76,10 +76,12 @@ namespace Control
 					pos);*/
 		
 				m_grid.SetPosition(m_model->GetPosition());
+				component_cast<Game::MarkerComponent>(m_grid).SetActive(true);
 			}
 			else
 			{
 				m_targetingMode = TargetingMode::Normal;
+				component_cast<Game::MarkerComponent>(m_grid).SetActive(false);
 				m_mouseMovement = Vec2(0.f);
 				g_camera.Attach(*m_model);
 			}

@@ -29,8 +29,9 @@ namespace Game {
 		Graphic::LightSystem::Draw();
 
 		// post lighting 3d effects
+		// todo: instead of a branch check have different containers
 		for (auto component : m_markerComponents)
-			component->Draw();
+			if(component->IsActive()) component->Draw();
 
 		// render the framebuffer to the hardwarebackbuffer
 		Texture& tex = *Device::GetCurrentFramebufferBinding()->GetColorAttachments().begin()->pTexture;
@@ -78,7 +79,7 @@ namespace Game {
 
 	void SceneGraph::CleanUp()
 	{
-		// todo: test performance; parallize or perform less freﬂuent
+		// todo: test performance; parallize or perform less frequent
 
 		// deregister components
 		RemoveDestroyed(m_geometryComponents);

@@ -13,8 +13,12 @@ namespace Game {
 		ActorComponent(Actor& _owner) : m_actor(_owner) {}
 
 		const Actor& GetActor() const { return m_actor; }
+
+		void SetActive(bool _isActive) { m_isActive = _isActive; }
+		bool IsActive() const { return m_isActive; }
 	protected:
 		Actor& m_actor;
+		bool m_isActive; // should the component be processed (or rendered)
 	};
 
 	// render component that is drawn after lighting.
@@ -34,4 +38,12 @@ namespace Game {
 
 		virtual void Draw() = 0;
 	};
+}
+
+// Use this cast if you want to access a specific components functions.
+template<typename T, typename U>
+T& component_cast(U& _component)
+{
+	static_assert(std::is_base_of_v<Game::ActorComponent, T>, "The target type is not an component type.");
+	return *static_cast<T*>(&_component);
 }
