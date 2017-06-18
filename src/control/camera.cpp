@@ -60,7 +60,8 @@ namespace Control {
 		
 		// update view projection to make sure that it is always up to date
 		// the order here is important
-		m_viewProjection = m_projection * Mat4x4(m_inverseRotationMatrix) *  translation(-m_position);
+		m_view = Mat4x4(m_inverseRotationMatrix) *  translation(-m_position);
+		m_viewProjection = m_projection * m_view;
 
 		// update ubo
 		UpdateUbo(Graphic::Resources::GetUBO(Graphic::UniformBuffers::CAMERA));

@@ -30,6 +30,8 @@ namespace Control {
 
 		// The view projection of this camera that transforms worldspace -> cameraspace.
 		const ei::Mat4x4& GetViewProjection() const { return m_viewProjection; }
+		// Inverse transformation for worldspace -> eyespace
+		const ei::Mat4x4& GetView() const { return m_view; }
 
 		void Attach(const Game::Actor& _target);
 		void FixRotation(const ei::Quaternion& _rotation, const ei::Vec3& _position = ei::Vec3(0.f));
@@ -45,6 +47,7 @@ namespace Control {
 		float m_fov;
 		ei::Mat4x4 m_projection;
 		ei::Mat4x4 m_viewProjection;
+		ei::Mat4x4 m_view;
 
 		ei::Vec3 m_targetPosition;
 		ei::Quaternion m_targetRotation;

@@ -27,7 +27,7 @@ Wimp_s::Wimp_s()
 		Texture::Format(4, 32, Texture::Format::ChannelType::FLOAT));
 	m_sceneDepthTexture = new Texture(Graphic::Device::GetBackbufferSize()[0], Device::GetBackbufferSize()[1],
 		Texture::Format(1, 32, Texture::Format::ChannelType::FLOAT, Texture::Format::FormatType::DEPTH));
-	m_sceneFramebuffer = new Framebuffer({ Framebuffer::Attachment(m_sceneColorTexture)/*, Framebuffer::Attachment(m_sceneNormalTexture) */},
+	m_sceneFramebuffer = new Framebuffer({ Framebuffer::Attachment(m_sceneColorTexture), Framebuffer::Attachment(m_sceneNormalTexture)},
 		Framebuffer::Attachment(m_sceneDepthTexture));
 
 	Jo::Files::MetaFileWrapper config;

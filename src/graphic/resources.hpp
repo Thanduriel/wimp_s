@@ -30,6 +30,7 @@ namespace Graphic {
 		CAMERA = 1,
 		SIMPLE_OBJECT,
 		OBJECT_LINES,
+		OBJECT_GEOMETRY,
 		COUNT
 	};
 

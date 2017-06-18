@@ -30,7 +30,7 @@ namespace Graphic {
 			effects[ind]->SetDepthStencilState(DepthStencilState(Graphic::DepthStencilState::COMPARISON_FUNC::LESS, true));
 			// the example cube has all faces inverted
 			effects[ind]->SetRasterizerState(RasterizerState(RasterizerState::CULL_MODE::NONE, RasterizerState::FILL_MODE::SOLID));
-			effects[ind]->BindUniformBuffer(GetUBO(UniformBuffers::SIMPLE_OBJECT));
+			effects[ind]->BindUniformBuffer(GetUBO(UniformBuffers::OBJECT_GEOMETRY));
 			break;
 		case Effects::DEFFERED_LIGHT:
 			effects[ind] = new Effect("shader/light.vs", "shader/light.ps", "shader/light.gs");
@@ -38,7 +38,7 @@ namespace Graphic {
 			effects[ind]->SetDepthStencilState(DepthStencilState(Graphic::DepthStencilState::COMPARISON_FUNC::ALWAYS, false));
 			effects[ind]->BindTexture("screenTex", 0, Resources::GetSamplerState(SamplerStates::POINT));
 			effects[ind]->BindTexture("depthTex", 1, Resources::GetSamplerState(SamplerStates::POINT));
-		//	effects[ind]->BindTexture("normalTex", 2, Resources::GetSamplerState(SamplerStates::POINT));
+			effects[ind]->BindTexture("normalTex", 2, Resources::GetSamplerState(SamplerStates::POINT));
 			effects[ind]->BindUniformBuffer(GetUBO(UniformBuffers::SIMPLE_OBJECT));
 			effects[ind]->BindUniformBuffer(GetUBO(UniformBuffers::GLOBAL));
 			effects[ind]->BindUniformBuffer(GetUBO(UniformBuffers::CAMERA));
@@ -138,6 +138,11 @@ namespace Graphic {
 			uniformBuffers[ind]->AddAttribute("c_WorldViewProjection", UniformBuffer::ATTRIBUTE_TYPE::MATRIX);
 			uniformBuffers[ind]->AddAttribute("c_Color", UniformBuffer::ATTRIBUTE_TYPE::VEC4);
 			uniformBuffers[ind]->AddAttribute("c_Thickness", UniformBuffer::ATTRIBUTE_TYPE::FLOAT);
+			break;
+		case UniformBuffers::OBJECT_GEOMETRY:
+			uniformBuffers[ind] = new UniformBuffer("Object");
+			uniformBuffers[ind]->AddAttribute("c_WorldViewProjection", UniformBuffer::ATTRIBUTE_TYPE::MATRIX);
+			uniformBuffers[ind]->AddAttribute("c_NormalWorldView", UniformBuffer::ATTRIBUTE_TYPE::MATRIX);
 			break;
 		default:
 			Assert(false, "This uniform buffer is not implemented.");

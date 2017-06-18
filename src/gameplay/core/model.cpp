@@ -12,10 +12,14 @@ namespace Game {
 
 	void GeometryComponent::Draw()
 	{
-		Graphic::UniformBuffer& objectConstants = Graphic::Resources::GetUBO(Graphic::UniformBuffers::SIMPLE_OBJECT);
+		Graphic::UniformBuffer& objectConstants = Graphic::Resources::GetUBO(Graphic::UniformBuffers::OBJECT_GEOMETRY);
 		ei::Mat4x4 modelViewProjection = Control::g_camera.GetViewProjection() * m_actor.GetTransformation();
+		// is actually the transpose(inverse(matrix)) but this only consists of rotation and translation
+		// thus this operations cancel themself out
+		ei::Mat4x4 normalTransform = Control::g_camera.GetView() * m_actor.GetTransformation();
 
 		objectConstants["c_WorldViewProjection"] = modelViewProjection;
+		objectConstants["c_NormalWorldView"] = normalTransform;
 
 		Mesh::Draw();
 	}

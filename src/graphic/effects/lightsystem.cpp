@@ -64,16 +64,18 @@ namespace Graphic {
 			buffer[i] = info.second;
 			++i;
 		}
-		m_vertices->GetBuffer(0)->SetData((void*&)buffer, num * sizeof(LightInfo));
+		m_vertices->GetBuffer(0)->SetData((void*&)buffer, (int)num * sizeof(LightInfo));
 
 		UniformBuffer& ubo = Resources::GetUBO(UniformBuffers::SIMPLE_OBJECT);
 		ubo["c_WorldViewProjection"] = Control::g_camera.GetViewProjection();
 
 		Device::SetEffect(Resources::GetEffect(Effects::DEFFERED_LIGHT));
-		Texture& colorTex = *Device::GetCurrentFramebufferBinding()->GetColorAttachments().begin()->pTexture;
+		Texture& colorTex = *Device::GetCurrentFramebufferBinding()->GetColorAttachments().front().pTexture;
 		Device::SetTexture(colorTex, 0);
 		const Texture& depthTex = *Device::GetCurrentFramebufferBinding()->GetDepthStencilAttachment().pTexture;
 		Device::SetTexture(depthTex, 1);
+		Texture& normalTex = *Device::GetCurrentFramebufferBinding()->GetColorAttachments().back().pTexture;
+		Device::SetTexture(normalTex, 2);
 		Device::DrawVertices(*m_vertices, 0, (int)num);
 	}
 }

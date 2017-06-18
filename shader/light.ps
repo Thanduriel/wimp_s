@@ -9,6 +9,7 @@ in float gs_fallOff;
 
 uniform sampler2D screenTex;
 uniform sampler2D depthTex;
+uniform sampler2D normalTex;
 
 out vec4 fragColor;
 
@@ -31,9 +32,11 @@ void main()
 	vec4 dif = eyePos - gs_center;
 	dif.w = 0;
 	
+	vec3 normal = texture(normalTex, gs_texCoord).xyz;
+	
 	float dSqr = dot(dif,dif);
 //	if(sqrt(dSqr) > gs_radius ) discard;
 //	fragColor = vec4(1,1,1, clamp(1-sqrt(dSqr)/gs_radius,0, 1));
 	// intensity falls of ~ 1/r^2. To reach 0 at distance r the function is distorted and shifted
-	fragColor = vec4(gs_color, clamp(1/(gs_fallOff * dSqr) - threshold,0, 1));
+	fragColor = vec4(normal, 1);//vec4(gs_color, clamp(1/(gs_fallOff * dSqr) - threshold,0, 1));
 }
