@@ -14,6 +14,9 @@ namespace Game {
 		// this could be optimized by having an extra container for this
 		for (auto& actor : m_actors)
 			actor->Process(_deltaTime);
+
+		for (auto component : m_markerComponents)
+			component->ProcessComponent(_deltaTime);
 	}
 
 	void SceneGraph::Draw()

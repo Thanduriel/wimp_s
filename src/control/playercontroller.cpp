@@ -76,12 +76,12 @@ namespace Control
 					pos);*/
 		
 				m_grid.SetPosition(m_model->GetPosition());
-				component_cast<Game::MarkerComponent>(m_grid).SetActive(true);
+				component_cast<Game::GridComponent>(m_grid).reverseTransition();
 			}
 			else
 			{
 				m_targetingMode = TargetingMode::Normal;
-				component_cast<Game::MarkerComponent>(m_grid).SetActive(false);
+				component_cast<Game::GridComponent>(m_grid).reverseTransition();
 				m_mouseMovement = Vec2(0.f);
 				g_camera.Attach(*m_model);
 			}

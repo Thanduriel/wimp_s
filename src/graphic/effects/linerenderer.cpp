@@ -21,6 +21,14 @@ namespace Graphic {
 		vbGuard->Add(vertex);
 	}
 
+	void LineRenderer::Remove()
+	{
+		auto vbGuard = m_lineVertices.GetBuffer(0);
+		int num = m_lineVertices.GetNumVertices();
+		vbGuard->Remove<Vertex>(num - 1);
+		vbGuard->Remove<Vertex>(num - 2);
+	}
+
 	void LineRenderer::Draw(const ei::Mat4x4& _worldViewProjection)
 	{
 		Device::SetEffect(Resources::GetEffect(Effects::LINES));

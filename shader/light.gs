@@ -3,7 +3,7 @@
 
 in vec3 vs_out_Position[1];
 in float vs_out_Radius[1];
-in vec4 vs_out_Color[1];
+in vec3 vs_out_Color[1];
 
 layout(std140) uniform Object
 {

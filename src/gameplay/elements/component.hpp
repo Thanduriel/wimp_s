@@ -28,6 +28,7 @@ namespace Game {
 		using ActorComponent::ActorComponent;
 
 		virtual void Draw() = 0;
+		virtual void ProcessComponent(float _deltaTime) {}
 	};
 
 	// post processing effects are order dependend

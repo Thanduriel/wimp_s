@@ -25,9 +25,12 @@ namespace GameStates {
 	MainState::MainState()
 		: m_starbackground(2000, 20000.f, 14000)
 	{
+		// setup player controller
 		blackHole = new BlackHole(ei::Vec3(-5.f), 5.f);
 		m_sceneGraph.Add(*blackHole);
-		Grid* grid = new Game::Grid(ei::Vec3(0.f), ei::qidentity(), Utils::Color32F(0.f, 1.f, 0.f, 0.6f), 2.f, 2.f);
+		Grid* grid = new Game::Grid(ei::Vec3(0.f), ei::qidentity(), 
+			Utils::Color32F(0.f, 1.f, 0.f, 0.6f), 2.f, 2.f,
+			50.f, GridComponent::TransitionInfo(600.f, 0.25f));
 		m_sceneGraph.Add(*grid);
 		Model* model = new Model("models/spaceship.fbx", Vec3(0.f), qidentity());
 		m_sceneGraph.Add(*model);

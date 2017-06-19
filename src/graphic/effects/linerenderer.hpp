@@ -13,6 +13,8 @@ namespace Graphic {
 
 		// Add a line to the set.
 		void Add(const ei::Vec3& _begin, const ei::Vec3& _end);
+		// Removes the line added last.
+		void Remove();
 
 		void Draw(const ei::Mat4x4& _worldViewProjection);
 	private:
