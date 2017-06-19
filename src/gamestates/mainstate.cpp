@@ -20,12 +20,12 @@ namespace GameStates {
 	using namespace Game;
 
 	Game::PointLight* pointLight;
-	Game::BlackHoleComponent* ptr;
+	Game::BlackHole* blackHole;
 
 	MainState::MainState()
 		: m_starbackground(2000, 20000.f, 14000)
 	{
-		BlackHole* blackHole = new BlackHole(ei::Vec3(-5.f), 5.f);
+		blackHole = new BlackHole(ei::Vec3(-5.f), 5.f);
 		m_sceneGraph.Add(*blackHole);
 		Grid* grid = new Game::Grid(ei::Vec3(0.f), ei::qidentity(), Utils::Color32F(0.f, 1.f, 0.f, 0.6f), 2.f, 2.f);
 		m_sceneGraph.Add(*grid);
@@ -33,7 +33,7 @@ namespace GameStates {
 		m_sceneGraph.Add(*model);
 		m_playerController = new Control::PlayerController(*model, *grid, *blackHole);
 		Control::g_camera.Attach(*model);
-		pointLight = new PointLight(Vec3(0.f), 2.f, Utils::Color8U(255_uc, 255_uc, 0_uc));
+		pointLight = new PointLight(Vec3(0.f), 5.f, Utils::Color8U(255_uc, 255_uc, 0_uc));
 		m_sceneGraph.Add(*pointLight);
 
 		m_sceneGraph.Add(*new Model("models/spaceship.fbx", Vec3(5.f, 0.f, 0.f), qidentity()));
@@ -66,7 +66,7 @@ namespace GameStates {
 		t += _deltaTime;
 		
 		Vec4 pos = m_playerController->GetShip().GetTransformation() * Vec4(0.5f, 0.f, 0.f, 1.f);
-	//	pointLight->SetPosition(Vec3(pos));
+	//	pointLight->SetPosition(blackHole->GetPosition() /*+ Vec3(0.f,0.1f,0.f)*/);
 		pointLight->SetPosition(ei::Vec3(cos(t), 0.f, sin(t)));
 
 		m_sceneGraph.Process(_deltaTime);

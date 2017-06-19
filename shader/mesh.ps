@@ -11,9 +11,10 @@ void main()
 	vec4 fragColor;
 	fragColor = vs_out_normal;
 	fragColor.w = 1;
-	float cosTheta = clamp( dot( vs_out_normal, vec4(0,1,0,1) ), 0,1 );
+	float cosTheta = clamp( dot( vs_out_normal, vec4(0,0,-1,1) ), 0,1 );
+	// todo read color from texture
 	fragColor.rgb = vec3(0.4,0.3,0.6);
-//	fragColor *= clamp(cosTheta, 0.2, 1);
+	fragColor *= clamp(cosTheta, 0.2, 0.4);
 	fragColor.a = 1;
 	
 	gl_FragData[0] = fragColor;

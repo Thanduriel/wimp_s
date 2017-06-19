@@ -28,7 +28,7 @@ void main(void)
 	vec3 color = vs_out_Color[0].xyz;
 	float size = vs_out_Radius[0];
 	// intensity fall of can be calculated once per light
-	const float threshold = 0.1; // this const needs to be updated in light.ps aswell.
+	const float threshold = 0.25; // this const needs to be updated in light.ps aswell.
 	float fallOff = 1/(size * size * threshold);
 
 	vec4 position = vec4(vs_out_Position[0].xyz, 1) * c_mViewProjection;

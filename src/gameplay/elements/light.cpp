@@ -14,7 +14,7 @@ namespace Game{
 	void PointLightComponent::Draw()
 	{
 		// transform to world space
-		m_handle->position = ei::Vec3(m_actor.GetTransformation() * ei::Vec4(m_actor.GetPosition(), 1.f));
+		m_handle->position = ei::Vec3(ei::transpose(m_actor.GetTransformation()) * ei::Vec4(m_actor.GetPosition(), 1.f));
 	}
 
 	PointLightComponent::~PointLightComponent()

@@ -93,6 +93,17 @@ namespace Graphic {
 
 		//m_vertices.GetBuffer(0)->SetData((void*&)vertex, 36 * sizeof(Vertex));
 		ImportModel(_pFile);
+	/*	Vertex* vertex = (Vertex*)malloc(3 * sizeof(Vertex));
+		vertex[1].position = Vec3(-15.0f, 0.0f, -15.0f);
+		vertex[0].position = Vec3(15.0f, 0.0f, -15.0f);
+		vertex[2].position = Vec3(0.0f, 0.0f, 15.0f);
+		vertex[0].normal = Vec3(0.f, 1.f, 0.f);
+		vertex[1].normal = Vec3(0.f, 1.f, 0.f);
+		vertex[2].normal = Vec3(0.f, 1.f, 0.f);
+
+		m_vertices.GetBuffer(0)->SetData((void*&)vertex, 3 * sizeof(Vertex));*/
+
+
 	}
 
 	bool Mesh::ImportModel(const std::string& _pFile)
