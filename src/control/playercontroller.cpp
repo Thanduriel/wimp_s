@@ -114,23 +114,6 @@ namespace Control
 			g_camera.Translate(camVel * _deltaTime);
 			m_grid.Translate(camVel * _deltaTime);
 		}
-		else
-		{
-			Vec3 forward = m_ship->GetRotationMatrix() * Vec3(0.0f, 0.0f, 1.0f);
-			m_ship->SetThrust(0.0f);
-			float forwardVelocity = 0.0f;
-			if (len(m_ship->GetVelocity()) > 0.0f)
-				forwardVelocity = dot(forward, normalize(m_ship->GetVelocity())) * len(m_ship->GetVelocity());
-			if (forwardVelocity < m_targetSpeed)
-			{
-				// accelerate
-				m_ship->SetThrust(10.0f);
-			}
-			/*if (glfwGetKey(Graphic::Device::GetWindow(), GLFW_KEY_W))
-				m_ship->SetThrust(m_ship->GetThrust() + 100.0f);
-			if (glfwGetKey(Graphic::Device::GetWindow(), GLFW_KEY_S))
-				m_ship->SetThrust(m_ship->GetThrust() - 100.0f);*/
-		}
 
 		// mouse rotation
 		//if (m_mouseMovement.x + m_mouseMovement.y == 0.f) return;
