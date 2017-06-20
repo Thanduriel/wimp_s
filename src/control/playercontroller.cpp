@@ -149,26 +149,9 @@ namespace Control
 		// mouse rotation
 		//if (m_mouseMovement.x + m_mouseMovement.y == 0.f) return;
 
-		float dx = m_mouseSensitivity.x * _deltaTime * m_mouseMovement.x;
-		float dy = m_mouseSensitivity.y * _deltaTime * m_mouseMovement.y;
+		Vec2 cursor = InputManager::GetCursorPosScreenSpace();
 
-		//First yaw, then pitch
-		/*m_model->Yaw(dx);
-		m_model->Pitch(dy);*/
-		//Yaw the target rotation
-		Vec3 localY = ei::rotation(m_targetRotation) * Vec3(0.0f, 1.0f, 0.0f);
-		localY *= dx;
-		m_targetRotation = Quaternion(localY.x, localY.y, localY.z) * m_targetRotation;
-
-		//Pitch the target rotation
-		Vec3 localX = ei::rotation(m_targetRotation) * Vec3(1.0f, 0.0f, 0.0f);
-		localX *= dy;
-		m_targetRotation = Quaternion(localX.x, localX.y, localX.z) * m_targetRotation;
-
-		//Calculate the smooth new rotation
-		//todo: try fix jumping from 360 to 0 in slerp function
-		m_model->SetRotation(ei::slerp(m_model->GetRotation(), m_targetRotation, 0.001f));
-
-		m_mouseMovement = Vec2(0.f);
+		cursor = Vec2(sgn(cursor[0]), sgn(cursor[1])) * cursor * cursor;
+		m_model->SetAngularVelocity( m_model->GetRotationMatrix() * Vec3(-cursor[1], cursor[0], 0.0f));
 	}
 }
