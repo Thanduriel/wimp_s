@@ -4,6 +4,7 @@ namespace Game {
 	class Grid;
 	class Model;
 	class Actor;
+	class Ship;
 }
 
 namespace Control
@@ -17,7 +18,7 @@ namespace Control
 	{
 	public:
 
-		PlayerController(Game::Model& _model, Game::Grid& _grid, Game::Actor& _indicator);
+		PlayerController(Game::Ship& _ship, Game::Grid& _grid, Game::Actor& _indicator);
 
 		// The basic processing method called once per frame
 		void Process(float _deltaTime);
@@ -26,7 +27,7 @@ namespace Control
 		void KeyClick(int _key);
 		void Scroll(float _dx, float _dy);
 
-		const Game::Model& GetShip() const { return *m_model; }
+		const Game::Ship& GetShip() const { return *m_ship; }
 
 		// Setter and getter for the mouse sensitivity
 		void SetMouseSensitivity(const Vec2& _sensitivity) { m_mouseSensitivity = _sensitivity; };
@@ -43,22 +44,14 @@ namespace Control
 		// The sensitivity of the mouse... duh
 		Vec2 m_mouseSensitivity;
 
-		// The thrust force in each direction
-		Vec2 m_xForce;
-		Vec2 m_yForce;
-		Vec2 m_zForce;
-
-		// The friction in every direction from 0 to 1/_deltaTime
-		float m_friction;
-
-		// the target rotation to slerp towards
-		Quaternion m_targetRotation;
+		// the target thrust
+		float m_targetSpeed;
 
 		Vec2 m_mouseMovement;
 		// Control the input of the player
 		void HandleInput(float _deltaTime);
 
-		Game::Model* m_model;
+		Game::Ship* m_ship;
 		Game::Grid& m_grid;
 		Game::Actor& m_indicator;
 	};

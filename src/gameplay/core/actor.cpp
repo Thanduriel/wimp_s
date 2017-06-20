@@ -35,8 +35,7 @@ namespace Game {
 	DynamicActor::DynamicActor(const ei::Vec3& _position, const ei::Quaternion& _rotation)
 		: Actor(_position, _rotation),
 		m_velocity(0.f),
-		m_angularVelocity(0.f),
-		m_weight(1.0f)
+		m_angularVelocity(0.f)
 	{}
 
 	void DynamicActor::Process(float _deltaTime)

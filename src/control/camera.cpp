@@ -37,7 +37,7 @@ namespace Control {
 				m_targetRotation = m_target->GetRotation();
 
 				// move to the desired configuration
-				float smoothDistanceToTarget = ei::lerp(len(m_position - m_target->GetPosition()), m_distanceToTarget, 0.8f * _deltaTime);
+				float smoothDistanceToTarget = ei::lerp(len(m_position - m_target->GetPosition()), m_distanceToTarget, 100.0f * _deltaTime);
 				m_position = Vec3(m_target->GetTransformation() * Vec4(0.f, 0.f, -smoothDistanceToTarget, 1.f));
 				m_rotation = m_targetRotation;
 			}
