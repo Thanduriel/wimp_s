@@ -1,6 +1,8 @@
 #pragma once
 
 #include "ei/vector.hpp"
+#include <vector>
+#include <memory>
 
 namespace Game {
 
@@ -11,9 +13,11 @@ namespace Game {
 	class Actor
 	{
 	public:
-		Actor() : m_position(0.f), m_rotation(ei::qidentity()), m_destroyed(false) { UpdateMatrices(); }
+		// all constructors and destructors need to be defined in the cpp 
+		// to allow for forward declaration with unique_ptr
+		Actor();
 		Actor(const ei::Vec3& _position, const ei::Quaternion& _rotation = ei::qidentity());
-		virtual ~Actor() {}
+		virtual ~Actor();
 
 		// Access Position
 		void SetPosition(const ei::Vec3& _position) { m_position = _position; UpdateMatrices(); }
@@ -44,7 +48,7 @@ namespace Game {
 		// Is object to be destroyed?
 		bool IsDestroyed() const { return m_destroyed; }
 
-		virtual void Process(float _deltaTime) {};
+		virtual void Process(float _deltaTime);
 
 		bool CanTick() const { return m_canTick; }
 	protected:
@@ -55,13 +59,16 @@ namespace Game {
 		ei::Vec3 m_position;
 		ei::Quaternion m_rotation;
 
-		// transformation matrices for convinience
+		// transformation matrices for convenience
 		ei::Mat3x3 m_rotationMatrix;
 		ei::Mat3x3 m_inverseRotationMatrix;
 		ei::Mat4x4 m_transformation;
 
 		// shows if the object is to be destroyed
 		bool m_destroyed;
+
+		typedef std::vector< std::unique_ptr<class ActorDynamicComponent>> ComponentContainer;
+		ComponentContainer m_components;
 	};
 
 

@@ -37,6 +37,29 @@ namespace Game {
 		bool m_isActive;
 	};
 
+	namespace Details {
+		template <typename T>
+		class DynamicComponent : public T
+		{
+		public:
+			virtual void OnRegister() {}
+			virtual void ProcessComponent(float _deltaTime) {}
+		};
+	}
+
+	// A component that can be added (or removed) at runtime to an actor.
+	// Multiple instances of the same kind can be attached to the same actor.
+	class ActorDynamicComponent : public ActorComponent
+	{
+	public:
+		virtual void OnRegister() {}
+		virtual void ProcessComponent(float _deltaTime) {}
+	};
+	// This is intentionally the same.
+	// The additional const guaranty makes multi threading easier
+	// but we do not need to much premature optimization right now.
+	typedef ActorDynamicComponent DynamicConstActorComponent; //Details::DynamicComponent<ConstActorComponent>
+
 	// render component that is drawn after lighting.
 	class MarkerComponent : public ConstActorComponent
 	{

@@ -5,9 +5,9 @@
 
 namespace Game {
 	
-	GeometryComponent::GeometryComponent(Actor& _actor, const std::string& _pFile)
-		: ActorComponent(_actor),
-		Mesh(_pFile)
+	GeometryComponent::GeometryComponent(const Actor& _actor, const std::string& _pFile)
+		: ConstActorComponent(_actor),
+		m_mesh(&Graphic::Resources::GetMesh(_pFile))
 	{}
 
 	void GeometryComponent::Draw()
@@ -21,7 +21,7 @@ namespace Game {
 		objectConstants["c_WorldViewProjection"] = modelViewProjection;
 		objectConstants["c_NormalWorldView"] = normalTransform;
 
-		Mesh::Draw();
+		m_mesh->Draw();
 	}
 
 	Model::Model(const std::string& _pFile, const ei::Vec3&_position, const ei::Quaternion&_rotation)

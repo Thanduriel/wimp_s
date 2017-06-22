@@ -12,7 +12,7 @@ namespace Graphic {
 		Mesh();
 		Mesh(const std::string& _pFile);
 
-		void Draw();
+		void Draw() const;
 	private:
 		struct Vertex
 		{

@@ -1,8 +1,15 @@
 #include "actor.hpp"
+#include "gameplay/elements/component.hpp"
 
 namespace Game {
 
 	using namespace ei;
+
+	Actor::Actor()
+		: m_position(0.f), m_rotation(ei::qidentity()), m_destroyed(false) 
+	{
+		UpdateMatrices();
+	}
 
 	Actor::Actor(const ei::Vec3& _position, const ei::Quaternion& _rotation)
 		: m_position(_position),
@@ -10,6 +17,10 @@ namespace Game {
 		m_destroyed(false)
 	{
 		UpdateMatrices();
+	}
+
+	Actor::~Actor()
+	{
 	}
 
 	void Actor::UpdateMatrices()
@@ -32,6 +43,14 @@ namespace Game {
 		Rotate(Quaternion(localToGlobal.x, localToGlobal.y, localToGlobal.z));
 	}
 
+
+	void Actor::Process(float _deltaTime)
+	{
+		for (auto& component : m_components)
+			component->ProcessComponent(_deltaTime);
+	}
+
+	// ****************************************************************** //
 	DynamicActor::DynamicActor(const ei::Vec3& _position, const ei::Quaternion& _rotation)
 		: Actor(_position, _rotation),
 		m_velocity(0.f),

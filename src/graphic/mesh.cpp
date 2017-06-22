@@ -122,8 +122,7 @@ namespace Graphic {
 		// If the import failed, report it
 		if (!scene)
 		{	
-			// TODO: implement error logging 
-			//DoTheErrorLogging(importer.GetErrorString());
+			LOG_ERROR(std::string("Failed to load mesh: ") + importer.GetErrorString());
 			return false;
 		}
 		// Now we can access the file's contents. 
@@ -205,7 +204,7 @@ namespace Graphic {
 					textures.insert(textures.end(),(std::string)"|");
 				}
 
-				for (unsigned int i = textures.size(); i < material->GetTextureCount(aiTextureType_SPECULAR); i++)
+				for (size_t i = textures.size(); i < material->GetTextureCount(aiTextureType_SPECULAR); i++)
 				{
 					aiString str;
 					material->GetTexture(aiTextureType_SPECULAR, i, &str);
@@ -218,9 +217,8 @@ namespace Graphic {
 		m_vertices.GetBuffer(0)->SetData((void*&)v, mesh->mNumFaces * 3 * sizeof(Vertex)); // set m_vertices with all vertex data (position,normal,texturecoords)
 	}
 
-	void Mesh::Draw()
+	void Mesh::Draw() const
 	{
 		Device::DrawVertices(m_vertices, 0, m_vertices.GetNumVertices());
-		
 	}
 }

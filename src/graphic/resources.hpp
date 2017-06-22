@@ -1,5 +1,7 @@
 #pragma once
 
+#include <unordered_map>
+
 #include "predeclarations.hpp"
 
 namespace Jo {
@@ -59,6 +61,7 @@ namespace Graphic {
 		static Font& GetFont(Fonts _font);
 
 		static Jo::Files::MetaFileWrapper& GetTextureMap();
+		static Mesh& GetMesh(const std::string& _name);
 
 		static void Unload();
 	private:
@@ -67,5 +70,6 @@ namespace Graphic {
 		static SamplerState* samplers[(unsigned)SamplerStates::COUNT];
 		static Font* fonts[(unsigned)Fonts::COUNT];
 		static Jo::Files::MetaFileWrapper* textureMap;
+		static std::unordered_map<std::string, Mesh*> meshes;
 	};
 }

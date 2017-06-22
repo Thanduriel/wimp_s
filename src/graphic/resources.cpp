@@ -6,6 +6,7 @@
 #include "core/texture.hpp"
 #include "graphic/interface/font.hpp"
 #include "jofilelib.hpp"
+#include "mesh.hpp"
 
 namespace Graphic {
 
@@ -14,6 +15,8 @@ namespace Graphic {
 	SamplerState* Resources::samplers[];
 	Font* Resources::fonts[];
 	Jo::Files::MetaFileWrapper* Resources::textureMap;
+	std::unordered_map<std::string, Mesh*> Resources::meshes;
+
 
 	// ****************************************************** //
 	Effect& Resources::GetEffect(Effects _effect)
@@ -208,6 +211,21 @@ namespace Graphic {
 	}
 
 	// ****************************************************** //
+	Mesh& Resources::GetMesh(const std::string& _name)
+	{
+		auto it = meshes.find(_name);
+		Mesh* mesh;
+		if (it == meshes.end())
+		{
+			mesh = new Mesh(_name);
+			meshes.emplace(_name, mesh);
+		}
+		else mesh = it->second;
+
+		return *mesh;
+	}
+
+	// ****************************************************** //
 	void Resources::Unload()
 	{
 		for (int i = 0; i < (int)Effects::COUNT; ++i)
@@ -223,5 +241,8 @@ namespace Graphic {
 			if (fonts[i]) delete fonts[i];
 
 		if (textureMap) delete textureMap;
+
+		for (auto& mesh : meshes)
+			delete mesh.second;
 	}
 }

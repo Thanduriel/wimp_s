@@ -27,6 +27,7 @@ namespace Graphic {
 	class SingleComponentRenderer;
 	class DataBuffer;
 	class VertexArrayBuffer;
+	class Mesh;
 
 } // namespace Graphic
 
