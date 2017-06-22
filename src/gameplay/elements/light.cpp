@@ -4,8 +4,10 @@ namespace Game{
 
 	using namespace Graphic;
 
-	PointLightComponent::PointLightComponent(Actor& _actor, float _radius, Utils::Color8U _color)
+	PointLightComponent::PointLightComponent(Actor& _actor, const ei::Vec3& _position,
+		float _radius, Utils::Color8U _color)
 		: ActorComponent(_actor),
+		Transformation(_position),
 		m_handle(Graphic::LightSystem::Register(Graphic::LightInfo(_radius, _color)))
 	{
 
@@ -14,7 +16,8 @@ namespace Game{
 	void PointLightComponent::Draw()
 	{
 		// transform to world space
-		m_handle->position = ei::Vec3(ei::transpose(m_actor.GetTransformation()) * ei::Vec4(m_actor.GetPosition(), 1.f));
+		// todo optimize for null vector (with w = 1)
+		m_handle->position = ei::Vec3(Transformation::Get(m_actor.GetTransformation()) * ei::Vec4(0.f, 0.f, 0.f, 1.f));
 	}
 
 	PointLightComponent::~PointLightComponent()
@@ -24,7 +27,7 @@ namespace Game{
 
 	PointLight::PointLight(const ei::Vec3& _position, float _radius, Utils::Color8U _color)
 		: Actor(_position),
-		PointLightComponent(THISACTOR, _radius, _color)
+		PointLightComponent(THISACTOR, ei::Vec3(0.f), _radius, _color)
 	{
 
 	}

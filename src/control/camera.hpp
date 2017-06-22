@@ -33,10 +33,16 @@ namespace Control {
 		// Inverse transformation for worldspace -> eyespace
 		const ei::Mat4x4& GetView() const { return m_view; }
 
+		// Change the mode to follow _target.
 		void Attach(const Game::Actor& _target);
+
+		// Change the mode to tactial preventing changes to the rotation.
 		void FixRotation(const ei::Quaternion& _rotation, const ei::Vec3& _position = ei::Vec3(0.f));
+
+		// Change the mode free moving camera.
 		void Detach();
 
+		// Update parameters of the global camera ubo with this cameras.
 		void UpdateUbo(Graphic::UniformBuffer& _ubo);
 
 		// Returns a ray from the camera that goes through the given point.

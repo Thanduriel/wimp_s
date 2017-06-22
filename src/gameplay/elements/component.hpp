@@ -21,21 +21,37 @@ namespace Game {
 		bool m_isActive; // should the component be processed (or rendered)
 	};
 
-	// render component that is drawn after lighting.
-	class MarkerComponent : public ActorComponent
+	// Actor Component that does not change the state of the underlying actor.
+	// Can be easily parallelized.
+	class ConstActorComponent
 	{
 	public:
-		using ActorComponent::ActorComponent;
+		ConstActorComponent(const Actor& _owner) : m_actor(_owner) {}
+
+		const Actor& GetActor() const { return m_actor; }
+
+		void SetActive(bool _isActive) { m_isActive = _isActive; }
+		bool IsActive() const { return m_isActive; }
+	protected:
+		const Actor& m_actor;
+		bool m_isActive;
+	};
+
+	// render component that is drawn after lighting.
+	class MarkerComponent : public ConstActorComponent
+	{
+	public:
+		using ConstActorComponent::ConstActorComponent;
 
 		virtual void Draw() = 0;
 		virtual void ProcessComponent(float _deltaTime) {}
 	};
 
-	// post processing effects are order dependend
-	class PostProcessComponent : public ActorComponent 
+	// post processing effects are order depended
+	class PostProcessComponent : public ConstActorComponent 
 	{
 	public:
-		using ActorComponent::ActorComponent;
+		using ConstActorComponent::ConstActorComponent;
 
 		virtual void Draw() = 0;
 	};
@@ -45,6 +61,7 @@ namespace Game {
 template<typename T, typename U>
 T& component_cast(U& _component)
 {
-	static_assert(std::is_base_of_v<Game::ActorComponent, T>, "The target type is not an component type.");
+	static_assert(std::is_base_of_v<Game::ActorComponent, T>
+		|| std::is_base_of_v<Game::ConstActorComponent, T>, "The target type is not an component type.");
 	return *static_cast<T*>(&_component);
 }

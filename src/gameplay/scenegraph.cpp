@@ -82,9 +82,9 @@ namespace Game {
 
 	void SceneGraph::CleanUp()
 	{
-		// todo: test performance; parallize or perform less frequent
+		// todo: test performance; parallelize or perform less frequent
 
-		// deregister components
+		// unregister components
 		RemoveDestroyed(m_geometryComponents);
 		RemoveDestroyed(m_lightComponents);
 		RemoveDestroyed(m_postProcessComponents);

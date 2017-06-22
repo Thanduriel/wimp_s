@@ -73,12 +73,12 @@ namespace Control
 					pos);*/
 		
 				m_grid.SetPosition(m_ship->GetPosition());
-				component_cast<Game::GridComponent>(m_grid).reverseTransition();
+				component_cast<Game::GridComponent>(m_grid).ReverseTransition();
 			}
 			else
 			{
 				m_targetingMode = TargetingMode::Normal;
-				component_cast<Game::GridComponent>(m_grid).reverseTransition();
+				component_cast<Game::GridComponent>(m_grid).ReverseTransition();
 				m_mouseMovement = Vec2(0.f);
 				g_camera.Attach(*m_ship);
 			}

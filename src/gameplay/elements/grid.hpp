@@ -15,11 +15,18 @@ namespace Game {
 	public:
 		typedef std::function<bool(const std::pair<ei::Vec3, ei::Vec3>&, 
 			const std::pair<ei::Vec3, ei::Vec3>&)> ComparisonFunc;
+
+		// Descriptor of how the lines should be added.
 		struct TransitionInfo
 		{
 			TransitionInfo() = default;
+			// @param _speed add lines in [lines per second]
+			// @param _mod the speed is scaled from _mod and linearly
+			//		interpolated so that the total time required stays the same.
+			// @param _func The function used to order the lines.
 			TransitionInfo(float _speed, float _mod = 1.f, ComparisonFunc&& _func = &closerToCenter)
 				: speed(_speed), comparisonFunction(std::move(_func)), speedModifier(_mod) {}
+
 			float speed; // in lines per second
 			float speedModifier; // acceleration / slow dependend on progress
 			ComparisonFunc comparisonFunction;
@@ -33,8 +40,9 @@ namespace Game {
 		void ProcessComponent(float _deltaTime) override;
 		void Draw() override;
 
-		// starts to hide lines in reverse order of the current TransitionInfo
-		void reverseTransition() { m_fadeIn = !m_fadeIn; m_linesShown = (float)m_currentLine; }
+		// Reverses the order of the current transition.
+		// Switches between adding and reomving lines.
+		void ReverseTransition() { m_fadeIn = !m_fadeIn; m_linesShown = (float)m_currentLine; }
 
 	private:
 		static bool closerToCenter(const std::pair<ei::Vec3, ei::Vec3>&,
@@ -52,6 +60,7 @@ namespace Game {
 	class Grid : public Actor, public GridComponent
 	{
 	public:
+		// Pass the transitionInfo as rvalue if copying the function is expensive.
 		Grid(const ei::Vec3& _position, const ei::Quaternion& _rotation,
 			const Utils::Color32F& _color,
 			float _resolutionX = 1.f, float _resolutionZ = 1.f,
