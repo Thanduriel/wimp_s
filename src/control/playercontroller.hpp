@@ -44,8 +44,11 @@ namespace Control
 		// The sensitivity of the mouse... duh
 		Vec2 m_mouseSensitivity;
 
-		// the target thrust
+		// the target speed
 		float m_targetSpeed;
+
+		// the sensitivity of the target speed slider
+		float m_sliderSensitivity;
 
 		Vec2 m_mouseMovement;
 		// Control the input of the player

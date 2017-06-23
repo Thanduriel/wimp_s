@@ -18,6 +18,7 @@ namespace Control
 	PlayerController::PlayerController(Game::Ship& _ship, Game::Grid& _grid, Game::Actor& _indicator)
 		: m_ship(&_ship),
 		m_mouseSensitivity(10.0f),
+		m_sliderSensitivity(10.0f),
 		m_targetSpeed(1.0f),
 		m_targetingMode(TargetingMode::Normal),
 		m_grid(_grid),
@@ -61,17 +62,17 @@ namespace Control
 				g_camera.FixRotation(ei::Quaternion(Vec3(1.f, 0.f, 0.f), m_tacticalDirSign * angle) * rot,
 					m_ship->GetPosition() + Vec3(0.f, m_tacticalDirSign * TACTICALCAM_DIST, -TACTICALCAM_DIST / tan(angle)));
 				m_ship->SetVelocity({});
-		/*		Vec3 shift = m_model->GetRotationMatrix() * Vec3(0.f, 0.f, -1.f);
-				shift.y = 0.f;
-				shift = normalize(shift) * 32.f / tan(angle);
-				shift.y = 32.f;
-				Vec3 pos = m_model->GetPosition() + shift;
-				Vec3 rotAxis = xaxis(m_model->GetRotation());
-				rotAxis.y = 0.f;
-				rotAxis = normalize(rotAxis);
-				g_camera.FixRotation(Quaternion(rotAxis, angle),
-					pos);*/
-		
+				/*		Vec3 shift = m_model->GetRotationMatrix() * Vec3(0.f, 0.f, -1.f);
+						shift.y = 0.f;
+						shift = normalize(shift) * 32.f / tan(angle);
+						shift.y = 32.f;
+						Vec3 pos = m_model->GetPosition() + shift;
+						Vec3 rotAxis = xaxis(m_model->GetRotation());
+						rotAxis.y = 0.f;
+						rotAxis = normalize(rotAxis);
+						g_camera.FixRotation(Quaternion(rotAxis, angle),
+							pos);*/
+
 				m_grid.SetPosition(m_ship->GetPosition());
 				component_cast<Game::GridComponent>(m_grid).ReverseTransition();
 			}
@@ -114,6 +115,47 @@ namespace Control
 			g_camera.Translate(camVel * _deltaTime);
 			m_grid.Translate(camVel * _deltaTime);
 		}
+		else
+		{
+			bool approximateTargetSpeed = true;
+			if (InputManager::IsKeyPressed(GLFW_KEY_LEFT_SHIFT))
+			{
+				// control target speed slider
+				if (InputManager::IsKeyPressed(GLFW_KEY_W))
+					m_targetSpeed = ei::min(m_targetSpeed + m_sliderSensitivity * _deltaTime, m_ship->GetMaxSpeed());
+				if (InputManager::IsKeyPressed(GLFW_KEY_S))
+					m_targetSpeed = ei::max(m_targetSpeed - m_sliderSensitivity * _deltaTime, m_ship->GetMinSpeed());
+			}
+			else
+			{
+				// control ship speed manually
+				if (InputManager::IsKeyPressed(GLFW_KEY_W))
+				{
+					float newSpeed = m_ship->GetSpeed() + (m_ship->GetThrust() / m_ship->GetWeight()) * _deltaTime;
+					m_ship->SetSpeed(newSpeed);
+					approximateTargetSpeed = false;
+				}
+				if (InputManager::IsKeyPressed(GLFW_KEY_S))
+				{
+					m_ship->SetSpeed(m_ship->GetSpeed() - (m_ship->GetThrust() / m_ship->GetWeight()) * _deltaTime);
+					approximateTargetSpeed = false;
+				}
+			}
+			// approximate target speed with ship's (target) speed
+			if (approximateTargetSpeed)
+			{
+				if (m_targetSpeed > m_ship->GetSpeed())
+				{
+					// accelerate ship's (target) speed
+					m_ship->SetSpeed(min(m_ship->GetSpeed() + (m_ship->GetThrust() / m_ship->GetWeight()) * _deltaTime, m_targetSpeed));
+				}
+				else if (m_targetSpeed < m_ship->GetSpeed())
+				{
+					// decelerate ship's (target) speed
+					m_ship->SetSpeed(max(m_ship->GetSpeed() - (m_ship->GetThrust() / m_ship->GetWeight()) * _deltaTime, m_targetSpeed));
+				}
+			}
+		}
 
 		// mouse rotation
 		//if (m_mouseMovement.x + m_mouseMovement.y == 0.f) return;
@@ -121,6 +163,6 @@ namespace Control
 		Vec2 cursor = InputManager::GetCursorPosScreenSpace();
 
 		cursor = Vec2(sgn(cursor[0]), sgn(cursor[1])) * cursor * cursor;
-		m_ship->SetAngularVelocity( m_ship->GetRotationMatrix() * Vec3(-cursor[1], cursor[0], 0.0f));
+		m_ship->SetAngularVelocity(m_ship->GetRotationMatrix() * Vec3(-cursor[1], cursor[0], 0.0f));
 	}
 }
