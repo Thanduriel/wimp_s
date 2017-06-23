@@ -13,7 +13,7 @@ namespace Graphic
 		ScreenOverlay(ei::Vec2(_pos[0],_pos[1] + _size[1]), _size),
 
 		m_characters( VertexArrayBuffer::PrimitiveType::POINT, {{VertexAttribute::VEC2, 11}, {VertexAttribute::VEC2, 12}, {VertexAttribute::VEC2, 13}, {VertexAttribute::VEC2, 14}} ),
-		m_texContainer("texture/combined.png"),
+		m_texContainer(Resources::GetTexture(_texture)),
 		m_preElem(nullptr),
 		m_showCursor(_cursor),
 		m_scrollable(false),
@@ -34,7 +34,7 @@ namespace Graphic
 		m_cursors.emplace_back("cursorAlt", Vec2(0.07f, 0.07f), Vec2(-0.035f, 0.035f));
 		m_cursors.back().texture.SetActive(false);
 
-		//cursor occupies adress [0]
+		//cursor occupies address [0]
 		RegisterElement(*static_cast<ScreenOverlay*>(&m_cursors[0].texture));
 
 		ShowCursor(_cursor);

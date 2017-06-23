@@ -19,7 +19,7 @@ namespace Graphic {
 		/// \param [in] _componentRenderer Reference to a renderer to show single component previews.
 		///		The HUD class does not take the ownership.
 		Hud( ei::Vec2 _pos=ei::Vec2(-1.f,-1.f) , ei::Vec2 _size=ei::Vec2(2.f,2.f),
-			const std::string& _texture = "defaultcontainer.png", CursorType _cursor = CursorType::Pointer);
+			const std::string& _texture = "defaultcontainer", CursorType _cursor = CursorType::Pointer);
 
 		/// \brief Creates an 2d element that is registered and managed by this hud.
 		/// \details For parameters required check the corresponding constructors.
@@ -83,9 +83,9 @@ namespace Graphic {
 
 		VertexArrayBuffer m_characters;/// < vertex buffer that holds the screen textures
 
-		Texture m_texContainer; ///< The basic texture container for screen elements; loads "combined.png" 
+		const Texture& m_texContainer; ///< The basic texture container for screen elements; loads "combined.png" 
 		// is created dynamically in constructor since it temporarily needs a hdd file handle
-		Jo::Files::MetaFileWrapper* m_texContainerMap; ///< the size and position informations of the elements in the container
+		const Jo::Files::MetaFileWrapper* m_texContainerMap; ///< the size and position informations of the elements in the container
 
 		// dynamic lists to hold and manage HUD elements
 		// all elements of m_containers and m_screenModels are as well in m_screenOverlays

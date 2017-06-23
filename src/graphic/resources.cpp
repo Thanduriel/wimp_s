@@ -16,6 +16,7 @@ namespace Graphic {
 	Font* Resources::fonts[];
 	Jo::Files::MetaFileWrapper* Resources::textureMap;
 	std::unordered_map<std::string, Mesh*> Resources::meshes;
+	std::unordered_map<std::string, Texture*> Resources::textures;
 
 
 	// ****************************************************** //
@@ -203,7 +204,7 @@ namespace Graphic {
 		if (!textureMap)
 		{
 			//test screen tex
-			Jo::Files::HDDFile file("texture/combined.sraw");
+			Jo::Files::HDDFile file("texture/defaultcontainer.sraw");
 			textureMap = new Jo::Files::MetaFileWrapper(file, Jo::Files::Format::SRAW);
 		}
 
@@ -217,12 +218,27 @@ namespace Graphic {
 		Mesh* mesh;
 		if (it == meshes.end())
 		{
-			mesh = new Mesh(_name);
+			mesh = new Mesh("models/" + _name + ".fbx");
 			meshes.emplace(_name, mesh);
 		}
 		else mesh = it->second;
 
 		return *mesh;
+	}
+
+	// ****************************************************** //
+	Texture& Resources::GetTexture(const std::string& _name)
+	{
+		auto it = textures.find(_name);
+		Texture* texture;
+		if (it == textures.end())
+		{
+			texture = new Texture("texture/" + _name + ".png");
+			textures.emplace(_name, texture);
+		}
+		else texture = it->second;
+
+		return *texture;
 	}
 
 	// ****************************************************** //
@@ -244,5 +260,8 @@ namespace Graphic {
 
 		for (auto& mesh : meshes)
 			delete mesh.second;
+
+		for (auto& texture : textures)
+			delete texture.second;
 	}
 }

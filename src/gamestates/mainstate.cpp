@@ -33,14 +33,14 @@ namespace GameStates {
 			Utils::Color32F(0.f, 1.f, 0.f, 0.6f), 2.f, 2.f,
 			50.f, GridComponent::TransitionInfo(600.f, 0.25f));
 		m_sceneGraph.Add(*grid);
-		Ship* ship = new Ship("models/spaceship.fbx", Vec3(0.f));
+		Ship* ship = new Ship("spaceship", Vec3(0.f));
 		m_sceneGraph.Add(*ship);
 		m_playerController = new Control::PlayerController(*ship, *grid, *blackHole);
 		Control::g_camera.Attach(*ship);
 		pointLight = new PointLight(Vec3(0.f), 5.f, Utils::Color8U(255_uc, 255_uc, 0_uc));
 		m_sceneGraph.Add(*pointLight);
 
-		m_sceneGraph.Add(*new Model("models/spaceship.fbx", Vec3(5.f, 0.f, 0.f), qidentity()));
+		m_sceneGraph.Add(*new Model("spaceship", Vec3(5.f, 0.f, 0.f), qidentity()));
 	//	model2->SetAngularVelocity(Vec3(1.f));
 	//	model2->SetVelocity(Vec3(1.f, 0.f, 1.f));
 
