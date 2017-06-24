@@ -21,19 +21,30 @@ namespace Game {
 	public:
 
 		// Add an heap allocated object to the scene management.
-		template<typename T>
+		template<class T>
 		void Add(T& _element)
 		{
 			static_assert(std::is_base_of<Actor, T>::value, "Only Actors can be managed by the SceneGraph.");
+
 			// ownership is taken here
 			m_actors.emplace_back(&_element);
-			
-			// Register components of T.
+
+			// let the actor register its own components
+			_element.RegisterComponents(*this);
+
+			// Register static components of T.
 			RegisterGeometryComponent(_element);
 			RegisterLightComponent(_element);
 			RegisterPPComponent(_element);
 			RegisterMarkerComponent(_element);
 		}
+
+		// register methods for specific components
+		// The correct one will be selected by the compiler if the static type is supplied.
+		// If the component does not require special treatment the least specific one is chosen.
+		void RegisterComponent(ConstActorComponent& _component);
+		void RegisterComponent(ActorComponent& _component);
+		void RegisterComponent(class BaseParticleSystemComponent& _component);
 
 		void Process(float _deltaTime);
 		void Draw();
@@ -58,7 +69,11 @@ namespace Game {
 		void RegisterMarkerComponent(T& _component) {}
 		void RegisterMarkerComponent(MarkerComponent& _component);
 
-		std::vector < std::unique_ptr<Actor>> m_actors;
+		std::vector < std::unique_ptr<Actor>> m_actors; // all active actors
+
+		std::vector <ActorComponent*> m_actorComponents;
+		std::vector<ConstActorComponent*> m_constActorComponents;
+		std::vector<BaseParticleSystemComponent*> m_particleSystemComponents;
 
 		std::vector<PostProcessComponent*> m_postProcessComponents;
 		std::vector<PointLightComponent*> m_lightComponents;

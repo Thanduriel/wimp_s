@@ -13,11 +13,12 @@ namespace Game {
 	class Actor
 	{
 	public:
-		// all constructors and destructors need to be defined in the cpp 
-		// to allow for forward declaration with unique_ptr
 		Actor();
 		Actor(const ei::Vec3& _position, const ei::Quaternion& _rotation = ei::qidentity());
 		virtual ~Actor();
+
+		// Override this to register components.
+		virtual void RegisterComponents(class SceneGraph& _sceneGraph) {}
 
 		// Access Position
 		void SetPosition(const ei::Vec3& _position) { m_position = _position; UpdateMatrices(); }
@@ -48,7 +49,7 @@ namespace Game {
 		// Is object to be destroyed?
 		bool IsDestroyed() const { return m_destroyed; }
 
-		virtual void Process(float _deltaTime);
+		virtual void Process(float _deltaTime) {}
 
 		bool CanTick() const { return m_canTick; }
 	protected:
@@ -66,9 +67,6 @@ namespace Game {
 
 		// shows if the object is to be destroyed
 		bool m_destroyed;
-
-		typedef std::vector< std::unique_ptr<class ActorDynamicComponent>> ComponentContainer;
-		ComponentContainer m_components;
 	};
 
 

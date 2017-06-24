@@ -44,12 +44,6 @@ namespace Game {
 	}
 
 
-	void Actor::Process(float _deltaTime)
-	{
-		for (auto& component : m_components)
-			component->ProcessComponent(_deltaTime);
-	}
-
 	// ****************************************************************** //
 	DynamicActor::DynamicActor(const ei::Vec3& _position, const ei::Quaternion& _rotation)
 		: Actor(_position, _rotation),

@@ -3,64 +3,43 @@
 #include <type_traits>
 #include "../core/actor.hpp"
 
+// passes the actual actor instance to the constructor of an actor
 #define THISACTOR *static_cast<Actor*>(this)
 
 namespace Game {
-
-	class ActorComponent
-	{
-	public:
-		ActorComponent(Actor& _owner) : m_actor(_owner) {}
-
-		const Actor& GetActor() const { return m_actor; }
-
-		void SetActive(bool _isActive) { m_isActive = _isActive; }
-		bool IsActive() const { return m_isActive; }
-	protected:
-		Actor& m_actor;
-		bool m_isActive; // should the component be processed (or rendered)
-	};
-
-	// Actor Component that does not change the state of the underlying actor.
-	// Can be easily parallelized.
-	class ConstActorComponent
-	{
-	public:
-		ConstActorComponent(const Actor& _owner) : m_actor(_owner) {}
-
-		const Actor& GetActor() const { return m_actor; }
-
-		void SetActive(bool _isActive) { m_isActive = _isActive; }
-		bool IsActive() const { return m_isActive; }
-	protected:
-		const Actor& m_actor;
-		bool m_isActive;
-	};
-
+	/* ActorComponent ***************************o
+	 * A functional unit that implements some behavior or visual effect
+	 * that can be added to an actor.
+	 */
 	namespace Details {
-		template <typename T>
-		class DynamicComponent : public T
+		template<typename T>
+		class BaseComponent
 		{
 		public:
+			BaseComponent(T _owner) : m_actor(_owner) {}
+
+			const T GetActor() const { return m_actor; }
+
 			virtual void OnRegister() {}
 			virtual void ProcessComponent(float _deltaTime) {}
+
+			void SetActive(bool _isActive) { m_isActive = _isActive; }
+			bool IsActive() const { return m_isActive; }
+		protected:
+			T m_actor;
+			bool m_isActive; // should the component be processed (or rendered)
 		};
 	}
 
-	// A component that can be added (or removed) at runtime to an actor.
-	// Multiple instances of the same kind can be attached to the same actor.
-	class ActorDynamicComponent : public ActorComponent
-	{
-	public:
-		virtual void OnRegister() {}
-		virtual void ProcessComponent(float _deltaTime) {}
-	};
-	// This is intentionally the same.
-	// The additional const guaranty makes multi threading easier
-	// but we do not need to much premature optimization right now.
-	typedef ActorDynamicComponent DynamicConstActorComponent; //Details::DynamicComponent<ConstActorComponent>
+	class ActorComponent : public Details::BaseComponent<Actor&> { using Details::BaseComponent<Actor&>::BaseComponent; };
 
-	// render component that is drawn after lighting.
+	// Actor Component that does not change the state of the owning actor.
+	// Can be easily parallelized. Use this as base class if possible.
+	class ConstActorComponent : public Details::BaseComponent<const Actor&> { using Details::BaseComponent<const Actor&>::BaseComponent; };
+
+
+	// A render component that is drawn after lighting
+	// to display 3d structures that are not part of the world and should thus not be illuminated.
 	class MarkerComponent : public ConstActorComponent
 	{
 	public:
@@ -70,7 +49,9 @@ namespace Game {
 		virtual void ProcessComponent(float _deltaTime) {}
 	};
 
-	// post processing effects are order depended
+	// Post processing effects are order depended and are drawn last.
+	// The graphics pipeline is set up to read from the frame buffer of previous
+	// steps and override the finished scene in the backbuffer.
 	class PostProcessComponent : public ConstActorComponent 
 	{
 	public:
@@ -80,7 +61,8 @@ namespace Game {
 	};
 }
 
-// Use this cast if you want to access a specific components functions.
+// Casts an Actor that consists of components by inheritance to the desired component.
+// Use this cast if you want to access a specific components functions that would otherwise clash.
 template<typename T, typename U>
 T& component_cast(U& _component)
 {

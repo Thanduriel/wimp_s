@@ -4,6 +4,8 @@
 #include "graphic/resources.hpp"
 #include "graphic/core/framebuffer.hpp"
 
+#include "gameplay/elements/particlesystemcomponent.hpp"
+
 using namespace Graphic;
 
 namespace Game {
@@ -14,6 +16,11 @@ namespace Game {
 		// this could be optimized by having an extra container for this
 		for (auto& actor : m_actors)
 			actor->Process(_deltaTime);
+
+		for (auto component : m_constActorComponents)
+			component->ProcessComponent(_deltaTime);
+		for (auto component : m_actorComponents)
+			component->ProcessComponent(_deltaTime);
 
 		for (auto component : m_markerComponents)
 			component->ProcessComponent(_deltaTime);
@@ -26,7 +33,11 @@ namespace Game {
 		for (auto component : m_geometryComponents)
 			component->Draw();
 
-		// apply lights to the framebuffer
+		// particles can be illuminated to
+		for (auto psComponent : m_particleSystemComponents)
+			psComponent->Draw();
+
+		// apply lights to the frame-buffer
 		for (auto component : m_lightComponents)
 			component->Draw();
 		Graphic::LightSystem::Draw();
@@ -36,7 +47,7 @@ namespace Game {
 		for (auto component : m_markerComponents)
 			if(component->IsActive()) component->Draw();
 
-		// render the framebuffer to the hardwarebackbuffer
+		// render the frame-buffer to the hardware back-buffer
 		Texture& tex = *Device::GetCurrentFramebufferBinding()->GetColorAttachments().begin()->pTexture;
 
 		Device::BindFramebuffer(nullptr);
@@ -44,10 +55,35 @@ namespace Game {
 		Device::SetTexture(tex, 0);
 		Device::DrawFullscreen();
 
-		// post processing reads from the framebuffer and writes to the backbuffer
+		// post processing reads from the frame-buffer and writes to the back-buffer
 		for (auto component : m_postProcessComponents)
 			component->Draw();
 	}
+
+	// *********************************************************** //
+	void SceneGraph::RegisterComponent(ConstActorComponent& _component)
+	{
+		m_constActorComponents.push_back(&_component);
+	}
+	void SceneGraph::RegisterComponent(ActorComponent& _component)
+	{
+		m_actorComponents.push_back(&_component);
+	}
+
+	void SceneGraph::RegisterComponent(BaseParticleSystemComponent& _component)
+	{
+		RegisterComponent(component_cast<ConstActorComponent>(_component));
+
+		// insert so that systems with the same RenderEffect are continuous
+		auto Pred = [](const BaseParticleSystemComponent* _lhs, const BaseParticleSystemComponent* _rhs)
+		{ return _lhs->getRenderType() < _rhs->getRenderType(); };
+
+		m_particleSystemComponents.insert(
+			std::upper_bound(m_particleSystemComponents.begin(), m_particleSystemComponents.end(), &_component, Pred),
+			&_component
+		);
+	}
+
 
 	void SceneGraph::RegisterGeometryComponent(GeometryComponent& _component)
 	{
@@ -89,6 +125,7 @@ namespace Game {
 		RemoveDestroyed(m_lightComponents);
 		RemoveDestroyed(m_postProcessComponents);
 		RemoveDestroyed(m_markerComponents);
+		RemoveDestroyed(m_particleSystemComponents);
 
 		// actual destruction is last
 		auto it = std::remove_if(m_actors.begin(), m_actors.end(), [](const std::unique_ptr<Actor>& _actor)

@@ -11,6 +11,8 @@
 #include "gameplay/elements/grid.hpp"
 #include "gameplay/elements/blackhole.hpp"
 #include "gameplay/elements/light.hpp"
+#include "gameplay/elements/particlesystemcomponent.hpp"
+#include "generators/random.hpp"
 
 namespace GameStates {
 
@@ -22,6 +24,7 @@ namespace GameStates {
 
 	Game::PointLight* pointLight;
 	Game::BlackHole* blackHole;
+	Game::ParticleSystemActor<Graphic::ParticleSystems::BASIC_SYSTEM>* particleSystem;
 
 	MainState::MainState()
 		: m_starbackground(2000, 20000.f, 14000)
@@ -37,13 +40,18 @@ namespace GameStates {
 		m_sceneGraph.Add(*ship);
 		m_playerController = new Control::PlayerController(*ship, *grid, *blackHole);
 		Control::g_camera.Attach(*ship);
+
+		// some test actors
 		pointLight = new PointLight(Vec3(0.f), 5.f, Utils::Color8U(255_uc, 255_uc, 0_uc));
 		m_sceneGraph.Add(*pointLight);
 
 		m_sceneGraph.Add(*new Model("spaceship", Vec3(5.f, 0.f, 0.f), qidentity()));
 	//	model2->SetAngularVelocity(Vec3(1.f));
 	//	model2->SetVelocity(Vec3(1.f, 0.f, 1.f));
+		particleSystem = new Game::ParticleSystemActor<Graphic::ParticleSystems::BASIC_SYSTEM>(Vec3(0.f), Graphic::ParticleSystems::RenderType::BLOB);
+		m_sceneGraph.Add(*particleSystem);
 
+		// examples for how to work with the hud
 		auto& label = m_hud.GetDebugLabel();
 		label.SetText("Let there be strings!");
 
@@ -71,7 +79,15 @@ namespace GameStates {
 		
 		Vec4 pos = m_playerController->GetShip().GetTransformation() * Vec4(0.5f, 0.f, 0.f, 1.f);
 	//	pointLight->SetPosition(m_playerController->GetShip().GetPosition() + Vec3(0.f,1.f,0.f));
-		pointLight->SetPosition(ei::Vec3(cos(t), 0.f, sin(t)));
+		Vec3 p = ei::Vec3(cos(t), 0.f, sin(t));
+		pointLight->SetPosition(p);
+
+		static Generators::RandomGenerator rng(0x123156);
+		particleSystem->AddParticle(Vec3(0.f), //position
+			rng.Direction() * rng.Uniform(0.3f, 2.f), //velocity
+			6.1f, //life time
+			Utils::Color8U(0.2f, 0.4f, 0.5f, 0.5f).RGBA(),
+			0.2f);
 	}
 
 	void MainState::Draw(float _deltaTime)

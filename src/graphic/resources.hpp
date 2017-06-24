@@ -22,6 +22,8 @@ namespace Graphic {
 		LINES,
 		SCREEN_OUTPUT,
 		BLACKHOLE,
+		PARTICLE_BLOB,
+		PARTICLE_TEXQAUD,
 		COUNT
 	};
 

@@ -80,6 +80,13 @@ namespace Graphic {
 			effects[ind]->BindUniformBuffer(GetUBO(UniformBuffers::GLOBAL));
 			effects[ind]->BindTexture("screenTex", 0, Resources::GetSamplerState(SamplerStates::LINEAR));
 			break;
+		case Effects::PARTICLE_BLOB:
+			effects[ind] = new Effect("shader/particle/blob.vs", "shader/particle/blob.ps", "shader/particle/blob.gs");
+			effects[ind]->SetBlendState(BlendState(Graphic::BlendState::BLEND_OPERATION::MAX, Graphic::BlendState::BLEND::SRC_ALPHA, Graphic::BlendState::BLEND::ONE));
+			effects[ind]->SetDepthStencilState(DepthStencilState(Graphic::DepthStencilState::COMPARISON_FUNC::LESS, true));
+			effects[ind]->BindUniformBuffer(GetUBO(UniformBuffers::SIMPLE_OBJECT));
+			effects[ind]->BindUniformBuffer(GetUBO(UniformBuffers::GLOBAL));
+			break;
 		default:
 			Assert(false, "This effect is not implemented.");
 			break;

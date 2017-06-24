@@ -38,11 +38,10 @@ namespace Generators {
 
 		void discard(result_type _num)
 		{
-			for (; 0 < _Nskip; --_Nskip)
+			for (; 0 < _num; --_num)
 				(*this)();
 		}
 	protected:
-		result_type m_seed;
 	};
 
 	// decent and fast generator with  a period of 2^32
@@ -82,7 +81,7 @@ namespace Generators {
 	typedef Xorshift128 DefaultRandomGen;
 
 	// a simple sampler for most common distributions
-	template <typename GenT>
+	template <typename GenT = DefaultRandomGen>
 	class RandomSampler
 	{
 	public:
@@ -143,12 +142,23 @@ namespace Generators {
 		// a random 3d direction
 		ei::Vec3 Direction()
 		{
-			float phi = 2 * PI* Uniform();
+			float phi = 2 * ei::PI* Uniform();
 			float cosTheta = 2.0f * Uniform() - 1.0f;
 			float sinTheta = sqrt((1.0f - cosTheta) * (1.0f + cosTheta));
 			return ei::Vec3(sinTheta * sin(phi), sinTheta * cos(phi), cosTheta);
 		}
 	private:
 		GenT& m_generator;
+	};
+
+	// The combination of a generator and a sampler for ease of use
+	// if you just want some random numbers.
+	class RandomGenerator :public DefaultRandomGen, public RandomSampler<DefaultRandomGen>
+	{
+	public:
+		RandomGenerator(uint32_t _seed) : 
+			DefaultRandomGen(_seed),
+			RandomSampler<DefaultRandomGen>(static_cast<DefaultRandomGen&>(*this))
+		{}
 	};
 }
