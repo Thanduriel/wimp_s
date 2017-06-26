@@ -20,6 +20,8 @@ namespace Graphic{
 		BotRight
 	};
 
+	typedef DefinitionPoint DefP;
+
 	class ScreenOverlay;
 
 	// a position on the screen that can be described relative to a ScreenOverlay
@@ -40,6 +42,7 @@ namespace Graphic{
 
 		/// \brief Functions to alter the rectangle in its lifetime
 		virtual void SetPosition(ei::Vec2 _pos);
+		ei::Vec2 GetPosition() const { return m_positionDef; }
 
 		/// \brief Called once by the hud to add it and its child.
 		/// \details The hud should take full ownership of all elements.
@@ -115,6 +118,7 @@ namespace Graphic{
 		/// \brief Only triggered for the overlay the mouse is in; Does nothing by default 
 		virtual bool Scroll(double _dx, double _dy){ return false; };
 
+		void SetOnMouseUp(std::function<void()>&& _event) { OnMouseUp = std::move(_event); }
 	protected:
 		void UpdateParams(); // calculates real size and position from the defined params
 

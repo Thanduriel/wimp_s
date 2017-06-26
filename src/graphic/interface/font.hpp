@@ -70,8 +70,7 @@ namespace Graphic {
 		void SetVisible(bool _visible) { m_visible = _visible; }
 
 		/// \brief Sets the Position on the screen.
-		void SetPosition(ei::Vec2 _screenPos);
-		const ei::Vec2 GetPosition() const { return m_position; };
+		void SetPosition(ei::Vec2 _screenPos) override;
 
 		/// \brief Sets the default size of the Textrender which gets used while no control char overrides it
 		void SetDefaultSize(float _size);
@@ -83,7 +82,7 @@ namespace Graphic {
 		/// \details chars are stretched to preserve the right view on the screen
 		ei::Vec2 GetCharSize();
 
-		/// \brief returns the size of the smallest rectangle in screen coords in wich the displayed text would fit in
+		/// \brief returns the size of the smallest rectangle in screen coords in which the displayed text would fit in
 		ei::Vec2 GetRectangle() const;
 
 		/// \brief Scales the font size so that the text fills the area on the screen

@@ -50,17 +50,6 @@ namespace GameStates {
 	//	model2->SetVelocity(Vec3(1.f, 0.f, 1.f));
 		particleSystem = new Game::ParticleSystemActor<Graphic::ParticleSystems::BASIC_SYSTEM>(Vec3(0.f), Graphic::ParticleSystems::RenderType::BLOB);
 		m_sceneGraph.Add(*particleSystem);
-
-		// examples for how to work with the hud
-		auto& label = m_hud.GetDebugLabel();
-		label.SetText("Let there be strings!");
-
-		auto& btn0 = m_hud.CreateScreenElement<Graphic::Button>("menuBtn", Vec2(0.f, 0.f), Vec2(0.f),
-			DefinitionPoint::BotRight, ScreenPosition::Anchor(DefinitionPoint::BotRight, &m_hud), "button");
-		btn0.Scale(Vec2(0.65f));
-
-		ScreenOverlay* el = &m_hud.CreateScreenElement<ScreenTexture>("simpleWindow", PixelCoord(50, 100));
-		el->Scale(Vec2(0.33f));
 	}
 
 	MainState::~MainState()
