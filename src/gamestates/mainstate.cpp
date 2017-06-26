@@ -30,9 +30,9 @@ namespace GameStates {
 		: m_starbackground(2000, 20000.f, 14000)
 	{
 		// setup player controller
-		blackHole = new BlackHole(ei::Vec3(-5.f), 5.f);
+		blackHole = new BlackHole(ei::Vec3(-5.f));
 		m_sceneGraph.Add(*blackHole);
-		Grid* grid = new Game::Grid(ei::Vec3(0.f), ei::qidentity(), 
+		Grid* grid = new Game::Grid(ei::Vec3(0.f), 
 			Utils::Color32F(0.f, 1.f, 0.f, 0.6f), 2.f, 2.f,
 			50.f, GridComponent::TransitionInfo(600.f, 0.25f));
 		m_sceneGraph.Add(*grid);
@@ -42,13 +42,13 @@ namespace GameStates {
 		Control::g_camera.Attach(*ship);
 
 		// some test actors
-		pointLight = new PointLight(Vec3(0.f), 5.f, Utils::Color8U(255_uc, 255_uc, 0_uc));
+		pointLight = new PointLight(Vec3(0.f), Vec3(0.f), 5.f, Utils::Color8U(255_uc, 255_uc, 0_uc));
 		m_sceneGraph.Add(*pointLight);
 
 		m_sceneGraph.Add(*new Model("spaceship", Vec3(5.f, 0.f, 0.f), qidentity()));
 	//	model2->SetAngularVelocity(Vec3(1.f));
 	//	model2->SetVelocity(Vec3(1.f, 0.f, 1.f));
-		particleSystem = new Game::ParticleSystemActor<Graphic::ParticleSystems::BASIC_SYSTEM>(Vec3(0.f), Graphic::ParticleSystems::RenderType::BLOB);
+		particleSystem = new Game::ParticleSystemActor<Graphic::ParticleSystems::BASIC_SYSTEM>(Vec3(0.f), Vec3(0.f), Graphic::ParticleSystems::RenderType::BLOB);
 		m_sceneGraph.Add(*particleSystem);
 	}
 

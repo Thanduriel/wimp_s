@@ -1,9 +1,10 @@
 #pragma once
 
 #include "graphic/effects/particlesystem.hpp"
-#include "component.hpp"
+#include "gameplay/core/component.hpp"
 #include "math/transformation.hpp"
 #include "gameplay/scenegraph.hpp"
+#include "gameplay/core/singlecomponentactor.hpp"
 
 namespace Game {
 	// Base type that can be used to identify a ParticleSystemComponent in compile time.
@@ -40,16 +41,9 @@ namespace Game {
 	};
 
 	template<ei::uint PFlags>
-	class ParticleSystemActor : public ParticleSystemComponent<PFlags>, public Actor
+	class ParticleSystemActor : public SingleComponentActor<ParticleSystemComponent<PFlags>>
 	{
 	public:
-		ParticleSystemActor(const ei::Vec3& _position, Graphic::ParticleSystems::RenderType _type)
-			: ParticleSystemComponent<PFlags>(THISACTOR, _position, _type)
-		{}
-
-		void RegisterComponents(SceneGraph& _sceneGraph)
-		{
-			_sceneGraph.RegisterComponent(component_cast<BaseParticleSystemComponent>(*this));
-		}
+		using SuperType::SingleComponentActor;
 	};
 }

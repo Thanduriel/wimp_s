@@ -1,8 +1,7 @@
 #pragma once
 
-#include "gameplay/core/actor.hpp"
+#include "gameplay/core/singlecomponentactor.hpp"
 #include "graphic/effects/blackholerenderer.hpp"
-#include "component.hpp"
 
 namespace Game
 {
@@ -16,9 +15,9 @@ namespace Game
 		Graphic::BlackHoleRenderer m_renderer;
 	};
 
-	class BlackHole : public Actor, public BlackHoleComponent
+	class BlackHole : public SingleComponentActor<BlackHoleComponent>
 	{
 	public:
-		BlackHole(const ei::Vec3& _position, float _radius);
+		using SuperType::SingleComponentActor;
 	};
 }

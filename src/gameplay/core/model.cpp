@@ -2,6 +2,7 @@
 #include "graphic/resources.hpp"
 #include "graphic/core/uniformbuffer.hpp"
 #include "control/camera.hpp"
+#include "gameplay/scenegraph.hpp"
 
 namespace Game {
 	
@@ -28,4 +29,9 @@ namespace Game {
 		: DynamicActor(_position, _rotation),
 		GeometryComponent(THISACTOR, _pFile)
 	{}
+
+	void Model::RegisterComponents(SceneGraph& _sceneGraph)
+	{
+		_sceneGraph.RegisterComponent(component_cast<GeometryComponent>(*this));
+	}
 }

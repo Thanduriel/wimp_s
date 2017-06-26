@@ -6,7 +6,7 @@
 #include "gameplay/elements/grid.hpp"
 #include "gameplay/core/model.hpp"
 #include "ei/3dintersection.hpp"
-#include "gameplay/elements/component.hpp"
+#include "gameplay/core/component.hpp"
 #include "gameplay/elements/ship.hpp"
 
 namespace Control

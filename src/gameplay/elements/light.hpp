@@ -1,7 +1,6 @@
 #pragma once
 
-#include "gameplay/core/actor.hpp"
-#include "component.hpp"
+#include "gameplay/core/singlecomponentactor.hpp"
 #include "graphic/effects/lightsystem.hpp"
 #include "math/transformation.hpp"
 
@@ -17,9 +16,9 @@ namespace Game {
 		Graphic::LightHandle m_handle;
 	};
 
-	class PointLight : public Actor, public PointLightComponent
+	class PointLight : public SingleComponentActor<PointLightComponent>
 	{
 	public:
-		PointLight(const ei::Vec3& _position, float _radius, Utils::Color8U _color);
+		using SuperType::SingleComponentActor;
 	};
 }

@@ -5,8 +5,6 @@
 #include <memory>
 #include <array>
 
-#include "gameplay/elements/light.hpp"
-#include "gameplay/elements/blackhole.hpp"
 #include "gameplay/core/model.hpp"
 #include "core/actor.hpp"
 
@@ -31,12 +29,6 @@ namespace Game {
 
 			// let the actor register its own components
 			_element.RegisterComponents(*this);
-
-			// Register static components of T.
-			RegisterGeometryComponent(_element);
-			RegisterLightComponent(_element);
-			RegisterPPComponent(_element);
-			RegisterMarkerComponent(_element);
 		}
 
 		// register methods for specific components
@@ -45,30 +37,16 @@ namespace Game {
 		void RegisterComponent(ConstActorComponent& _component);
 		void RegisterComponent(ActorComponent& _component);
 		void RegisterComponent(class BaseParticleSystemComponent& _component);
+		void RegisterComponent(GeometryComponent& _component);
+		void RegisterComponent(class PointLightComponent& _component);
+		void RegisterComponent(class PostProcessComponent& _component);
+		void RegisterComponent(class MarkerComponent& _component);
 
 		void Process(float _deltaTime);
 		void Draw();
 
 		void CleanUp();
 	private:
-		// If an object does not have the specified component
-		// the empty register implementation is used.
-		template<typename T, typename = std::enable_if_t<!std::is_base_of_v<GeometryComponent, T>>>
-		void RegisterGeometryComponent(T& _component) {}
-		void RegisterGeometryComponent(GeometryComponent& _component);
-
-		template<typename T, typename = std::enable_if_t<!std::is_base_of_v<PostProcessComponent, T>>>
-		void RegisterPPComponent(T& _component) {}
-		void RegisterPPComponent(PostProcessComponent& _component);
-
-		template<typename T, typename = std::enable_if_t<!std::is_base_of_v<PointLightComponent, T>>>
-		void RegisterLightComponent(T& _component) {}
-		void RegisterLightComponent(PointLightComponent& _component);
-
-		template<typename T, typename = std::enable_if_t<!std::is_base_of_v<MarkerComponent, T>>>
-		void RegisterMarkerComponent(T& _component) {}
-		void RegisterMarkerComponent(MarkerComponent& _component);
-
 		std::vector < std::unique_ptr<Actor>> m_actors; // all active actors
 
 		std::vector <ActorComponent*> m_actorComponents;

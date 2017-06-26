@@ -67,13 +67,6 @@ namespace Game {
 		m_lineRenderer.Draw(Control::g_camera.GetViewProjection() * m_actor.GetTransformation());
 	}
 
-	Grid::Grid(const ei::Vec3& _position, const ei::Quaternion& _rotation,
-		const Utils::Color32F& _color, float _resolutionX, float _resolutionZ, float _radius, TransitionInfo&& _transitionInfo)
-		: Actor(_position, _rotation),
-		GridComponent(THISACTOR, _color, _resolutionX, _resolutionZ, _radius, std::move(_transitionInfo))
-	{
-	}
-
 	bool GridComponent::closerToCenter(const std::pair<ei::Vec3,ei::Vec3>& _lhs, const std::pair<ei::Vec3, ei::Vec3>& _rhs)
 	{
 		return ei::dot(_lhs.first, _lhs.first) < ei::dot(_rhs.first, _rhs.first);

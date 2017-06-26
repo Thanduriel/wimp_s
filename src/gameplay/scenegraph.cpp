@@ -4,6 +4,8 @@
 #include "graphic/resources.hpp"
 #include "graphic/core/framebuffer.hpp"
 
+#include "gameplay/elements/light.hpp"
+#include "gameplay/elements/blackhole.hpp"
 #include "gameplay/elements/particlesystemcomponent.hpp"
 
 using namespace Graphic;
@@ -84,23 +86,22 @@ namespace Game {
 		);
 	}
 
-
-	void SceneGraph::RegisterGeometryComponent(GeometryComponent& _component)
+	void SceneGraph::RegisterComponent(GeometryComponent& _component)
 	{
 		m_geometryComponents.push_back(&_component);
 	}
 
-	void SceneGraph::RegisterLightComponent(PointLightComponent& _component)
+	void SceneGraph::RegisterComponent(PointLightComponent& _component)
 	{
 		m_lightComponents.push_back(&_component);
 	}
 
-	void SceneGraph::RegisterPPComponent(PostProcessComponent& _component)
+	void SceneGraph::RegisterComponent(PostProcessComponent& _component)
 	{
 		m_postProcessComponents.push_back(&_component);
 	}
 
-	void SceneGraph::RegisterMarkerComponent(MarkerComponent& _component)
+	void SceneGraph::RegisterComponent(MarkerComponent& _component)
 	{
 		m_markerComponents.push_back(&_component);
 	}

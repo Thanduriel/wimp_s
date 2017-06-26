@@ -1,5 +1,5 @@
 #include "actor.hpp"
-#include "gameplay/elements/component.hpp"
+#include "component.hpp"
 
 namespace Game {
 

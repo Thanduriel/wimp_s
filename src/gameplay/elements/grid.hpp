@@ -3,8 +3,7 @@
 #include <functional>
 
 #include "graphic/effects/linerenderer.hpp"
-#include "gameplay/core/actor.hpp"
-#include "component.hpp"
+#include "gameplay/core/singlecomponentactor.hpp"
 #include "utils/color.hpp"
 
 namespace Game {
@@ -32,6 +31,7 @@ namespace Game {
 			ComparisonFunc comparisonFunction;
 		};
 
+		// Pass the transitionInfo as rvalue if copying the function is expensive.
 		GridComponent(Actor& _actor, const Utils::Color32F& _color,
 			float _resolutionX = 1.f, float _resolutionZ = 1.f,
 			float _radius = 50.f,
@@ -57,14 +57,9 @@ namespace Game {
 		bool m_fadeIn; // should lines be added or removed
 	};
 
-	class Grid : public Actor, public GridComponent
+	class Grid : public SingleComponentActor<GridComponent>
 	{
 	public:
-		// Pass the transitionInfo as rvalue if copying the function is expensive.
-		Grid(const ei::Vec3& _position, const ei::Quaternion& _rotation,
-			const Utils::Color32F& _color,
-			float _resolutionX = 1.f, float _resolutionZ = 1.f,
-			float _radius = 50.f,
-			TransitionInfo&& _transitionInfo = TransitionInfo{});
+		using SuperType::SingleComponentActor;
 	};
 }

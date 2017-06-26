@@ -1,7 +1,7 @@
 #pragma once
 
 #include "actor.hpp"
-#include "../elements/component.hpp"
+#include "component.hpp"
 #include "graphic/mesh.hpp"
 
 namespace Game {
@@ -24,5 +24,7 @@ namespace Game {
 	{
 	public:
 		Model(const std::string& _pFile, const ei::Vec3&_position, const ei::Quaternion&_rotation);
+
+		void RegisterComponents(class SceneGraph& _sceneGraph);
 	};
 }

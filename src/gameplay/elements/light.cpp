@@ -24,11 +24,4 @@ namespace Game{
 	{
 		LightSystem::DeRegister(m_handle);
 	}
-
-	PointLight::PointLight(const ei::Vec3& _position, float _radius, Utils::Color8U _color)
-		: Actor(_position),
-		PointLightComponent(THISACTOR, ei::Vec3(0.f), _radius, _color)
-	{
-
-	}
 }
