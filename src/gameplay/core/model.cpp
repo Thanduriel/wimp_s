@@ -16,7 +16,7 @@ namespace Game {
 		Graphic::UniformBuffer& objectConstants = Graphic::Resources::GetUBO(Graphic::UniformBuffers::OBJECT_GEOMETRY);
 		ei::Mat4x4 modelViewProjection = Control::g_camera.GetViewProjection() * m_actor.GetTransformation();
 		// is actually the transpose(inverse(matrix)) but this only consists of rotation and translation
-		// thus this operations cancel themself out
+		// thus this operations cancel them self out
 		ei::Mat4x4 normalTransform = Control::g_camera.GetView() * m_actor.GetTransformation();
 
 		objectConstants["c_WorldViewProjection"] = modelViewProjection;

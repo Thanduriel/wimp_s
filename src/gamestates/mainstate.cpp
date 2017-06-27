@@ -34,7 +34,7 @@ namespace GameStates {
 		m_sceneGraph.Add(*blackHole);
 		Grid* grid = new Game::Grid(ei::Vec3(0.f), 
 			Utils::Color32F(0.f, 1.f, 0.f, 0.6f), 2.f, 2.f,
-			50.f, GridComponent::TransitionInfo(600.f, 0.25f));
+			50.f, GridComponent::TransitionInfo(4800.f, 0.25f));
 		m_sceneGraph.Add(*grid);
 		Ship* ship = new Ship("spaceship", Vec3(0.f));
 		m_sceneGraph.Add(*ship);

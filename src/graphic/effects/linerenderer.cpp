@@ -8,7 +8,8 @@ namespace Graphic {
 	LineRenderer::LineRenderer(const Utils::Color32F& _color, float _thickness)
 		: m_thickness(_thickness),
 		m_color(_color),
-		m_lineVertices(VertexArrayBuffer::PrimitiveType::LINE, { { VertexAttribute::VEC3,0 } })
+		m_lineVertices(VertexArrayBuffer::PrimitiveType::LINE, { { VertexAttribute::VEC3,0 } }),
+		m_numVertices(0)
 	{}
 
 	void LineRenderer::Add(const ei::Vec3& _begin, const ei::Vec3& _end)
@@ -19,14 +20,16 @@ namespace Graphic {
 		vbGuard->Add(vertex);
 		vertex.position = _end;
 		vbGuard->Add(vertex);
+
+		m_numVertices += 2;
 	}
 
 	void LineRenderer::Remove()
 	{
 		auto vbGuard = m_lineVertices.GetBuffer(0);
-		int num = m_lineVertices.GetNumVertices();
-		vbGuard->Remove<Vertex>(num - 1);
-		vbGuard->Remove<Vertex>(num - 2);
+		
+		vbGuard->Remove<Vertex>(--m_numVertices);
+		vbGuard->Remove<Vertex>(--m_numVertices);
 	}
 
 	void LineRenderer::Draw(const ei::Mat4x4& _worldViewProjection)
@@ -38,6 +41,6 @@ namespace Graphic {
 		ubo["c_Color"] = m_color;
 		ubo["c_Thickness"] = m_thickness;
 
-		Device::DrawVertices(m_lineVertices, 0, m_lineVertices.GetNumVertices());
+		Device::DrawVertices(m_lineVertices, 0, m_numVertices);
 	}
 }

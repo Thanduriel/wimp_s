@@ -27,7 +27,7 @@ namespace Game {
 				: speed(_speed), comparisonFunction(std::move(_func)), speedModifier(_mod) {}
 
 			float speed; // in lines per second
-			float speedModifier; // acceleration / slow dependend on progress
+			float speedModifier; // acceleration / slow depended on progress
 			ComparisonFunc comparisonFunction;
 		};
 
@@ -41,8 +41,8 @@ namespace Game {
 		void Draw() override;
 
 		// Reverses the order of the current transition.
-		// Switches between adding and reomving lines.
-		void ReverseTransition() { m_fadeIn = !m_fadeIn; m_linesShown = (float)m_currentLine; }
+		// Switches between adding and removing lines.
+		void ReverseTransition() { m_fadeIn = !m_fadeIn; }
 
 	private:
 		static bool closerToCenter(const std::pair<ei::Vec3, ei::Vec3>&,

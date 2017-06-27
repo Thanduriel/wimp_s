@@ -16,6 +16,8 @@ namespace Graphic {
 		// Removes the line added last.
 		void Remove();
 
+		void SetLinesShown(int _num) { m_numVertices = _num * 2; }
+
 		void Draw(const ei::Mat4x4& _worldViewProjection);
 	private:
 		struct Vertex
@@ -26,5 +28,6 @@ namespace Graphic {
 		float m_thickness;
 		Utils::Color32F m_color;
 		Graphic::VertexArrayBuffer m_lineVertices;
+		int m_numVertices;
 	};
 }

@@ -33,6 +33,9 @@ namespace Game {
 		}
 		else
 			std::sort(m_lines.begin(), m_lines.end(), m_transitionInfo.comparisonFunction);
+
+		for (auto& line : m_lines)
+			m_lineRenderer.Add(line.first, line.second);
 	}
 
 	void GridComponent::ProcessComponent(float _deltaTime)
@@ -45,21 +48,14 @@ namespace Game {
 		if (m_fadeIn)
 		{
 			m_linesShown += _deltaTime * m_transitionInfo.speed * fact;
-
-			size_t newLine = (size_t)m_linesShown;
-			newLine = std::min(newLine, m_lines.size() - 1);
-			for (; m_currentLine < newLine; ++m_currentLine)
-				m_lineRenderer.Add(m_lines[m_currentLine].first, m_lines[m_currentLine].second);
+			m_linesShown = std::min(m_linesShown, (float)m_lines.size() - 1.f);
 		}
 		else
 		{
 			m_linesShown -= _deltaTime * m_transitionInfo.speed * fact;
-
-			size_t newLine = (size_t)m_linesShown;
-			newLine = std::max(newLine, (size_t)0);
-			for (; m_currentLine > newLine; --m_currentLine)
-				m_lineRenderer.Remove();
+			m_linesShown = std::max(m_linesShown, 0.f);
 		}
+		m_lineRenderer.SetLinesShown((int)m_linesShown);
 	}
 	
 	void GridComponent::Draw()

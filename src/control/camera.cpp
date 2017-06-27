@@ -11,7 +11,7 @@ namespace Control {
 
 	Camera g_camera(ei::Vec3(0.f), ei::qidentity(), 0.9f, 16.f / 9.f);
 
-	const float MOVEMENT_FACTOR = 20.0f;
+	const float MOVEMENT_FACTOR = 60.0f;
 	const float ROTATION_FACTOR = 7.f;
 
 	Camera::Camera(const Vec3& _position, const Quaternion& _rotation, float _fov, float _aspectRatio)
