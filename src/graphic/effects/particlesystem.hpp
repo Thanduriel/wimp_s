@@ -295,10 +295,11 @@ namespace Graphic {
 		{
 		public:
 			SystemActions(RenderType _type);
-		//	virtual void Simulate(float _deltaTime) {}
-			void Draw( const ei::Mat4x4& _transformation, size_t _numVertices);
-			RenderType getRenderType() const { return m_renderer; }
-		//	virtual uint32 GetNumParticles() const { return 0; }
+			virtual ~SystemActions() {}
+			virtual void Simulate(float _deltaTime) {}
+			void Draw(size_t _numVertices);
+			RenderType GetRenderType() const { return m_renderer; }
+			virtual uint32 GetNumParticles() const { return 0; }
 		protected:
 			RenderType m_renderer;
 			VertexArrayBuffer m_particleVertices;
@@ -311,24 +312,25 @@ namespace Graphic {
 		// would not compile. The trick is that an empty dummy function from the default
 		// type gets called instead of invalid code if a condition is not fulfilled.
 		template<uint PFlags>
-		class System :
+		class System : public SystemActions,
 			public virtual SystemData<PFlags>,
 			public inherit_conditional<(PFlags & Component::POSITION) != 0 && (PFlags & Component::VELOCITY) != 0, FuncAdvection<SystemData<PFlags>>, FuncNOP<SystemData<PFlags>>>,
 			public inherit_conditional<(PFlags & Component::LIFETIME) != 0, FuncDie<SystemData<PFlags>>, FuncNOP<SystemData<PFlags>>>,
 			public inherit_conditional<(PFlags & Component::POSITION) != 0 && (PFlags & Component::VELOCITY) != 0 && (PFlags & Component::GRAVITATION) != 0, FuncGravitation<SystemData<PFlags>>, FuncNOP<SystemData<PFlags>>>
 		{
 		public:
-			System(VertexArrayBuffer& _vbo)
+			System(RenderType _type)
+				: SystemActions(_type)
 			{
 				// The subconstructors of SystemData and SystemActions created all
 				// GPU resources, but they do not know each other.
-				inherit_conditional<(PFlags & Component::POSITION) != 0, PositionComponents, NoComponent>::AttachTo(_vbo);
-				inherit_conditional<(PFlags & Component::COLOR) != 0, ColorComponents, PSColorComponent>::AttachTo(_vbo);
-				inherit_conditional<(PFlags & Component::SIZE) != 0, SizeComponents, PSSizeComponent>::AttachTo(_vbo);
-				inherit_conditional<(PFlags & Component::DIRECTION) != 0, DirectionComponents, NoComponent>::AttachTo(_vbo);
+				inherit_conditional<(PFlags & Component::POSITION) != 0, PositionComponents, NoComponent>::AttachTo(m_particleVertices);
+				inherit_conditional<(PFlags & Component::COLOR) != 0, ColorComponents, PSColorComponent>::AttachTo(m_particleVertices);
+				inherit_conditional<(PFlags & Component::SIZE) != 0, SizeComponents, PSSizeComponent>::AttachTo(m_particleVertices);
+				inherit_conditional<(PFlags & Component::DIRECTION) != 0, DirectionComponents, NoComponent>::AttachTo(m_particleVertices);
 			}
 
-			void Simulate(float _deltaTime)
+			void Simulate(float _deltaTime) override
 			{
 				inherit_conditional<((PFlags & Component::POSITION) != 0) && ((PFlags & Component::VELOCITY) != 0), FuncAdvection<SystemData<PFlags>>, FuncNOP<SystemData<PFlags>>>::Run(_deltaTime);
 				inherit_conditional<((PFlags & Component::LIFETIME) != 0), FuncDie<SystemData<PFlags>>, FuncNOP<SystemData<PFlags>>>::Run(_deltaTime);
@@ -341,8 +343,44 @@ namespace Graphic {
 		const ei::uint BASIC_SYSTEM = Component::POSITION
 			| Component::VELOCITY | Component::LIFETIME
 			| Component::COLOR | Component::SIZE;
-	}
+
+		typedef std::pair< ei::uint, RenderType> PSKey;
+
+		class Manager
+		{
+		public:
+			static void Draw(const Control::Camera& _camera);
+			static void Process(float _deltaTime);
+
+			template<uint PFlags>
+			static System<PFlags>& Get(RenderType _type)
+			{
+				PSKey key = std::make_pair(PFlags, _type);
+				auto it = std::find_if(m_particleSystems.begin(), m_particleSystems.end(), [=](const SystemPair& _sys)
+				{
+					return _sys.first == key;
+				});
+				if (it == m_particleSystems.end())
+				{
+
+					auto sysPair = SystemPair(key, std::unique_ptr<System<PFlags>>( new System<PFlags>(_type)));
+
+					// insert so that systems with the same RenderEffect are continuous
+					auto Pred = [](const SystemPair& _lhs, const SystemPair& _rhs)
+					{ return _lhs.second->GetRenderType() < _rhs.second->GetRenderType(); };
+
+					it = m_particleSystems.insert(
+						std::upper_bound(m_particleSystems.begin(), m_particleSystems.end(), sysPair, Pred),
+						std::move(sysPair)
+					);
+				}
+				return static_cast<System<PFlags>&>(*it->second);
+			}
+		private:
+			typedef std::pair<PSKey, std::unique_ptr<SystemActions>> SystemPair;
+			static std::vector<  SystemPair > m_particleSystems;
+		};
+	} // namespace ParticleSystems
 
 	using PSComponent = ParticleSystems::Component;
-
 } // namespace Graphic

@@ -36,7 +36,7 @@ namespace Game {
 		template<typename T, typename... Args>
 		T& Make(const ei::Vec3& _position, Args&&... _args)
 		{
-			ei::Vec3 pos(m_actor.GetTransformation() * ei::Vec4(_position, 1));
+			ei::Vec3 pos(m_actor.GetTransformation() * ei::Vec4(_position, 1.f));
 			auto p = new T(pos, std::forward<Args>(_args)...);
 
 			Add(*p);

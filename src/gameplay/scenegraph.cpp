@@ -25,6 +25,8 @@ namespace Game {
 		for (auto component : m_actorComponents)
 			component->ProcessComponent(_deltaTime);
 
+		Graphic::ParticleSystems::Manager::Process(_deltaTime);
+
 		for (auto component : m_markerComponents)
 			component->ProcessComponent(_deltaTime);
 	}
@@ -36,9 +38,8 @@ namespace Game {
 		for (auto component : m_geometryComponents)
 			component->Draw();
 
-		// particles can be illuminated to
-		for (auto psComponent : m_particleSystemComponents)
-			psComponent->Draw();
+		// particles can be illuminated too
+		Graphic::ParticleSystems::Manager::Draw(Control::g_camera);
 
 		// apply lights to the frame-buffer
 		for (auto component : m_lightComponents)
@@ -76,15 +77,6 @@ component->Draw();
 	void SceneGraph::RegisterComponent(BaseParticleSystemComponent& _component)
 	{
 		RegisterComponent(component_cast<ConstActorComponent>(_component));
-
-		// insert so that systems with the same RenderEffect are continuous
-		auto Pred = [](const BaseParticleSystemComponent* _lhs, const BaseParticleSystemComponent* _rhs)
-		{ return _lhs->getRenderType() < _rhs->getRenderType(); };
-
-		m_particleSystemComponents.insert(
-			std::upper_bound(m_particleSystemComponents.begin(), m_particleSystemComponents.end(), &_component, Pred),
-			&_component
-		);
 	}
 
 	void SceneGraph::RegisterComponent(GeometryComponent& _component)

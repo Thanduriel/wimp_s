@@ -20,11 +20,8 @@ ParticleSystems::SystemActions::SystemActions(RenderType _type) :
 	m_particleVertices.SetNumInstances(1);
 }
 
-void ParticleSystems::SystemActions::Draw( const ei::Mat4x4& _transformation, size_t _numVertices )
+void ParticleSystems::SystemActions::Draw( size_t _numVertices )
 {
-	// Upload current transformation matrix
-	Resources::GetUBO(UniformBuffers::SIMPLE_OBJECT)["c_WorldViewProjection"] = _transformation;
-
 	// Set renderer and do draw call. The set has no effect if the renderer is
 	// currently active.
 	switch(m_renderer)
@@ -39,7 +36,7 @@ void ParticleSystems::SystemActions::Draw( const ei::Mat4x4& _transformation, si
 		Assert(false, "This effect is not implemented.");
 	}
 	m_particleVertices.Bind();
-	Graphic::Device::DrawVertices( m_particleVertices, 0, _numVertices);
+	Graphic::Device::DrawVertices( m_particleVertices, 0, (unsigned)_numVertices);
 }
 
 
@@ -178,6 +175,29 @@ void DirectionComponents::AttachTo(VertexArrayBuffer& _vertexArray)
 {
 	_vertexArray.AttachBuffer(m_directions);
 }
+
+// ************************************************************************* //
+// system manager
+std::vector< Manager::SystemPair > Manager::m_particleSystems;
+
+
+void Manager::Draw(const Control::Camera& _camera)
+{
+	// Upload current transformation matrix
+	Resources::GetUBO(UniformBuffers::SIMPLE_OBJECT)["c_WorldViewProjection"] = _camera.GetViewProjection();
+
+	for (auto& system : m_particleSystems)
+	{
+		system.second->Draw(system.second->GetNumParticles());
+	}
+}
+
+void Manager::Process(float _deltaTime)
+{
+	for (auto& system : m_particleSystems)
+		system.second->Simulate(_deltaTime);
+}
+
 
 } // namespace ParticleSystem
 } // namespace Graphic
