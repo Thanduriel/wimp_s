@@ -7,6 +7,7 @@
 #include "gameplay/elements/light.hpp"
 #include "gameplay/elements/blackhole.hpp"
 #include "gameplay/elements/particlesystemcomponent.hpp"
+#include "elements/factorycomponent.hpp"
 
 using namespace Graphic;
 
@@ -47,19 +48,19 @@ namespace Game {
 		// post lighting 3d effects
 		// todo: instead of a branch check have different containers
 		for (auto component : m_markerComponents)
-			if(component->IsActive()) component->Draw();
+if (component->IsActive()) component->Draw();
 
-		// render the frame-buffer to the hardware back-buffer
-		Texture& tex = *Device::GetCurrentFramebufferBinding()->GetColorAttachments().begin()->pTexture;
+// render the frame-buffer to the hardware back-buffer
+Texture& tex = *Device::GetCurrentFramebufferBinding()->GetColorAttachments().begin()->pTexture;
 
-		Device::BindFramebuffer(nullptr);
-		Device::SetEffect(Graphic::Resources::GetEffect(Effects::SCREEN_OUTPUT));
-		Device::SetTexture(tex, 0);
-		Device::DrawFullscreen();
+Device::BindFramebuffer(nullptr);
+Device::SetEffect(Graphic::Resources::GetEffect(Effects::SCREEN_OUTPUT));
+Device::SetTexture(tex, 0);
+Device::DrawFullscreen();
 
-		// post processing reads from the frame-buffer and writes to the back-buffer
-		for (auto component : m_postProcessComponents)
-			component->Draw();
+// post processing reads from the frame-buffer and writes to the back-buffer
+for (auto component : m_postProcessComponents)
+component->Draw();
 	}
 
 	// *********************************************************** //
@@ -106,6 +107,11 @@ namespace Game {
 		m_markerComponents.push_back(&_component);
 	}
 
+	void SceneGraph::RegisterComponent(FactoryComponent& _component)
+	{
+		m_factoryComponents.push_back(&_component);
+	}
+
 	// *********************************************************** //
 	template <typename T>
 	void RemoveDestroyed(std::vector<T*>& _container)
@@ -127,6 +133,9 @@ namespace Game {
 		RemoveDestroyed(m_postProcessComponents);
 		RemoveDestroyed(m_markerComponents);
 		RemoveDestroyed(m_particleSystemComponents);
+		RemoveDestroyed(m_factoryComponents);
+		RemoveDestroyed(m_constActorComponents);
+		RemoveDestroyed(m_actorComponents);
 
 		// actual destruction is last
 		auto it = std::remove_if(m_actors.begin(), m_actors.end(), [](const std::unique_ptr<Actor>& _actor)
@@ -134,5 +143,21 @@ namespace Game {
 			return _actor->IsDestroyed();
 		});
 		m_actors.erase(it, m_actors.end());
+	}
+
+	void SceneGraph::AddActors()
+	{
+		// collect actors created by all known factories
+		// it is possible that new factories are added, making any iterator invalid
+		size_t size = m_factoryComponents.size();
+		for (size_t i = 0; i < size; ++i)
+		{
+			auto& container = m_factoryComponents[i]->m_createdActors;
+			while (container.size())
+			{
+				Add(*container.back().release());
+				container.pop_back();
+			}
+		}
 	}
 }

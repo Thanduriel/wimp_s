@@ -1,6 +1,10 @@
 #pragma once
 
+#include <array>
+
 #include "gameplay/core/model.hpp"
+#include "factorycomponent.hpp"
+#include "gameplay/elements/socketcomponent.hpp"
 
 namespace Game
 {
@@ -53,6 +57,10 @@ namespace Game
 
 		// Access current spray radius
 		float GetSprayRadius() const { return m_sprayRadius; }
+
+		void RegisterComponents(class SceneGraph& _sceneGraph);
+		// Fire all weapons straight forward.
+		void Fire();
 	private:
 		// the power of acceleration
 		float m_thrust;
@@ -70,5 +78,8 @@ namespace Game
 		float m_maxSprayRadius;
 		// the spray radius
 		float m_sprayRadius;
+
+		std::array < SocketComponent, 2> m_weaponSockets;
+		FactoryComponent m_actorFactory;
 	};
 }

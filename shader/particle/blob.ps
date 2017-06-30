@@ -3,6 +3,8 @@
 in vec4 gs_color;
 in vec2 gs_texCoord;
 
+#include "../cameraubo.glsl"
+
 layout(location = 0) out vec4 out_FragColor;
 layout(location = 1) out vec4 out_Normal;
 void main()

@@ -3,6 +3,8 @@
 #include <assimp/Importer.hpp>      // C++ importer interface
 #include <assimp/scene.h>           // Output data structure
 #include <assimp/postprocess.h>     // Post processing flags
+#include "resources.hpp"
+#include "utils/pathutils.hpp"
 
 namespace Graphic {
 
@@ -12,7 +14,7 @@ namespace Graphic {
 	Mesh::Mesh(const std::string& _pFile)
 		: m_vertices(VertexArrayBuffer::PrimitiveType::TRIANGLE_LIST,
 		{ {VertexAttribute::VEC3, 0}, {VertexAttribute::VEC3, 1}, {VertexAttribute::VEC2, 2} })
-		,m_texture(std::vector<std::string>())
+		,m_texture(nullptr)
 	{
 		//Vertex* vertex = (Vertex*)malloc(36 * sizeof(Vertex));
 
@@ -114,10 +116,11 @@ namespace Graphic {
 		// Usually - if speed is not the most important aspect for you - you'll 
 		// propably to request more postprocessing than we do in this example.
 		const aiScene* scene = importer.ReadFile(_pFile,
-			aiProcess_Triangulate|
-			aiProcess_GenUVCoords|
-			aiProcess_GenNormals|
-			aiProcess_FixInfacingNormals);
+			aiProcess_Triangulate |
+			aiProcess_GenUVCoords |
+			aiProcess_FlipUVs | // fbx exported by blender seem to require this
+			aiProcess_GenNormals |
+		aiProcess_FixInfacingNormals);
 
 		// If the import failed, report it
 		if (!scene)
@@ -144,9 +147,6 @@ namespace Graphic {
 	{
 		unsigned int totalVertexNum = 0;
 		int totalMaterialNum = 0;
-		Vec3 vertex;
-		Vec3 normal;
-		Vec2 textureC;
 		Vertex* v;
 		
 		for (unsigned int i = 0; i < _scene->mNumMeshes; i++) // count all vertices in all meshes
@@ -167,50 +167,54 @@ namespace Graphic {
 		{
 			Assert(mesh->mFaces[j].mNumIndices == 3, "Primitives should only be triangles.");
 			unsigned ind = j * 3;
-			assign(vertex, mesh->mVertices[mesh->mFaces[j].mIndices[0]]);
-			v[ind].position = vertex;
-			assign(vertex, mesh->mVertices[mesh->mFaces[j].mIndices[1]]);
-			v[ind +1].position = vertex;
-			assign(vertex, mesh->mVertices[mesh->mFaces[j].mIndices[2]]);
-			v[ind +2].position = vertex;
+			auto indices = mesh->mFaces[j].mIndices;
 
-			assign(vertex, mesh->mNormals[mesh->mFaces[j].mIndices[0]]);
-			v[ind].normal = vertex;
-			assign(vertex, mesh->mNormals[mesh->mFaces[j].mIndices[1]]);
-			v[ind+1].normal = vertex;
-			assign(vertex, mesh->mNormals[mesh->mFaces[j].mIndices[2]]);
-			v[ind+2].normal = vertex;
+			assign(v[ind].position, mesh->mVertices[indices[0]]);
+			assign(v[ind + 1].position, mesh->mVertices[indices[1]]);
+			assign(v[ind + 2].position, mesh->mVertices[indices[2]]);
+
+			assign(v[ind].normal, mesh->mNormals[indices[0]]);
+			assign(v[ind + 1].normal, mesh->mNormals[indices[1]]);
+			assign(v[ind + 2].normal, mesh->mNormals[indices[2]]);
 
 			if (mesh->mTextureCoords[0]) // does the mesh contain texture coordinates?
 			{
-				vertex.x = mesh->mTextureCoords[0][j].x;
-				vertex.y = mesh->mTextureCoords[0][j].y;
-				v[j].textureCoords = textureC;
+				assign(v[ind + 0].textureCoords, mesh->mTextureCoords[0][indices[0]]);
+				assign(v[ind + 1].textureCoords, mesh->mTextureCoords[0][indices[1]]);
+				assign(v[ind + 2].textureCoords, mesh->mTextureCoords[0][indices[2]]);
+
+				auto coord = mesh->mTextureCoords[0][indices[0]];
+				if (coord.x < 0.f || coord.y > 1.f)
+					int i = 24;
+			//	v[ind + 0].textureCoords = Vec2(1.f) - v[ind + 0].textureCoords;
+			//	v[ind + 1].textureCoords = Vec2(1.f) - v[ind + 1].textureCoords;
+			//	v[ind + 2].textureCoords = Vec2(1.f) - v[ind + 2].textureCoords;
 			}
-			else
-				v[j].textureCoords = Vec2(0.0f, 0.0f);
+		}
 
-
-			// Texture loading (Diffuse and Specular maps)
-			if (mesh->mMaterialIndex >= 0)
+		// Texture loading (Diffuse and Specular maps)
+		if (mesh->mMaterialIndex >= 0)
+		{
+			aiMaterial *material = _scene->mMaterials[mesh->mMaterialIndex];
+			std::vector<std::string> textures;
+			for (unsigned int i = 0; i < material->GetTextureCount(aiTextureType_DIFFUSE); i++)
 			{
-				aiMaterial *material = _scene->mMaterials[mesh->mMaterialIndex];
-				std::vector<std::string> textures;
-				for (unsigned int i = 0; i < material->GetTextureCount(aiTextureType_DIFFUSE); i++)
-				{
-					aiString str;
-					material->GetTexture(aiTextureType_DIFFUSE, i, &str);
-					textures[i] = str.C_Str();
-					textures.insert(textures.end(),(std::string)"|");
-				}
+				aiString str;
+				material->GetTexture(aiTextureType_DIFFUSE, i, &str);
+				textures.emplace_back(str.C_Str());
+				//	textures.insert(textures.end(),(std::string)"|");
+			}
 
-				for (size_t i = textures.size(); i < material->GetTextureCount(aiTextureType_SPECULAR); i++)
-				{
-					aiString str;
-					material->GetTexture(aiTextureType_SPECULAR, i, &str);
-					textures[i] = str.C_Str();
-				}
-				m_texture = Graphic::Texture(textures); //till the "|" seperator all textures are Diffuse maps, after that Specular maps
+			for (size_t i = textures.size(); i < material->GetTextureCount(aiTextureType_SPECULAR); i++)
+			{
+				aiString str;
+				material->GetTexture(aiTextureType_SPECULAR, (unsigned)i, &str);
+				textures[i] = str.C_Str();
+			}
+			if (textures.size())
+			{
+				std::string name = PathUtils::GetName(PathUtils::CanonicalizePath(textures[0]));
+				m_texture = &Resources::GetTexture(name); //till the "|" seperator all textures are Diffuse maps, after that Specular maps
 			}
 		}
 		
@@ -219,6 +223,7 @@ namespace Graphic {
 
 	void Mesh::Draw() const
 	{
+		if(m_texture) Device::SetTexture(*m_texture, 0);
 		Device::DrawVertices(m_vertices, 0, m_vertices.GetNumVertices());
 	}
 }

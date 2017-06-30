@@ -25,6 +25,6 @@ namespace Game {
 	public:
 		Model(const std::string& _pFile, const ei::Vec3&_position, const ei::Quaternion&_rotation);
 
-		void RegisterComponents(class SceneGraph& _sceneGraph);
+		void RegisterComponents(class SceneGraph& _sceneGraph) override;
 	};
 }

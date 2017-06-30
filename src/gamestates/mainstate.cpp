@@ -13,6 +13,7 @@
 #include "gameplay/elements/light.hpp"
 #include "gameplay/elements/particlesystemcomponent.hpp"
 #include "generators/random.hpp"
+#include "gameplay/elements/shipsystems/projectile.hpp"
 
 namespace GameStates {
 
@@ -45,11 +46,14 @@ namespace GameStates {
 		pointLight = new PointLight(Vec3(0.f), Vec3(0.f), 5.f, Utils::Color8U(255_uc, 255_uc, 0_uc));
 		m_sceneGraph.Add(*pointLight);
 
-		m_sceneGraph.Add(*new Model("spaceship", Vec3(5.f, 0.f, 0.f), qidentity()));
+		m_sceneGraph.Add(*new Model("testrocket", Vec3(5.f, 0.f, 0.f), qidentity()));
 	//	model2->SetAngularVelocity(Vec3(1.f));
 	//	model2->SetVelocity(Vec3(1.f, 0.f, 1.f));
 		particleSystem = new Game::ParticleSystemActor<Graphic::ParticleSystems::BASIC_SYSTEM>(Vec3(0.f), Vec3(0.f), Graphic::ParticleSystems::RenderType::BLOB);
 		m_sceneGraph.Add(*particleSystem);
+
+		Rocket* rocket = new Rocket(Vec3(0.f), Vec3(0.f, 0.f, -0.5f), 100.f);
+		m_sceneGraph.Add(*rocket);
 	}
 
 	MainState::~MainState()
@@ -72,11 +76,11 @@ namespace GameStates {
 		pointLight->SetPosition(p);
 
 		static Generators::RandomGenerator rng(0x123156);
-		particleSystem->AddParticle(Vec3(0.f), //position
+/*		particleSystem->AddParticle(Vec3(0.f), //position
 			rng.Direction() * rng.Uniform(0.3f, 2.f), //velocity
 			6.1f, //life time
 			Utils::Color8U(0.2f, 0.4f, 0.5f, 0.5f).RGBA(),
-			0.2f);
+			0.2f);*/
 	}
 
 	void MainState::Draw(float _deltaTime)
@@ -93,6 +97,7 @@ namespace GameStates {
 	void MainState::Dispose()
 	{
 		m_sceneGraph.CleanUp();
+		m_sceneGraph.AddActors();
 	}
 
 	// ******************************************************* //
@@ -111,6 +116,8 @@ namespace GameStates {
 	void MainState::KeyDown(int _key, int _modifiers)  
 	{ 
 		if(m_hud.KeyDown(_key, _modifiers)) return; 
+
+		m_playerController->KeyDown(_key, _modifiers);
 	}
 	void MainState::KeyRelease(int _key)  
 	{ 

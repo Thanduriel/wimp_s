@@ -132,6 +132,7 @@ namespace Control {
 		_ubo["NearPlaneSize"] = Vec4(tan(m_fov) * Device::GetAspectRatio(), tan(m_fov), tan(m_fov/2.f), tan(m_fov/2.f));
 		_ubo["CameraRotation"] = ei::Mat4x4(m_inverseRotationMatrix);
 		_ubo["View"] = Mat4x4(m_inverseRotationMatrix) * translation(-m_position);
+		_ubo["SignDir"] = sgn(zaxis(m_rotation));
 	}
 
 	// ******************************************************************* //

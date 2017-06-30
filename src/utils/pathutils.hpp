@@ -19,6 +19,10 @@ namespace PathUtils
 	/// \param _path Canonicalized path.
 	std::string GetFilename(const std::string& _path);
 
+	/// Returns the name without ending.
+	/// \param _path Canonicalized path.
+	std::string GetName(const std::string& _path);
+
 	/// Returns the directory of a given path.
 	/// \param _path Canonicalized path.
 	std::string GetDirectory(const std::string& _path);

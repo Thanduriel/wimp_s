@@ -84,6 +84,12 @@ namespace Control
 				g_camera.Attach(*m_ship);
 			}
 		}
+		else if (_key == GLFW_MOUSE_BUTTON_LEFT)
+			m_ship->Fire();
+	}
+
+	void PlayerController::KeyDown(int _key, int _modifiers)
+	{
 	}
 
 	void PlayerController::Scroll(float _dx, float _dy)
@@ -98,6 +104,10 @@ namespace Control
 	// ************************************************************ //
 	void PlayerController::HandleInput(float _deltaTime)
 	{
+		// the key to kill your performance!
+		if(InputManager::IsKeyPressed(GLFW_KEY_Q))
+			m_ship->Fire();
+
 		if (m_targetingMode == TargetingMode::Tactical)
 		{
 			// todo move this to a config

@@ -1,7 +1,7 @@
 #include "ei/vector.hpp"
+#include "gameplay/elements/grid.hpp"
 
 namespace Game {
-	class Grid;
 	class Model;
 	class Actor;
 	class Ship;
@@ -25,6 +25,7 @@ namespace Control
 
 		void MouseMove(float _dx, float _dy);
 		void KeyClick(int _key);
+		void KeyDown(int _key, int _modifiers);
 		void Scroll(float _dx, float _dy);
 
 		const Game::Ship& GetShip() const { return *m_ship; }

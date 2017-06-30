@@ -1,4 +1,6 @@
 #include "ship.hpp"
+#include "../scenegraph.hpp"
+#include "shipsystems/weapon.hpp"
 
 namespace Game
 {
@@ -14,9 +16,12 @@ namespace Game
 		m_maxSpeed(10.0f),
 		m_minSprayRadius(0.0f),
 		m_maxSprayRadius(1.0f),
-		m_sprayRadius(0.0f)
+		m_sprayRadius(0.0f),
+		m_weaponSockets{ SocketComponent(THISACTOR, Vec3(1.f,0.f,0.f)), SocketComponent(THISACTOR, Vec3(-1.f,0.f,0.f)) },
+		m_actorFactory(THISACTOR)
 	{
-
+		Weapon& weapon = m_actorFactory.Make<Weapon>(Vec3());
+		m_weaponSockets[0].Attach(weapon);
 	}
 
 	float Ship::GetCurrentSpeed() const
@@ -72,5 +77,25 @@ namespace Game
 		UpdateSprayRadius(currentSpeed);
 
 		Model::Process(_deltaTime);
+	}
+
+	void Ship::RegisterComponents(SceneGraph& _sceneGraph)
+	{
+		_sceneGraph.RegisterComponent(m_actorFactory);
+
+		Model::RegisterComponents(_sceneGraph);
+		for (auto& socket : m_weaponSockets)
+			_sceneGraph.RegisterComponent(socket);
+	}
+
+	void Ship::Fire()
+	{
+		for (auto& sockets : m_weaponSockets)
+		{
+			Weapon* weapon = static_cast<Weapon*>(sockets.GetActor());
+			if (!weapon) continue;
+
+			weapon->Fire();
+		}
 	}
 }

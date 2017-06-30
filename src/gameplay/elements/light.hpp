@@ -16,9 +16,5 @@ namespace Game {
 		Graphic::LightHandle m_handle;
 	};
 
-	class PointLight : public SingleComponentActor<PointLightComponent>
-	{
-	public:
-		using SuperType::SingleComponentActor;
-	};
+	typedef SingleComponentActor<PointLightComponent> PointLight;
 }

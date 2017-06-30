@@ -86,6 +86,7 @@ namespace Graphic {
 			effects[ind]->SetDepthStencilState(DepthStencilState(Graphic::DepthStencilState::COMPARISON_FUNC::LESS, true));
 			effects[ind]->BindUniformBuffer(GetUBO(UniformBuffers::SIMPLE_OBJECT));
 			effects[ind]->BindUniformBuffer(GetUBO(UniformBuffers::GLOBAL));
+			effects[ind]->BindUniformBuffer(GetUBO(UniformBuffers::CAMERA));
 			break;
 		default:
 			Assert(false, "This effect is not implemented.");
@@ -138,6 +139,7 @@ namespace Graphic {
 			uniformBuffers[ind]->AddAttribute("NearPlaneSize", Graphic::UniformBuffer::ATTRIBUTE_TYPE::VEC4);
 			uniformBuffers[ind]->AddAttribute("CameraRotation", Graphic::UniformBuffer::ATTRIBUTE_TYPE::MATRIX);
 			uniformBuffers[ind]->AddAttribute("View", Graphic::UniformBuffer::ATTRIBUTE_TYPE::MATRIX);
+			uniformBuffers[ind]->AddAttribute("SignDir", Graphic::UniformBuffer::ATTRIBUTE_TYPE::VEC3);
 			break;
 
 		case UniformBuffers::SIMPLE_OBJECT:

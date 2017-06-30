@@ -15,9 +15,5 @@ namespace Game
 		Graphic::BlackHoleRenderer m_renderer;
 	};
 
-	class BlackHole : public SingleComponentActor<BlackHoleComponent>
-	{
-	public:
-		using SuperType::SingleComponentActor;
-	};
+	typedef SingleComponentActor<BlackHoleComponent> BlackHole;
 }

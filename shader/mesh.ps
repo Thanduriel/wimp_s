@@ -1,5 +1,7 @@
 #version 330
 
+uniform sampler2D texture;
+
 in vec4 vs_out_normal;
 in vec2 vs_out_texCoords;
 
@@ -14,8 +16,8 @@ void main()
 	fragColor.w = 1;
 	float cosTheta = clamp( dot( vs_out_normal, vec4(0,0,-1,1) ), 0,1 );
 	// todo read color from texture
-	fragColor.rgb = vec3(0.4,0.3,0.6);
-	fragColor *= clamp(cosTheta, 0.2, 0.4);
+	fragColor.rgb = texture2D(texture, vs_out_texCoords).rgb;//vec3(0.4,0.3,0.6);
+	fragColor *= clamp(cosTheta, 0.4, 0.6);
 	fragColor.a = 1;
 	
 	out_FragColor = fragColor;

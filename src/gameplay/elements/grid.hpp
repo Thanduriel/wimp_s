@@ -56,10 +56,5 @@ namespace Game {
 		float m_linesShown;
 		bool m_fadeIn; // should lines be added or removed
 	};
-
-	class Grid : public SingleComponentActor<GridComponent>
-	{
-	public:
-		using SuperType::SingleComponentActor;
-	};
+	typedef SingleComponentActor<GridComponent> Grid;
 }

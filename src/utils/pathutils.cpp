@@ -64,10 +64,19 @@ namespace PathUtils
 		return _path.substr(_path.find_last_of('/') + 1);
 	}
 
+	std::string GetName(const std::string& _path)
+	{
+		Assert(_path == CanonicalizePath(_path), "Given path was expected to be canonicalized: \'" + _path + "\'");
+		auto begin = _path.find_last_of('/') + 1;
+		auto end = _path.find_last_of('.');
+		return _path.substr(begin, end-begin);
+	}
+
 	std::string GetDirectory(const std::string& _path)
 	{
 		Assert(_path == CanonicalizePath(_path), "Given path was expected to be canonicalized: \'" + _path + "\'");
 		return _path.substr(0, _path.find_last_of('/'));
 	}
+
 
 } // PathUtils

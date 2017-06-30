@@ -41,11 +41,16 @@ namespace Game {
 		void RegisterComponent(class PointLightComponent& _component);
 		void RegisterComponent(class PostProcessComponent& _component);
 		void RegisterComponent(class MarkerComponent& _component);
+		void RegisterComponent(class FactoryComponent& _component);
 
 		void Process(float _deltaTime);
 		void Draw();
 
+		// removes all destroyed components and associated components.
 		void CleanUp();
+
+		// Registers by Factories created Actors tho the scene.
+		void AddActors();
 	private:
 		std::vector < std::unique_ptr<Actor>> m_actors; // all active actors
 
@@ -57,5 +62,6 @@ namespace Game {
 		std::vector<PointLightComponent*> m_lightComponents;
 		std::vector<GeometryComponent*> m_geometryComponents;
 		std::vector<MarkerComponent*> m_markerComponents;
+		std::vector<FactoryComponent*> m_factoryComponents;
 	};
 }
