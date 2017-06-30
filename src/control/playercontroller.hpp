@@ -7,6 +7,10 @@ namespace Game {
 	class Ship;
 }
 
+namespace GameStates {
+	class MainHud;
+}
+
 namespace Control
 {
 	using namespace ei;
@@ -18,7 +22,7 @@ namespace Control
 	{
 	public:
 
-		PlayerController(Game::Ship& _ship, Game::Grid& _grid, Game::Actor& _indicator);
+		PlayerController(Game::Ship& _ship, Game::Grid& _grid, Game::Actor& _indicator, GameStates::MainHud& _hud);
 
 		// The basic processing method called once per frame
 		void Process(float _deltaTime);
@@ -58,5 +62,6 @@ namespace Control
 		Game::Ship* m_ship;
 		Game::Grid& m_grid;
 		Game::Actor& m_indicator;
+		GameStates::MainHud& m_hud;
 	};
 }

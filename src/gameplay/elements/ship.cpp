@@ -9,11 +9,11 @@ namespace Game
 
 	Ship::Ship(const string& _pFile, const Vec3& _position)
 		: Model(_pFile, _position, qidentity()),
-		m_thrust(10.0f),
+		m_thrust(100.0f),
 		m_weight(1.0f),
 		m_speed(1.0f),
 		m_minSpeed(0.0f),
-		m_maxSpeed(10.0f),
+		m_maxSpeed(100.0f),
 		m_minSprayRadius(0.0f),
 		m_maxSprayRadius(1.0f),
 		m_sprayRadius(0.0f),

@@ -1,7 +1,7 @@
 #pragma once
 
 #include "graphic/interface/hud.hpp"
-#include "huds/examplehud.hpp"
+#include "huds/mainhud.hpp"
 #include "gamestate.hpp"
 #include "graphic/effects/starbackground.hpp"
 #include "gameplay/core/actor.hpp"
@@ -20,7 +20,7 @@ namespace GameStates{
 	 * The state in wich the actual game runs.
 	 */
 
-	class MainState : public GameStateHT<ExampleHud>
+	class MainState : public GameStateHT<MainHud>
 	{
 	public:
 		MainState();

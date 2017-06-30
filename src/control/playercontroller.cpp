@@ -8,6 +8,7 @@
 #include "ei/3dintersection.hpp"
 #include "gameplay/core/component.hpp"
 #include "gameplay/elements/ship.hpp"
+#include "gamestates/huds/mainhud.hpp"
 
 namespace Control
 {
@@ -15,11 +16,12 @@ namespace Control
 
 	const float TACTICALCAM_DIST = 32.f;
 
-	PlayerController::PlayerController(Game::Ship& _ship, Game::Grid& _grid, Game::Actor& _indicator)
+	PlayerController::PlayerController(Game::Ship& _ship, Game::Grid& _grid, Game::Actor& _indicator, GameStates::MainHud& _hud)
 		: m_ship(&_ship),
+		m_hud(_hud),
 		m_mouseSensitivity(10.0f),
-		m_sliderSensitivity(10.0f),
-		m_targetSpeed(1.0f),
+		m_sliderSensitivity(100.0f),
+		m_targetSpeed(10.0f),
 		m_targetingMode(TargetingMode::Normal),
 		m_grid(_grid),
 		m_indicator(_indicator)
@@ -174,5 +176,9 @@ namespace Control
 
 		cursor = Vec2(sgn(cursor[0]), sgn(cursor[1])) * cursor * cursor;
 		m_ship->SetAngularVelocity(m_ship->GetRotationMatrix() * Vec3(-cursor[1], cursor[0], 0.0f));
+
+		m_hud.UpdateSpeedLabel(m_ship->GetCurrentSpeed());
+		m_hud.UpdateSpeedBar(m_ship->GetCurrentSpeed(), m_ship->GetMaxSpeed());
+		m_hud.UpdateTargetSpeedSlider(m_targetSpeed, m_ship->GetMaxSpeed());
 	}
 }

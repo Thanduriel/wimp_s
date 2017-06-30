@@ -39,7 +39,7 @@ namespace GameStates {
 		m_sceneGraph.Add(*grid);
 		Ship* ship = new Ship("spaceship", Vec3(0.f));
 		m_sceneGraph.Add(*ship);
-		m_playerController = new Control::PlayerController(*ship, *grid, *blackHole);
+		m_playerController = new Control::PlayerController(*ship, *grid, *blackHole, m_hud);
 		Control::g_camera.Attach(*ship);
 
 		// some test actors
