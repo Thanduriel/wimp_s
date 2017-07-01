@@ -3,6 +3,7 @@
 
 #include "graphic/core/framebuffer.hpp"
 #include "gamestates/gamestate.hpp"
+#include "jofilelib.hpp"
 
 class Wimp_s
 {
@@ -14,6 +15,10 @@ public:
 
 	static float GetGameTime(){ return m_gameTime; }
 private:
+	void BuildDefaultConfig();
+
+	Jo::Files::MetaFileWrapper m_config;
+
 	std::vector < std::unique_ptr< GameStates::GameState > > m_gameStates;
 
 	Graphic::Texture* m_sceneDepthTexture; ///< Main depth target for the 3D scene.

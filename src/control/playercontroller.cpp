@@ -129,28 +129,28 @@ namespace Control
 		}
 		else
 		{
-			if (GLFW_PRESS == glfwGetMouseButton(Graphic::Device::GetWindow(), GLFW_MOUSE_BUTTON_LEFT))
+			if (InputManager::IsVirtualKeyPressed(Control::VirtualKey::FIRE))
 				m_ship->Fire();
 
 			bool approximateTargetSpeed = true;
-			if (InputManager::IsKeyPressed(GLFW_KEY_LEFT_SHIFT))
+			if (InputManager::IsVirtualKeyPressed(Control::VirtualKey::ADJUST_TARGET_ACC))
 			{
 				// control target speed slider
-				if (InputManager::IsKeyPressed(GLFW_KEY_W))
+				if (InputManager::IsVirtualKeyPressed(Control::VirtualKey::ACC_FORWARD))
 					m_targetSpeed = ei::min(m_targetSpeed + m_sliderSensitivity * _deltaTime, m_ship->GetMaxSpeed());
-				if (InputManager::IsKeyPressed(GLFW_KEY_S))
+				if (InputManager::IsVirtualKeyPressed(Control::VirtualKey::ACC_BACKWARD))
 					m_targetSpeed = ei::max(m_targetSpeed - m_sliderSensitivity * _deltaTime, m_ship->GetMinSpeed());
 			}
 			else
 			{
 				// control ship speed manually
-				if (InputManager::IsKeyPressed(GLFW_KEY_W))
+				if (InputManager::IsVirtualKeyPressed(Control::VirtualKey::ACC_FORWARD))
 				{
 					float newSpeed = m_ship->GetSpeed() + (m_ship->GetThrust() / m_ship->GetWeight()) * _deltaTime;
 					m_ship->SetSpeed(newSpeed);
 					approximateTargetSpeed = false;
 				}
-				if (InputManager::IsKeyPressed(GLFW_KEY_S))
+				if (InputManager::IsVirtualKeyPressed(Control::VirtualKey::ACC_BACKWARD))
 				{
 					m_ship->SetSpeed(m_ship->GetSpeed() - (m_ship->GetThrust() / m_ship->GetWeight()) * _deltaTime);
 					approximateTargetSpeed = false;

@@ -1,5 +1,6 @@
 /Debug
 /Release
+/RelWithDebInfo
 /x64
 /win32
 /lib
@@ -32,3 +33,5 @@ epsilon.dir/
 
 CMakeCache.txt
 CMakeFiles/
+
+config.json

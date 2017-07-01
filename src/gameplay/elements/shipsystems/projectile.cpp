@@ -8,9 +8,9 @@ namespace Game {
 
 	using namespace ei;
 
-	const Vec3 THRUSTEROFFSET = Vec3(0.f, 0.f, -1.f);
 	const float PARTICLESPAWN = 300.f; // in particles per second
 
+	// ********************************************************************** //
 	Projectile::Projectile(const ei::Vec3& _position, const ei::Vec3& _velocity, float _lifeTime)
 		: DynamicActor(_position, Quaternion(Vec3(0.f,0.f,1.f), _velocity)),
 		m_lifeTimeComponent(THISACTOR, _lifeTime)
@@ -29,7 +29,9 @@ namespace Game {
 	}
 
 	// ********************************************************************** //
-	Rocket::Rocket(const Vec3& _position, const ei::Vec3 _velocity, float _lifeTime)
+	const Vec3 THRUSTEROFFSET = Vec3(0.f, 0.f, -1.f);
+
+	Rocket::Rocket(const Vec3& _position, const ei::Vec3& _velocity, float _lifeTime)
 		: Projectile(_position, _velocity, _lifeTime),
 		m_engineLight(THISACTOR, THRUSTEROFFSET * 1.3f, 2.5f, Utils::Color8U(0.4f, 0.2f, 0.9f)),
 		m_thrustParticles(THISACTOR, THRUSTEROFFSET),
@@ -39,6 +41,7 @@ namespace Game {
 
 	}
 
+	// ********************************************************************** //
 	void Rocket::Process(float _deltaTime)
 	{
 		Projectile::Process(_deltaTime);
@@ -61,6 +64,7 @@ namespace Game {
 		}
 	}
 
+	// ********************************************************************** //
 	void Rocket::RegisterComponents(SceneGraph& _sceneGraph)
 	{
 		Projectile::RegisterComponents(_sceneGraph);

@@ -7,6 +7,9 @@
 
 namespace Game {
 
+	/* Projectile ***********************************************
+	 * Basic projectile with limited life time (and damage on hit)
+	 */
 	class Projectile : public DynamicActor
 	{
 	public:
@@ -18,10 +21,14 @@ namespace Game {
 		LifeTimeComponent m_lifeTimeComponent;
 	};
 
+	/* Rocket **************************************************
+	 * A projectile with acceleration and target-seeking functionality.
+	 * Explodes on impact to deal aoe damage.
+	 */
 	class Rocket : public Projectile
 	{
 	public:
-		Rocket(const ei::Vec3& _position, const ei::Vec3 _velocity, float _lifeTime);
+		Rocket(const ei::Vec3& _position, const ei::Vec3& _velocity, float _lifeTime);
 
 		void Process(float _deltaTime) override;
 		void RegisterComponents(class SceneGraph& _sceneGraph) override;

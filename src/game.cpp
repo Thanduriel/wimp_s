@@ -17,6 +17,24 @@ float Wimp_s::m_gameTime;
 
 Wimp_s::Wimp_s()
 {
+	// Load configuration
+	try {
+		Jo::Files::HDDFile file("config.json");
+		m_config.Read(file, Jo::Files::Format::JSON);
+	}
+	catch (std::string _message) {
+		LOG_ERROR("Failed to load config file with message:\n" + _message + '\n' + "\nLoading default configuration.");
+		BuildDefaultConfig();
+
+		try {
+			Jo::Files::HDDFile file("config.json", Jo::Files::HDDFile::OVERWRITE);
+			m_config.Write(file, Jo::Files::Format::JSON);
+		}
+		catch (std::string _message) {
+			LOG_ERROR("Failed to write config file with message:\n" + _message + '\n' + "\n");
+		}
+	}
+
 	// create context
 	const int screenWidth = 1366;
 	const int screenHeight = 768;
@@ -31,8 +49,7 @@ Wimp_s::Wimp_s()
 	m_sceneFramebuffer = new Framebuffer({ Framebuffer::Attachment(m_sceneColorTexture), Framebuffer::Attachment(m_sceneNormalTexture)},
 		Framebuffer::Attachment(m_sceneDepthTexture));
 
-	Jo::Files::MetaFileWrapper config;
-	Control::InputManager::Initialize(Graphic::Device::GetWindow(), config.RootNode);//config[std::string("Input")]
+	Control::InputManager::Initialize(Graphic::Device::GetWindow(), m_config[std::string("Input")]);//config[std::string("Input")]
 
 	LightSystem::Initialize();
 
@@ -100,4 +117,22 @@ void Wimp_s::Run()
 		}
 		if (glfwWindowShouldClose(Graphic::Device::GetWindow())) m_gameStates.clear();
 	}
+}
+
+void Wimp_s::BuildDefaultConfig()
+{
+	auto& cinput = m_config[std::string("Input")];
+	cinput[std::string("AccForward")][0] = GLFW_KEY_W;
+	cinput[std::string("AccBackward")][0] = GLFW_KEY_S;
+	cinput[std::string("AccLeft")][0] = GLFW_KEY_A;
+	cinput[std::string("AccRight")][0] = GLFW_KEY_D;
+	cinput[std::string("AdjustTargetAcc")][0] = GLFW_KEY_LEFT_SHIFT;
+	cinput[std::string("Fire")][0] = GLFW_MOUSE_BUTTON_LEFT;
+	
+/*	auto& cgame = m_config[std::string("Game")];
+	cgame[std::string("Language")] = "english.json";
+
+	auto& cgraphics = Config[std::string("Graphics")];
+	cgraphics[std::string("ScreenWidth")] = 1366;
+	cgraphics[std::string("ScreenHeight")] = 768; */
 }
