@@ -88,8 +88,6 @@ namespace Control
 				m_controlParams.m_timeScale = 1.f;
 			}
 		}
-		else if (_key == GLFW_MOUSE_BUTTON_LEFT)
-			m_ship->Fire();
 	}
 
 	void PlayerController::KeyDown(int _key, int _modifiers)
@@ -131,6 +129,9 @@ namespace Control
 		}
 		else
 		{
+			if (GLFW_PRESS == glfwGetMouseButton(Graphic::Device::GetWindow(), GLFW_MOUSE_BUTTON_LEFT))
+				m_ship->Fire();
+
 			bool approximateTargetSpeed = true;
 			if (InputManager::IsKeyPressed(GLFW_KEY_LEFT_SHIFT))
 			{

@@ -2,6 +2,7 @@
 #include "generators/random.hpp"
 #include "gameplay/scenegraph.hpp"
 #include "gameplay/elements/factorycomponent.hpp"
+#include "../explosion.hpp"
 
 namespace Game {
 
@@ -12,21 +13,19 @@ namespace Game {
 
 	Projectile::Projectile(const ei::Vec3& _position, const ei::Vec3& _velocity, float _lifeTime)
 		: DynamicActor(_position, Quaternion(Vec3(0.f,0.f,1.f), _velocity)),
-		m_lifeTime(_lifeTime)
+		m_lifeTimeComponent(THISACTOR, _lifeTime)
 	{
 		SetVelocity(_velocity);
 	}
 
-	void Projectile::Process(float _deltaTime)
+	void Projectile::OnDestroy()
 	{
-		DynamicActor::Process(_deltaTime);
+		FactoryActor::GetThreadLocalInstance().MakeP<Explosion>(m_position, 20.f, 0.f);
+	}
 
-		m_lifeTime -= _deltaTime;
-		if (m_lifeTime <= 0.f)
-		{
-			Destroy();
-			FactoryActor::GetThreadLocalInstance().MakeP<Explosion>(m_position);
-		}
+	void Projectile::RegisterComponents(SceneGraph& _sceneGraph)
+	{
+		_sceneGraph.RegisterComponent(m_lifeTimeComponent);
 	}
 
 	// ********************************************************************** //
@@ -43,6 +42,8 @@ namespace Game {
 	void Rocket::Process(float _deltaTime)
 	{
 		Projectile::Process(_deltaTime);
+
+		SetVelocity(GetVelocity() + m_rotationMatrix * Vec3(0.f, 0.f, _deltaTime) * 5.f);
 
 		m_particleSpawnCount += _deltaTime * PARTICLESPAWN;
 		static Generators::RandomGenerator rng(0x614AA);
@@ -62,41 +63,10 @@ namespace Game {
 
 	void Rocket::RegisterComponents(SceneGraph& _sceneGraph)
 	{
+		Projectile::RegisterComponents(_sceneGraph);
+
 		_sceneGraph.RegisterComponent(m_engineLight);
 		_sceneGraph.RegisterComponent(m_thrustParticles);
 		_sceneGraph.RegisterComponent(m_mesh);
-	}
-
-	// ********************************************************************** //
-	Explosion::Explosion(const ei::Vec3& _position)
-		: Actor(_position),
-		m_light(THISACTOR, Vec3(0.f), 15.f, Utils::Color8U(0.0f, 0.0f, 1.0f)),
-		m_particles(THISACTOR, Vec3(0.f)),
-		m_lifeTime(5.f)
-	{
-		for (int i = 0; i < 1000; ++i)
-		{
-			static Generators::RandomGenerator rng(0x614AA);
-			Vec3 dir = rng.Direction() * rng.Uniform(0.5f, 20.f);
-			float col = rng.Uniform(0.2f, 0.7f);
-			m_particles.AddParticle(Vec3(), //position
-				dir, //velocity
-				5.0f, //life time
-				Utils::Color8U(0.7f, 0.8f, col, 1.f).RGBA(),
-				0.2f); // size
-		}
-	}
-
-	void Explosion::RegisterComponents(SceneGraph& _sceneGraph)
-	{
-		_sceneGraph.RegisterComponent(m_light);
-		_sceneGraph.RegisterComponent(m_particles);
-	}
-
-	void Explosion::Process(float _deltaTime)
-	{
-		m_lifeTime -= _deltaTime;
-
-		if (m_lifeTime < 0.f) Destroy();
 	}
 }

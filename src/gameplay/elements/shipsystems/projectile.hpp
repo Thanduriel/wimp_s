@@ -3,6 +3,7 @@
 #include "gameplay/elements/particlesystemcomponent.hpp"
 #include "gameplay/elements/light.hpp"
 #include "gameplay/core/model.hpp"
+#include "../lifetimecomponent.hpp"
 
 namespace Game {
 
@@ -11,9 +12,10 @@ namespace Game {
 	public:
 		Projectile(const ei::Vec3& _position, const ei::Vec3& _velocity, float _lifeTime);
 
-		void Process(float _deltaTime) override;
+		void OnDestroy() override;
+		void RegisterComponents(class SceneGraph& _sceneGraph) override;
 	private:
-		float m_lifeTime; //< remaining life time
+		LifeTimeComponent m_lifeTimeComponent;
 	};
 
 	class Rocket : public Projectile
@@ -29,18 +31,5 @@ namespace Game {
 		GeometryComponent m_mesh;
 		PointLightComponent m_engineLight;
 		ParticleSystemComponent<Graphic::ParticleSystems::BASIC_SYSTEM> m_thrustParticles;
-	};
-
-	class Explosion : public Actor
-	{
-	public:
-		Explosion(const ei::Vec3& _position);
-
-		void RegisterComponents(class SceneGraph& _sceneGraph) override;
-		void Process(float _deltaTime) override;
-	private:
-		PointLightComponent m_light;
-		ParticleSystemComponent<Graphic::ParticleSystems::BASIC_SYSTEM> m_particles;
-		float m_lifeTime;
 	};
 }

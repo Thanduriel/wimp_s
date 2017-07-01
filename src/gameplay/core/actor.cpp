@@ -34,6 +34,7 @@ namespace Game {
 	void Actor::Destroy()
 	{
 		m_destroyed = true;
+		OnDestroy();
 	}
 
 	void Actor::RotateAroundLocal(const Vec3& axis, const float degrees)

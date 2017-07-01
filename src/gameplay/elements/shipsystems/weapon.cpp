@@ -4,9 +4,11 @@
 
 namespace Game {
 
-	Weapon::Weapon(const ei::Vec3& _position)
+	Weapon::Weapon(const ei::Vec3& _position, float _cooldown)
 		: Actor(_position),
-		m_factoryComponent(THISACTOR)
+		m_factoryComponent(THISACTOR),
+		m_cooldown(0.f),
+		m_cooldownMax(_cooldown)
 	{
 
 	}
@@ -16,8 +18,19 @@ namespace Game {
 		_sceneGraph.RegisterComponent(m_factoryComponent);
 	}
 
+	void Weapon::Process(float _deltaTime)
+	{
+		Actor::Process(_deltaTime);
+
+		m_cooldown -= _deltaTime;
+	}
+
 	void Weapon::Fire()
 	{
-		m_factoryComponent.MakeP<Rocket>(ei::Vec3(0.f), m_rotationMatrix * ei::Vec3(0.f,0.f,50.f), 2.f);
+		if (m_cooldown < 0.f)
+		{
+			m_cooldown = m_cooldownMax;
+			m_factoryComponent.MakeP<Rocket>(ei::Vec3(0.f), m_rotationMatrix * ei::Vec3(0.f, 0.f, 12.f), 4.f);
+		}
 	}
 }
