@@ -16,7 +16,7 @@ namespace Control
 
 	const float TACTICALCAM_DIST = 32.f;
 
-	PlayerController::PlayerController(Game::Ship& _ship, Game::Grid& _grid, Game::Actor& _indicator, GameStates::MainHud& _hud)
+	PlayerController::PlayerController(Game::Ship& _ship, Game::Grid& _grid, Game::Actor& _indicator, GameStates::MainHud& _hud, GameTimeControl& _params)
 		: m_ship(&_ship),
 		m_hud(_hud),
 		m_mouseSensitivity(10.0f),
@@ -24,7 +24,8 @@ namespace Control
 		m_targetSpeed(10.0f),
 		m_targetingMode(TargetingMode::Normal),
 		m_grid(_grid),
-		m_indicator(_indicator)
+		m_indicator(_indicator),
+		m_controlParams(_params)
 	{};
 
 	void PlayerController::Process(float _deltaTime)
@@ -63,7 +64,6 @@ namespace Control
 				// shift the camera back so that the player is in the center
 				g_camera.FixRotation(ei::Quaternion(Vec3(1.f, 0.f, 0.f), m_tacticalDirSign * angle) * rot,
 					m_ship->GetPosition() + Vec3(0.f, m_tacticalDirSign * TACTICALCAM_DIST, -TACTICALCAM_DIST / tan(angle)));
-				m_ship->SetVelocity({});
 				/*		Vec3 shift = m_model->GetRotationMatrix() * Vec3(0.f, 0.f, -1.f);
 						shift.y = 0.f;
 						shift = normalize(shift) * 32.f / tan(angle);
@@ -77,6 +77,7 @@ namespace Control
 
 				m_grid.SetPosition(m_ship->GetPosition());
 				component_cast<Game::GridComponent>(m_grid).ReverseTransition();
+				m_controlParams.m_timeScale = 0.02f;
 			}
 			else
 			{
@@ -84,6 +85,7 @@ namespace Control
 				component_cast<Game::GridComponent>(m_grid).ReverseTransition();
 				m_mouseMovement = Vec2(0.f);
 				g_camera.Attach(*m_ship);
+				m_controlParams.m_timeScale = 1.f;
 			}
 		}
 		else if (_key == GLFW_MOUSE_BUTTON_LEFT)

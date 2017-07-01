@@ -1,3 +1,5 @@
+#pragma once
+
 #include "ei/vector.hpp"
 #include "gameplay/elements/grid.hpp"
 
@@ -15,6 +17,10 @@ namespace Control
 {
 	using namespace ei;
 
+	struct GameTimeControl
+	{
+		float m_timeScale;
+	};
 	/* PlayerController *******************************
 	 * Handles the player input and applies movement to the player's model.
 	 */
@@ -22,7 +28,9 @@ namespace Control
 	{
 	public:
 
-		PlayerController(Game::Ship& _ship, Game::Grid& _grid, Game::Actor& _indicator, GameStates::MainHud& _hud);
+		PlayerController(Game::Ship& _ship, Game::Grid& _grid, 
+			Game::Actor& _indicator, GameStates::MainHud& _hud,
+			GameTimeControl& _params);
 
 		// The basic processing method called once per frame
 		void Process(float _deltaTime);
@@ -63,5 +71,6 @@ namespace Control
 		Game::Grid& m_grid;
 		Game::Actor& m_indicator;
 		GameStates::MainHud& m_hud;
+		GameTimeControl& m_controlParams;
 	};
 }

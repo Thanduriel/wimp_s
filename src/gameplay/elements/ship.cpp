@@ -17,18 +17,21 @@ namespace Game
 		m_minSprayRadius(0.0f),
 		m_maxSprayRadius(1.0f),
 		m_sprayRadius(0.0f),
-		m_weaponSockets{ SocketComponent(THISACTOR, Vec3(1.f,0.f,0.f)), SocketComponent(THISACTOR, Vec3(-1.f,0.f,0.f)) }
+		m_weaponSockets{ SocketComponent(THISACTOR, Vec3(2.f,-1.f,0.f)), SocketComponent(THISACTOR, Vec3(-2.f,-1.f,0.f)) }
 	{
-		Weapon& weapon = FactoryActor::GetThreadLocalInstance().Make<Weapon>(Vec3());
-		m_weaponSockets[0].Attach(weapon);
+		Weapon& weapon1 = FactoryActor::GetThreadLocalInstance().Make<Weapon>(Vec3());
+		Weapon& weapon2 = FactoryActor::GetThreadLocalInstance().Make<Weapon>(Vec3());
+		m_weaponSockets[0].Attach(weapon1);
+		m_weaponSockets[1].Attach(weapon2);
 	}
 
 	float Ship::GetCurrentSpeed() const
 	{
 		Vec3 forward = ei::rotation(GetRotation()) * Vec3(0.0f, 0.0f, 1.0f);
 		float forwardVelocity = 0.0f;
-		if (len(GetVelocity()) > 0.0f)
-			forwardVelocity = dot(forward, normalize(GetVelocity())) * len(GetVelocity());
+		float l = len(GetVelocity());
+		if (l > 0.0f)
+			forwardVelocity = dot(forward, normalize(GetVelocity())) * l;
 		return forwardVelocity;
 	}
 

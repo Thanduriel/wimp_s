@@ -24,6 +24,8 @@ namespace Game {
 		void Process(float _deltaTime) override;
 		void RegisterComponents(class SceneGraph& _sceneGraph) override;
 	private:
+		float m_particleSpawnCount;
+
 		GeometryComponent m_mesh;
 		PointLightComponent m_engineLight;
 		ParticleSystemComponent<Graphic::ParticleSystems::BASIC_SYSTEM> m_thrustParticles;

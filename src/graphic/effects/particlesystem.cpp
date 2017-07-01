@@ -180,6 +180,10 @@ void DirectionComponents::AttachTo(VertexArrayBuffer& _vertexArray)
 // system manager
 std::vector< Manager::SystemPair > Manager::m_particleSystems;
 
+void Manager::Close()
+{
+	m_particleSystems.clear();
+}
 
 void Manager::Draw(const Control::Camera& _camera)
 {

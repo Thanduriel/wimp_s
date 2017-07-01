@@ -7,6 +7,7 @@
 #include "graphic/resources.hpp"
 #include "control/input.hpp"
 #include "graphic/effects/lightsystem.hpp"
+#include "graphic/effects/particlesystem.hpp"
 
 #include "utils/loggerinit.hpp"
 
@@ -42,6 +43,7 @@ Wimp_s::~Wimp_s()
 {
 	Control::InputManager::Close();
 	LightSystem::Close();
+	ParticleSystems::Manager::Close();
 
 	delete m_sceneColorTexture;
 	delete m_sceneNormalTexture;

@@ -6,6 +6,7 @@
 #include "graphic/effects/starbackground.hpp"
 #include "gameplay/core/actor.hpp"
 #include "gameplay/scenegraph.hpp"
+#include "control/playercontroller.hpp"
 
 #include <vector>
 #include <memory>
@@ -39,7 +40,9 @@ namespace GameStates{
 
 	private:
 		Graphic::Starbackground m_starbackground;
+
 		Control::PlayerController* m_playerController;
+		Control::GameTimeControl m_gameTimeControl;
 
 		Game::SceneGraph m_sceneGraph;
 	};

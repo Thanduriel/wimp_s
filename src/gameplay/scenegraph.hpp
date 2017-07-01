@@ -44,7 +44,7 @@ namespace Game {
 		void RegisterComponent(class MarkerComponent& _component);
 		void RegisterComponent(class FactoryComponent& _component);
 
-		void Process(float _deltaTime);
+		void Process(float _deltaTime, float _realdTime);
 		void Draw();
 
 		// removes all destroyed components and associated components.

@@ -28,7 +28,8 @@ namespace GameStates {
 	Game::ParticleSystemActor<Graphic::ParticleSystems::BASIC_SYSTEM>* particleSystem;
 
 	MainState::MainState()
-		: m_starbackground(2000, 20000.f, 14000)
+		: m_starbackground(2000, 20000.f, 14000),
+		m_gameTimeControl{1.f}
 	{
 		// setup player controller
 		blackHole = new BlackHole(ei::Vec3(-5.f));
@@ -39,7 +40,7 @@ namespace GameStates {
 		m_sceneGraph.Add(*grid);
 		Ship* ship = new Ship("spaceship", Vec3(0.f));
 		m_sceneGraph.Add(*ship);
-		m_playerController = new Control::PlayerController(*ship, *grid, *blackHole, m_hud);
+		m_playerController = new Control::PlayerController(*ship, *grid, *blackHole, m_hud, m_gameTimeControl);
 		Control::g_camera.Attach(*ship);
 
 		// some test actors
@@ -63,7 +64,7 @@ namespace GameStates {
 
 	void MainState::Process(float _deltaTime)
 	{
-		m_sceneGraph.Process(_deltaTime);
+		m_sceneGraph.Process(m_gameTimeControl.m_timeScale * _deltaTime, _deltaTime);
 		m_playerController->Process(_deltaTime);
 		Control::g_camera.Process(_deltaTime);
 

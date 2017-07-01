@@ -349,6 +349,8 @@ namespace Graphic {
 		class Manager
 		{
 		public:
+			static void Close();
+
 			static void Draw(const Control::Camera& _camera);
 			static void Process(float _deltaTime);
 

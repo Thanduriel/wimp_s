@@ -23,7 +23,7 @@ namespace Game {
 		FactoryActor::m_instances.push_back(factory);
 	}
 
-	void SceneGraph::Process(float _deltaTime)
+	void SceneGraph::Process(float _deltaTime, float _realdTime)
 	{
 		// for now all actors are processed
 		// this could be optimized by having an extra container for this
@@ -38,7 +38,7 @@ namespace Game {
 		Graphic::ParticleSystems::Manager::Process(_deltaTime);
 
 		for (auto component : m_markerComponents)
-			component->ProcessComponent(_deltaTime);
+			component->ProcessComponent(_realdTime);
 	}
 
 	void SceneGraph::Draw()
