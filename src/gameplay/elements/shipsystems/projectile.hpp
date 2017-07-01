@@ -3,23 +3,32 @@
 #include "gameplay/elements/particlesystemcomponent.hpp"
 #include "gameplay/elements/light.hpp"
 #include "gameplay/core/model.hpp"
+#include "../lifetimecomponent.hpp"
 
 namespace Game {
 
+	/* Projectile ***********************************************
+	 * Basic projectile with limited life time (and damage on hit)
+	 */
 	class Projectile : public DynamicActor
 	{
 	public:
 		Projectile(const ei::Vec3& _position, const ei::Vec3& _velocity, float _lifeTime);
 
-		void Process(float _deltaTime) override;
+		void OnDestroy() override;
+		void RegisterComponents(class SceneGraph& _sceneGraph) override;
 	private:
-		float m_lifeTime; //< remaining life time
+		LifeTimeComponent m_lifeTimeComponent;
 	};
 
+	/* Rocket **************************************************
+	 * A projectile with acceleration and target-seeking functionality.
+	 * Explodes on impact to deal aoe damage.
+	 */
 	class Rocket : public Projectile
 	{
 	public:
-		Rocket(const ei::Vec3& _position, const ei::Vec3 _velocity, float _lifeTime);
+		Rocket(const ei::Vec3& _position, const ei::Vec3& _velocity, float _lifeTime);
 
 		void Process(float _deltaTime) override;
 		void RegisterComponents(class SceneGraph& _sceneGraph) override;
@@ -29,18 +38,5 @@ namespace Game {
 		GeometryComponent m_mesh;
 		PointLightComponent m_engineLight;
 		ParticleSystemComponent<Graphic::ParticleSystems::BASIC_SYSTEM> m_thrustParticles;
-	};
-
-	class Explosion : public Actor
-	{
-	public:
-		Explosion(const ei::Vec3& _position);
-
-		void RegisterComponents(class SceneGraph& _sceneGraph) override;
-		void Process(float _deltaTime) override;
-	private:
-		PointLightComponent m_light;
-		ParticleSystemComponent<Graphic::ParticleSystems::BASIC_SYSTEM> m_particles;
-		float m_lifeTime;
 	};
 }

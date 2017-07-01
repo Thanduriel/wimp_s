@@ -12,6 +12,8 @@ namespace Game {
 		~PointLightComponent();
 
 		void Draw();
+
+		Graphic::LightHandle& GetLight() { return m_handle; }
 	private:
 		Graphic::LightHandle m_handle;
 	};

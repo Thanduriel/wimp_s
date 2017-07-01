@@ -49,6 +49,7 @@ namespace Game {
 		// Is object to be destroyed?
 		bool IsDestroyed() const { return m_destroyed; }
 
+		virtual void OnDestroy() {}
 		virtual void Process(float _deltaTime) {}
 
 		bool CanTick() const { return m_canTick; }

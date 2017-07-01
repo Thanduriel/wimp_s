@@ -33,6 +33,15 @@ namespace Control {
 		// Avoid invalid pointers
 		InputManagerInstance.m_gameState = nullptr;
 		InputManagerInstance.m_window = _window;
+		
+		// Read key mapping
+		InputManagerInstance.m_keyMap = new Jo::Files::MetaFileWrapper::Node*[6];
+		InputManagerInstance.m_keyMap[(int)VirtualKey::ACC_FORWARD] = &_keyConfig[string("AccForward")];
+		InputManagerInstance.m_keyMap[(int)VirtualKey::ACC_BACKWARD] = &_keyConfig[string("AccBackward")];
+		InputManagerInstance.m_keyMap[(int)VirtualKey::ACC_LEFT] = &_keyConfig[string("AccLeft")];
+		InputManagerInstance.m_keyMap[(int)VirtualKey::ACC_RIGHT] = &_keyConfig[string("AccRight")];
+		InputManagerInstance.m_keyMap[(int)VirtualKey::ADJUST_TARGET_ACC] = &_keyConfig[string("AdjustTargetAcc")];
+		InputManagerInstance.m_keyMap[(int)VirtualKey::FIRE] = &_keyConfig[string("Fire")];
 	}
 
 	// ********************************************************************* //

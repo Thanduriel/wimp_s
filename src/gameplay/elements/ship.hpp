@@ -5,6 +5,7 @@
 #include "gameplay/core/model.hpp"
 #include "factorycomponent.hpp"
 #include "gameplay/elements/socketcomponent.hpp"
+#include "gameplay/elements/light.hpp"
 
 namespace Game
 {
@@ -88,6 +89,7 @@ namespace Game
 		Vec3 m_targetAngularVelocity;
 		float m_angularAcceleration;
 
+		std::array < PointLightComponent, 2 > m_staticLights;
 		std::array < SocketComponent, 2> m_weaponSockets;
 	};
 }

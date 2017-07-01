@@ -8,7 +8,7 @@ namespace Game
 	class BlackHoleComponent : public PostProcessComponent
 	{
 	public:
-		using PostProcessComponent::PostProcessComponent;
+		BlackHoleComponent(const Actor& _actor, float _radius);
 
 		void Draw() override;
 	private:
