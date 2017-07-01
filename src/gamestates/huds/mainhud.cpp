@@ -16,6 +16,9 @@ namespace GameStates {
 		m_speedLabel->SetText("0 m/s");
 		m_speedLabel->SetDefaultSize(0.7f);
 		m_speedSlider = &CreateScreenElement<ScreenTexture>("targetspeed_slider", Vec2(0, 0.11328125f * m_outerSpeedBar->GetSize().y), PixelOffset(128, 32), DefP::MidMid, Anchor(DefP::BotMid, m_outerSpeedBar));
+		m_crossHairDot = &CreateScreenElement<ScreenTexture>("crosshair_dot", PixelOffset(0, 0), PixelOffset(32, 32), DefP::MidMid, Anchor(DefP::MidMid, this));
+		m_crossHairLeft = &CreateScreenElement<ScreenTexture>("crosshair_left", PixelOffset(0, 0), PixelOffset(64, 64), DefP::MidRight, Anchor(DefP::MidMid, m_crossHairDot));
+		m_crossHairRight = &CreateScreenElement<ScreenTexture>("crosshair_right", PixelOffset(0, 0), PixelOffset(64, 64), DefP::MidLeft, Anchor(DefP::MidMid, m_crossHairDot));
 	}
 
 	void MainHud::UpdateSpeedLabel(float _speed)
@@ -35,7 +38,7 @@ namespace GameStates {
 		//Magic numbers FTW!!!
 		//The relative heights from the bottom of the drawn texture to the top of the drawn texture
 		Vec2 vec(1.0f, 0.11328125f + 0.7734375f * (_speed / _maxSpeed));
-		if (_speed >= _maxSpeed - 0.001f)
+		if (_speed >= _maxSpeed - 0.01f)
 			vec[1] = 1.0f;
 		m_innerSpeedBar->SetScale(vec);
 		m_innerSpeedBar->SetTextureRect(vec);
@@ -46,5 +49,13 @@ namespace GameStates {
 	{
 		float height = 0.11328125f + 0.7734375f * (_targetSpeed / _maxSpeed);
 		m_speedSlider->SetPosition(Vec2(0, height * m_outerSpeedBar->GetSize().y));
+	}
+
+	void MainHud::UpdateCrossHair(float _sprayRadius)
+	{
+		float maxSpread = 50.0f;
+		float spread = maxSpread * _sprayRadius;
+		m_crossHairLeft->SetPosition(PixelOffset(-spread, 0));
+		m_crossHairRight->SetPosition(PixelOffset(spread, 0));
 	}
 }

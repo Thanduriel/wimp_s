@@ -17,7 +17,7 @@ struct texQuad
 
 using namespace std;
 
-const int TEXTURESMAX = 16;
+const int TEXTURESMAX = 64;
 
 bool cmp( const Jo::Files::ImageWrapper* a, const Jo::Files::ImageWrapper* b ) 
 {

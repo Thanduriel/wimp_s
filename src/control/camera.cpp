@@ -4,6 +4,7 @@
 #include "graphic/resources.hpp"
 #include "graphic/core/uniformbuffer.hpp"
 #include "math/extensions.hpp"
+#include "gameplay/elements/ship.hpp"
 
 namespace Control {
 
@@ -18,9 +19,12 @@ namespace Control {
 		: DynamicActor(_position, _rotation),
 		m_fov(_fov),
 		m_projection(ei::perspectiveGL(_fov, _aspectRatio, 0.1f, 50000.f)),
-		m_viewProjection( ),
+		m_viewProjection(),
 		m_mode(Mode::Follow),
-		m_distanceToTarget(10.0f)
+		m_minDistanceBehind(10.0f),
+		m_maxDistanceBehind(15.0f),
+		m_minDistanceAbove(3.0f),
+		m_maxDistanceAbove(3.0f)
 	{
 	}
 
@@ -33,12 +37,11 @@ namespace Control {
 		case Mode::Follow:
 			if (m_target)
 			{
-				m_targetPosition = m_target->GetPosition() + m_target->GetRotationMatrix() * Vec3(0.f,0.f,-m_distanceToTarget);
+				m_targetPosition = m_target->GetPosition() + m_target->GetRotationMatrix() * GetDistance();
 				m_targetRotation = m_target->GetRotation();
 
 				// move to the desired configuration
-				float smoothDistanceToTarget = ei::lerp(len(m_position - m_target->GetPosition()), m_distanceToTarget, 100.0f * _deltaTime);
-				m_position = Vec3(m_target->GetTransformation() * Vec4(0.f, 0.f, -smoothDistanceToTarget, 1.f));
+				m_position = m_targetPosition;
 				m_rotation = m_targetRotation;
 			}
 			break;
@@ -73,7 +76,7 @@ namespace Control {
 		m_nextMode = Mode::Follow; 
 		m_mode = Mode::MoveTo;
 		m_target = &_target;
-		m_targetPosition = m_target->GetPosition() + m_target->GetRotationMatrix() * Vec3(0.f, 0.f, -m_distanceToTarget);
+		m_targetPosition = m_target->GetPosition() + m_target->GetRotationMatrix() * GetDistance();
 		m_targetRotation = m_target->GetRotation();
 	}
 
@@ -133,6 +136,14 @@ namespace Control {
 		_ubo["CameraRotation"] = ei::Mat4x4(m_inverseRotationMatrix);
 		_ubo["View"] = Mat4x4(m_inverseRotationMatrix) * translation(-m_position);
 		_ubo["SignDir"] = sgn(zaxis(m_rotation));
+	}
+
+	ei::Vec3 Camera::GetDistance() const
+	{
+		float factor = ((Game::Ship*)m_target)->GetCurrentSpeed() / ((Game::Ship*)m_target)->GetMaxSpeed();
+		float distanceAboveTarget = m_minDistanceAbove + factor * (m_maxDistanceAbove - m_minDistanceAbove);
+		float distanceBehindTarget = m_minDistanceBehind + factor * (m_maxDistanceBehind - m_minDistanceBehind);
+		return Vec3(0.0f, distanceAboveTarget, -distanceBehindTarget);
 	}
 
 	// ******************************************************************* //

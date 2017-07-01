@@ -47,6 +47,9 @@ namespace Control {
 
 		// Returns a ray from the camera that goes through the given point.
 		ei::Ray GetRay(const ei::Vec2& _screenSpaceCoordinate) const;
+
+		// Gets the distance to the target ship
+		ei::Vec3 GetDistance() const;
 	private:
 		void ProcessFreeMove(float _deltaTime);
 
@@ -60,7 +63,10 @@ namespace Control {
 		Mode m_mode;
 		Mode m_nextMode; // mode after the target position has been reached
 		const Game::Actor* m_target;
-		const float m_distanceToTarget;
+		const float m_minDistanceBehind;
+		const float m_maxDistanceBehind;
+		const float m_minDistanceAbove;
+		const float m_maxDistanceAbove;
 	};
 
 	extern Camera g_camera; // global default camera used for scene rendering

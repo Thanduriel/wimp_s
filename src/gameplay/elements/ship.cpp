@@ -60,13 +60,6 @@ namespace Game
 		}
 	}
 
-	void Ship::UpdateSprayRadius(float currentSpeed)
-	{
-		// Scale spray radius from min to max over speed 0 to max speed
-		float factor = (currentSpeed - m_minSpeed) / (m_maxSpeed - m_minSpeed);
-		m_sprayRadius = ei::max(ei::min(m_minSprayRadius + (m_maxSprayRadius - m_minSprayRadius) * factor, m_maxSprayRadius), m_minSprayRadius);
-	}
-
 	void Ship::Process(float _deltaTime)
 	{
 		// Get current speed here for performance reasons
@@ -74,9 +67,6 @@ namespace Game
 
 		// Update the speed
 		UpdateSpeed(currentSpeed, _deltaTime);
-
-		// Update the spray radius
-		UpdateSprayRadius(currentSpeed);
 
 		Model::Process(_deltaTime);
 	}

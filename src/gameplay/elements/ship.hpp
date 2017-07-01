@@ -21,9 +21,6 @@ namespace Game
 		// Update speed
 		void UpdateSpeed(float currentSpeed, float _deltaTime);
 
-		// Update spray radius
-		void UpdateSprayRadius(float currentSpeed);
-
 		//Access thrust
 		void SetThrust(const float _thrust) { m_thrust = _thrust; };
 		const float GetThrust() const { return m_thrust; };
@@ -56,6 +53,7 @@ namespace Game
 		float GetMinSprayRadius() const { return m_minSprayRadius; }
 
 		// Access current spray radius
+		void SetSprayRadius(const float _sprayRadius) { m_sprayRadius = ei::max(ei::min(m_maxSprayRadius, _sprayRadius), m_minSprayRadius); }
 		float GetSprayRadius() const { return m_sprayRadius; }
 
 		void RegisterComponents(class SceneGraph& _sceneGraph);

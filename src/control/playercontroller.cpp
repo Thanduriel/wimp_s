@@ -182,5 +182,6 @@ namespace Control
 		m_hud.UpdateSpeedLabel(m_ship->GetCurrentSpeed());
 		m_hud.UpdateSpeedBar(m_ship->GetCurrentSpeed(), m_ship->GetMaxSpeed());
 		m_hud.UpdateTargetSpeedSlider(m_targetSpeed, m_ship->GetMaxSpeed());
+		m_hud.UpdateCrossHair(m_ship->GetSprayRadius());
 	}
 }
