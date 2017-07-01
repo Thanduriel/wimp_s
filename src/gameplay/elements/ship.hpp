@@ -80,6 +80,5 @@ namespace Game
 		float m_sprayRadius;
 
 		std::array < SocketComponent, 2> m_weaponSockets;
-		FactoryComponent m_actorFactory;
 	};
 }

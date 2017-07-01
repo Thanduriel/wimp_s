@@ -17,6 +17,7 @@ namespace Game {
 	class SceneGraph
 	{
 	public:
+		SceneGraph();
 
 		// Add an heap allocated object to the scene management.
 		template<class T>

@@ -12,6 +12,16 @@
 using namespace Graphic;
 
 namespace Game {
+	// thread safe instances
+	std::vector<FactoryActor*> FactoryActor::m_instances;
+
+	SceneGraph::SceneGraph()
+	{
+		// register general factories
+		FactoryActor* factory = new FactoryActor(ei::Vec3(0.f));
+		Add(*factory);
+		FactoryActor::m_instances.push_back(factory);
+	}
 
 	void SceneGraph::Process(float _deltaTime)
 	{
@@ -47,30 +57,31 @@ namespace Game {
 		Graphic::LightSystem::Draw();
 
 		// post lighting 3d effects
-		// todo: instead of a branch check have different containers
 		for (auto component : m_markerComponents)
-if (component->IsActive()) component->Draw();
+			component->Draw();
 
-// render the frame-buffer to the hardware back-buffer
-Texture& tex = *Device::GetCurrentFramebufferBinding()->GetColorAttachments().begin()->pTexture;
+		// render the frame-buffer to the hardware back-buffer
+		Texture& tex = *Device::GetCurrentFramebufferBinding()->GetColorAttachments().begin()->pTexture;
 
-Device::BindFramebuffer(nullptr);
-Device::SetEffect(Graphic::Resources::GetEffect(Effects::SCREEN_OUTPUT));
-Device::SetTexture(tex, 0);
-Device::DrawFullscreen();
+		Device::BindFramebuffer(nullptr);
+		Device::SetEffect(Graphic::Resources::GetEffect(Effects::SCREEN_OUTPUT));
+		Device::SetTexture(tex, 0);
+		Device::DrawFullscreen();
 
-// post processing reads from the frame-buffer and writes to the back-buffer
-for (auto component : m_postProcessComponents)
-component->Draw();
+		// post processing reads from the frame-buffer and writes to the back-buffer
+		for (auto component : m_postProcessComponents)
+		component->Draw();
 	}
 
 	// *********************************************************** //
 	void SceneGraph::RegisterComponent(ConstActorComponent& _component)
 	{
+		_component.OnRegister();
 		m_constActorComponents.push_back(&_component);
 	}
 	void SceneGraph::RegisterComponent(ActorComponent& _component)
 	{
+		_component.OnRegister();
 		m_actorComponents.push_back(&_component);
 	}
 

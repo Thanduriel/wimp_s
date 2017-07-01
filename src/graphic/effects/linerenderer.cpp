@@ -35,7 +35,7 @@ namespace Graphic {
 	void LineRenderer::Draw(const ei::Mat4x4& _worldViewProjection)
 	{
 		Device::SetEffect(Resources::GetEffect(Effects::LINES));
-
+		
 		UniformBuffer& ubo = Resources::GetUBO(UniformBuffers::OBJECT_LINES);
 		ubo["c_WorldViewProjection"] = _worldViewProjection;
 		ubo["c_Color"] = m_color;

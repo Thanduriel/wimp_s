@@ -14,10 +14,10 @@ void main()
 	vec4 fragColor;
 	fragColor = vs_out_normal;
 	fragColor.w = 1;
-	float cosTheta = clamp( dot( vs_out_normal, vec4(0,0,-1,1) ), 0,1 );
+	float cosTheta = clamp( dot( vs_out_normal, vec4(0,0,-1,1) ), 0.4,0.6 );
 	// todo read color from texture
 	fragColor.rgb = texture(diffuseTex, vs_out_texCoords).rgb;//vec3(0.4,0.3,0.6);
-	fragColor *= clamp(cosTheta, 0.4, 0.6);
+	fragColor *= cosTheta;
 	fragColor.a = 1;
 	
 	out_FragColor = fragColor;

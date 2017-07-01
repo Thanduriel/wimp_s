@@ -352,6 +352,8 @@ namespace Graphic {
 			static void Draw(const Control::Camera& _camera);
 			static void Process(float _deltaTime);
 
+			static size_t GetNumParticlesTotal();
+
 			template<uint PFlags>
 			static System<PFlags>& Get(RenderType _type)
 			{

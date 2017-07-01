@@ -29,9 +29,9 @@ namespace Game {
 		Vec3 dir = (Vec3(0.f, 0.f, -1.f) + rng.Direction() * 0.2f) * rng.Uniform(0.3f, 2.f);
 		m_thrustParticles.AddParticle(Vec3(0.f), //position
 			dir, //velocity
-			2.1f, //life time
+			2.0f, //life time
 			Utils::Color8U(0.65f, 0.65f, 0.65f, 0.3f).RGBA(),
-			0.1f); // size
+			0.06f); // size
 	}
 
 	void Rocket::RegisterComponents(SceneGraph& _sceneGraph)
@@ -45,7 +45,7 @@ namespace Game {
 
 	Rocket::Rocket(const Vec3& _position, const ei::Vec3 _velocity, float _lifeTime)
 		: Projectile(_position, _velocity, _lifeTime),
-		m_engineLight(THISACTOR, THRUSTEROFFSET * 1.2f, 2.f, Utils::Color8U(0.4f, 0.2f, 0.9f)),
+		m_engineLight(THISACTOR, THRUSTEROFFSET * 1.3f, 1.f, Utils::Color8U(0.4f, 0.2f, 0.9f)),
 		m_thrustParticles(THISACTOR, THRUSTEROFFSET),
 		m_mesh(THISACTOR, "testrocket")
 	{

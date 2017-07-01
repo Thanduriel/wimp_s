@@ -90,7 +90,8 @@ namespace GameStates {
 		m_sceneGraph.Draw();
 
 		// the hud should be drawn last
-		m_hud.GetDebugLabel().SetText("ft: <c 0 255 100>" + std::to_string(_deltaTime) + "</c>");
+		m_hud.GetDebugLabel().SetText("ft: <c 0 255 100>" + std::to_string(_deltaTime) + "</c>"
+							+ "\nnumP" + std::to_string(ParticleSystems::Manager::GetNumParticlesTotal()));
 		m_hud.Draw(_deltaTime);
 	}
 

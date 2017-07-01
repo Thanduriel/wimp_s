@@ -18,6 +18,6 @@ namespace Game {
 
 	void Weapon::Fire()
 	{
-		m_factoryComponent.Make<Rocket>(ei::Vec3(0.f), m_rotationMatrix * ei::Vec3(0.f,0.f,10.f), 10.f);
+		m_factoryComponent.MakeP<Rocket>(ei::Vec3(0.f), m_rotationMatrix * ei::Vec3(0.f,0.f,50.f), 10.f);
 	}
 }

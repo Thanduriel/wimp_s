@@ -198,6 +198,16 @@ void Manager::Process(float _deltaTime)
 		system.second->Simulate(_deltaTime);
 }
 
+size_t Manager::GetNumParticlesTotal()
+{
+	size_t count = 0;
+
+	for (auto& system : m_particleSystems)
+		count += system.second->GetNumParticles();
+
+	return count;
+}
+
 
 } // namespace ParticleSystem
 } // namespace Graphic

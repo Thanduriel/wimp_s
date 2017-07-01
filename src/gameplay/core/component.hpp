@@ -23,6 +23,7 @@ namespace Game {
 			virtual void OnRegister() {}
 			virtual void ProcessComponent(float _deltaTime) {}
 
+			// does nothing currently
 			void SetActive(bool _isActive) { m_isActive = _isActive; }
 			bool IsActive() const { return m_isActive; }
 		protected:
