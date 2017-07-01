@@ -21,7 +21,6 @@ namespace Graphic {
 	void BlackHoleRenderer::Add(const ei::Vec3& _position, float _radius)
 	{
 		// temporary refresh
-		m_vertices.Clear();
 		auto vbGuard = m_vertices.GetBuffer(0);
 		Vertex vertex;
 		vertex.position = _position;
