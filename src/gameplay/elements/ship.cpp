@@ -84,11 +84,8 @@ namespace Game
 		// Update the speed
 		UpdateSpeed(currentSpeed, _deltaTime);
 
-<<<<<<< HEAD
 		// Update angular velocity
 		UpdateAngularVelocity(_deltaTime);
-=======
->>>>>>> origin/master
 
 		Model::Process(_deltaTime);
 	}
