@@ -177,7 +177,7 @@ namespace Control
 		Vec2 cursor = InputManager::GetCursorPosScreenSpace();
 
 		cursor = Vec2(sgn(cursor[0]), sgn(cursor[1])) * cursor * cursor;
-		m_ship->SetAngularVelocity(m_ship->GetRotationMatrix() * Vec3(-cursor[1], cursor[0], 0.0f));
+		m_ship->SetTargetAngularVelocity(m_ship->GetRotationMatrix() * Vec3(-cursor[1], cursor[0], 0.0f));
 
 		m_hud.UpdateSpeedLabel(m_ship->GetCurrentSpeed());
 		m_hud.UpdateSpeedBar(m_ship->GetCurrentSpeed(), m_ship->GetMaxSpeed());

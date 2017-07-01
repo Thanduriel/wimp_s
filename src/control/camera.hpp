@@ -63,10 +63,10 @@ namespace Control {
 		Mode m_mode;
 		Mode m_nextMode; // mode after the target position has been reached
 		const Game::Actor* m_target;
-		const float m_minDistanceBehind;
-		const float m_maxDistanceBehind;
-		const float m_minDistanceAbove;
-		const float m_maxDistanceAbove;
+		ei::Vec3 m_targetOffset;
+		ei::Vec3 m_currentOffset;
+		float m_speed;
+		float m_acceleration;
 	};
 
 	extern Camera g_camera; // global default camera used for scene rendering

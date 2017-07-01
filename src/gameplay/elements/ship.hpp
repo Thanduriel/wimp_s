@@ -20,6 +20,7 @@ namespace Game
 
 		// Update speed
 		void UpdateSpeed(float currentSpeed, float _deltaTime);
+		void UpdateAngularVelocity(float _deltaTime);
 
 		//Access thrust
 		void SetThrust(const float _thrust) { m_thrust = _thrust; };
@@ -56,6 +57,14 @@ namespace Game
 		void SetSprayRadius(const float _sprayRadius) { m_sprayRadius = ei::max(ei::min(m_maxSprayRadius, _sprayRadius), m_minSprayRadius); }
 		float GetSprayRadius() const { return m_sprayRadius; }
 
+		// Access target angular velocity
+		void SetTargetAngularVelocity(const Vec3 _angularVelocity) { m_targetAngularVelocity = _angularVelocity; };
+		Vec3 GetTargetAngularVelocity() const { return m_targetAngularVelocity; };
+
+		//Access angular acceleration
+		void SetAngularAcceleration(const float _angularAcceleration) { m_angularAcceleration = _angularAcceleration; };
+		float GetAngularAcceleration() const { return m_angularAcceleration; };
+
 		void RegisterComponents(class SceneGraph& _sceneGraph);
 		// Fire all weapons straight forward.
 		void Fire();
@@ -76,6 +85,8 @@ namespace Game
 		float m_maxSprayRadius;
 		// the spray radius
 		float m_sprayRadius;
+		Vec3 m_targetAngularVelocity;
+		float m_angularAcceleration;
 
 		std::array < SocketComponent, 2> m_weaponSockets;
 	};

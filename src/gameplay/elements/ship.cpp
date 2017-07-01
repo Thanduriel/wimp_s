@@ -17,6 +17,7 @@ namespace Game
 		m_minSprayRadius(0.0f),
 		m_maxSprayRadius(1.0f),
 		m_sprayRadius(0.0f),
+		m_angularAcceleration(1.0f),
 		m_weaponSockets{ SocketComponent(THISACTOR, Vec3(2.f,-1.f,0.f)), SocketComponent(THISACTOR, Vec3(-2.f,-1.f,0.f)) }
 	{
 		Weapon& weapon1 = FactoryActor::GetThreadLocalInstance().Make<Weapon>(Vec3());
@@ -60,6 +61,19 @@ namespace Game
 		}
 	}
 
+	void Ship::UpdateAngularVelocity(float _deltaTime)
+	{
+		Vec3 newAngularVelocity(GetAngularVelocity());
+		for (int i = 0; i < 3; i++)
+		{
+			if (GetAngularVelocity()[i] < m_targetAngularVelocity[i])
+				newAngularVelocity[i] = ei::min(lerp(newAngularVelocity[i], m_targetAngularVelocity[i], m_angularAcceleration * _deltaTime), m_targetAngularVelocity[i]);
+			else
+				newAngularVelocity[i] = ei::max(lerp(newAngularVelocity[i], m_targetAngularVelocity[i], m_angularAcceleration * _deltaTime), m_targetAngularVelocity[i]);
+		}
+		SetAngularVelocity(newAngularVelocity);
+	}
+
 	void Ship::Process(float _deltaTime)
 	{
 		// Get current speed here for performance reasons
@@ -67,6 +81,9 @@ namespace Game
 
 		// Update the speed
 		UpdateSpeed(currentSpeed, _deltaTime);
+
+		// Update angular velocity
+		UpdateAngularVelocity(_deltaTime);
 
 		Model::Process(_deltaTime);
 	}
