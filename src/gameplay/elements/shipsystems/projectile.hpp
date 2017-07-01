@@ -30,4 +30,17 @@ namespace Game {
 		PointLightComponent m_engineLight;
 		ParticleSystemComponent<Graphic::ParticleSystems::BASIC_SYSTEM> m_thrustParticles;
 	};
+
+	class Explosion : public Actor
+	{
+	public:
+		Explosion(const ei::Vec3& _position);
+
+		void RegisterComponents(class SceneGraph& _sceneGraph) override;
+		void Process(float _deltaTime) override;
+	private:
+		PointLightComponent m_light;
+		ParticleSystemComponent<Graphic::ParticleSystems::BASIC_SYSTEM> m_particles;
+		float m_lifeTime;
+	};
 }

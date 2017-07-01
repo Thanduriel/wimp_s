@@ -1,5 +1,7 @@
 #pragma once
 
+#include <functional>
+
 #include "graphic/effects/particlesystem.hpp"
 #include "gameplay/core/component.hpp"
 #include "math/transformation.hpp"
@@ -22,7 +24,7 @@ namespace Game {
 	class ParticleSystemComponent : public BaseParticleSystemComponent
 	{
 	public:
-		ParticleSystemComponent(const Actor& _actor, const ei::Vec3& _position, 
+		ParticleSystemComponent(const Actor& _actor, const ei::Vec3& _position,
 			Graphic::ParticleSystems::RenderType _type = Graphic::ParticleSystems::RenderType::BLOB)
 			: BaseParticleSystemComponent(_actor, _position),
 			m_system(Graphic::ParticleSystems::Manager::Get<PFlags>(_type))
@@ -42,8 +44,11 @@ namespace Game {
 				std::forward<Args>(_args)...);
 		}
 
+		void ProcessComponent(float _deltaTime) override {}
+
 	private:
 		Graphic::ParticleSystems::System<PFlags>& m_system;
+		std::function<void(const ParticleSystemComponent&)> m_generatorFunc;
 	};
 
 	template<ei::uint PFlags>
