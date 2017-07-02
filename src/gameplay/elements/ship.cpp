@@ -7,7 +7,7 @@ namespace Game
 	using namespace ei;
 	using namespace std;
 
-	Ship::Ship(const string& _pFile, const Vec3& _position)
+	Ship::Ship(const string& _pFile, const Vec3& _position, CollisionComponent::Type _collisionType)
 		: Model(_pFile, _position, qidentity()),
 		m_thrust(50.0f),
 		m_weight(1.0f),
@@ -19,10 +19,11 @@ namespace Game
 		m_sprayRadius(0.0f),
 		m_angularAcceleration(1.0f),
 		m_targetAngularVelocity(0.f),
-		m_weaponSockets{ SocketComponent(THISACTOR, Vec3(3.f,3.5f,0.f)), SocketComponent(THISACTOR, Vec3(-3.f,3.5f,0.f)) },
+		m_weaponSockets{ SocketComponent(THISACTOR, Vec3(3.f,1.5f,0.f)), SocketComponent(THISACTOR, Vec3(-3.f,1.5f,0.f)) },
 		m_staticLights {PointLightComponent(THISACTOR, Vec3(3.f, 0.f, -6.f), 5.f, Utils::Color8U(0.f,1.f,0.f)), 
 				PointLightComponent(THISACTOR, Vec3(-3.f, 0.f, -6.f), 5.f, Utils::Color8U(0.f,1.f,0.f)) }
 	{
+		GetCollisionComponent().SetType(_collisionType);
 		Weapon& weapon1 = FactoryActor::GetThreadLocalInstance().Make<Weapon>(Vec3());
 		Weapon& weapon2 = FactoryActor::GetThreadLocalInstance().Make<Weapon>(Vec3());
 		m_weaponSockets[0].Attach(weapon1);

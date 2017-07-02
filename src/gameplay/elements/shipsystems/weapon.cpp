@@ -30,7 +30,8 @@ namespace Game {
 		if (m_cooldown < 0.f)
 		{
 			m_cooldown = m_cooldownMax;
-			m_factoryComponent.MakeP<Rocket>(ei::Vec3(0.f), m_rotationMatrix * ei::Vec3(0.f, 0.f, 12.f), 10.f);
+			Rocket& rocket = m_factoryComponent.MakeP<Rocket>(ei::Vec3(0.f), m_rotationMatrix * ei::Vec3(0.f, 0.f, 12.f), 10.f);
+			rocket.GetCollisionComponent().SetType(CollisionComponent::Type::NonPlayer);
 		}
 	}
 }

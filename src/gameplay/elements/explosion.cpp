@@ -14,10 +14,9 @@ namespace Game {
 		: Actor(_position),
 		m_lifeTimeComponent(THISACTOR, 2.f),
 		m_light(THISACTOR, Vec3(0.f), _radius, Utils::Color8U(0.0f, 0.0f, 1.0f)),
-		m_particles(THISACTOR, Vec3(0.f))
+		m_particles(THISACTOR, Vec3(0.f)),
+		m_radius(_radius)
 	{
-		m_canTick = false;
-
 		for (int i = 0; i < 1000; ++i)
 		{
 			static Generators::RandomGenerator rng(0x614AA);
@@ -30,6 +29,12 @@ namespace Game {
 				Utils::Color8U(0.7f, 0.8f, col, 1.f).RGBA(),
 				0.2f); // size
 		}
+	}
+
+	void Explosion::Process(float _deltaTime)
+	{
+		float x = m_lifeTimeComponent.GetLifeTimeLeft() / m_lifeTimeComponent.GetLifeTimeMax();
+		m_light.GetLight()->radius = x * m_radius;
 	}
 
 	void Explosion::RegisterComponents(SceneGraph& _sceneGraph)

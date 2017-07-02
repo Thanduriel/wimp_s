@@ -28,7 +28,8 @@ namespace Game {
 		Model(const std::string& _pFile, const ei::Vec3&_position, const ei::Quaternion&_rotation);
 
 		void RegisterComponents(class SceneGraph& _sceneGraph) override;
-
+		GeometryComponent& GetGeometryComponent() { return m_geometryComponent; }
+		CollisionComponent& GetCollisionComponent() { return m_collisionComponent; }
 	protected:
 		GeometryComponent m_geometryComponent;
 		CollisionComponent m_collisionComponent;

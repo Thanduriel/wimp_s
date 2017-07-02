@@ -193,6 +193,10 @@ namespace Game {
 			{
 				CollisionComponent* slfComp = m_collisionComponents[i];
 				CollisionComponent* othComp = m_collisionComponents[j];
+				if (slfComp->GetType() == CollisionComponent::Type::NonPlayer
+					&& othComp->GetType() == CollisionComponent::Type::NonPlayer)
+					continue;
+
 				if (slfComp->GetVolume() < othComp->GetVolume()) std::swap(slfComp, othComp);
 				Actor& slf = slfComp->GetActor();
 				Actor& oth = othComp->GetActor();

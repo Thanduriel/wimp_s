@@ -13,7 +13,8 @@ namespace Game {
 			: ActorComponent(_actor), 
 			m_boundingRadius(_boundingRadius),
 			m_boundingRadiusSq(_boundingRadius*_boundingRadius),
-			m_boundingBox(_boundingBox)
+			m_boundingBox(_boundingBox),
+			m_type(Type::Any)
 		{
 			ei::Vec3 v = _boundingBox.max - _boundingBox.min;
 			m_volume = v.x * v.y * v.z;
@@ -23,10 +24,24 @@ namespace Game {
 		float GetBoundingRadiusSq() const { return m_boundingRadiusSq; }
 		const ei::Box& GetBoundingBox() const { return m_boundingBox; }
 		float GetVolume() const { return m_volume; }
+
+		// Restricts which sets of components can collide with each other.
+		// x indicates that the types can collide.
+		//     Any NP
+		// Any  x  x
+		// NP   x  -
+		enum struct Type 
+		{
+			Any,
+			NonPlayer
+		};
+		Type GetType() const { return m_type; }
+		void SetType(Type _type) { m_type = _type; }
 	private:
 		float m_volume;
 		float m_boundingRadius;
 		float m_boundingRadiusSq;
 		ei::Box m_boundingBox;
+		Type m_type;
 	};
 }

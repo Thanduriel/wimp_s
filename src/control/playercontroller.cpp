@@ -177,7 +177,7 @@ namespace Control
 
 		Vec2 cursor = InputManager::GetCursorPosScreenSpace();
 		// constrain movement to a circle to have same behavior in both directions
-		cursor.x = min(cursor.x * Graphic::Device::GetAspectRatio(), 1.f);
+		cursor.x = clamp(cursor.x * Graphic::Device::GetAspectRatio(), -1.f, 1.f);
 		cursor = Vec2(sgn(cursor[0]), sgn(cursor[1])) * cursor * cursor;
 
 		m_ship->SetTargetAngularVelocity(m_ship->GetRotationMatrix() * Vec3(-cursor[1], cursor[0], 0.0f));

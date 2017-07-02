@@ -15,7 +15,7 @@ namespace Game
 	class Ship : public Model
 	{
 	public:
-		Ship(const string& _pFile, const Vec3& _position);
+		Ship(const string& _pFile, const Vec3& _position, CollisionComponent::Type _collisionType = CollisionComponent::Type::Any);
 
 		void Process(float _deltaTime) override;
 

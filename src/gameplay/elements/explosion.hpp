@@ -12,11 +12,15 @@ namespace Game {
 	public:
 		Explosion(const ei::Vec3& _position, float _radius, float _damage);
 
+		void Process(float _deltaTime) override;
+
 		void RegisterComponents(class SceneGraph& _sceneGraph) override;
 	private:
 		LifeTimeComponent m_lifeTimeComponent;
 		PointLightComponent m_light;
 		ParticleSystemComponent<Graphic::ParticleSystems::BASIC_SYSTEM> m_particles;
+
+		float m_radius;
 	};
 
 }
