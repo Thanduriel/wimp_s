@@ -21,8 +21,8 @@ namespace Control {
 		m_projection(ei::perspectiveGL(_fov, _aspectRatio, 0.1f, 50000.f)),
 		m_viewProjection(),
 		m_mode(Mode::Follow),
-		m_targetOffset(Vec3(0.0f, 3.0f, -10.0f)),
-		m_currentOffset(Vec3(0.0f, 3.0f, -10.0f)),
+		m_targetOffset(Vec3(0.0f, 3.0f, -5.0f)),
+		m_currentOffset(Vec3(0.0f, 3.0f, -5.0f)),
 		m_speed(0.0f),
 		m_acceleration(1.0f)
 	{
@@ -37,6 +37,9 @@ namespace Control {
 		case Mode::Follow:
 			if (m_target)
 			{
+				//Set the acceleration relative to the target acceleration
+				m_acceleration = 0.005f * ((Game::Ship*)m_target)->GetThrust() / ((Game::Ship*)m_target)->GetWeight();
+
 				m_currentOffset = m_targetOffset;
 				m_speed = lerp(m_speed, ((Game::Ship*)m_target)->GetCurrentSpeed(), m_acceleration * _deltaTime);
 				/*m_speed = 1.0f;*/
