@@ -77,7 +77,10 @@ namespace Control {
 		ACC_LEFT,
 		ACC_RIGHT,
 		ADJUST_TARGET_ACC,
-		FIRE
+		FIRE,
+		ROLL_CW,
+		ROLL_CCW,
+		COUNT
 	};
 
 	/// \brief Takes the glfw input and converts it to a printable character

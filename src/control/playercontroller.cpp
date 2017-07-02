@@ -107,8 +107,8 @@ namespace Control
 	void PlayerController::HandleInput(float _deltaTime)
 	{
 		// the key to kill your performance!
-		if(InputManager::IsKeyPressed(GLFW_KEY_Q))
-			m_ship->Fire();
+	//	if(InputManager::IsKeyPressed(GLFW_KEY_Q))
+	//		m_ship->Fire();
 
 		if (m_targetingMode == TargetingMode::Tactical)
 		{
@@ -173,6 +173,12 @@ namespace Control
 		}
 
 		// mouse rotation
+		float z = 0.f;
+		if (InputManager::IsVirtualKeyPressed(Control::VirtualKey::ROLL_CCW))
+			z += 0.8f;
+		if (InputManager::IsVirtualKeyPressed(Control::VirtualKey::ROLL_CW))
+			z -= 0.8f;
+
 		//if (m_mouseMovement.x + m_mouseMovement.y == 0.f) return;
 
 		Vec2 cursor = InputManager::GetCursorPosScreenSpace();
@@ -180,7 +186,7 @@ namespace Control
 		cursor.x = clamp(cursor.x * Graphic::Device::GetAspectRatio(), -1.f, 1.f);
 		cursor = Vec2(sgn(cursor[0]), sgn(cursor[1])) * cursor * cursor;
 
-		m_ship->SetTargetAngularVelocity(m_ship->GetRotationMatrix() * Vec3(-cursor[1], cursor[0], 0.0f));
+		m_ship->SetTargetAngularVelocity(m_ship->GetRotationMatrix() * Vec3(-cursor[1], cursor[0], z));
 
 		m_hud.UpdateSpeedLabel(m_ship->GetCurrentSpeed());
 		m_hud.UpdateSpeedBar(m_ship->GetCurrentSpeed(), m_ship->GetMaxSpeed());
