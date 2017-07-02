@@ -3,11 +3,13 @@
 #include "graphic/core/device.hpp"
 #include "graphic/resources.hpp"
 #include "graphic/core/framebuffer.hpp"
+#include "ei/3dintersection.hpp"
 
 #include "gameplay/elements/light.hpp"
 #include "gameplay/elements/blackhole.hpp"
 #include "gameplay/elements/particlesystemcomponent.hpp"
 #include "elements/factorycomponent.hpp"
+#include "elements/collisioncomponent.hpp"
 
 using namespace Graphic;
 
@@ -39,6 +41,9 @@ namespace Game {
 
 		for (auto component : m_markerComponents)
 			component->ProcessComponent(_realdTime);
+
+		// check collisions
+		ResolveCollisions();
 	}
 
 	void SceneGraph::Draw()
@@ -77,42 +82,54 @@ namespace Game {
 	void SceneGraph::RegisterComponent(ConstActorComponent& _component)
 	{
 		_component.OnRegister();
-		m_constActorComponents.push_back(&_component);
+		if(_component.m_canTick) m_constActorComponents.push_back(&_component);
 	}
 	void SceneGraph::RegisterComponent(ActorComponent& _component)
 	{
 		_component.OnRegister();
-		m_actorComponents.push_back(&_component);
+		if (_component.m_canTick) m_actorComponents.push_back(&_component);
 	}
 
 	void SceneGraph::RegisterComponent(BaseParticleSystemComponent& _component)
 	{
 		RegisterComponent(component_cast<ConstActorComponent>(_component));
+		RegisterBaseComponent(_component);
 	}
 
 	void SceneGraph::RegisterComponent(GeometryComponent& _component)
 	{
 		m_geometryComponents.push_back(&_component);
+		RegisterBaseComponent(_component);
 	}
 
 	void SceneGraph::RegisterComponent(PointLightComponent& _component)
 	{
 		m_lightComponents.push_back(&_component);
+		RegisterBaseComponent(_component);
 	}
 
 	void SceneGraph::RegisterComponent(PostProcessComponent& _component)
 	{
 		m_postProcessComponents.push_back(&_component);
+		RegisterBaseComponent(_component);
 	}
 
 	void SceneGraph::RegisterComponent(MarkerComponent& _component)
 	{
 		m_markerComponents.push_back(&_component);
+		RegisterBaseComponent(_component);
 	}
 
 	void SceneGraph::RegisterComponent(FactoryComponent& _component)
 	{
 		m_factoryComponents.push_back(&_component);
+		RegisterBaseComponent(_component);
+	}
+
+	void SceneGraph::RegisterComponent(CollisionComponent& _component)
+	{
+		m_collisionComponents.push_back(&_component);
+		RegisterBaseComponent(_component);
 	}
 
 	// *********************************************************** //
@@ -139,6 +156,7 @@ namespace Game {
 		RemoveDestroyed(m_factoryComponents);
 		RemoveDestroyed(m_constActorComponents);
 		RemoveDestroyed(m_actorComponents);
+		RemoveDestroyed(m_collisionComponents);
 
 		// actual destruction is last
 		auto it = std::remove_if(m_actors.begin(), m_actors.end(), [](const std::unique_ptr<Actor>& _actor)
@@ -148,6 +166,7 @@ namespace Game {
 		m_actors.erase(it, m_actors.end());
 	}
 
+	// *********************************************************** //
 	void SceneGraph::AddActors()
 	{
 		// collect actors created by all known factories
@@ -162,5 +181,44 @@ namespace Game {
 				container.pop_back();
 			}
 		}
+	}
+
+	// *********************************************************** //
+	void SceneGraph::ResolveCollisions()
+	{
+		using namespace ei;
+		// todo order components to perform less checks
+		for (size_t i = 0; i < m_collisionComponents.size(); ++i)
+			for (size_t j = i + 1; j < m_collisionComponents.size(); ++j)
+			{
+				CollisionComponent* slfComp = m_collisionComponents[i];
+				CollisionComponent* othComp = m_collisionComponents[j];
+				if (slfComp->GetVolume() < othComp->GetVolume()) std::swap(slfComp, othComp);
+				Actor& slf = slfComp->GetActor();
+				Actor& oth = othComp->GetActor();
+				float distSq = ei::lensq(slf.GetPosition()
+					- oth.GetPosition());
+
+				if (slfComp->GetBoundingRadiusSq() + othComp->GetBoundingRadiusSq() < distSq)
+				{
+					const Box& boxSlf = slfComp->GetBoundingBox();
+					const Box& boxOth = othComp->GetBoundingBox();
+					// check bounding boxes
+					Mat4x4 transform = slf.GetInverseTransformation() * oth.GetTransformation();
+					Vec3 lower = Vec3(transform * Vec4(boxOth.min, 1.f));
+					Vec3 upper = Vec3(transform * Vec4(boxOth.max, 1.f));
+
+					// instead of performing a full check of both boxes
+					// the smaller box is substituted with two of its faces.
+					if (intersects(boxSlf, Triangle(lower, Vec3(lower.x,lower.y, upper.z),
+						Vec3(lower.x, upper.y, lower.z)))
+						|| intersects(boxSlf, Triangle(upper, Vec3(upper.x, upper.y, lower.z),
+							Vec3(upper.x, lower.y, upper.z))))
+					{
+						slf.OnCollision(oth);
+						oth.OnCollision(slf);
+					}
+				}
+			}
 	}
 }

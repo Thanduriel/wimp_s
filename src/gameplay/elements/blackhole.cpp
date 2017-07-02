@@ -5,6 +5,8 @@ namespace Game {
 	BlackHoleComponent::BlackHoleComponent(const Actor& _actor, float _radius)
 		: PostProcessComponent(_actor)
 	{
+		m_canTick = false;
+
 		m_renderer.Add(ei::Vec3(0.f), _radius);
 	}
 

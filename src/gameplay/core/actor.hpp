@@ -41,6 +41,7 @@ namespace Game {
 
 		// This matrix transforms modelspace -> worldspace
 		const ei::Mat4x4& GetTransformation() const { return m_transformation; }
+		const ei::Mat4x4& GetInverseTransformation() const { return m_inverseTransformation; }
 		const ei::Mat3x3& GetRotationMatrix() const { return m_rotationMatrix; }
 		const ei::Mat3x3& GetInverseRotationMatrix() const { return m_inverseRotationMatrix; }
 
@@ -50,6 +51,9 @@ namespace Game {
 		bool IsDestroyed() const { return m_destroyed; }
 
 		virtual void OnDestroy() {}
+		// Collision with another Actor was registered.
+		// This will
+		virtual void OnCollision(Actor& _other) {}
 		virtual void Process(float _deltaTime) {}
 
 		bool CanTick() const { return m_canTick; }
@@ -65,6 +69,7 @@ namespace Game {
 		ei::Mat3x3 m_rotationMatrix;
 		ei::Mat3x3 m_inverseRotationMatrix;
 		ei::Mat4x4 m_transformation;
+		ei::Mat4x4 m_inverseTransformation;
 
 		// shows if the object is to be destroyed
 		bool m_destroyed;

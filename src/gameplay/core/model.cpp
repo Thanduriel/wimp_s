@@ -27,11 +27,14 @@ namespace Game {
 
 	Model::Model(const std::string& _pFile, const ei::Vec3&_position, const ei::Quaternion&_rotation)
 		: DynamicActor(_position, _rotation),
-		GeometryComponent(THISACTOR, _pFile)
+		m_geometryComponent(THISACTOR, _pFile),
+		m_collisionComponent(THISACTOR, m_geometryComponent.GetMesh().GetBoundingRadius(),
+			ei::Box(m_geometryComponent.GetMesh().GetLowerBound(), m_geometryComponent.GetMesh().GetUpperBound()))
 	{}
 
 	void Model::RegisterComponents(SceneGraph& _sceneGraph)
 	{
-		_sceneGraph.RegisterComponent(component_cast<GeometryComponent>(*this));
+		_sceneGraph.RegisterComponent(m_geometryComponent);
+		_sceneGraph.RegisterComponent(m_collisionComponent);
 	}
 }

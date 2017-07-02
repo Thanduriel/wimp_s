@@ -13,6 +13,12 @@ namespace Graphic {
 		Mesh(const std::string& _pFile);
 
 		void Draw() const;
+
+		// Returns the radius of the minimum sized sphere
+		// positioned at point 0, that contains all vertices.
+		float GetBoundingRadius() const { return m_boundingRadius; }
+		const ei::Vec3& GetLowerBound() const { return m_lowerBound; }
+		const ei::Vec3& GetUpperBound() const { return m_upperBound; }
 	private:
 		struct Vertex
 		{
@@ -24,5 +30,10 @@ namespace Graphic {
 		VertexArrayBuffer m_vertices;
 		bool ImportModel(const std::string& _pFile);
 		void SceneProcessing(const aiScene* _scene);
+		void ComputeBoundingValues(const aiVector3D* _vertices, size_t _numVertices);
+
+		float m_boundingRadius;
+		ei::Vec3 m_lowerBound;
+		ei::Vec3 m_upperBound;
 	};
 }

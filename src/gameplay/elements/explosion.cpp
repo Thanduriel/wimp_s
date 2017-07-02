@@ -16,6 +16,8 @@ namespace Game {
 		m_light(THISACTOR, Vec3(0.f), _radius, Utils::Color8U(0.0f, 0.0f, 1.0f)),
 		m_particles(THISACTOR, Vec3(0.f))
 	{
+		m_canTick = false;
+
 		for (int i = 0; i < 1000; ++i)
 		{
 			static Generators::RandomGenerator rng(0x614AA);

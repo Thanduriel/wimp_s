@@ -29,6 +29,7 @@ namespace Game {
 		m_inverseRotationMatrix = transpose(m_rotationMatrix);
 
 		m_transformation = translation(m_position) * Mat4x4(m_rotationMatrix);
+		m_inverseTransformation = Mat4x4(m_inverseRotationMatrix) * translation(-m_position);
 	}
 
 	void Actor::Destroy()

@@ -28,7 +28,9 @@ namespace Game {
 			Graphic::ParticleSystems::RenderType _type = Graphic::ParticleSystems::RenderType::BLOB)
 			: BaseParticleSystemComponent(_actor, _position),
 			m_system(Graphic::ParticleSystems::Manager::Get<PFlags>(_type))
-		{}
+		{
+			m_canTick = false;
+		}
 
 
 		// Add a particle 
@@ -43,8 +45,6 @@ namespace Game {
 			m_system.AddParticle(position, velocity,
 				std::forward<Args>(_args)...);
 		}
-
-		void ProcessComponent(float _deltaTime) override {}
 
 	private:
 		Graphic::ParticleSystems::System<PFlags>& m_system;

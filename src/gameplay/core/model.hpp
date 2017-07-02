@@ -3,6 +3,7 @@
 #include "actor.hpp"
 #include "component.hpp"
 #include "graphic/mesh.hpp"
+#include "gameplay/elements/collisioncomponent.hpp"
 
 namespace Game {
 
@@ -13,6 +14,7 @@ namespace Game {
 
 		void Draw();
 
+		const Graphic::Mesh& GetMesh() const { return *m_mesh; }
 	private:
 		const Graphic::Mesh* m_mesh;
 	};
@@ -20,11 +22,15 @@ namespace Game {
 	/* Model *********************************************
 	 * A movable object with an textured mesh attached to it.
 	 */
-	class Model : public DynamicActor, public GeometryComponent
+	class Model : public DynamicActor
 	{
 	public:
 		Model(const std::string& _pFile, const ei::Vec3&_position, const ei::Quaternion&_rotation);
 
 		void RegisterComponents(class SceneGraph& _sceneGraph) override;
+
+	protected:
+		GeometryComponent m_geometryComponent;
+		CollisionComponent m_collisionComponent;
 	};
 }

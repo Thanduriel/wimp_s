@@ -219,11 +219,43 @@ namespace Graphic {
 		}
 		
 		m_vertices.GetBuffer(0)->SetData((void*&)v, mesh->mNumFaces * 3 * sizeof(Vertex)); // set m_vertices with all vertex data (position,normal,texturecoords)
+
+		// compute size properties
+		ComputeBoundingValues(mesh->mVertices, mesh->mNumVertices);
 	}
 
 	void Mesh::Draw() const
 	{
 		if(m_texture) Device::SetTexture(*m_texture, 0);
 		Device::DrawVertices(m_vertices, 0, m_vertices.GetNumVertices());
+	}
+
+	void Mesh::ComputeBoundingValues(const aiVector3D* _vertices, size_t _numVertices)
+	{
+		float minDist = std::numeric_limits<float>::max();
+
+		for (size_t i = 0; i < _numVertices; ++i)
+		{
+			float val = _vertices[i].SquareLength();
+			if (val < minDist) minDist = val;
+		}
+
+		m_boundingRadius = sqrt(minDist);
+
+		auto xval = std::minmax_element(_vertices, _vertices + _numVertices, [](const aiVector3D& _lhs, const aiVector3D& _rhs)
+		{
+			return _lhs.x < _rhs.x;
+		});
+		auto yval = std::minmax_element(_vertices, _vertices + _numVertices, [](const aiVector3D& _lhs, const aiVector3D& _rhs)
+		{
+			return _lhs.y < _rhs.y;
+		});
+		auto zval = std::minmax_element(_vertices, _vertices + _numVertices, [](const aiVector3D& _lhs, const aiVector3D& _rhs)
+		{
+			return _lhs.z < _rhs.z;
+		});
+
+		m_lowerBound = Vec3(xval.first->x, yval.first->y, zval.first->z);
+		m_upperBound = Vec3(xval.second->x, yval.second->y, zval.second->z);
 	}
 }

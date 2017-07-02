@@ -16,7 +16,7 @@ namespace Game {
 		class BaseComponent
 		{
 		public:
-			BaseComponent(T _owner) : m_actor(_owner) {}
+			BaseComponent(T _owner) : m_actor(_owner), m_canTick(true) {}
 
 			const T GetActor() const { return m_actor; }
 
@@ -29,6 +29,12 @@ namespace Game {
 		protected:
 			T m_actor;
 			bool m_isActive; // should the component be processed (or rendered)
+
+			// Should this components ProcessComponent be called?
+			// Can only be changed before registering.
+			bool m_canTick;
+
+			friend class SceneGraph;
 		};
 	}
 

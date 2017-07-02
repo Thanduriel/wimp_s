@@ -43,6 +43,7 @@ namespace Game {
 		void RegisterComponent(class PostProcessComponent& _component);
 		void RegisterComponent(class MarkerComponent& _component);
 		void RegisterComponent(class FactoryComponent& _component);
+		void RegisterComponent(class CollisionComponent& _component);
 
 		void Process(float _deltaTime, float _realdTime);
 		void Draw();
@@ -53,6 +54,11 @@ namespace Game {
 		// Registers by Factories created Actors tho the scene.
 		void AddActors();
 	private:
+		void RegisterBaseComponent(ConstActorComponent& _component) { RegisterComponent(_component); }
+		void RegisterBaseComponent(ActorComponent& _component) { RegisterComponent(_component); }
+
+		void ResolveCollisions();
+
 		std::vector < std::unique_ptr<Actor>> m_actors; // all active actors
 
 		std::vector <ActorComponent*> m_actorComponents;
@@ -64,5 +70,6 @@ namespace Game {
 		std::vector<GeometryComponent*> m_geometryComponents;
 		std::vector<MarkerComponent*> m_markerComponents;
 		std::vector<FactoryComponent*> m_factoryComponents;
+		std::vector<CollisionComponent*> m_collisionComponents;
 	};
 }

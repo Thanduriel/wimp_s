@@ -18,7 +18,8 @@ namespace Game
 		m_maxSprayRadius(1.0f),
 		m_sprayRadius(0.0f),
 		m_angularAcceleration(1.0f),
-		m_weaponSockets{ SocketComponent(THISACTOR, Vec3(3.f,1.5f,0.f)), SocketComponent(THISACTOR, Vec3(-3.f,1.5f,0.f)) },
+		m_targetAngularVelocity(0.f),
+		m_weaponSockets{ SocketComponent(THISACTOR, Vec3(3.f,3.5f,0.f)), SocketComponent(THISACTOR, Vec3(-3.f,3.5f,0.f)) },
 		m_staticLights {PointLightComponent(THISACTOR, Vec3(3.f, 0.f, -6.f), 5.f, Utils::Color8U(0.f,1.f,0.f)), 
 				PointLightComponent(THISACTOR, Vec3(-3.f, 0.f, -6.f), 5.f, Utils::Color8U(0.f,1.f,0.f)) }
 	{

@@ -10,12 +10,14 @@ namespace Game {
 	/* Projectile ***********************************************
 	 * Basic projectile with limited life time (and damage on hit)
 	 */
-	class Projectile : public DynamicActor
+	class Projectile : public Model
 	{
 	public:
-		Projectile(const ei::Vec3& _position, const ei::Vec3& _velocity, float _lifeTime);
+		Projectile(const ei::Vec3& _position, const ei::Vec3& _velocity,
+			const std::string& _mesh, float _lifeTime);
 
 		void OnDestroy() override;
+		void OnCollision(Actor& _other) override;
 		void RegisterComponents(class SceneGraph& _sceneGraph) override;
 	private:
 		LifeTimeComponent m_lifeTimeComponent;
@@ -35,7 +37,6 @@ namespace Game {
 	private:
 		float m_particleSpawnCount;
 
-		GeometryComponent m_mesh;
 		PointLightComponent m_engineLight;
 		ParticleSystemComponent<Graphic::ParticleSystems::BASIC_SYSTEM> m_thrustParticles;
 	};
