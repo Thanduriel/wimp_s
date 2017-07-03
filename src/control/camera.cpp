@@ -38,7 +38,7 @@ namespace Control {
 			if (m_target)
 			{
 				//Set the acceleration relative to the target acceleration
-				m_acceleration = 0.005f * ((Game::Ship*)m_target)->GetThrust() / ((Game::Ship*)m_target)->GetWeight();
+				m_acceleration = 0.005f * ((Game::Ship*)m_target)->GetThrust() / ((Game::Ship*)m_target)->GetMass();
 
 				m_currentOffset = m_targetOffset;
 				m_speed = lerp(m_speed, ((Game::Ship*)m_target)->GetCurrentSpeed(), m_acceleration * _deltaTime);

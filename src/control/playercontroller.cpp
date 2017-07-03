@@ -146,13 +146,13 @@ namespace Control
 				// control ship speed manually
 				if (InputManager::IsVirtualKeyPressed(Control::VirtualKey::ACC_FORWARD))
 				{
-					float newSpeed = m_ship->GetSpeed() + (m_ship->GetThrust() / m_ship->GetWeight()) * _deltaTime;
+					float newSpeed = m_ship->GetSpeed() + (m_ship->GetThrust() / m_ship->GetMass()) * _deltaTime;
 					m_ship->SetSpeed(newSpeed);
 					approximateTargetSpeed = false;
 				}
 				if (InputManager::IsVirtualKeyPressed(Control::VirtualKey::ACC_BACKWARD))
 				{
-					m_ship->SetSpeed(m_ship->GetSpeed() - (m_ship->GetThrust() / m_ship->GetWeight()) * _deltaTime);
+					m_ship->SetSpeed(m_ship->GetSpeed() - (m_ship->GetThrust() / m_ship->GetMass()) * _deltaTime);
 					approximateTargetSpeed = false;
 				}
 			}
@@ -162,12 +162,12 @@ namespace Control
 				if (m_targetSpeed > m_ship->GetSpeed())
 				{
 					// accelerate ship's (target) speed
-					m_ship->SetSpeed(min(m_ship->GetSpeed() + (m_ship->GetThrust() / m_ship->GetWeight()) * _deltaTime, m_targetSpeed));
+					m_ship->SetSpeed(min(m_ship->GetSpeed() + (m_ship->GetThrust() / m_ship->GetMass()) * _deltaTime, m_targetSpeed));
 				}
 				else if (m_targetSpeed < m_ship->GetSpeed())
 				{
 					// decelerate ship's (target) speed
-					m_ship->SetSpeed(max(m_ship->GetSpeed() - (m_ship->GetThrust() / m_ship->GetWeight()) * _deltaTime, m_targetSpeed));
+					m_ship->SetSpeed(max(m_ship->GetSpeed() - (m_ship->GetThrust() / m_ship->GetMass()) * _deltaTime, m_targetSpeed));
 				}
 			}
 		}

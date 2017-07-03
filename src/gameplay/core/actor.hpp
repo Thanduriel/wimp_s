@@ -41,6 +41,7 @@ namespace Game {
 
 		// This matrix transforms modelspace -> worldspace
 		const ei::Mat4x4& GetTransformation() const { return m_transformation; }
+		// worldspace -> modelspace
 		const ei::Mat4x4& GetInverseTransformation() const { return m_inverseTransformation; }
 		const ei::Mat3x3& GetRotationMatrix() const { return m_rotationMatrix; }
 		const ei::Mat3x3& GetInverseRotationMatrix() const { return m_inverseRotationMatrix; }
@@ -48,12 +49,15 @@ namespace Game {
 		// Destroys the object
 		void Destroy();
 		// Is object to be destroyed?
-		bool IsDestroyed() const { return m_destroyed; }
+		bool IsDestroyed() const { return m_isDestroyed; }
+		void Damage(float _amount, Actor& _source);
 
 		virtual void OnDestroy() {}
 		// Collision with another Actor was registered.
-		// This will
 		virtual void OnCollision(Actor& _other) {}
+		// Decide how damage is handled.
+		// Overwrite to implement custom behavior such as reduction or absorption.
+		virtual float OnDamageTaken(float _amount, Actor& _source) { return _amount; }
 		virtual void Process(float _deltaTime) {}
 
 		bool CanTick() const { return m_canTick; }
@@ -61,6 +65,7 @@ namespace Game {
 		void UpdateMatrices();
 
 		bool m_canTick;
+		bool m_canTakeDamage;
 
 		ei::Vec3 m_position;
 		ei::Quaternion m_rotation;
@@ -72,7 +77,8 @@ namespace Game {
 		ei::Mat4x4 m_inverseTransformation;
 
 		// shows if the object is to be destroyed
-		bool m_destroyed;
+		bool m_isDestroyed;
+		float m_health;
 	};
 
 
@@ -91,8 +97,12 @@ namespace Game {
 		void SetAngularVelocity(const ei::Vec3& _angVel) { m_angularVelocity = _angVel; }
 		const ei::Vec3& GetAngularVelocity() const { return m_angularVelocity; }
 
+		float GetMass() const { return m_mass; }
+
 		void Process(float _deltaTime) override;
-	private:
+	protected:
+		float m_mass; // mass in kg
+
 		ei::Vec3 m_velocity;
 		ei::Vec3 m_angularVelocity; // the length is the rotation speed
 	};

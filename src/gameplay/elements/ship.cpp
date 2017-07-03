@@ -10,7 +10,6 @@ namespace Game
 	Ship::Ship(const string& _pFile, const Vec3& _position, CollisionComponent::Type _collisionType)
 		: Model(_pFile, _position, qidentity()),
 		m_thrust(50.0f),
-		m_weight(1.0f),
 		m_speed(1.0f),
 		m_minSpeed(0.0f),
 		m_maxSpeed(100.0f),
@@ -23,6 +22,10 @@ namespace Game
 		m_staticLights {PointLightComponent(THISACTOR, Vec3(3.f, 0.f, -6.f), 5.f, Utils::Color8U(0.f,1.f,0.f)), 
 				PointLightComponent(THISACTOR, Vec3(-3.f, 0.f, -6.f), 5.f, Utils::Color8U(0.f,1.f,0.f)) }
 	{
+		m_health = 100;
+		m_canTakeDamage = true;
+		m_mass = 1.f;
+
 		GetCollisionComponent().SetType(_collisionType);
 		Weapon& weapon1 = FactoryActor::GetThreadLocalInstance().Make<Weapon>(Vec3());
 		Weapon& weapon2 = FactoryActor::GetThreadLocalInstance().Make<Weapon>(Vec3());
@@ -46,7 +49,7 @@ namespace Game
 		if (currentSpeed < m_speed)
 		{
 			// since we have newtons second axiom: F = m * a => a = F / m
-			float acceleration = m_thrust / m_weight;
+			float acceleration = m_thrust / m_mass;
 			// and since delta_v = a * delta_t
 			float deltaSpeed = acceleration * _deltaTime;
 			// Apply the velocity to the player ship in the current direction
@@ -57,7 +60,7 @@ namespace Game
 		else if (m_speed < currentSpeed)
 		{
 			// same as above, but decelerate
-			float deceleration = -m_thrust / m_weight;
+			float deceleration = -m_thrust / m_mass;
 			float deltaSpeed = deceleration * _deltaTime;
 			// max() to prevent ship from freaking out at low framerates
 			Vec3 newVel = ei::max(len(GetVelocity()) + deltaSpeed, m_speed) * forward;

@@ -13,7 +13,8 @@ namespace Game {
 	// ********************************************************************** //
 	Projectile::Projectile(const ei::Vec3& _position, const ei::Vec3& _velocity, const std::string& _mesh, float _lifeTime)
 		: Model(_mesh, _position, Quaternion(Vec3(0.f,0.f,1.f), _velocity)),
-		m_lifeTimeComponent(THISACTOR, _lifeTime)
+		m_lifeTimeComponent(THISACTOR, _lifeTime),
+		m_damage(10.f)
 	{
 		SetVelocity(_velocity);
 	}
@@ -25,6 +26,7 @@ namespace Game {
 
 	void Projectile::OnCollision(Actor& _other)
 	{
+		_other.Damage(m_damage, *this);
 		Destroy();
 	}
 

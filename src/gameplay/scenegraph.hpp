@@ -51,8 +51,10 @@ namespace Game {
 		// removes all destroyed components and associated components.
 		void CleanUp();
 
-		// Registers by Factories created Actors tho the scene.
+		// Registers Actors created by Factories to the scene.
 		void AddActors();
+
+	//	void RayCast(const ei::Ray& _ray, float _maxDist)
 	private:
 		void RegisterBaseComponent(ConstActorComponent& _component) { RegisterComponent(_component); }
 		void RegisterBaseComponent(ActorComponent& _component) { RegisterComponent(_component); }

@@ -27,10 +27,6 @@ namespace Game
 		void SetThrust(const float _thrust) { m_thrust = _thrust; };
 		const float GetThrust() const { return m_thrust; };
 
-		// Access weight
-		void SetWeight(const float _weight) { m_weight = _weight; }
-		float GetWeight() const { return m_weight; }
-
 		// Access speed
 		void SetSpeed(const float _speed) { m_speed = ei::max(ei::min(m_maxSpeed, _speed), m_minSpeed); }
 		float GetSpeed() const { return m_speed; }
@@ -72,8 +68,6 @@ namespace Game
 	private:
 		// the power of acceleration
 		float m_thrust;
-		// the weight of the ship (increased weight = increased intertia)
-		float m_weight;
 		// the speed at which the ship will fly
 		float m_speed;
 		// the minimum speed of the ship

@@ -6,7 +6,7 @@ namespace Game {
 	using namespace ei;
 
 	Actor::Actor()
-		: m_position(0.f), m_rotation(ei::qidentity()), m_destroyed(false) 
+		: m_position(0.f), m_rotation(ei::qidentity()), m_isDestroyed(false)
 	{
 		UpdateMatrices();
 	}
@@ -14,7 +14,9 @@ namespace Game {
 	Actor::Actor(const ei::Vec3& _position, const ei::Quaternion& _rotation)
 		: m_position(_position),
 		m_rotation(_rotation),
-		m_destroyed(false)
+		m_isDestroyed(false),
+		m_canTakeDamage(false),
+		m_health(0.f)
 	{
 		UpdateMatrices();
 	}
@@ -34,8 +36,18 @@ namespace Game {
 
 	void Actor::Destroy()
 	{
-		m_destroyed = true;
+		m_isDestroyed = true;
 		OnDestroy();
+	}
+
+	void Actor::Damage(float _amount, Actor& _source)
+	{
+		float amount = OnDamageTaken(_amount, _source);
+		if (m_canTakeDamage)
+		{
+			m_health -= amount;
+			if (m_health < 0.f) Destroy();
+		}
 	}
 
 	void Actor::RotateAroundLocal(const Vec3& axis, const float degrees)
@@ -50,7 +62,8 @@ namespace Game {
 	DynamicActor::DynamicActor(const ei::Vec3& _position, const ei::Quaternion& _rotation)
 		: Actor(_position, _rotation),
 		m_velocity(0.f),
-		m_angularVelocity(0.f)
+		m_angularVelocity(0.f),
+		m_mass(0.f)
 	{}
 
 	void DynamicActor::Process(float _deltaTime)

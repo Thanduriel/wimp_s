@@ -20,6 +20,8 @@ namespace Game {
 		void OnCollision(Actor& _other) override;
 		void RegisterComponents(class SceneGraph& _sceneGraph) override;
 	private:
+		float m_damage;
+
 		LifeTimeComponent m_lifeTimeComponent;
 	};
 
