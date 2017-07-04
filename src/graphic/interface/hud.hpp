@@ -103,7 +103,7 @@ namespace Graphic {
 		struct CursorData
 		{
 			CursorData(const std::string& _name,
-				ei::Vec2 _size = ei::Vec2(0.07f, 0.07f), ei::Vec2 _off = ei::Vec2(0.f));
+				ei::Vec2 _off = ei::Vec2(0.f));
 
 			ScreenTexture texture;
 			ei::Vec2 offset;

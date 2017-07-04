@@ -31,7 +31,7 @@ namespace Graphic
 		
 		m_cursors.emplace_back("cursor");
 		m_cursors.back().texture.SetActive(false);
-		m_cursors.emplace_back("cursorAlt", Vec2(0.07f, 0.07f), Vec2(-0.035f, 0.035f));
+		m_cursors.emplace_back("cursorAlt", Vec2(-0.035f, 0.035f));
 		m_cursors.back().texture.SetActive(false);
 
 		//cursor occupies address [0]
@@ -253,8 +253,7 @@ namespace Graphic
 		}
 	}
 
-	Hud::CursorData::CursorData(const std::string& _name,
-		Vec2 _size, Vec2 _off)
+	Hud::CursorData::CursorData(const std::string& _name, Vec2 _off)
 		: texture(_name, Vec2(0.f)),
 		offset(_off)
 	{

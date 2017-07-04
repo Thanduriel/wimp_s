@@ -101,7 +101,7 @@ namespace Game {
 
 		void Process(float _deltaTime) override;
 	protected:
-		float m_mass; // mass in kg
+		float m_mass; // mass in [kg]
 
 		ei::Vec3 m_velocity;
 		ei::Vec3 m_angularVelocity; // the length is the rotation speed
