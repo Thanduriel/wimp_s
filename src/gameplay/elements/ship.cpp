@@ -1,6 +1,7 @@
 #include "ship.hpp"
 #include "../scenegraph.hpp"
 #include "shipsystems/weapon.hpp"
+#include "generators/weapongen.hpp"
 
 namespace Game
 {
@@ -25,10 +26,14 @@ namespace Game
 		m_health = 100;
 		m_canTakeDamage = true;
 		m_mass = 1.f;
-
 		GetCollisionComponent().SetType(_collisionType);
-		Weapon& weapon1 = FactoryActor::GetThreadLocalInstance().Make<Weapon>(Vec3());
-		Weapon& weapon2 = FactoryActor::GetThreadLocalInstance().Make<Weapon>(Vec3());
+
+		// temporary weapon setup
+		Generators::WeaponGenerator weaponGen;
+		Weapon& weapon1 = *weaponGen.Generate(100.f);
+		Weapon& weapon2 = *weaponGen.Generate(100.f);
+		FactoryActor::GetThreadLocalInstance().Add(weapon1);
+		FactoryActor::GetThreadLocalInstance().Add(weapon2);
 		m_weaponSockets[0].Attach(weapon1);
 		m_weaponSockets[1].Attach(weapon2);
 	}

@@ -13,10 +13,10 @@ namespace Game {
 	// could be subject to change.
 	class SceneRegister
 	{
-	protected:
+	public:
 		// Add an actor to this functions internal container to be later registered by the scene.
 		void Add(Actor& _actor) { m_createdActors.emplace_back(&_actor); };
-
+	protected:
 		std::vector<std::unique_ptr<Actor>> m_createdActors;
 
 		friend class SceneGraph;
@@ -58,11 +58,41 @@ namespace Game {
 		 * @param _args Further arguments forwarded to the constructor of T.
 		 */
 		template<typename T, typename... Args>
-		void MakeR(const ei::Vec3& _position, const ei::Quaternion& _rot, Args&&... _args)
+		T& MakeR(const ei::Vec3& _position, const ei::Quaternion& _rot, Args&&... _args)
 		{
 			ei::Vec3 pos = m_actor.GetTransformation() * ei::Vec4(_position, 1);
 			
 			return Make<T>(pos, m_actor.GetRotation() * _rot, std::forward<Args>(_args)...);
+		}
+
+		/* Copy ************************************************
+		 * Creates a deep copy of the given prototype and registers it.
+		 * Requires a copy constructor to exist.
+		 */
+		template <typename T>
+		T& Copy(const T& _orig)
+		{
+			static_assert(std::is_copy_constructible_v<T>, "Copying requires a copy constructor to be available.");
+			auto p = new T(_orig);
+			Add(*p);
+			return *p;
+		}
+
+		// Transforms the copy's position.
+		template <typename T>
+		T& CopyP(const T& _orig)
+		{
+			ei::Vec3 pos = m_actor.GetTransformation() * ei::Vec4(_orig.GetPosition(), 1);
+			T& cpy = Copy<T>(_orig);
+			cpy.SetPosition(pos);
+		}
+
+		// Transforms the copy's position and rotation.
+		template <typename T>
+		T& CopyR(const T& _orig)
+		{
+			T& cpy = CopyR<T>(_orig);
+			cpy.SetRotation(m_actor.GetRotation() * _orig.GetRotation());
 		}
 	};
 

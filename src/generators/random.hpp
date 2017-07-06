@@ -3,6 +3,7 @@
 #include <cstdint>
 #include <limits>
 #include "ei/vector.hpp"
+#include "utils/assert.hpp"
 
 namespace Generators {
 

@@ -8,11 +8,16 @@
 namespace Game {
 
 	/* Projectile ***********************************************
-	 * Basic projectile with limited life time (and damage on hit)
+	 * Basic projectile with limited life time and damage on hit.
 	 */
 	class Projectile : public Model
 	{
 	public:
+		enum struct Visual {
+			Simple,
+			Rocket
+		};
+
 		Projectile(const ei::Vec3& _position, const ei::Vec3& _velocity,
 			const std::string& _mesh, float _lifeTime);
 
