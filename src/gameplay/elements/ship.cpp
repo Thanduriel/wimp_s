@@ -29,11 +29,8 @@ namespace Game
 		GetCollisionComponent().SetType(_collisionType);
 
 		// temporary weapon setup
-		Generators::WeaponGenerator weaponGen;
-		Weapon& weapon1 = *weaponGen.Generate(100.f);
-		Weapon& weapon2 = *weaponGen.Generate(100.f);
-		FactoryActor::GetThreadLocalInstance().Add(weapon1);
-		FactoryActor::GetThreadLocalInstance().Add(weapon2);
+		Weapon& weapon1 = FactoryActor::GetThreadLocalInstance().Make<Weapon>();
+		Weapon& weapon2 = FactoryActor::GetThreadLocalInstance().Make<Weapon>();
 		m_weaponSockets[0].Attach(weapon1);
 		m_weaponSockets[1].Attach(weapon2);
 	}
@@ -110,14 +107,22 @@ namespace Game
 			_sceneGraph.RegisterComponent(light);
 	}
 
+	// ***************************************************************************** //
 	void Ship::Fire()
 	{
 		for (auto& sockets : m_weaponSockets)
 		{
-			Weapon* weapon = static_cast<Weapon*>(sockets.GetActor());
+			Weapon* weapon = static_cast<Weapon*>(sockets.GetAttached());
 			if (!weapon) continue;
 
 			weapon->Fire();
 		}
+	}
+
+	void Ship::SetWeapon(int _slot, Weapon& _weapon)
+	{
+		m_weaponSockets[_slot].GetAttached()->Destroy();
+		m_weaponSockets[_slot].Attach(_weapon);
+		FactoryActor::GetThreadLocalInstance().Add(_weapon);
 	}
 }

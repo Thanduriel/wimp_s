@@ -1,5 +1,6 @@
 #pragma once
 #include <array>
+#include <string>
 #include "ei/vector.hpp"
 
 // todo: move this closer to Game::Item(does not exist yet)
@@ -21,8 +22,8 @@ namespace Generators {
 	{
 		1.f,
 		0.2f,
-		0.04f,
-		0.01f
+		0.08f, //0.04
+		0.04f//0.01
 	};
 
 	// Some score that is used to decide the general strength of the stats
@@ -33,4 +34,19 @@ namespace Generators {
 		{16.f, 24.f},
 		{18.f, 25.f}
 	} };
+
+	const std::array<std::string, (size_t)Quality::COUNT> QUALITY_COLOR = 
+	{
+		"<c 255 255 255>",
+		"<c 0 119 200>",
+		"<c 220 235 32>",
+		"<c 222 75 44>"
+	};
+
+	struct TraitDescription
+	{
+		std::string name;
+		std::string description;
+		bool isPrefix;
+	};
 }

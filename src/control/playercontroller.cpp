@@ -10,6 +10,9 @@
 #include "gameplay/elements/ship.hpp"
 #include "gamestates/huds/mainhud.hpp"
 
+// test
+#include "generators/weapongen.hpp"
+
 namespace Control
 {
 	using namespace ei;
@@ -87,6 +90,18 @@ namespace Control
 				g_camera.Attach(*m_ship);
 				m_controlParams.m_timeScale = 1.f;
 			}
+		}
+
+		// test stuff
+		if (_key == GLFW_KEY_R)
+		{
+			static Graphic::TextRender& label = m_hud.CreateScreenElement<Graphic::TextRender>(Vec2(0.f),
+				Graphic::ScreenPosition::Anchor(Graphic::DefP::TopLeft, &m_hud));
+			label.SetDefaultSize(0.5f);
+			Generators::WeaponGenerator gen;
+			Game::Weapon* w = gen.Generate(2.f);
+			label.SetText(gen.GetName() + "\n-----\n" + gen.GetDescr());
+			m_ship->SetWeapon(0, *w);
 		}
 	}
 

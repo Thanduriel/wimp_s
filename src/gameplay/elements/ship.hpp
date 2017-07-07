@@ -65,6 +65,9 @@ namespace Game
 		void RegisterComponents(class SceneGraph& _sceneGraph);
 		// Fire all weapons straight forward.
 		void Fire();
+
+		// Activates the given weapon in _slot.
+		void SetWeapon(int _slot, class Weapon& _weapon);
 	private:
 		// the power of acceleration
 		float m_thrust;
