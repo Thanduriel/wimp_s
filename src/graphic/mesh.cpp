@@ -232,15 +232,15 @@ namespace Graphic {
 
 	void Mesh::ComputeBoundingValues(const aiVector3D* _vertices, size_t _numVertices)
 	{
-		float minDist = std::numeric_limits<float>::max();
+		float maxDist = 0.f;
 
 		for (size_t i = 0; i < _numVertices; ++i)
 		{
 			float val = _vertices[i].SquareLength();
-			if (val < minDist) minDist = val;
+			if (val > maxDist) maxDist = val;
 		}
 
-		m_boundingRadius = sqrt(minDist);
+		m_boundingRadius = sqrt(maxDist);
 
 		auto xval = std::minmax_element(_vertices, _vertices + _numVertices, [](const aiVector3D& _lhs, const aiVector3D& _rhs)
 		{

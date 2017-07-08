@@ -12,6 +12,16 @@ namespace Generators {
 
 	Game::Weapon* WeaponGenerator::Generate(float _qualityFactor)
 	{
+		static bool killer = false;
+		if (!killer)
+		{
+			killer = true;
+			m_name = "<c 154 153 203>performance killer</c>";
+			m_description = "damage: " + std::to_string(std::numeric_limits<float>::infinity())
+				+ "\n" + "cooldown: 0.0";
+			return new Weapon(0.f);
+		}
+
 		// decide on quality
 		auto qVec = QUALITY_RARITY * _qualityFactor;
 		

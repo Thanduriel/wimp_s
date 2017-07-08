@@ -203,22 +203,51 @@ namespace Game {
 				float distSq = ei::lensq(slf.GetPosition()
 					- oth.GetPosition());
 
-				if (slfComp->GetBoundingRadiusSq() + othComp->GetBoundingRadiusSq() < distSq)
+				if (slfComp->GetBoundingRadiusSq() + othComp->GetBoundingRadiusSq() > distSq)
 				{
-					const Box& boxSlf = slfComp->GetBoundingBox();
-					const Box& boxOth = othComp->GetBoundingBox();
 					// check bounding boxes
-					Mat4x4 transform = slf.GetInverseTransformation() * oth.GetTransformation();
-					Vec3 lower = Vec3(transform * Vec4(boxOth.min, 1.f));
-					Vec3 upper = Vec3(transform * Vec4(boxOth.max, 1.f));
+					HitInfo hitInfo;
 
 					// instead of performing a full check of both boxes
 					// the smaller box is substituted with two of its faces.
-					if (intersects(boxSlf, Triangle(lower, Vec3(lower.x,lower.y, upper.z),
-						Vec3(lower.x, upper.y, lower.z)))
-						|| intersects(boxSlf, Triangle(upper, Vec3(upper.x, upper.y, lower.z),
-							Vec3(upper.x, lower.y, upper.z))))
+				/*	if (intersects(boxSlf, Triangle(lower, Vec3(lower.x,lower.y, upper.z),
+					Vec3(lower.x, upper.y, lower.z)))
+					|| intersects(boxSlf, Triangle(upper, Vec3(upper.x, upper.y, lower.z),
+						Vec3(upper.x, lower.y, upper.z)))) */
+					if (slfComp->Check(*othComp, hitInfo))
 					{
+						// some very simple impulse
+						DynamicActor* slfDyn = dynamic_cast<DynamicActor*>(&slf);
+						DynamicActor* othDyn = dynamic_cast<DynamicActor*>(&oth);
+						if (slfDyn && othDyn)
+						{
+							Vec3 radiusSlf = hitInfo.position - slf.GetPosition(); //point
+							Vec3 radiusOth = hitInfo.position - oth.GetPosition();
+							float massSlf = slfDyn->GetMass();
+							float massOth = othDyn->GetMass();
+
+							Vec3 velocitySlf = slfDyn->GetVelocity() + cross(slfDyn->GetAngularVelocity(), radiusSlf);
+							Vec3 velocityOth = othDyn->GetVelocity() + cross(othDyn->GetAngularVelocity(), radiusOth);
+
+							Vec3 normal = normalize(hitInfo.normal);
+
+							//check that they are really closing and not just intersecting from a previous crash
+							if (dot((velocitySlf - velocityOth), normal) >= 0) return;
+
+							float epsilon = 0.04f;
+
+							float impulse = -(1 + epsilon) * dot((velocitySlf - velocityOth), normal);
+							impulse /= (1 / massSlf + 1 / massOth) + dot(normal, cross(slfDyn->GetInverseInertiaTensor()* cross(radiusSlf, normal), radiusSlf)
+								+ cross(othDyn->GetInverseInertiaTensor()* cross(radiusOth, normal), radiusOth));
+
+							slfDyn->AddVelocity(impulse / massSlf * normal);
+							othDyn->AddVelocity(-impulse / massOth * normal);
+
+							slfDyn->AddAngularVelocity(slfDyn->GetInverseInertiaTensor() * cross(radiusSlf, normal) * 1.f * impulse);
+							othDyn->AddAngularVelocity(othDyn->GetInverseInertiaTensor() * cross(radiusOth, normal) *-1.f * impulse);
+
+						}
+
 						slf.OnCollision(oth);
 						oth.OnCollision(slf);
 					}

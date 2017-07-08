@@ -1,3 +1,5 @@
+#pragma once
+
 namespace ei {
 
 	// slerp variant that always rotates around the smaller angle.
@@ -28,5 +30,11 @@ namespace ei {
 			_q0.j * f0 + _q1.j * f1,
 			_q0.k * f0 + _q1.k * f1,
 			_q0.r * f0 + _q1.r * f1);
+	}
+
+	template<typename T>
+	inline Vec<T, 3u> operator*(const Matrix<T, 4u, 4u>& _mat, const Vec<T, 3u>& _vec)
+	{
+		return Vec<T,3u>(_mat * Vec<T,4u>(_vec, static_cast<T>(1)));
 	}
 }

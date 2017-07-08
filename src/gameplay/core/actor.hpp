@@ -92,11 +92,14 @@ namespace Game {
 
 		// Access Velocity
 		void SetVelocity(const ei::Vec3& _velocity) { m_velocity = _velocity; }
+		void AddVelocity(const ei::Vec3& _velocity) { m_velocity += _velocity; }
 		const ei::Vec3& GetVelocity() const { return m_velocity; }
 
 		void SetAngularVelocity(const ei::Vec3& _angVel) { m_angularVelocity = _angVel; }
+		void AddAngularVelocity(const ei::Vec3& _angVel) { m_angularVelocity += _angVel; }
 		const ei::Vec3& GetAngularVelocity() const { return m_angularVelocity; }
 
+		const ei::Mat3x3& GetInverseInertiaTensor() const { static auto m = ei::identity3x3(); return m; }
 		float GetMass() const { return m_mass; }
 
 		void Process(float _deltaTime) override;
