@@ -64,6 +64,64 @@ namespace Graphic
 	}
 
 	// ************************************************************************ //
+	DraggableTexture::DraggableTexture(const std::string& _name, Vec2 _position, Vec2 _size,
+		DefinitionPoint _def, Anchor _anchor,
+		std::function<void()> _OnMouseUp) :
+		ScreenTexture(_name, _position, _size, _def, _anchor, _OnMouseUp)
+	{
+	}
+
+	void DraggableTexture::MouseEnter()
+	{
+		ScreenOverlay::MouseEnter();
+
+		m_state = State::MouseOver;
+	}
+
+	void DraggableTexture::MouseLeave()
+	{
+		ScreenOverlay::MouseLeave();
+
+		m_state = State::Base;
+	}
+
+	void DraggableTexture::UpdatePosition(double _dx, double _dy)
+	{
+		Vec2 newPos = GetPosition() + PixelCoord(_dx, _dy);
+		SetPosition(newPos);
+	}
+
+	void DraggableTexture::MouseMove(double _dx, double _dy)
+	{
+		ScreenOverlay::MouseMove(_dx, _dy);
+
+		if (m_state == State::Pressed)
+		{
+			m_state = State::Dragged;
+			UpdatePosition(_dx, _dy);
+		}
+		else if (m_state == State::Dragged)
+			UpdatePosition(_dx, _dy);
+	}
+
+	bool DraggableTexture::KeyDown(int _key, int _modifiers, ei::Vec2 _pos)
+	{
+		ScreenOverlay::KeyDown(_key, _modifiers, _pos);
+
+		m_state = State::Pressed;
+		//since an object(this) is hit, the return value is always true
+		return true;
+	}
+
+	bool DraggableTexture::KeyUp(int _key, int _modifiers, ei::Vec2 _pos)
+	{
+		ScreenOverlay::KeyUp(_key, _modifiers, _pos);
+		m_state = State::MouseOver;
+
+		return true;
+	}
+
+	// ************************************************************************ //
 
 	Button::Button(const std::string& _name, Vec2 _position, Vec2 _size,
 		DefinitionPoint _def, Anchor _anchor, const std::string& _caption,

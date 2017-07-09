@@ -44,6 +44,36 @@ namespace Graphic {
 	};
 
 	// ************************************************************* //
+	/// \brief A draggable 2d screen overlay texture 
+	/// \details To preserve the ratio defined in size one can define _rDim so that the other dimension is scaled to fit the needs
+	class DraggableTexture : public ScreenTexture
+	{
+	public:
+		DraggableTexture(const std::string& _name,
+			ei::Vec2 _position, ei::Vec2 _size = ei::Vec2(0.f), DefinitionPoint _def = DefinitionPoint::TopLeft,
+			Anchor _anchor = Anchor(),
+			std::function<void()> _OnMouseUp = []() {return; });
+
+		//override to apply vertex changes
+		virtual void MouseEnter() override;
+		virtual void MouseLeave() override;
+		virtual void MouseMove(double _dx, double _dy) override;
+		virtual bool KeyDown(int _key, int _modifiers, ei::Vec2 _pos) override;
+		virtual bool KeyUp(int _key, int _modifiers, ei::Vec2 _pos) override;
+
+		enum struct State
+		{
+			Base,
+			MouseOver,
+			Pressed,
+			Dragged
+		};
+	private:
+		State m_state;
+		void UpdatePosition(double _dx, double _dy);
+	};
+
+	// ************************************************************* //
 	/// \brief A press-able button with mouseover indication
 	class Button : public ScreenTexture
 	{

@@ -32,6 +32,7 @@ namespace GameStates {
 		bool IsFinished() const { return m_isFinished; }
 	private:
 		bool m_isFinished;
+	protected:
 		GameState* m_newState;
 	};
 

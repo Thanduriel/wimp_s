@@ -1,4 +1,5 @@
 #include "mainstate.hpp"
+#include "inventorystate.hpp"
 #include "../graphic/mesh.hpp"
 #include "gameplay/core/model.hpp"
 #include "gameplay/elements/ship.hpp"
@@ -58,6 +59,12 @@ namespace GameStates {
 
 	void MainState::Process(float _deltaTime)
 	{
+		if (InputManager::IsVirtualKeyPressed(Control::VirtualKey::INVENTORY))
+		{
+			// Change to inventory state
+			m_newState = new GameStates::InventoryState();
+		}
+
 		m_sceneGraph.Process(m_gameTimeControl.m_timeScale * _deltaTime, _deltaTime);
 		m_playerController->Process(_deltaTime);
 		Control::g_camera.Process(_deltaTime);

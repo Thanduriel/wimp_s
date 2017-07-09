@@ -3,6 +3,7 @@
 #include "game.hpp"
 #include "graphic/core/device.hpp"
 #include "gamestates/mainstate.hpp"
+#include "gamestates/inventorystate.hpp"
 #include "graphic/core/texture.hpp"
 #include "graphic/resources.hpp"
 #include "control/input.hpp"

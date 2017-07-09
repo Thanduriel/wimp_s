@@ -80,6 +80,7 @@ namespace Control {
 		FIRE,
 		ROLL_CW,
 		ROLL_CCW,
+		INVENTORY,
 		COUNT
 	};
 
