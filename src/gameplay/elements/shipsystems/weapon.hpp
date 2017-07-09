@@ -13,7 +13,7 @@ namespace Game {
 		typedef std::function<void(Weapon&)> FireFunction;
 		typedef std::function<void(Weapon&, float)> ReloadFunction;
 
-		Weapon(float _cooldown = 1.f, float _damage = 10.f, 
+		Weapon(float _cooldown = 1.f, float _damage = 1.f, 
 			FireFunction&& _fireFn = FireFunction(),
 			ReloadFunction&& _reloadFn = ReloadFunction());
 

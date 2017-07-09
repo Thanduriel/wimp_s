@@ -197,7 +197,6 @@ namespace Game {
 					&& othComp->GetType() == CollisionComponent::Type::NonPlayer)
 					continue;
 
-				if (slfComp->GetVolume() < othComp->GetVolume()) std::swap(slfComp, othComp);
 				Actor& slf = slfComp->GetActor();
 				Actor& oth = othComp->GetActor();
 				float distSq = ei::lensq(slf.GetPosition()
@@ -208,14 +207,11 @@ namespace Game {
 					// check bounding boxes
 					HitInfo hitInfo;
 
-					// instead of performing a full check of both boxes
-					// the smaller box is substituted with two of its faces.
-				/*	if (intersects(boxSlf, Triangle(lower, Vec3(lower.x,lower.y, upper.z),
-					Vec3(lower.x, upper.y, lower.z)))
-					|| intersects(boxSlf, Triangle(upper, Vec3(upper.x, upper.y, lower.z),
-						Vec3(upper.x, lower.y, upper.z)))) */
 					if (slfComp->Check(*othComp, hitInfo))
 					{
+						slf.OnCollision(oth);
+						oth.OnCollision(slf);
+
 						// some very simple impulse
 						DynamicActor* slfDyn = dynamic_cast<DynamicActor*>(&slf);
 						DynamicActor* othDyn = dynamic_cast<DynamicActor*>(&oth);
@@ -232,7 +228,7 @@ namespace Game {
 							Vec3 normal = normalize(hitInfo.normal);
 
 							//check that they are really closing and not just intersecting from a previous crash
-							if (dot((velocitySlf - velocityOth), normal) >= 0) return;
+							if (dot((velocitySlf - velocityOth), normal) >= 0.f) return;
 
 							float epsilon = 0.04f;
 
@@ -247,9 +243,6 @@ namespace Game {
 							othDyn->AddAngularVelocity(othDyn->GetInverseInertiaTensor() * cross(radiusOth, normal) *-1.f * impulse);
 
 						}
-
-						slf.OnCollision(oth);
-						oth.OnCollision(slf);
 					}
 				}
 			}

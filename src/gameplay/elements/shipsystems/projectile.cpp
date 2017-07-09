@@ -11,10 +11,10 @@ namespace Game {
 	const float PARTICLESPAWN = 300.f; // in particles per second
 
 	// ********************************************************************** //
-	Projectile::Projectile(const ei::Vec3& _position, const ei::Vec3& _velocity, const std::string& _mesh, float _lifeTime)
+	Projectile::Projectile(const ei::Vec3& _position, const ei::Vec3& _velocity, const std::string& _mesh, float _damage, float _lifeTime)
 		: Model(_mesh, _position, Quaternion(Vec3(0.f,0.f,1.f), _velocity)),
 		m_lifeTimeComponent(THISACTOR, _lifeTime),
-		m_damage(10.f)
+		m_damage(_damage)
 	{
 		SetVelocity(_velocity);
 	}
@@ -40,8 +40,8 @@ namespace Game {
 	// ********************************************************************** //
 	const Vec3 THRUSTEROFFSET = Vec3(0.f, 0.f, -1.f);
 
-	Rocket::Rocket(const Vec3& _position, const ei::Vec3& _velocity, float _lifeTime)
-		: Projectile(_position, _velocity, "testrocket", _lifeTime),
+	Rocket::Rocket(const Vec3& _position, const ei::Vec3& _velocity, float _damage, float _lifeTime)
+		: Projectile(_position, _velocity, "testrocket", _damage, _lifeTime),
 		m_engineLight(THISACTOR, THRUSTEROFFSET * 1.3f, 2.5f, Utils::Color8U(0.4f, 0.2f, 0.9f)),
 		m_thrustParticles(THISACTOR, THRUSTEROFFSET),
 		m_particleSpawnCount(0.f)

@@ -19,7 +19,7 @@ namespace Game {
 		};
 
 		Projectile(const ei::Vec3& _position, const ei::Vec3& _velocity,
-			const std::string& _mesh, float _lifeTime);
+			const std::string& _mesh, float _damage, float _lifeTime);
 
 		void OnDestroy() override;
 		void OnCollision(Actor& _other) override;
@@ -37,7 +37,7 @@ namespace Game {
 	class Rocket : public Projectile
 	{
 	public:
-		Rocket(const ei::Vec3& _position, const ei::Vec3& _velocity, float _lifeTime);
+		Rocket(const ei::Vec3& _position, const ei::Vec3& _velocity, float _damage, float _lifeTime = 10.f);
 
 		void Process(float _deltaTime) override;
 		void RegisterComponents(class SceneGraph& _sceneGraph) override;

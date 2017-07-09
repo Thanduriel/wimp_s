@@ -99,12 +99,15 @@ namespace Game {
 		void AddAngularVelocity(const ei::Vec3& _angVel) { m_angularVelocity += _angVel; }
 		const ei::Vec3& GetAngularVelocity() const { return m_angularVelocity; }
 
-		const ei::Mat3x3& GetInverseInertiaTensor() const { static auto m = ei::identity3x3(); return m; }
+		const ei::Mat3x3& GetInertiaTensor() const { return m_inertiaTensor; }
+		const ei::Mat3x3& GetInverseInertiaTensor() const { return m_inverseInertiaTensor; }
 		float GetMass() const { return m_mass; }
 
 		void Process(float _deltaTime) override;
 	protected:
 		float m_mass; // mass in [kg]
+		ei::Mat3x3 m_inertiaTensor;
+		ei::Mat3x3 m_inverseInertiaTensor;
 
 		ei::Vec3 m_velocity;
 		ei::Vec3 m_angularVelocity; // the length is the rotation speed

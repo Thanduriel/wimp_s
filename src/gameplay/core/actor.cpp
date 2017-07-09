@@ -63,7 +63,9 @@ namespace Game {
 		: Actor(_position, _rotation),
 		m_velocity(0.f),
 		m_angularVelocity(0.f),
-		m_mass(0.f)
+		m_mass(0.f),
+		m_inertiaTensor(ei::identity3x3()),
+		m_inverseInertiaTensor(ei::identity3x3())
 	{}
 
 	void DynamicActor::Process(float _deltaTime)

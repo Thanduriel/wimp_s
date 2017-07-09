@@ -60,6 +60,7 @@ namespace Game {
 		const Plane* closestPlane = nullptr;
 		float closestAvgD = -std::numeric_limits<float>::max();
 		Vec3 hitPos;
+		bool flip = true;
 
 		// find hit normal and position
 		for (const Plane& plane : faces)
@@ -110,10 +111,11 @@ namespace Game {
 				closestPlane = &plane;
 				closestAvgD = avgDist;
 				hitPos = pos / c;
+				flip = false;
 			}
 		}
 
-		_info.normal = closestPlane->n;
+		_info.normal = (flip ? -1.f : 1.f) * closestPlane->n;
 		_info.position = hitPos;
 		return true;
 	}

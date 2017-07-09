@@ -30,7 +30,18 @@ namespace Game {
 		m_geometryComponent(THISACTOR, _pFile),
 		m_collisionComponent(THISACTOR, m_geometryComponent.GetMesh().GetBoundingRadius(),
 			ei::Box(m_geometryComponent.GetMesh().GetLowerBound(), m_geometryComponent.GetMesh().GetUpperBound()))
-	{}
+	{
+		// calculate inertia tensor
+		const ei::Vec3& min = m_geometryComponent.GetMesh().GetLowerBound();
+		const ei::Vec3& max = m_geometryComponent.GetMesh().GetUpperBound();
+		float h = max.y - min.y; h *= h;
+		float d = max.z - min.z; d *= d;
+		float w = max.x - min.x; w *= w;
+		m_inertiaTensor.m00 = 1.f / 12.f * m_mass * (h + d);
+		m_inertiaTensor.m11 = 1.f / 12.f * m_mass * (w + d);
+		m_inertiaTensor.m22 = 1.f / 12.f * m_mass * (w + h);
+		m_inverseInertiaTensor = ei::invert(m_inertiaTensor);
+	}
 
 	void Model::RegisterComponents(SceneGraph& _sceneGraph)
 	{
