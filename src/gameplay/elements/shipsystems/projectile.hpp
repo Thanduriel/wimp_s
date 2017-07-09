@@ -21,6 +21,9 @@ namespace Game {
 		Projectile(const ei::Vec3& _position, const ei::Vec3& _velocity,
 			const std::string& _mesh, float _damage, float _lifeTime);
 
+		// does a correct copy of the given projectile including components
+		Projectile(const Projectile& _proj);
+
 		void OnDestroy() override;
 		void OnCollision(Actor& _other) override;
 		void RegisterComponents(class SceneGraph& _sceneGraph) override;
@@ -38,6 +41,7 @@ namespace Game {
 	{
 	public:
 		Rocket(const ei::Vec3& _position, const ei::Vec3& _velocity, float _damage, float _lifeTime = 10.f);
+		Rocket(const Rocket& _orig);
 
 		void Process(float _deltaTime) override;
 		void RegisterComponents(class SceneGraph& _sceneGraph) override;

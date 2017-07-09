@@ -46,8 +46,17 @@ namespace Game {
 		static Weapon::ReloadFunction ReloadBurstFire(float _highFactor = 2.f, float _lowFactor = 0.25f, int _numShots = 10);
 
 		// fire traits
-		static Weapon::FireFunction FireDefault();
+		template<typename T>
+		static Weapon::FireFunction FireDefault(const T& _prototype)
+		{
+			return [=](Weapon& _weapon)
+			{
+				T& rocket = _weapon.m_factoryComponent.CopyP<T>(_prototype);
+				rocket.SetVelocity(_weapon.GetRotationMatrix() * rocket.GetVelocity());
+				rocket.SetRotation(ei::Quaternion(ei::Vec3(0.f, 0.f, 1.f), rocket.GetVelocity()));
+				rocket.GetCollisionComponent().SetType(CollisionComponent::Type::NonPlayer);
+			};
+		}
 		static Weapon::FireFunction FireDouble();
 	};
-
 }

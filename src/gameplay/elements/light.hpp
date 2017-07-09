@@ -5,10 +5,11 @@
 #include "math/transformation.hpp"
 
 namespace Game {
-	class PointLightComponent : public ActorComponent, public Transformation
+	class PointLightComponent : public ConstActorComponent, public Transformation
 	{
 	public:
-		PointLightComponent(Actor& _actor, const ei::Vec3& _position, float _radius, Utils::Color8U _color);
+		PointLightComponent(const Actor& _actor, const ei::Vec3& _position, float _radius, Utils::Color8U _color);
+		PointLightComponent(const Actor& _actor, const PointLightComponent& _orig);
 		~PointLightComponent();
 
 		void Draw();

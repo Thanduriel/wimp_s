@@ -32,6 +32,11 @@ namespace Game {
 			m_canTick = false;
 		}
 
+		ParticleSystemComponent(const Actor& _actor, const ParticleSystemComponent& _orig)
+			: BaseParticleSystemComponent(_actor, _orig.m_positionOffset),
+			m_system(_orig.m_system) 
+		{}
+
 
 		// Add a particle 
 		template<typename... Args>

@@ -1,5 +1,6 @@
 #include <ctime>
 #include "weapongen.hpp"
+#include "gameplay/elements/shipsystems/projectile.hpp"
 
 namespace Generators {
 	WeaponGenerator::WeaponGenerator()
@@ -38,6 +39,8 @@ namespace Generators {
 		m_description += "damage: " + std::to_string(damage) + "\n";
 
 		float speed = m_randomSampler.Uniform(20.f, 50.f);
+
+		Game::Rocket projProto(ei::Vec3(0.f), ei::Vec3(0.f,0.f, speed), damage, 10.f);
 		m_description += "speed: " + std::to_string(speed);
 		Weapon::FireFunction fireFn;
 		Weapon::ReloadFunction reloadFn;
@@ -54,6 +57,7 @@ namespace Generators {
 				break;
 			}
 		}
+		if (!fireFn) fireFn = WeaponTrait::FireDefault(projProto);
 
 		m_description += "\n-----\ndps: " + std::to_string(1.f / cooldown * damage)
 			+ "\nrange: " + std::to_string(speed * 10.f);

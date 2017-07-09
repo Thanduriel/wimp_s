@@ -120,6 +120,7 @@ namespace Game {
 		return true;
 	}
 
+	// *************************************************************** //
 	CollisionComponent::CollisionComponent(Actor& _actor, float _boundingRadius, 
 		const ei::Box& _boundingBox)
 		: ActorComponent(_actor),
@@ -165,6 +166,17 @@ namespace Game {
 		m_boundingMesh.faces.emplace_back(Vec3(0.f, 1.f, 0.f), m_boundingMesh.supportVectors.back());
 	}
 
+	// *************************************************************** //
+	CollisionComponent::CollisionComponent(Actor& _actor, const CollisionComponent& _orig)
+		: ActorComponent(_actor),
+		m_boundingRadius(_orig.m_boundingRadius),
+		m_boundingRadiusSq(_orig.m_boundingRadiusSq),
+		m_type(Type::Any),
+		m_volume(_orig.m_volume),
+		m_boundingMesh(_orig.m_boundingMesh)
+	{}
+
+	// *************************************************************** //
 	bool CollisionComponent::Check(const CollisionComponent& _other, HitInfo& _info)
 	{
 		Mat4x4 transform = m_actor.GetInverseTransformation() * _other.m_actor.GetTransformation();

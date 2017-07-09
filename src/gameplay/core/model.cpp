@@ -11,6 +11,11 @@ namespace Game {
 		m_mesh(&Graphic::Resources::GetMesh(_pFile))
 	{}
 
+	GeometryComponent::GeometryComponent(const Actor& _actor, const GeometryComponent& _orig)
+		: ConstActorComponent(_actor),
+		m_mesh(_orig.m_mesh)
+	{}
+
 	void GeometryComponent::Draw()
 	{
 		Graphic::UniformBuffer& objectConstants = Graphic::Resources::GetUBO(Graphic::UniformBuffers::OBJECT_GEOMETRY);
@@ -25,6 +30,7 @@ namespace Game {
 		m_mesh->Draw();
 	}
 
+	// ********************************************************************** //
 	Model::Model(const std::string& _pFile, const ei::Vec3&_position, const ei::Quaternion&_rotation)
 		: DynamicActor(_position, _rotation),
 		m_geometryComponent(THISACTOR, _pFile),
@@ -41,6 +47,13 @@ namespace Game {
 		m_inertiaTensor.m11 = 1.f / 12.f * m_mass * (w + d);
 		m_inertiaTensor.m22 = 1.f / 12.f * m_mass * (w + h);
 		m_inverseInertiaTensor = ei::invert(m_inertiaTensor);
+	}
+
+	Model::Model(const Model& _orig)
+		: DynamicActor(_orig),
+		m_geometryComponent(THISACTOR, _orig.m_geometryComponent),
+		m_collisionComponent(THISACTOR, _orig.m_collisionComponent)
+	{
 	}
 
 	void Model::RegisterComponents(SceneGraph& _sceneGraph)

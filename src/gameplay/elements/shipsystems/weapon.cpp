@@ -36,16 +36,6 @@ namespace Game {
 		return Functor();
 	}
 
-	Weapon::FireFunction WeaponTrait::FireDefault()
-	{
-		return [](Weapon& _weapon)
-		{
-			Rocket& rocket = _weapon.m_factoryComponent.MakeP<Rocket>(ei::Vec3(0.f),
-				_weapon.GetRotationMatrix() * ei::Vec3(0.f, 0.f, 12.f), _weapon.m_damage);
-			rocket.GetCollisionComponent().SetType(CollisionComponent::Type::NonPlayer);
-		};
-	}
-
 	Weapon::FireFunction WeaponTrait::FireDouble()
 	{
 		return [](Weapon& _weapon)
@@ -69,7 +59,7 @@ namespace Game {
 		m_damage(_damage),
 		m_energyCost(1.f),
 		m_reloadImpl(_reloadFn ? std::move(_reloadFn) : WeaponTrait::ReloadDefault()),
-		m_fireImpl(_fireFn ? std::move(_fireFn) : WeaponTrait::FireDefault())
+		m_fireImpl(_fireFn ? std::move(_fireFn) : WeaponTrait::FireDefault(Rocket(ei::Vec3(0.f), ei::Vec3(0.f,0.f,12.f),5.f)))
 	{
 
 	}

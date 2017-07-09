@@ -11,6 +11,9 @@ namespace Game {
 		LifeTimeComponent(Actor& _actor, float _lifeTime) 
 			: ActorComponent(_actor), m_lifeTime(_lifeTime), m_lifeTimeMax(_lifeTime) {}
 
+		LifeTimeComponent(Actor& _actor, const LifeTimeComponent& _orig)
+			: ActorComponent(_actor), m_lifeTime(_orig.m_lifeTime), m_lifeTimeMax(_orig.m_lifeTimeMax) {}
+
 		void ProcessComponent(float _deltaTime) override
 		{
 			m_lifeTime -= _deltaTime;

@@ -82,17 +82,21 @@ namespace Game {
 		template <typename T>
 		T& CopyP(const T& _orig)
 		{
-			ei::Vec3 pos = m_actor.GetTransformation() * ei::Vec4(_orig.GetPosition(), 1);
+			ei::Vec3 pos = ei::Vec3(m_actor.GetTransformation() * ei::Vec4(_orig.GetPosition(), 1.f));
 			T& cpy = Copy<T>(_orig);
 			cpy.SetPosition(pos);
+
+			return cpy;
 		}
 
 		// Transforms the copy's position and rotation.
 		template <typename T>
 		T& CopyR(const T& _orig)
 		{
-			T& cpy = CopyR<T>(_orig);
+			T& cpy = CopyP<T>(_orig);
 			cpy.SetRotation(m_actor.GetRotation() * _orig.GetRotation());
+
+			return cpy;
 		}
 	};
 

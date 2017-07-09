@@ -4,14 +4,20 @@ namespace Game{
 
 	using namespace Graphic;
 
-	PointLightComponent::PointLightComponent(Actor& _actor, const ei::Vec3& _position,
+	PointLightComponent::PointLightComponent(const Actor& _actor, const ei::Vec3& _position,
 		float _radius, Utils::Color8U _color)
-		: ActorComponent(_actor),
+		: ConstActorComponent(_actor),
 		Transformation(_position),
 		m_handle(Graphic::LightSystem::Register(Graphic::LightInfo(_radius, _color)))
 	{
 
 	}
+
+	PointLightComponent::PointLightComponent(const Actor& _actor, const PointLightComponent& _orig)
+		: ConstActorComponent(_actor),
+		Transformation(_orig),
+		m_handle(Graphic::LightSystem::Register(*_orig.m_handle))
+	{}
 
 	void PointLightComponent::Draw()
 	{

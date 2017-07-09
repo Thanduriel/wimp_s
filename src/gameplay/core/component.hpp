@@ -18,6 +18,14 @@ namespace Game {
 		public:
 			BaseComponent(T _owner) : m_actor(_owner), m_canTick(true) {}
 
+			// standard constructors do not work since they need to provide an owner
+			/*
+			BaseComponent() = delete;
+			BaseComponent(const BaseComponent&) = delete;
+			BaseComponent(BaseComponent&&) = delete;
+			BaseComponent& operator=(const BaseComponent&) = delete;
+			BaseComponent& operator=(BaseComponent&&) = delete;
+			*/
 			const T GetActor() const { return m_actor; }
 
 			virtual void OnRegister() {}
@@ -43,7 +51,6 @@ namespace Game {
 	// Actor Component that does not change the state of the owning actor.
 	// Can be easily parallelized. Use this as base class if possible.
 	class ConstActorComponent : public Details::BaseComponent<const Actor&> { using Details::BaseComponent<const Actor&>::BaseComponent; };
-
 
 	// A render component that is drawn after lighting
 	// to display 3d structures that are not part of the world and should thus not be illuminated.

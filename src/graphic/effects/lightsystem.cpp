@@ -19,7 +19,17 @@ namespace Graphic {
 		return m_reference[m_key];
 	}
 
+	const LightInfo& LightHandle::operator*() const
+	{
+		return m_reference[m_key];
+	}
+
 	LightInfo* LightHandle::operator->()
+	{
+		return &m_reference[m_key];
+	}
+
+	const LightInfo* LightHandle::operator->() const
 	{
 		return &m_reference[m_key];
 	}

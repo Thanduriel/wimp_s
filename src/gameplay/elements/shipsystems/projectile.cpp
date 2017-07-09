@@ -19,6 +19,14 @@ namespace Game {
 		SetVelocity(_velocity);
 	}
 
+	Projectile::Projectile(const Projectile& _proj)
+		: Model(_proj),
+		m_lifeTimeComponent(THISACTOR, _proj.m_lifeTimeComponent),
+		m_damage(_proj.m_damage)
+	{
+
+	}
+
 	void Projectile::OnDestroy()
 	{
 		FactoryActor::GetThreadLocalInstance().MakeP<Explosion>(m_position, 20.f, 0.f);
@@ -48,6 +56,13 @@ namespace Game {
 	{
 
 	}
+
+	Rocket::Rocket(const Rocket& _orig)
+		: Projectile(_orig),
+		m_engineLight(THISACTOR, _orig.m_engineLight),
+		m_thrustParticles(THISACTOR, _orig.m_thrustParticles),
+		m_particleSpawnCount(_orig.m_particleSpawnCount)
+	{}
 
 	// ********************************************************************** //
 	void Rocket::Process(float _deltaTime)

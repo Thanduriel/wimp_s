@@ -11,6 +11,7 @@ namespace Game {
 	{
 	public:
 		GeometryComponent(const Actor& _actor, const std::string& _pFile);
+		GeometryComponent(const Actor& _actor, const GeometryComponent& _orig);
 
 		void Draw();
 
@@ -26,6 +27,7 @@ namespace Game {
 	{
 	public:
 		Model(const std::string& _pFile, const ei::Vec3&_position, const ei::Quaternion&_rotation);
+		Model(const Model& _orig);
 
 		void RegisterComponents(class SceneGraph& _sceneGraph) override;
 		GeometryComponent& GetGeometryComponent() { return m_geometryComponent; }

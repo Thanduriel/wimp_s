@@ -26,7 +26,9 @@ namespace Graphic {
 	{
 	public:
 		LightInfo& operator*();
+		const LightInfo& operator*() const;
 		LightInfo* operator->();
+		const LightInfo* operator->() const;
 	private:
 		friend class LightSystem;
 		LightHandle(Details::LightInfoContainer& _infos, Details::LightKey _key) 

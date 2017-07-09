@@ -29,6 +29,7 @@ namespace Game {
 	{
 	public:
 		CollisionComponent(Actor& _actor, float _boundingRadius, const ei::Box& _boundingBox);
+		CollisionComponent(Actor& _actor, const CollisionComponent& _other);
 
 		bool Check(const CollisionComponent& _other, HitInfo& _info);
 
