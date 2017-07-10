@@ -104,32 +104,24 @@ namespace Graphic{
 
 		//Only the overlay in front receives this events
 
-		virtual void MouseMove(double _dx, double _dy){ return; };
+		virtual void MouseMove(float _dx, float _dy){ return; };
 		/// \brief Triggered when the mouse entered the tex this frame
-		virtual void MouseEnter(){ if (OnMouseEnter != nullptr) OnMouseEnter(); };
+		virtual void MouseEnter(){ };
 		/// \brief Triggered when the mouse leaved the tex this frame
-		virtual	void MouseLeave(){ if (OnMouseLeave != nullptr) OnMouseLeave(); };
+		virtual	void MouseLeave(){ };
 		/// \brief Called when left mouse buttons goes down inside the rectangle; @param _pos Pos of Mouse relative to the button
 		///returns true when input gets captured
-		virtual bool KeyDown(int _key, int _modifiers, ei::Vec2 _pos = ei::Vec2(0.f, 0.f)){ if (OnMouseDown != nullptr) OnMouseDown(); return true; };
+		virtual bool KeyDown(int _key, int _modifiers, ei::Vec2 _pos = ei::Vec2(0.f, 0.f)){ return true; };
 		/// \brief Called when left mouse buttons goes up inside the rectangle; @param _pos Pos of Mouse relative to the button
-		virtual bool KeyUp(int _key, int _modifiers, ei::Vec2 _pos = ei::Vec2(0.f, 0.f)){ if (OnMouseUp != nullptr) OnMouseUp(); return true; };
+		virtual bool KeyUp(int _key, int _modifiers, ei::Vec2 _pos = ei::Vec2(0.f, 0.f)){ return true; };
 
 		/// \brief Only triggered for the overlay the mouse is in; Does nothing by default 
-		virtual bool Scroll(double _dx, double _dy){ return false; };
-
-		void SetOnMouseUp(std::function<void()>&& _event) { OnMouseUp = std::move(_event); }
+		virtual bool Scroll(float _dx, float _dy){ return false; };
 	protected:
 		void UpdateParams(); // calculates real size and position from the defined params
 
 		bool m_active; ///< when false: gets ignored by everything
 		bool m_visible; ///< visibility
-
-		//events
-		std::function<void()> OnMouseEnter;
-		std::function<void()> OnMouseLeave;
-		std::function<void()> OnMouseDown;
-		std::function<void()> OnMouseUp;
 
 		ei::Vec2 m_size;///< actual size in screen coordsystem after scaling
 		ei::Vec2 m_scale; ///< size is multiplied with this

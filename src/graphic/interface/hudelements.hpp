@@ -57,7 +57,7 @@ namespace Graphic {
 		//override to apply vertex changes
 		virtual void MouseEnter() override;
 		virtual void MouseLeave() override;
-		virtual void MouseMove(double _dx, double _dy) override;
+		virtual void MouseMove(float _dx, float _dy) override;
 		virtual bool KeyDown(int _key, int _modifiers, ei::Vec2 _pos) override;
 		virtual bool KeyUp(int _key, int _modifiers, ei::Vec2 _pos) override;
 
@@ -70,7 +70,7 @@ namespace Graphic {
 		};
 	private:
 		State m_state;
-		void UpdatePosition(double _dx, double _dy);
+		void UpdatePosition(float _dx, float _dy);
 	};
 
 	// ************************************************************* //
@@ -102,6 +102,8 @@ namespace Graphic {
 		virtual bool KeyDown(int _key, int _modifiers, ei::Vec2 _pos) override;
 		virtual bool KeyUp(int _key, int _modifiers, ei::Vec2 _pos) override;
 
+		void SetOnMouseUp(std::function<void()>&& _event) { OnMouseUp = std::move(_event); }
+
 		enum struct State
 		{
 			Base,
@@ -115,6 +117,8 @@ namespace Graphic {
 		ScreenTexture m_btnOver;
 		ScreenTexture m_btnDown;
 		TextRender m_caption;
+
+		std::function<void()> OnMouseUp;
 
 		ei::Vec<bool,2> m_autoCenter;
 		State m_btnState; // 0 - default; 1 - mouseover; 2 - down

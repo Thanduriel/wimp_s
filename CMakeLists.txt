@@ -26,6 +26,11 @@ endmacro()
 # execute tha macro
 GroupSources(src)
 
+# faster compilation with multithreading
+if(MSVC)
+	add_compile_options( /MP )
+endif(MSVC)
+
 # needs to be known to link with the libraries
 add_executable(wimp_s ${SOURCE_FILES})
 # navigation should always start from root
