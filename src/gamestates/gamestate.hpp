@@ -28,7 +28,7 @@ namespace GameStates {
 		virtual void KeyDoubleClick(int _key) {}
 
 		// Returns a newly created state.
-		GameState* FetchNewState() { return m_newState; m_newState = nullptr; }
+		GameState* FetchNewState() { GameState* s = m_newState; m_newState = nullptr; return s; }
 		bool IsFinished() const { return m_isFinished; }
 	private:
 		bool m_isFinished;

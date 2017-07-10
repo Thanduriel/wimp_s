@@ -130,6 +130,7 @@ void Wimp_s::BuildDefaultConfig()
 	cinput[std::string("Fire")][0] = GLFW_MOUSE_BUTTON_LEFT;
 	cinput[std::string("RollCW")][0] = GLFW_KEY_E;
 	cinput[std::string("RollCCW")][0] = GLFW_KEY_Q;
+	cinput[std::string("Inventory")][0] = GLFW_KEY_I;
 	
 /*	auto& cgame = m_config[std::string("Game")];
 	cgame[std::string("Language")] = "english.json";
