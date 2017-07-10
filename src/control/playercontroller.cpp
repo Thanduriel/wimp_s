@@ -121,10 +121,6 @@ namespace Control
 	// ************************************************************ //
 	void PlayerController::HandleInput(float _deltaTime)
 	{
-		// the key to kill your performance!
-	//	if(InputManager::IsKeyPressed(GLFW_KEY_Q))
-	//		m_ship->Fire();
-
 		if (m_targetingMode == TargetingMode::Tactical)
 		{
 			// todo move this to a config
@@ -206,6 +202,6 @@ namespace Control
 		m_hud.UpdateSpeedLabel(m_ship->GetCurrentSpeed());
 		m_hud.UpdateSpeedBar(m_ship->GetCurrentSpeed(), m_ship->GetMaxSpeed());
 		m_hud.UpdateTargetSpeedSlider(m_targetSpeed, m_ship->GetMaxSpeed());
-		m_hud.UpdateCrossHair(m_ship->GetSprayRadius());
+	//	m_hud.UpdateCrossHair(m_ship->GetSprayRadius());
 	}
 }

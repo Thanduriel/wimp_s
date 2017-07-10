@@ -13,14 +13,14 @@ namespace Game {
 	};
 
 	// Convex polyhedron to check intersection with
-	class BoundingMesh
+	struct BoundingMesh
 	{
-	public:
 		std::vector<ei::Vec3> vertices;
 		std::vector<ei::Plane> faces;
 		std::vector<ei::Vec3> supportVectors; //< center of the face
+		std::vector<ei::Triangle> triangles;
 
-		bool Intersects(const BoundingMesh& _other, const ei::Mat4x4& _transform, HitInfo& _info) const;
+		bool Intersects(const BoundingMesh& _other, const ei::Mat4x4& _transform,HitInfo& _info) const;
 	};
 
 	// While the collision component itself does not change the Actor
@@ -32,6 +32,10 @@ namespace Game {
 		CollisionComponent(Actor& _actor, const CollisionComponent& _other);
 
 		bool Check(const CollisionComponent& _other, HitInfo& _info);
+		// ray cast with the bounding sphere
+		bool RayCastFast(const ei::Ray& _ray, float& _distance) const;
+		// ray cast with the bounding mesh
+		bool RayCast(const ei::Ray& _ray, float& _distance) const;
 
 		float GetBoundingRadius() const { return m_boundingRadius; }
 		float GetBoundingRadiusSq() const { return m_boundingRadiusSq; }

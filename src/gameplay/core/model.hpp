@@ -32,6 +32,7 @@ namespace Game {
 		void RegisterComponents(class SceneGraph& _sceneGraph) override;
 		GeometryComponent& GetGeometryComponent() { return m_geometryComponent; }
 		CollisionComponent& GetCollisionComponent() { return m_collisionComponent; }
+		const CollisionComponent& GetCollisionComponent() const { return m_collisionComponent; }
 	protected:
 		GeometryComponent m_geometryComponent;
 		CollisionComponent m_collisionComponent;

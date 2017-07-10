@@ -54,7 +54,9 @@ namespace Game {
 		// Registers Actors created by Factories to the scene.
 		void AddActors();
 
-	//	void RayCast(const ei::Ray& _ray, float _maxDist)
+		// Performs a ray cast on all objects in the scene.
+		// @Return The closest object that is hit by the ray.
+		CollisionComponent* RayCast(const ei::Ray& _ray, float _maxDist);
 	private:
 		void RegisterBaseComponent(ConstActorComponent& _component) { RegisterComponent(_component); }
 		void RegisterBaseComponent(ActorComponent& _component) { RegisterComponent(_component); }

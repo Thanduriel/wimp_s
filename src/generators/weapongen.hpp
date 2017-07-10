@@ -14,7 +14,11 @@ namespace Generators{
 		{"Twin", "fires additional projectile", true }
 	} };
 
-
+	enum struct WeaponType {
+		Simple,
+		Rocket,
+		Ray // not implemented
+	};
 
 	class WeaponGenerator
 	{
