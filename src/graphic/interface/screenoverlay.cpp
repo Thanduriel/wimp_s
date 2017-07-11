@@ -40,8 +40,7 @@ namespace Graphic{
 		: ScreenPosition(_pos, _anchor),
 		m_sizeBase(_size), 
 		m_active(true), 
-		m_visible(true), 
-		OnMouseUp(_OnMouseUp),
+		m_visible(true),
 		m_scale(1.f),
 		m_definitionPoint(_def)
 	{

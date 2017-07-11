@@ -184,6 +184,20 @@ namespace Game {
 	}
 
 	// *********************************************************** //
+	CollisionComponent* SceneGraph::RayCast(const ei::Ray& _ray, float _maxDist)
+	{
+		for (CollisionComponent* component : m_collisionComponents)
+		{
+			float d;
+			if (component->RayCastFast(_ray, d) && d < _maxDist && component->RayCast(_ray, d))
+			{
+				return component;
+			}
+		}
+		return nullptr;
+	}
+
+	// *********************************************************** //
 	void SceneGraph::ResolveCollisions()
 	{
 		using namespace ei;

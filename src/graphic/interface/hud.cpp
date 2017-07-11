@@ -59,7 +59,7 @@ namespace Graphic
 
 	
 	// ************************************************************************* //
-	void Hud::Draw(double _deltaTime)
+	void Hud::Draw(float _deltaTime)
 	{
 		ScissorRect scissor(m_position[0], m_position[1]-m_size[1], m_size[0], m_size[1]);
 		RenewBuffer();
@@ -109,7 +109,7 @@ namespace Graphic
 	}
 
 	// ************************************************************************* //
-	void Hud::MouseMove( double _dx, double _dy )
+	void Hud::MouseMove( float _dx, float _dy )
 	{
 		// Get cursor converted to screen coordinates
 		Vec2 cursorPos = Control::InputManager::GetCursorPosScreenSpace();
@@ -180,7 +180,7 @@ namespace Graphic
 		return false;
 	}
 	
-	bool Hud::Scroll(double _dx, double _dy)
+	bool Hud::Scroll(float _dx, float _dy)
 	{
 		//The focused overlay takes the input
 		if(m_preElem && m_preElem->Scroll(_dx , _dy)) return true;

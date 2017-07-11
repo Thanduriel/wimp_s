@@ -37,7 +37,7 @@ namespace Graphic {
 		Hud* CreateContainer(ei::Vec2 _pos=ei::Vec2(-1.f,-1.f) , ei::Vec2 _size=ei::Vec2(2.f,2.f));
 
 		/// \brief Last call in every frame draw call
-		void Draw(double _deltaTime);
+		void Draw(float _deltaTime);
 
 
 		// Always just call the most specialized RegisterElement!
@@ -67,9 +67,9 @@ namespace Graphic {
 		virtual bool KeyUp(int _key, int _modifiers, ei::Vec2 _pos = ei::Vec2(0.f,0.f)) override;
 
 		/// \brief called by the current game state to update mouse input
-		virtual void MouseMove( double _dx, double _dy )override;
+		virtual void MouseMove( float _dx, float _dy )override;
 
-		virtual bool Scroll(double _dx, double _dy) override;
+		virtual bool Scroll(float _dx, float _dy) override;
 
 		const Jo::Files::MetaFileWrapper* GetTexContainerMap() const { return m_texContainerMap; }
 

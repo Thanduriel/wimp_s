@@ -139,7 +139,7 @@ void VertexArrayBuffer::AttachBuffer(std::shared_ptr<DataBuffer> _b)
 	// Take ownership of data
 	m_buffers.push_back(_b);
 
-	int offset = 0;
+	size_t offset = 0;
 	GL_CALL(glBindBuffer, GL_ARRAY_BUFFER, _b->m_VBO);
 	for(size_t i = 0; i < _b->m_types.size(); ++i)
 	{

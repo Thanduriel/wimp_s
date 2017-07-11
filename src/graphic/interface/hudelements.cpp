@@ -85,13 +85,13 @@ namespace Graphic
 		m_state = State::Base;
 	}
 
-	void DraggableTexture::UpdatePosition(double _dx, double _dy)
+	void DraggableTexture::UpdatePosition(float _dx, float _dy)
 	{
 		Vec2 newPos = GetPosition() + PixelCoord(_dx, _dy);
 		SetPosition(newPos);
 	}
 
-	void DraggableTexture::MouseMove(double _dx, double _dy)
+	void DraggableTexture::MouseMove(float _dx, float _dy)
 	{
 		ScreenOverlay::MouseMove(_dx, _dy);
 
@@ -226,7 +226,8 @@ namespace Graphic
 	}
 	bool Button::KeyDown(int _key, int _modifiers, Vec2 _pos)
 	{
-		ScreenOverlay::KeyDown(_key, _modifiers, _pos);
+		if (OnMouseUp) OnMouseUp();
+
 		m_btnDefault.SetVisible(false);
 		m_btnOver.SetVisible(false);
 		m_btnDown.SetVisible(true);

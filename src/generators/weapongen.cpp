@@ -25,7 +25,6 @@ namespace Generators {
 
 		// decide on quality
 		auto qVec = QUALITY_RARITY * _qualityFactor;
-		
 		Quality rarity = Quality::Unique;
 		while (float n = m_randomSampler.Uniform() > qVec[(int)rarity]) rarity = Quality((int)rarity - 1);
 
@@ -39,6 +38,7 @@ namespace Generators {
 		m_description += "damage: " + std::to_string(damage) + "\n";
 
 		float speed = m_randomSampler.Uniform(20.f, 50.f);
+		float lifeTime = m_randomSampler.Uniform(5.f, 10.f);
 
 		Game::Rocket projProto(ei::Vec3(0.f), ei::Vec3(0.f,0.f, speed), damage, 10.f);
 		m_description += "speed: " + std::to_string(speed);
@@ -59,6 +59,7 @@ namespace Generators {
 		}
 		if (!fireFn) fireFn = WeaponTrait::FireDefault(projProto);
 
+		// accumulated stats
 		m_description += "\n-----\ndps: " + std::to_string(1.f / cooldown * damage)
 			+ "\nrange: " + std::to_string(speed * 10.f);
 

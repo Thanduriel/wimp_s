@@ -12,7 +12,6 @@
 #include "gameplay/elements/grid.hpp"
 #include "gameplay/elements/blackhole.hpp"
 #include "gameplay/elements/light.hpp"
-#include "gameplay/elements/particlesystemcomponent.hpp"
 #include "generators/random.hpp"
 #include "gameplay/elements/shipsystems/projectile.hpp"
 
@@ -24,9 +23,7 @@ namespace GameStates {
 	using namespace Control;
 	using namespace Game;
 
-	Game::PointLight* pointLight;
 	Game::BlackHole* blackHole;
-	Game::ParticleSystemActor<Graphic::ParticleSystems::BASIC_SYSTEM>* particleSystem;
 
 	MainState::MainState()
 		: m_starbackground(2000, 20000.f, 14000),
@@ -44,12 +41,9 @@ namespace GameStates {
 		m_playerController = new Control::PlayerController(*ship, *grid, *blackHole, m_hud, m_gameTimeControl);
 		Control::g_camera.Attach(*ship);
 
+		// test actors
 		ship = new Ship("spaceship", Vec3(50.f,0.f,100.f));
 		m_sceneGraph.Add(*ship);
-
-		// some test actors
-		pointLight = new PointLight(Vec3(0.f), Vec3(0.f), 5.f, Utils::Color8U(255_uc, 255_uc, 0_uc));
-		m_sceneGraph.Add(*pointLight);
 	}
 
 	MainState::~MainState()
@@ -64,18 +58,17 @@ namespace GameStates {
 			// Change to inventory state
 			m_newState = new GameStates::InventoryState();
 		}
+	//	ei::Ray ray(Vec3(m_playerController->GetShip().GetPosition()),
+	//		normalize(m_playerController->GetShip().GetRotationMatrix() * Vec3(0.f, 0.f, 1.f)));
+	//	ray.origin += ray.direction * (m_playerController->GetShip().GetCollisionComponent().GetBoundingRadius()+1.f);
+		if (m_sceneGraph.RayCast(g_camera.GetRay(Vec2(0.f, 0.f)), 200.f))
+			m_hud.UpdateCrossHair(1.f);
+		else
+			m_hud.UpdateCrossHair(0.f);
 
 		m_sceneGraph.Process(m_gameTimeControl.m_timeScale * _deltaTime, _deltaTime);
 		m_playerController->Process(_deltaTime);
 		Control::g_camera.Process(_deltaTime);
-
-		static float t = 0.f;
-		t += _deltaTime;
-		
-		Vec4 pos = m_playerController->GetShip().GetTransformation() * Vec4(0.5f, 0.f, 0.f, 1.f);
-	//	pointLight->SetPosition(m_playerController->GetShip().GetPosition() + Vec3(0.f,1.f,0.f));
-		Vec3 p = ei::Vec3(cos(t), 0.f, sin(t));
-		pointLight->SetPosition(p);
 	}
 
 	void MainState::Draw(float _deltaTime)
