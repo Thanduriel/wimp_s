@@ -2,7 +2,6 @@
 
 #include "core/texture.hpp"
 #include "core/vertexbuffer.hpp"
-#include <assimp/Importer.hpp>
 
 namespace Graphic {
 
@@ -26,11 +25,11 @@ namespace Graphic {
 			ei::Vec3 normal;
 			ei::Vec2 textureCoords;
 		};
+		void Load(const std::string& _file);
+		void Mesh::ComputeBoundingValues(const Vertex* _vertices, size_t _numVertices);
+
 		Texture* m_texture;
 		VertexArrayBuffer m_vertices;
-		bool ImportModel(const std::string& _pFile);
-		void SceneProcessing(const aiScene* _scene);
-		void ComputeBoundingValues(const aiVector3D* _vertices, size_t _numVertices);
 
 		float m_boundingRadius;
 		ei::Vec3 m_lowerBound;

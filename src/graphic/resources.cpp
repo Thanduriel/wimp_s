@@ -227,7 +227,7 @@ namespace Graphic {
 		Mesh* mesh;
 		if (it == meshes.end())
 		{
-			mesh = new Mesh("models/" + _name + ".fbx");
+			mesh = new Mesh("models/" + _name + ".wim");
 			meshes.emplace(_name, mesh);
 		}
 		else mesh = it->second;

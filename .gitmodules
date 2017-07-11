@@ -9,9 +9,12 @@
 	url = git@github.com:Perlmint/glew-cmake.git
 [submodule "dependencies/assimp"]
 	
-	path = dependencies/assimp
+	path = tools/meshprocessor/dependencies/assimp
 
 	url = https://github.com/assimp/assimp
 [submodule "dependencies/glew-cmake"]
 	path = dependencies/glew-cmake
 	url = https://github.com/Perlmint/glew-cmake.git
+[submodule "tools/meshprocessor/dependencies/quickhull"]
+	path = tools/meshprocessor/dependencies/quickhull
+	url = git@github.com:akuukka/quickhull.git
