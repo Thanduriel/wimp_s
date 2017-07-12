@@ -6,6 +6,11 @@ file(GLOB SOURCE_FILES
     "src/*.cpp"
 )
 
+# faster compilation with multithreading
+if(MSVC)
+	add_compile_options( /MP )
+endif(MSVC)
+
 add_executable(meshprocessor ${SOURCE_FILES})
 
 set(BUILD_SHARED_LIBS OFF CACHE BOOL "" FORCE)

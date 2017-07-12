@@ -22,13 +22,15 @@
 		_stream.write(reinterpret_cast<const char*>(&_data), sizeof(T));
 	}
 
-	void Mesh::Save(const std::string& _name)
+	void Mesh::Save(const std::string& _name, Format _format)
 	{
-		std::string name = _name + ".wim";
+		std::string name = _name + (_format == Format::Flat ? ".wim" : ".wii");
 		std::ofstream file(name, std::ios::binary);
 
-		uint16_t version = 1;
+		uint16_t version = FORMAT_VERSION;
 		write(file, version);
+		uint16_t format = static_cast<uint16_t>(_format);
+		write(file, format);
 		// texture name
 		file << m_texture;
 		file << ' ';
@@ -38,18 +40,25 @@
 		write(file, m_lowerBound);
 		write(file, m_upperBound);
 
-		// number of vertices
-		uint32_t s = static_cast<uint32_t>(m_vertices.size());
-		file.write(reinterpret_cast<char*>(&s), 4);
-#ifdef COMPACT_FORMAT
-		file << static_cast<uint32_t>(m_faces.size());
-#endif
-		// data
-		size_t test = m_vertices.size() * sizeof(Vertex);
-		file.write(reinterpret_cast<char*>(&m_vertices.front()), m_vertices.size() * sizeof(Vertex));
-#ifdef COMPACT_FORMAT
-		file.write(reinterpret_cast<char*>(&m_faces.front()), m_faces.size() * sizeof(Vec<int,3>));
-#endif
+		if (_format == Format::Indexed)
+		{
+			// number of vertices
+			uint32_t s = static_cast<uint32_t>(m_vertices.size());
+			write(file, s);
+
+			file << static_cast<uint32_t>(m_faces.size());
+			// data
+			file.write(reinterpret_cast<char*>(&m_vertices.front()), m_vertices.size() * sizeof(Vertex));
+			file.write(reinterpret_cast<char*>(&m_faces.front()), m_faces.size() * sizeof(Vec<int, 3>));
+		}
+		else if (_format == Format::Flat)
+		{
+			auto vertices = Flatten();
+			uint32_t s = static_cast<uint32_t>(vertices.size());
+			write(file, s);
+
+			file.write(reinterpret_cast<char*>(&vertices.front()), vertices.size() * sizeof(Vertex));
+		}
 	}
 
 	bool Mesh::ImportModel(const std::string& _pFile)
@@ -64,7 +73,9 @@
 			aiProcess_GenUVCoords |
 			aiProcess_FlipUVs | // fbx exported by blender seem to require this
 			aiProcess_GenNormals |
-		aiProcess_FixInfacingNormals);
+			aiProcess_ImproveCacheLocality | // could improve performance
+			aiProcess_JoinIdenticalVertices |
+			aiProcess_FixInfacingNormals);
 
 		if (!scene)
 			throw std::string("Failed to load mesh: ") + importer.GetErrorString();
@@ -73,64 +84,30 @@
 		return true;
 	}
 
-	template<typename T, unsigned N, typename A>
-	Vec<T,N>& assign(Vec<T,N>& _lhs, const A& _rhs)
-	{
-		for (unsigned i = 0; i < N; ++i)
-			_lhs[i] = _rhs[i];
-
-		return _lhs;
-	}
-
 	void Mesh::SceneProcessing(const aiScene* _scene) 
 	{	
 		aiMesh *mesh = _scene->mMeshes[0];
 		
-#ifdef COMPACT_FORMAT
 		m_vertices.resize(mesh->mNumVertices);
+		m_normals.resize(mesh->mNumFaces);
 		Vertex* v = &m_vertices[0];
 
 		for (unsigned int j = 0; j < mesh->mNumFaces; j++) // process vertex positions, normals and texture coordinates
 		{
 			auto indices = mesh->mFaces[j].mIndices;
 			m_faces.emplace_back(indices[0], indices[1], indices[2]);
+			m_normals[j] = (mesh->mNormals[indices[0]] + mesh->mNormals[indices[1]] + mesh->mNormals[indices[2]]).Normalize();
 		}
 		for (unsigned i = 0; i < mesh->mNumVertices; ++i)
 		{
-			assign(v[i].position, mesh->mVertices[i]);
-
-			assign(v[i].normal, mesh->mNormals[i]);
-
-			if (mesh->mTextureCoords[0]) // does the mesh contain texture coordinates?
-			{
-				assign(v[i].textureCoords, mesh->mTextureCoords[0][i]);
-			}
-		}
-#else
-		m_vertices.resize(mesh->mNumFaces * 3);
-		Vertex* v = &m_vertices[0];
-
-		for (unsigned int j = 0; j < mesh->mNumFaces; ++j) // process vertex positions, normals and texture coordinates
-		{
-			unsigned ind = j * 3;
-			auto indices = mesh->mFaces[j].mIndices;
-
-			assign(v[ind].position, mesh->mVertices[indices[0]]);
-			assign(v[ind + 1].position, mesh->mVertices[indices[1]]);
-			assign(v[ind + 2].position, mesh->mVertices[indices[2]]);
-
-			assign(v[ind].normal, mesh->mNormals[indices[0]]);
-			assign(v[ind + 1].normal, mesh->mNormals[indices[1]]);
-			assign(v[ind + 2].normal, mesh->mNormals[indices[2]]);
+			v[i].position = mesh->mVertices[i];
+			v[i].normal = mesh->mNormals[i];
 
 			if (mesh->mTextureCoords[0]) // does the mesh contain texture coordinates?
 			{
-				assign(v[ind + 0].textureCoords, mesh->mTextureCoords[0][indices[0]]);
-				assign(v[ind + 1].textureCoords, mesh->mTextureCoords[0][indices[1]]);
-				assign(v[ind + 2].textureCoords, mesh->mTextureCoords[0][indices[2]]);
+				v[i].textureCoords = mesh->mTextureCoords[0][i];
 			}
 		}
-#endif
 
 		// Texture loading (Diffuse and Specular maps)
 		if (mesh->mMaterialIndex >= 0)
@@ -161,34 +138,51 @@
 	
 
 		// compute size properties
-		ComputeBoundingValues(mesh->mVertices, mesh->mNumVertices);
+		ComputeBoundingValues();
 	}
 
-	void Mesh::ComputeBoundingValues(const aiVector3D* _vertices, size_t _numVertices)
+	void Mesh::ComputeBoundingValues()
 	{
 		float maxDist = 0.f;
 
-		for (size_t i = 0; i < _numVertices; ++i)
+		for (size_t i = 0; i < m_vertices.size(); ++i)
 		{
-			float val = _vertices[i].SquareLength();
+			float val = m_vertices[i].position[0] * m_vertices[i].position[0]
+				+ m_vertices[i].position[1] * m_vertices[i].position[1]
+				+ m_vertices[i].position[2] * m_vertices[i].position[2];
 			if (val > maxDist) maxDist = val;
 		}
 
 		m_boundingRadius = sqrt(maxDist);
 
-		auto xval = std::minmax_element(_vertices, _vertices + _numVertices, [](const aiVector3D& _lhs, const aiVector3D& _rhs)
+		auto xval = std::minmax_element(m_vertices.begin(), m_vertices.end(), [](const Vertex& _lhs, const Vertex& _rhs)
 		{
-			return _lhs.x < _rhs.x;
+			return _lhs.position[0] < _rhs.position[0];
 		});
-		auto yval = std::minmax_element(_vertices, _vertices + _numVertices, [](const aiVector3D& _lhs, const aiVector3D& _rhs)
+		auto yval = std::minmax_element(m_vertices.begin(), m_vertices.end(), [](const Vertex& _lhs, const Vertex& _rhs)
 		{
-			return _lhs.y < _rhs.y;
+			return _lhs.position[1] < _rhs.position[1];
 		});
-		auto zval = std::minmax_element(_vertices, _vertices + _numVertices, [](const aiVector3D& _lhs, const aiVector3D& _rhs)
+		auto zval = std::minmax_element(m_vertices.begin(), m_vertices.end(), [](const Vertex& _lhs, const Vertex& _rhs)
 		{
-			return _lhs.z < _rhs.z;
+			return _lhs.position[2] < _rhs.position[2];
 		});
 
-		m_lowerBound = Vec3((*xval.first)[0], (*yval.first)[1], (*zval.first)[2]);
-		m_upperBound = Vec3((*xval.second)[0], (*yval.second)[1], (*zval.second)[2]);
+		m_lowerBound = Vec3(xval.first->position[0], yval.first->position[1], zval.first->position[2]);
+		m_upperBound = Vec3(xval.second->position[0], yval.second->position[1], zval.second->position[2]);
+	}
+
+	std::vector<Mesh::Vertex> Mesh::Flatten()
+	{
+		std::vector<Vertex> vertices;
+		vertices.reserve(m_faces.size() * 3);
+
+		for (size_t i = 0; i < m_faces.size(); ++i)
+		{
+			vertices.emplace_back(m_vertices[m_faces[i][0]]);
+			vertices.emplace_back(m_vertices[m_faces[i][1]]);
+			vertices.emplace_back(m_vertices[m_faces[i][2]]);
+		}
+
+		return std::move(vertices);
 	}

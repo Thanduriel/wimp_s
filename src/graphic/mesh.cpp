@@ -48,13 +48,20 @@ namespace Graphic {
 		_stream.read(reinterpret_cast<char*>(&_data), sizeof(T));
 	}
 
+	const int FORMAT_VERSION = 2;
+
 	void Mesh::Load(const std::string& _file)
 	{
 		std::ifstream file(_file, std::ios::binary);
 
 		uint16_t ver;
 		read(file, ver);
-		if (ver != 1) LOG_ERROR("Expected mesh format version 1, but found " + std::to_string(ver));
+		if (ver != FORMAT_VERSION) LOG_ERROR("Expected mesh format version " 
+			+ std::to_string(FORMAT_VERSION) + ", but found " + std::to_string(ver));
+		uint16_t format;
+		read(file, format);
+		if (format != 1) LOG_ERROR("Currently only Format::Flat is supported.");
+
 
 		std::string texName;
 		file >> texName;

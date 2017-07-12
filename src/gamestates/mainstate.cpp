@@ -24,6 +24,7 @@ namespace GameStates {
 	using namespace Game;
 
 	Game::BlackHole* blackHole;
+	Game::Ship* ship2;
 
 	MainState::MainState()
 		: m_starbackground(2000, 20000.f, 14000),
@@ -44,6 +45,7 @@ namespace GameStates {
 		// test actors
 		ship = new Ship("spaceship", Vec3(50.f,0.f,100.f));
 		m_sceneGraph.Add(*ship);
+		ship2 = ship;
 	}
 
 	MainState::~MainState()
@@ -65,6 +67,9 @@ namespace GameStates {
 			m_hud.UpdateCrossHair(1.f);
 		else
 			m_hud.UpdateCrossHair(0.f);
+
+	//	ship2->SetPosition(m_playerController->GetShip().GetPosition());
+	//	ship2->SetRotation(m_playerController->GetShip().GetRotation());
 
 		m_sceneGraph.Process(m_gameTimeControl.m_timeScale * _deltaTime, _deltaTime);
 		m_playerController->Process(_deltaTime);

@@ -7,14 +7,16 @@
 class Mesh
 {
 public:
-	Mesh(const std::string& _pFile);
-	void Save(const std::string& _name);
+	enum struct Format {
+		Indexed,
+		Flat
+	};
+	const static uint16_t FORMAT_VERSION = 2;
 
-	// Returns the radius of the minimum sized sphere
-	// positioned at point 0, that contains all vertices.
-	float GetBoundingRadius() const { return m_boundingRadius; }
-	const Vec3& GetLowerBound() const { return m_lowerBound; }
-	const Vec3& GetUpperBound() const { return m_upperBound; }
+	Mesh() = default;
+	Mesh(const std::string& _pFile);
+	void Save(const std::string& _name, Format _format = Format::Flat);
+
 private:
 //	#pragma pack(1)
 	struct Vertex
@@ -25,13 +27,18 @@ private:
 	};
 	std::vector<Vertex> m_vertices;
 	std::vector<Vec<int, 3>> m_faces;
+	std::vector<Vec3> m_normals;
 	std::string m_texture;
 
 	bool ImportModel(const std::string& _pFile);
 	void SceneProcessing(const aiScene* _scene);
-	void ComputeBoundingValues(const aiVector3D* _vertices, size_t _numVertices);
+	void ComputeBoundingValues();
+	// Vertex buffer without indices
+	std::vector<Vertex> Flatten();
 
 	float m_boundingRadius;
 	Vec3 m_lowerBound;
 	Vec3 m_upperBound;
+
+	friend class ConvexHullGen;
 };
