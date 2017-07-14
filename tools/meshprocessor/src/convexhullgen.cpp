@@ -1,3 +1,5 @@
+#include <iostream>
+
 #include "convexhullgen.hpp"
 #include "QuickHull.hpp"
 
@@ -10,15 +12,18 @@ void ConvexHullGen::Set(Mesh& _mesh)
 		m_points.push_back(v.position);
 }
 
-Mesh ConvexHullGen::Generate(Mesh& _mesh)
+Mesh ConvexHullGen::Generate(Mesh& _mesh, float _epsilon)
 {
 	Set(_mesh);
 	using namespace quickhull;
 	QuickHull<float> qh;
 
-	auto hull = qh.getConvexHull(reinterpret_cast<float*>(&m_points.front()), m_points.size(), true, false, 0.01f);
+	auto hull = qh.getConvexHull(reinterpret_cast<float*>(&m_points.front()), m_points.size(), true, false, _epsilon);
 	auto& vertices = hull.getVertexBuffer();
 	auto& indices = hull.getIndexBuffer();
+
+	std::clog << "Generated bounding mesh with " + std::to_string(vertices.size())
+		+ " vertices and " + std::to_string(indices.size() / 3) + " faces." << std::endl;
 
 	Mesh mesh;
 	mesh.m_vertices.resize(vertices.size());

@@ -2,6 +2,7 @@
 
 #include "core/texture.hpp"
 #include "core/vertexbuffer.hpp"
+#include "utils/meshloader.hpp"
 
 namespace Graphic {
 
@@ -15,9 +16,7 @@ namespace Graphic {
 
 		// Returns the radius of the minimum sized sphere
 		// positioned at point 0, that contains all vertices.
-		float GetBoundingRadius() const { return m_boundingRadius; }
-		const ei::Vec3& GetLowerBound() const { return m_lowerBound; }
-		const ei::Vec3& GetUpperBound() const { return m_upperBound; }
+		const Utils::MeshInfo& GetMeshBounds() const { return m_meshBounds; }
 	private:
 		struct Vertex
 		{
@@ -25,14 +24,13 @@ namespace Graphic {
 			ei::Vec3 normal;
 			ei::Vec2 textureCoords;
 		};
-		void Load(const std::string& _file);
-		void Mesh::ComputeBoundingValues(const Vertex* _vertices, size_t _numVertices);
+		void Load(std::istream& _stream, size_t _numVertices);
 
 		Texture* m_texture;
 		VertexArrayBuffer m_vertices;
 
-		float m_boundingRadius;
-		ei::Vec3 m_lowerBound;
-		ei::Vec3 m_upperBound;
+		Utils::MeshInfo m_meshBounds;
+
+		friend class Resources; // to allow preloading
 	};
 }

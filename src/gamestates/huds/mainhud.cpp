@@ -28,7 +28,7 @@ namespace GameStates {
 		// +2 for 1 character after point
 		speedString = speedString.substr(0, pos + 2);
 		//We only move between speeds of 0 - 999
-		for (int i = 0; i < 3 - pos; i++)
+		for (int i = 0; i < 3 - (int)pos; i++)
 			speedString = " " + speedString;
 		m_speedLabel->SetText(speedString + " m/s");
 	}

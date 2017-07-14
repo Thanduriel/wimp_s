@@ -2,6 +2,8 @@
 
 #include "vec.hpp"
 #include <vector>
+#include <string>
+#include <unordered_map>
 #include <assimp/Importer.hpp>
 
 class Mesh
@@ -9,13 +11,17 @@ class Mesh
 public:
 	enum struct Format {
 		Indexed,
-		Flat
+		IndexedNormal, // indexed, but with normals per face following the indices
+		Flat,
+		COUNT
 	};
-	const static uint16_t FORMAT_VERSION = 2;
+	const static std::unordered_map<std::string, Format> FORMAT_NAMES;
+
+	const static uint16_t FORMAT_VERSION = 3;
 
 	Mesh() = default;
 	Mesh(const std::string& _pFile);
-	void Save(const std::string& _name, Format _format = Format::Flat);
+	void Save(const std::string& _name, Format _format = Format::Flat, bool _flatNormals = false);
 
 private:
 //	#pragma pack(1)
@@ -34,7 +40,7 @@ private:
 	void SceneProcessing(const aiScene* _scene);
 	void ComputeBoundingValues();
 	// Vertex buffer without indices
-	std::vector<Vertex> Flatten();
+	std::vector<Vertex> Flatten(bool _normals);
 
 	float m_boundingRadius;
 	Vec3 m_lowerBound;

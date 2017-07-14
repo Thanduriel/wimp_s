@@ -2,6 +2,7 @@
 #include <iostream>
 #include <vector>
 #include <fstream>
+#include <cassert>
 
 #include "mesh.hpp"
 #include <assimp/Importer.hpp>      // C++ importer interface
@@ -10,6 +11,14 @@
 #include "pathutils.hpp"
 
 //#define COMPACT_FORMAT
+
+const std::unordered_map<std::string, Mesh::Format> Mesh::FORMAT_NAMES =
+{
+	{"Indexed", Mesh::Format::Indexed},
+	{ "IndexedNormal", Mesh::Format::IndexedNormal },
+	{ "Flat", Mesh::Format::Flat }
+};
+
 
 	Mesh::Mesh(const std::string& _pFile)
 	{
@@ -22,7 +31,7 @@
 		_stream.write(reinterpret_cast<const char*>(&_data), sizeof(T));
 	}
 
-	void Mesh::Save(const std::string& _name, Format _format)
+	void Mesh::Save(const std::string& _name, Format _format, bool _flatNormals)
 	{
 		std::string name = _name + (_format == Format::Flat ? ".wim" : ".wii");
 		std::ofstream file(name, std::ios::binary);
@@ -51,9 +60,22 @@
 			file.write(reinterpret_cast<char*>(&m_vertices.front()), m_vertices.size() * sizeof(Vertex));
 			file.write(reinterpret_cast<char*>(&m_faces.front()), m_faces.size() * sizeof(Vec<int, 3>));
 		}
+		else if (_format == Format::IndexedNormal)
+		{
+			assert(m_faces.size() == m_normals.size() && "Expecting one normal per face.");
+			uint32_t s = static_cast<uint32_t>(m_vertices.size());
+			write(file, s);
+
+			file << static_cast<uint32_t>(m_faces.size());
+			for (auto& v : m_vertices)
+				file.write(reinterpret_cast<char*>(&v), sizeof(Vec3));
+
+			file.write(reinterpret_cast<char*>(&m_faces.front()), m_faces.size() * sizeof(Vec<int, 3>));
+			file.write(reinterpret_cast<char*>(&m_normals.front()), m_normals.size() * sizeof(Vec3));
+		}
 		else if (_format == Format::Flat)
 		{
-			auto vertices = Flatten();
+			auto vertices = Flatten(_flatNormals);
 			uint32_t s = static_cast<uint32_t>(vertices.size());
 			write(file, s);
 
@@ -172,16 +194,27 @@
 		m_upperBound = Vec3(xval.second->position[0], yval.second->position[1], zval.second->position[2]);
 	}
 
-	std::vector<Mesh::Vertex> Mesh::Flatten()
+	std::vector<Mesh::Vertex> Mesh::Flatten(bool _normals)
 	{
 		std::vector<Vertex> vertices;
 		vertices.reserve(m_faces.size() * 3);
 
 		for (size_t i = 0; i < m_faces.size(); ++i)
 		{
+			Vec3 n{};
 			vertices.emplace_back(m_vertices[m_faces[i][0]]);
+			n += vertices.back().normal;
 			vertices.emplace_back(m_vertices[m_faces[i][1]]);
+			n += vertices.back().normal;
 			vertices.emplace_back(m_vertices[m_faces[i][2]]);
+			n += vertices.back().normal;
+
+			float l = sqrt(n[0] * n[0] + n[1] * n[1] + n[2] * n[2]);
+			n[0] /= l; n[1] /= l; n[2] /= l;
+			auto it = vertices.end();
+			(--it)->normal = n;
+			(--it)->normal = n;
+			(--it)->normal = n;
 		}
 
 		return std::move(vertices);

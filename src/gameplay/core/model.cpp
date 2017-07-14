@@ -34,12 +34,12 @@ namespace Game {
 	Model::Model(const std::string& _pFile, const ei::Vec3&_position, const ei::Quaternion&_rotation)
 		: DynamicActor(_position, _rotation),
 		m_geometryComponent(THISACTOR, _pFile),
-		m_collisionComponent(THISACTOR, m_geometryComponent.GetMesh().GetBoundingRadius(),
-			ei::Box(m_geometryComponent.GetMesh().GetLowerBound(), m_geometryComponent.GetMesh().GetUpperBound()))
+		m_collisionComponent(THISACTOR, m_geometryComponent.GetMesh().GetMeshBounds().boundingRadius,
+			ei::Box(m_geometryComponent.GetMesh().GetMeshBounds().lowerBound, m_geometryComponent.GetMesh().GetMeshBounds().upperBound))
 	{
 		// calculate inertia tensor
-		const ei::Vec3& min = m_geometryComponent.GetMesh().GetLowerBound();
-		const ei::Vec3& max = m_geometryComponent.GetMesh().GetUpperBound();
+		const ei::Vec3& min = m_geometryComponent.GetMesh().GetMeshBounds().lowerBound;
+		const ei::Vec3& max = m_geometryComponent.GetMesh().GetMeshBounds().upperBound;
 		float h = max.y - min.y; h *= h;
 		float d = max.z - min.z; d *= d;
 		float w = max.x - min.x; w *= w;

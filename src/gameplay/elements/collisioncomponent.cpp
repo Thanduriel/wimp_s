@@ -1,11 +1,37 @@
 #include "collisioncomponent.hpp"
 #include "math/extensions.hpp"
 #include "ei/3dintersection.hpp"
+#include <functional>
 
 namespace Game {
 
 	using namespace ei;
 
+	BoundingMesh::BoundingMesh(const std::string& _fileName)
+	{
+		Utils::MeshLoader loader;
+		std::string texName;
+		loader.Load(_fileName, *this, texName, 
+			std::bind(&BoundingMesh::Load, this, std::placeholders::_1, std::placeholders::_2));
+	}
+
+	void BoundingMesh::Load(std::ifstream& _stream, size_t _numVertices)
+	{
+		size_t numFaces;
+		Utils::MeshLoader::Read(_stream, numFaces);
+		vertices.resize(_numVertices);
+		_stream.read(reinterpret_cast<char*>(&vertices.front()), _numVertices * sizeof(Vec3));
+		faces.reserve(numFaces);
+		supportVectors.reserve(numFaces);
+		triangles.reserve(numFaces);
+		for (size_t i = 0; i < numFaces; ++i)
+		{
+			IVec3 indices;
+			Utils::MeshLoader::Read(_stream, indices);
+		}
+	}
+
+	// *************************************************************** //
 	bool BoundingMesh::Intersects(const BoundingMesh& _other, const Mat4x4& _transform, HitInfo& _info) const
 	{
 		// transform one mesh
