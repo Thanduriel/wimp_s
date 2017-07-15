@@ -12,6 +12,7 @@ namespace GameStates
 		//Graphic::ScreenTexture* m_inventoryBackground;
 		//Graphic::Button* m_button;
 		Graphic::DraggableTexture* m_item;
+		Graphic::DropField* m_field;
 	};
 }
 

@@ -44,6 +44,35 @@ namespace Graphic {
 	};
 
 	// ************************************************************* //
+
+	class DraggableTexture;
+
+	class DropField : public ScreenTexture
+	{
+	public:
+		DropField(const std::string& _name,
+			ei::Vec2 _position, ei::Vec2 _size = ei::Vec2(0.f), DefinitionPoint _def = DefinitionPoint::TopLeft,
+			Anchor _anchor = Anchor(),
+			std::function<void()> _OnMouseUp = []() {return; });
+
+		//override to apply vertex changes
+		virtual void MouseEnter() override;
+		virtual void MouseLeave() override;
+
+		void DropElement(DraggableTexture& _element);
+		void AppendElement(DraggableTexture& _element);
+
+		enum struct State
+		{
+			Base,
+			MouseOver
+		};
+	private:
+		State m_state;
+		std::vector<DraggableTexture*> m_elements;
+	};
+
+	// ************************************************************* //
 	/// \brief A draggable 2d screen overlay texture 
 	/// \details To preserve the ratio defined in size one can define _rDim so that the other dimension is scaled to fit the needs
 	class DraggableTexture : public ScreenTexture
@@ -52,7 +81,8 @@ namespace Graphic {
 		DraggableTexture(const std::string& _name,
 			ei::Vec2 _position, ei::Vec2 _size = ei::Vec2(0.f), DefinitionPoint _def = DefinitionPoint::TopLeft,
 			Anchor _anchor = Anchor(),
-			std::function<void()> _OnMouseUp = []() {return; });
+			std::function<void()> _OnMouseUp = []() {return; },
+			const std::vector<DropField*>& _fields = std::vector<DropField*>());
 
 		//override to apply vertex changes
 		virtual void MouseEnter() override;
@@ -60,6 +90,9 @@ namespace Graphic {
 		virtual void MouseMove(float _dx, float _dy) override;
 		virtual bool KeyDown(int _key, int _modifiers, ei::Vec2 _pos) override;
 		virtual bool KeyUp(int _key, int _modifiers, ei::Vec2 _pos) override;
+
+		const ei::Vec2 GetBackupPosition() const { return m_backupPos; };
+		void SetBackupPosition(const ei::Vec2 _pos) { m_backupPos = _pos; };
 
 		enum struct State
 		{
@@ -70,10 +103,13 @@ namespace Graphic {
 		};
 	private:
 		State m_state;
+		ei::Vec2 m_backupPos;
 		void UpdatePosition(float _dx, float _dy);
+		std::vector<DropField*> m_fields;
 	};
 
 	// ************************************************************* //
+
 	/// \brief A press-able button with mouseover indication
 	class Button : public ScreenTexture
 	{

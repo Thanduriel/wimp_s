@@ -2,6 +2,7 @@
 #include "GLFW/glfw3.h"
 #include "pixelcoords.hpp"
 #include "hud.hpp"
+#include "control/input.hpp"
 
 using namespace ei;
 
@@ -64,11 +65,53 @@ namespace Graphic
 	}
 
 	// ************************************************************************ //
-	DraggableTexture::DraggableTexture(const std::string& _name, Vec2 _position, Vec2 _size,
+
+	DropField::DropField(const std::string& _name, Vec2 _position, Vec2 _size,
 		DefinitionPoint _def, Anchor _anchor,
 		std::function<void()> _OnMouseUp) :
 		ScreenTexture(_name, _position, _size, _def, _anchor, _OnMouseUp)
 	{
+	}
+
+	void DropField::MouseEnter()
+	{
+		ScreenOverlay::MouseEnter();
+
+		m_state = State::MouseOver;
+	}
+
+	void DropField::MouseLeave()
+	{
+		ScreenOverlay::MouseLeave();
+
+		m_state = State::Base;
+	}
+
+	void DropField::DropElement(DraggableTexture& _element)
+	{
+		for (int i = 0; i < m_elements.size(); i++)
+		{
+			if (m_elements[i] == &_element)
+				return;
+		}
+		AppendElement(_element);
+	}
+
+	void DropField::AppendElement(DraggableTexture& _element)
+	{
+		m_elements.push_back(&_element);
+		//Set backup position to a position inside of the field
+		_element.SetBackupPosition(GetPosition());
+	}
+
+	// ************************************************************************ //
+	DraggableTexture::DraggableTexture(const std::string& _name, Vec2 _position, Vec2 _size,
+		DefinitionPoint _def, Anchor _anchor,
+		std::function<void()> _OnMouseUp, const std::vector<DropField*>& _fields) :
+		ScreenTexture(_name, _position, _size, _def, _anchor, _OnMouseUp)
+	{
+		m_backupPos = Vec2(0, 0);
+		m_fields = _fields;
 	}
 
 	void DraggableTexture::MouseEnter()
@@ -87,8 +130,8 @@ namespace Graphic
 
 	void DraggableTexture::UpdatePosition(float _dx, float _dy)
 	{
-		Vec2 newPos = GetPosition() + PixelCoord(_dx, _dy);
-		SetPosition(newPos);
+		Vec2 offset = PixelOffset(_dx, -_dy);
+		SetPosition(GetPosition() + offset);
 	}
 
 	void DraggableTexture::MouseMove(float _dx, float _dy)
@@ -97,6 +140,7 @@ namespace Graphic
 
 		if (m_state == State::Pressed)
 		{
+			m_backupPos = GetPosition();
 			m_state = State::Dragged;
 			UpdatePosition(_dx, _dy);
 		}
@@ -116,6 +160,25 @@ namespace Graphic
 	bool DraggableTexture::KeyUp(int _key, int _modifiers, ei::Vec2 _pos)
 	{
 		ScreenOverlay::KeyUp(_key, _modifiers, _pos);
+
+		if (m_state == State::Dragged)
+		{
+			//Check if cursor is inside of one of the dropfields
+			Vec2 cursor = Control::InputManager::GetCursorPosScreenSpace();
+			for (int i = 0; i < m_fields.size(); i++)
+			{
+				Vec2 pos = m_fields[i]->GetPosition();
+				if (cursor.x >= pos.x && cursor.x <= pos.x + m_fields[i]->GetSize().x
+					&& cursor.y >= pos.y && cursor.y <= pos.y + m_fields[i]->GetSize().y)
+				{
+					m_fields[i]->DropElement(*this);
+				}
+			}
+
+			//Drop in underlying drop field or go back to backup position
+			SetPosition(m_backupPos);
+		}
+
 		m_state = State::MouseOver;
 
 		return true;
