@@ -9,7 +9,7 @@ namespace Game
 	using namespace std;
 
 	Ship::Ship(const string& _pFile, const Vec3& _position, CollisionComponent::Type _collisionType)
-		: Model(_pFile, _position, qidentity()),
+		: Model(_pFile, _pFile + "bm", _position, qidentity()),
 		m_thrust(50.0f),
 		m_speed(1.0f),
 		m_minSpeed(0.0f),

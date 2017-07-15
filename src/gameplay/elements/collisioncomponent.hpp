@@ -17,6 +17,8 @@ namespace Game {
 	struct BoundingMesh : public Utils::MeshInfo
 	{
 		BoundingMesh() = default;
+		// create a bounding mesh from a simple box.
+		BoundingMesh(const ei::Box& _box);
 		BoundingMesh(const std::string& _fileName);
 
 		std::vector<ei::Vec3> vertices;
@@ -37,7 +39,7 @@ namespace Game {
 		CollisionComponent(Actor& _actor, float _boundingRadius, const ei::Box& _boundingBox);
 
 		// Create a CollisionComponent from a BoundingMesh
-	//	CollisionComponent(Actor& _actor, const std::string& _name);
+		CollisionComponent(Actor& _actor, const std::string& _name);
 		CollisionComponent(Actor& _actor, const CollisionComponent& _other);
 
 		bool Check(const CollisionComponent& _other, HitInfo& _info);
@@ -46,7 +48,7 @@ namespace Game {
 		// ray cast with the bounding mesh
 		bool RayCast(const ei::Ray& _ray, float& _distance) const;
 
-		float GetBoundingRadius() const { return m_boundingRadius; }
+		float GetBoundingRadius() const { return m_boundingMesh.boundingRadius; }
 		float GetBoundingRadiusSq() const { return m_boundingRadiusSq; }
 		const BoundingMesh& GetBoundingMesh() const { return m_boundingMesh; }
 		float GetVolume() const { return m_volume; }
@@ -65,9 +67,8 @@ namespace Game {
 		void SetType(Type _type) { m_type = _type; }
 	private:
 		float m_volume;
-		float m_boundingRadius;
 		float m_boundingRadiusSq;
 		Type m_type;
-		BoundingMesh m_boundingMesh;
+		BoundingMesh& m_boundingMesh;
 	};
 }

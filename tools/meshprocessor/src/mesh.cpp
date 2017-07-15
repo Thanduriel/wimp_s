@@ -33,6 +33,8 @@ const std::unordered_map<std::string, Mesh::Format> Mesh::FORMAT_NAMES =
 
 	void Mesh::Save(const std::string& _name, Format _format, bool _flatNormals)
 	{
+		Mesh::ComputeBoundingValues();
+
 		std::string name = _name + (_format == Format::Flat ? ".wim" : ".wii");
 		std::ofstream file(name, std::ios::binary);
 
@@ -55,7 +57,7 @@ const std::unordered_map<std::string, Mesh::Format> Mesh::FORMAT_NAMES =
 			uint32_t s = static_cast<uint32_t>(m_vertices.size());
 			write(file, s);
 
-			file << static_cast<uint32_t>(m_faces.size());
+			write(file, m_faces.size());
 			// data
 			file.write(reinterpret_cast<char*>(&m_vertices.front()), m_vertices.size() * sizeof(Vertex));
 			file.write(reinterpret_cast<char*>(&m_faces.front()), m_faces.size() * sizeof(Vec<int, 3>));
@@ -65,13 +67,14 @@ const std::unordered_map<std::string, Mesh::Format> Mesh::FORMAT_NAMES =
 			assert(m_faces.size() == m_normals.size() && "Expecting one normal per face.");
 			uint32_t s = static_cast<uint32_t>(m_vertices.size());
 			write(file, s);
+			s = static_cast<uint32_t>(m_faces.size());
+			write(file, s);
 
-			file << static_cast<uint32_t>(m_faces.size());
 			for (auto& v : m_vertices)
-				file.write(reinterpret_cast<char*>(&v), sizeof(Vec3));
+				file.write(reinterpret_cast<char*>(&v.position), sizeof(Vec3));
 
 			file.write(reinterpret_cast<char*>(&m_faces.front()), m_faces.size() * sizeof(Vec<int, 3>));
-			file.write(reinterpret_cast<char*>(&m_normals.front()), m_normals.size() * sizeof(Vec3));
+		//	file.write(reinterpret_cast<char*>(&m_normals.front()), m_normals.size() * sizeof(Vec3));
 		}
 		else if (_format == Format::Flat)
 		{
@@ -157,10 +160,6 @@ const std::unordered_map<std::string, Mesh::Format> Mesh::FORMAT_NAMES =
 				m_texture = name;
 			}
 		}
-	
-
-		// compute size properties
-		ComputeBoundingValues();
 	}
 
 	void Mesh::ComputeBoundingValues()
