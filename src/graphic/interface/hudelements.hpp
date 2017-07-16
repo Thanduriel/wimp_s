@@ -61,6 +61,7 @@ namespace Graphic {
 
 		void DropElement(DraggableTexture& _element);
 		void AppendElement(DraggableTexture& _element);
+		void DetachElement(DraggableTexture& _element);
 
 		enum struct State
 		{
@@ -93,6 +94,8 @@ namespace Graphic {
 
 		const ei::Vec2 GetBackupPosition() const { return m_backupPos; };
 		void SetBackupPosition(const ei::Vec2 _pos) { m_backupPos = _pos; };
+		DropField* GetParentField() const { return m_parentField; };
+		void SetParentField(DropField* _field) { m_parentField = _field; };
 
 		enum struct State
 		{
@@ -106,6 +109,7 @@ namespace Graphic {
 		ei::Vec2 m_backupPos;
 		void UpdatePosition(float _dx, float _dy);
 		std::vector<DropField*> m_fields;
+		DropField* m_parentField;
 	};
 
 	// ************************************************************* //

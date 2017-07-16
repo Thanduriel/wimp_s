@@ -43,6 +43,7 @@ namespace Graphic{
 		/// \brief Functions to alter the rectangle in its lifetime
 		virtual void SetPosition(ei::Vec2 _pos);
 		ei::Vec2 GetPosition() const { return m_positionDef; }
+		ei::Vec2 GetScreenSpacePosition() const { return m_position; }
 
 		/// \brief Called once by the hud to add it and its child.
 		/// \details The hud should take full ownership of all elements.

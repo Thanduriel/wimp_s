@@ -11,8 +11,9 @@ namespace GameStates
 	private:
 		//Graphic::ScreenTexture* m_inventoryBackground;
 		//Graphic::Button* m_button;
-		Graphic::DraggableTexture* m_item;
-		Graphic::DropField* m_field;
+		std::vector<Graphic::DraggableTexture*> m_vicinityItems;
+		Graphic::DropField* m_vicinityField;
+		Graphic::DropField* m_inventoryField;
 	};
 }
 

@@ -3,6 +3,7 @@
 #include "pixelcoords.hpp"
 #include "hud.hpp"
 #include "control/input.hpp"
+#include <algorithm>
 
 using namespace ei;
 
@@ -11,12 +12,12 @@ namespace Graphic
 	ScreenTexture::ScreenTexture(const std::string& _name, Vec2 _position, Vec2 _size,
 		DefinitionPoint _def, Anchor _anchor,
 		std::function<void()> _OnMouseUp) :
-		ScreenOverlay(_position, _size, _def, _anchor,_OnMouseUp)
+		ScreenOverlay(_position, _size, _def, _anchor, _OnMouseUp)
 	{
 		Jo::Files::MetaFileWrapper& posMap = Resources::GetTextureMap();
 		m_vertex.position = m_position;
-		m_vertex.texCoord = Vec2((float)posMap.RootNode[_name][std::string("positionX")],(float)posMap.RootNode[_name][std::string("positionY")]);
-		m_vertex.size = Vec2((float)posMap.RootNode[_name][std::string("sizeX")],(float)posMap.RootNode[_name][std::string("sizeY")]);
+		m_vertex.texCoord = Vec2((float)posMap.RootNode[_name][std::string("positionX")], (float)posMap.RootNode[_name][std::string("positionY")]);
+		m_vertex.size = Vec2((float)posMap.RootNode[_name][std::string("sizeX")], (float)posMap.RootNode[_name][std::string("sizeY")]);
 		m_textureSize = m_vertex.size;
 		if (Vec2(0.f) == _size)
 		{
@@ -89,19 +90,41 @@ namespace Graphic
 
 	void DropField::DropElement(DraggableTexture& _element)
 	{
-		for (int i = 0; i < m_elements.size(); i++)
-		{
-			if (m_elements[i] == &_element)
-				return;
-		}
+		if (_element.GetParentField() == this)
+			return;
+		else if (_element.GetParentField() != nullptr)
+			_element.GetParentField()->DetachElement(_element);
 		AppendElement(_element);
 	}
 
 	void DropField::AppendElement(DraggableTexture& _element)
 	{
-		m_elements.push_back(&_element);
 		//Set backup position to a position inside of the field
-		_element.SetBackupPosition(GetPosition());
+		Vec2 newPos = GetScreenSpacePosition() + 0.5f * Vec2(_element.GetSize().x, -_element.GetSize().y);
+		//Assumption: All draggable texture have the same width and height
+		int multiple = (int)((_element.GetSize().x * m_elements.size()) / GetSize().x);
+		newPos.x += (_element.GetSize().x * m_elements.size()) - (multiple * GetSize().x);
+		newPos.y -= multiple * _element.GetSize().y;
+		_element.SetBackupPosition(newPos);
+		_element.SetParentField(this);
+		m_elements.push_back(&_element);
+	}
+
+	void DropField::DetachElement(DraggableTexture& _element)
+	{
+		m_elements.erase(std::remove(m_elements.begin(), m_elements.end(), &_element), m_elements.end());
+		//Update item positions
+		for (int i = 0; i < m_elements.size(); i++)
+		{
+			//Set backup position to a position inside of the field
+			Vec2 newPos = GetScreenSpacePosition() + 0.5f * Vec2(_element.GetSize().x, -_element.GetSize().y);
+			//Assumption: All draggable texture have the same width and height
+			int multiple = (int)((_element.GetSize().x * i) / GetSize().x);
+			newPos.x += (_element.GetSize().x * i) - (multiple * GetSize().x);
+			newPos.y -= multiple * _element.GetSize().y;
+			m_elements[i]->SetBackupPosition(newPos);
+			m_elements[i]->SetPosition(m_elements[i]->GetBackupPosition());
+		}
 	}
 
 	// ************************************************************************ //
@@ -112,6 +135,7 @@ namespace Graphic
 	{
 		m_backupPos = Vec2(0, 0);
 		m_fields = _fields;
+		m_parentField = nullptr;
 	}
 
 	void DraggableTexture::MouseEnter()
@@ -167,7 +191,8 @@ namespace Graphic
 			Vec2 cursor = Control::InputManager::GetCursorPosScreenSpace();
 			for (int i = 0; i < m_fields.size(); i++)
 			{
-				Vec2 pos = m_fields[i]->GetPosition();
+				Vec2 pos = m_fields[i]->GetScreenSpacePosition();
+				pos.y -= m_fields[i]->GetSize().y;
 				if (cursor.x >= pos.x && cursor.x <= pos.x + m_fields[i]->GetSize().x
 					&& cursor.y >= pos.y && cursor.y <= pos.y + m_fields[i]->GetSize().y)
 				{
@@ -189,16 +214,16 @@ namespace Graphic
 	Button::Button(const std::string& _name, Vec2 _position, Vec2 _size,
 		DefinitionPoint _def, Anchor _anchor, const std::string& _caption,
 		std::function<void()> _OnMouseUp, Font* _font) :
-		ScreenTexture(_name+"Default", _position, _size, _def, _anchor, _OnMouseUp),
-		m_btnDefault(_name+"Default", _position, _size, _def, _anchor),
+		ScreenTexture(_name + "Default", _position, _size, _def, _anchor, _OnMouseUp),
+		m_btnDefault(_name + "Default", _position, _size, _def, _anchor),
 		m_btnOver(_name + "Over", _position, _size, _def, _anchor),
 		m_btnDown(_name + "Down", _position, _size, _def, _anchor),
 		m_caption(Vec2(0.f), Anchor(DefinitionPoint::TopLeft, this), _font),
 		m_autoCenter(true)
 	{
-		SetVisible(false); 
+		SetVisible(false);
 		SetActive(true);
-		
+
 		m_btnDefault.SetVisible(true);
 		m_btnOver.SetVisible(false);
 		m_btnDown.SetVisible(false);
@@ -224,10 +249,10 @@ namespace Graphic
 	void Button::SetPosition(Vec2 _pos)
 	{
 		ScreenTexture::SetPosition(_pos);
-/*		m_btnDefault.SetPosition(_pos);
-		m_btnOver.SetPosition(_pos);
-		m_btnDown.SetPosition(_pos);
-		m_caption.SetPosition(_pos);*/
+		/*		m_btnDefault.SetPosition(_pos);
+				m_btnOver.SetPosition(_pos);
+				m_btnDown.SetPosition(_pos);
+				m_caption.SetPosition(_pos);*/
 		SetCaption(m_caption.GetText());
 	}
 
@@ -264,7 +289,7 @@ namespace Graphic
 		// center in both directions
 		Vec2 rect = m_caption.GetRectangle();//captionDim[0] * charCountMax * m_caption.GetDefaultSize()
 		m_caption.SetPosition(Vec2(!m_autoCenter[0] ? 0.f : ((m_size[0] - rect.x) * 0.5f),
-			!m_autoCenter[1] ? 0.f : (-m_size[1]  + rect.y) * 0.5f));//- captionDim[1] * m_caption.GetMaxSize() * 0.45f
+			!m_autoCenter[1] ? 0.f : (-m_size[1] + rect.y) * 0.5f));//- captionDim[1] * m_caption.GetMaxSize() * 0.45f
 
 	}
 
@@ -323,9 +348,9 @@ namespace Graphic
 		m_content(""),//init with cursor indicator
 		m_cursor(0)
 	{
-	//	m_lines.emplace_back(new TextRender(_font));
-	//	SetVisible(false);
-	//	SetActive(true);
+		//	m_lines.emplace_back(new TextRender(_font));
+		//	SetVisible(false);
+		//	SetActive(true);
 		m_textRender.SetText("");
 		Vec2 dim = m_textRender.GetCharSize();
 
@@ -334,7 +359,7 @@ namespace Graphic
 		if (!_fontSize)
 		{
 			m_fontSize = m_size[1] * textToBoxSize / dim[1];
-			m_textRender.SetDefaultSize( m_fontSize );
+			m_textRender.SetDefaultSize(m_fontSize);
 		}
 		m_textRender.SetRectangle(_size);
 		//offset of an half char in x direction ;center in y direction
@@ -351,14 +376,14 @@ namespace Graphic
 
 	void EditField::AddLine(int _preLine)
 	{
-	/*	int size = (int)m_lines.size();
-		if(size >= m_linesMax) return;
-		//create new line on right pos
-		m_lines.insert(m_lines.begin()+_preLine, std::unique_ptr<TextRender>(new TextRender(m_font)));
-		//erange texture and TextRenders
-		for(int i = 0; i < size; i++)
-			m_lines[i]->SetPosition(m_vertex.position+Math::Vec2(0.02f,-0.75f*i));
-		*/
+		/*	int size = (int)m_lines.size();
+			if(size >= m_linesMax) return;
+			//create new line on right pos
+			m_lines.insert(m_lines.begin()+_preLine, std::unique_ptr<TextRender>(new TextRender(m_font)));
+			//erange texture and TextRenders
+			for(int i = 0; i < size; i++)
+				m_lines[i]->SetPosition(m_vertex.position+Math::Vec2(0.02f,-0.75f*i));
+			*/
 	}
 
 	bool EditField::KeyDown(int _key, int _modifiers, Vec2 _pos)
@@ -366,19 +391,19 @@ namespace Graphic
 		//mouse click -> set cursor
 		if (_key == GLFW_MOUSE_BUTTON_LEFT)
 		{
-		//	m_cursor = 0;
+			//	m_cursor = 0;
 			return true; //nothing more happens
 		}
 		//right arrow key -> shift cursor 
 		else if (_key == GLFW_KEY_RIGHT && m_cursor < (int)m_content.size())
 		{
-		//	std::swap(m_content[m_cursor], m_content[m_cursor + 1]);
+			//	std::swap(m_content[m_cursor], m_content[m_cursor + 1]);
 			m_cursor++;
 		}
 		//left arrow key 
 		else if (_key == GLFW_KEY_LEFT && m_cursor > 0)
 		{
-		//	std::swap(m_content[m_cursor], m_content[m_cursor - 1]);
+			//	std::swap(m_content[m_cursor], m_content[m_cursor - 1]);
 			m_cursor--;
 		}
 		//backspace
@@ -426,7 +451,7 @@ namespace Graphic
 		Anchor _anchor) :
 		ScreenTexture("simpleWindow", _position, _size, _def, _anchor)
 	{
-		
+
 	}
 
 	// ************************************************************************ //
