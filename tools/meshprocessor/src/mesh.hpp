@@ -11,7 +11,7 @@ class Mesh
 public:
 	enum struct Format {
 		Indexed,
-		IndexedNormal, // indexed, but with normals per face following the indices
+		IndexedNormal,
 		Flat,
 		COUNT
 	};
