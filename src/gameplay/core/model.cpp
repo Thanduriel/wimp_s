@@ -31,47 +31,49 @@ namespace Game {
 	}
 
 	// ********************************************************************** //
+	namespace Details {
+		ModelComponentImpl::ModelComponentImpl(Actor& _actor, const std::string& _meshName)
+			: GeometryComponent(_actor, _meshName),
+			CollisionComponent(_actor, GetMesh().GetMeshBounds().boundingRadius,
+				ei::Box(GetMesh().GetMeshBounds().lowerBound, GetMesh().GetMeshBounds().upperBound))
+		{
+		}
+
+		ModelComponentImpl::ModelComponentImpl(Actor& _actor, const std::string& _meshName, const std::string& _boundingMeshName)
+			: GeometryComponent(_actor, _meshName),
+			CollisionComponent(_actor, _boundingMeshName)
+		{
+		}
+
+		ModelComponentImpl::ModelComponentImpl(Actor& _actor, const ModelComponentImpl& _other)
+			: GeometryComponent(_actor, _other),
+			CollisionComponent(_actor, _other)
+		{}
+	}
+
+	// ********************************************************************** //
 	Model::Model(const std::string& _pFile, const ei::Vec3&_position, const ei::Quaternion&_rotation)
 		: DynamicActor(_position, _rotation),
-		m_geometryComponent(THISACTOR, _pFile),
-		m_collisionComponent(THISACTOR, m_geometryComponent.GetMesh().GetMeshBounds().boundingRadius,
-			ei::Box(m_geometryComponent.GetMesh().GetMeshBounds().lowerBound, m_geometryComponent.GetMesh().GetMeshBounds().upperBound))
+		m_component(THISACTOR, _pFile)
 	{
-		ComputeInertiaTensor();
+		SetInertiaTensor(m_component.ComputeInertiaTensor(m_mass));
 	}
 
 	Model::Model(const std::string& _meshName, const std::string& _boundingMeshName, const ei::Vec3&_position, const ei::Quaternion&_rotation)
 		: DynamicActor(_position, _rotation),
-		m_geometryComponent(THISACTOR, _meshName),
-		m_collisionComponent(THISACTOR, _boundingMeshName)
+		m_component(THISACTOR, _meshName, _boundingMeshName)
 	{
-		ComputeInertiaTensor();
+		SetInertiaTensor(m_component.ComputeInertiaTensor(m_mass));
 	}
 
 	Model::Model(const Model& _orig)
 		: DynamicActor(_orig),
-		m_geometryComponent(THISACTOR, _orig.m_geometryComponent),
-		m_collisionComponent(THISACTOR, _orig.m_collisionComponent)
+		m_component(THISACTOR, _orig.m_component)
 	{
 	}
 
 	void Model::RegisterComponents(SceneGraph& _sceneGraph)
 	{
-		_sceneGraph.RegisterComponent(m_geometryComponent);
-		_sceneGraph.RegisterComponent(m_collisionComponent);
-	}
-
-	void Model::ComputeInertiaTensor()
-	{
-		// calculate inertia tensor
-		const ei::Vec3& min = m_geometryComponent.GetMesh().GetMeshBounds().lowerBound;
-		const ei::Vec3& max = m_geometryComponent.GetMesh().GetMeshBounds().upperBound;
-		float h = max.y - min.y; h *= h;
-		float d = max.z - min.z; d *= d;
-		float w = max.x - min.x; w *= w;
-		m_inertiaTensor.m00 = 1.f / 12.f * m_mass * (h + d);
-		m_inertiaTensor.m11 = 1.f / 12.f * m_mass * (w + d);
-		m_inertiaTensor.m22 = 1.f / 12.f * m_mass * (w + h);
-		m_inverseInertiaTensor = ei::invert(m_inertiaTensor);
+		_sceneGraph.RegisterComponent(m_component);
 	}
 }

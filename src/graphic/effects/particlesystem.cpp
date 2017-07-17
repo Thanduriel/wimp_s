@@ -29,9 +29,9 @@ void ParticleSystems::SystemActions::Draw( size_t _numVertices )
 	case RenderType::BLOB:
 		Device::SetEffect(	Resources::GetEffect(Effects::PARTICLE_BLOB) );
 		break;
-/*	case RenderType::RAY:
-		Device::SetEffect(Resources::GetEffect(Effects::RAY_PARTICLE));
-		break;*/
+	case RenderType::RAY:
+		Device::SetEffect(Resources::GetEffect(Effects::PARTICLE_RAY));
+		break;
 	default:
 		Assert(false, "This effect is not implemented.");
 	}

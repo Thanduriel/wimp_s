@@ -88,6 +88,13 @@ namespace Graphic {
 			effects[ind]->BindUniformBuffer(GetUBO(UniformBuffers::GLOBAL));
 			effects[ind]->BindUniformBuffer(GetUBO(UniformBuffers::CAMERA));
 			break;
+		case Effects::PARTICLE_RAY:
+			effects[ind] = new Effect("shader/particle/ray.vs", "shader/particle/ray.ps", "shader/particle/ray.gs");
+			effects[ind]->SetBlendState(BlendState(BlendState::BLEND_OPERATION::ADD, BlendState::BLEND::SRC_ALPHA, BlendState::BLEND::ONE));
+			effects[ind]->SetDepthStencilState(DepthStencilState(Graphic::DepthStencilState::COMPARISON_FUNC::LESS, false));
+			effects[ind]->BindUniformBuffer(GetUBO(UniformBuffers::SIMPLE_OBJECT));
+			effects[ind]->BindUniformBuffer(GetUBO(UniformBuffers::GLOBAL));
+			break;
 		default:
 			Assert(false, "This effect is not implemented.");
 			break;

@@ -52,6 +52,13 @@ namespace Game {
 	// Can be easily parallelized. Use this as base class if possible.
 	class ConstActorComponent : public Details::BaseComponent<const Actor&> { using Details::BaseComponent<const Actor&>::BaseComponent; };
 
+	template<typename T, typename T1, typename T2>
+	class CompositeComponent : public T
+	{
+	public:
+		using T::T;
+	};
+
 	// A render component that is drawn after lighting
 	// to display 3d structures that are not part of the world and should thus not be illuminated.
 	class MarkerComponent : public ConstActorComponent

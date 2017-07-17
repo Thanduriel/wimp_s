@@ -101,6 +101,7 @@ namespace Game {
 
 		const ei::Mat3x3& GetInertiaTensor() const { return m_inertiaTensor; }
 		const ei::Mat3x3& GetInverseInertiaTensor() const { return m_inverseInertiaTensor; }
+		void SetInertiaTensor(const ei::Mat3x3& _tensor) { m_inertiaTensor = _tensor; m_inverseInertiaTensor = ei::invert(_tensor); }
 		float GetMass() const { return m_mass; }
 
 		void Process(float _deltaTime) override;

@@ -44,6 +44,12 @@ namespace Game {
 		void RegisterComponent(class MarkerComponent& _component);
 		void RegisterComponent(class FactoryComponent& _component);
 		void RegisterComponent(class CollisionComponent& _component);
+		template<typename T, typename T1, typename T2>
+		void RegisterComponent(CompositeComponent<T, T1, T2>& _component)
+		{
+			RegisterComponent(component_cast<T1>(_component));
+			RegisterComponent(component_cast<T2>(_component));
+		}
 
 		void Process(float _deltaTime, float _realdTime);
 		void Draw();

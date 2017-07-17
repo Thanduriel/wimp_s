@@ -65,6 +65,8 @@ namespace Game {
 		};
 		Type GetType() const { return m_type; }
 		void SetType(Type _type) { m_type = _type; }
+
+		ei::Mat3x3 ComputeInertiaTensor(float _mass) const;
 	private:
 		float m_volume;
 		float m_boundingRadiusSq;

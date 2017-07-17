@@ -20,6 +20,20 @@ namespace Game {
 		const Graphic::Mesh* m_mesh;
 	};
 
+	namespace Details {
+
+		class ModelComponentImpl : public GeometryComponent, public CollisionComponent
+		{
+		public:
+			ModelComponentImpl(Actor& _actor, const std::string& _meshName);
+			ModelComponentImpl(Actor& _actor, const std::string& _meshName, const std::string& _boundingMeshName);
+			ModelComponentImpl(Actor& _actor, const ModelComponentImpl& _other);
+		private:
+		};
+	}
+
+	typedef CompositeComponent<Details::ModelComponentImpl, GeometryComponent, CollisionComponent> ModelComponent;
+
 	/* Model *********************************************
 	 * A movable object with an textured mesh attached to it.
 	 */
@@ -32,14 +46,10 @@ namespace Game {
 		Model(const Model& _orig);
 
 		void RegisterComponents(class SceneGraph& _sceneGraph) override;
-		GeometryComponent& GetGeometryComponent() { return m_geometryComponent; }
-		CollisionComponent& GetCollisionComponent() { return m_collisionComponent; }
-		const CollisionComponent& GetCollisionComponent() const { return m_collisionComponent; }
+		GeometryComponent& GetGeometryComponent() { return m_component; }
+		CollisionComponent& GetCollisionComponent() { return m_component; }
+		const CollisionComponent& GetCollisionComponent() const { return m_component; }
 	protected:
-		GeometryComponent m_geometryComponent;
-		CollisionComponent m_collisionComponent;
-
-	private:
-		void ComputeInertiaTensor();
+		ModelComponent m_component;
 	};
 }

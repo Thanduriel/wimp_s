@@ -240,6 +240,8 @@ namespace Game {
 		m_boundingMesh(Content::GetBoundingMesh(_name)),
 		m_type(Type::Any)
 	{
+		ei::Vec3 v = m_boundingMesh.upperBound - m_boundingMesh.lowerBound;
+		m_volume = v.x * v.y * v.z;
 		m_boundingRadiusSq = m_boundingMesh.boundingRadius * m_boundingMesh.boundingRadius;
 	}
 
@@ -285,5 +287,22 @@ namespace Game {
 		}
 
 		return false;
+	}
+
+	// *************************************************************** //
+	Mat3x3 CollisionComponent::ComputeInertiaTensor(float _mass) const
+	{
+		// calculate inertia tensor
+		const ei::Vec3& min = m_boundingMesh.lowerBound;
+		const ei::Vec3& max = m_boundingMesh.upperBound;
+		float h = max.y - min.y; h *= h;
+		float d = max.z - min.z; d *= d;
+		float w = max.x - min.x; w *= w;
+		ei::Mat3x3 inertiaTensor = ei::identity3x3();
+		inertiaTensor.m00 = 1.f / 12.f * _mass * (h + d);
+		inertiaTensor.m11 = 1.f / 12.f * _mass * (w + d);
+		inertiaTensor.m22 = 1.f / 12.f * _mass * (w + h);
+
+		return inertiaTensor;
 	}
 }

@@ -42,11 +42,11 @@ namespace Game {
 		{
 			Rocket& rocket = _weapon.m_factoryComponent.MakeP<Rocket>(ei::Vec3(-0.2f,0.f,0.f),
 				_weapon.GetRotationMatrix() * ei::Vec3(0.f, 0.f, 12.f), _weapon.m_damage);
-			rocket.GetCollisionComponent().SetType(CollisionComponent::Type::NonPlayer);
+			rocket.m_model.SetType(CollisionComponent::Type::NonPlayer);
 
 			Rocket& rocket2 = _weapon.m_factoryComponent.MakeP<Rocket>(ei::Vec3(0.2f, 0.f, 0.f),
 				_weapon.GetRotationMatrix() * ei::Vec3(0.f, 0.f, 12.f), _weapon.m_damage);
-			rocket2.GetCollisionComponent().SetType(CollisionComponent::Type::NonPlayer);
+			rocket2.m_model.SetType(CollisionComponent::Type::NonPlayer);
 		};
 	}
 

@@ -10,7 +10,7 @@ namespace Game {
 	/* Projectile ***********************************************
 	 * Basic projectile with limited life time and damage on hit.
 	 */
-	class Projectile : public Model
+	class Projectile : public DynamicActor
 	{
 	public:
 		enum struct Visual {
@@ -19,7 +19,7 @@ namespace Game {
 		};
 
 		Projectile(const ei::Vec3& _position, const ei::Vec3& _velocity,
-			const std::string& _mesh, float _damage, float _lifeTime);
+			float _damage, float _lifeTime);
 
 		// does a correct copy of the given projectile including components
 		Projectile(const Projectile& _proj);
@@ -31,6 +31,20 @@ namespace Game {
 		float m_damage;
 
 		LifeTimeComponent m_lifeTimeComponent;
+	};
+
+	class Bolt : public Projectile
+	{
+	public:
+		Bolt(const ei::Vec3& _position, const ei::Vec3& _velocity, float _damage, float _lifeTime);
+
+		void Process(float _deltaTime) override;
+
+	private:
+		ParticleSystemComponent<Graphic::PSComponent::POSITION
+			| Graphic::PSComponent::VELOCITY | Graphic::PSComponent::LIFETIME
+			| Graphic::PSComponent::COLOR | Graphic::PSComponent::SIZE
+			| Graphic::PSComponent::DIRECTION> m_particles;
 	};
 
 	/* Rocket **************************************************
@@ -50,5 +64,8 @@ namespace Game {
 
 		PointLightComponent m_engineLight;
 		ParticleSystemComponent<Graphic::ParticleSystems::BASIC_SYSTEM> m_thrustParticles;
+		ModelComponent m_model;
+
+		friend class WeaponTrait;
 	};
 }

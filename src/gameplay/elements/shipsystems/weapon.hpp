@@ -54,7 +54,7 @@ namespace Game {
 				T& rocket = _weapon.m_factoryComponent.CopyP<T>(_prototype);
 				rocket.SetVelocity(_weapon.GetRotationMatrix() * rocket.GetVelocity());
 				rocket.SetRotation(ei::Quaternion(ei::Vec3(0.f, 0.f, 1.f), rocket.GetVelocity()));
-				rocket.GetCollisionComponent().SetType(CollisionComponent::Type::NonPlayer);
+				rocket.m_model.SetType(CollisionComponent::Type::NonPlayer);
 			};
 		}
 		static Weapon::FireFunction FireDouble();
