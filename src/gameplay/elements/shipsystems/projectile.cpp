@@ -3,6 +3,7 @@
 #include "gameplay/scenegraph.hpp"
 #include "gameplay/elements/factorycomponent.hpp"
 #include "../explosion.hpp"
+#include "graphic/resources.hpp"
 
 namespace Game {
 
@@ -46,10 +47,20 @@ namespace Game {
 	}
 
 	// ********************************************************************** //
+	const float BOLT_SIZE = 1.f;
 	Bolt::Bolt(const ei::Vec3& _position, const ei::Vec3& _velocity, float _damage, float _lifeTime)
 		: Projectile(_position, _velocity, _damage, _lifeTime),
-		m_particles(THISACTOR, Vec3(0.f), Graphic::ParticleSystems::RenderType::RAY)
+		m_particles(THISACTOR, Vec3(0.f), Graphic::Resources::GetTexture("bolt")),
+		m_collisionComponent(THISACTOR, BOLT_SIZE, ei::Box(Vec3(sqrt(-BOLT_SIZE/2.f)), Vec3(sqrt(BOLT_SIZE/2.f))))
 	{
+	}
+
+	Bolt::Bolt(const Bolt& _orig)
+		: Projectile(_orig),
+		m_particles(THISACTOR, _orig.m_particles),
+		m_collisionComponent(THISACTOR, _orig.m_collisionComponent)
+	{
+
 	}
 
 	void Bolt::Process(float _deltaTime)
@@ -57,11 +68,16 @@ namespace Game {
 		Projectile::Process(_deltaTime);
 
 		m_particles.AddParticle(Vec3(0.f), //position
-			Vec3(0.f,0.f,1.f),//ray.direction * c_projVel * i / 10.f,// velocity
-			0.01f, //life time
-			Utils::Color8U(0.9f, 0.1f, 0.8f, 0.5f).RGBA(),
-			0.3f,
-			Vec3(0.f, 0.f, 1.f));
+			Utils::Color8U(0.5f, 1.0f, 0.5f, 1.0f).RGBA(),
+			0.7f);// size
+	}
+
+	void Bolt::RegisterComponents(SceneGraph& _sceneGraph)
+	{
+		Projectile::RegisterComponents(_sceneGraph);
+
+		_sceneGraph.RegisterComponent(m_particles);
+		_sceneGraph.RegisterComponent(m_collisionComponent);
 	}
 
 	// ********************************************************************** //

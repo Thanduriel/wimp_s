@@ -15,10 +15,17 @@ namespace ParticleSystems{
 // SystemAction class
 ParticleSystems::SystemActions::SystemActions(RenderType _type) :
 	m_particleVertices(VertexArrayBuffer::PrimitiveType::POINT),
-	m_renderer(_type)
+	m_renderer(_type),
+	m_texture(nullptr)
 {
 	m_particleVertices.SetNumInstances(1);
 }
+
+SystemActions::SystemActions(const Texture& _texture):
+	m_particleVertices(VertexArrayBuffer::PrimitiveType::POINT),
+	m_renderer(RenderType::TEXQUAD),
+	m_texture(&_texture)
+{}
 
 void ParticleSystems::SystemActions::Draw( size_t _numVertices )
 {
@@ -31,6 +38,10 @@ void ParticleSystems::SystemActions::Draw( size_t _numVertices )
 		break;
 	case RenderType::RAY:
 		Device::SetEffect(Resources::GetEffect(Effects::PARTICLE_RAY));
+		break;
+	case RenderType::TEXQUAD:
+		Device::SetEffect(Resources::GetEffect(Effects::PARTICLE_TEXQAUD));
+		Device::SetTexture(*m_texture, 0);
 		break;
 	default:
 		Assert(false, "This effect is not implemented.");
@@ -200,6 +211,12 @@ void Manager::Process(float _deltaTime)
 {
 	for (auto& system : m_particleSystems)
 		system.second->Simulate(_deltaTime);
+}
+
+void Manager::CleanUp()
+{
+	for (auto& system : m_particleSystems)
+		system.second->CleanUp();
 }
 
 size_t Manager::GetNumParticlesTotal()

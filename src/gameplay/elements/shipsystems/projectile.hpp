@@ -36,15 +36,19 @@ namespace Game {
 	class Bolt : public Projectile
 	{
 	public:
-		Bolt(const ei::Vec3& _position, const ei::Vec3& _velocity, float _damage, float _lifeTime);
+		Bolt(const ei::Vec3& _position, const ei::Vec3& _velocity, float _damage, float _lifeTime );
+		Bolt(const Bolt& _orig);
 
 		void Process(float _deltaTime) override;
+		void RegisterComponents(class SceneGraph& _sceneGraph) override;
 
+		CollisionComponent& GetCollisionComponent() { return m_collisionComponent; }
 	private:
 		ParticleSystemComponent<Graphic::PSComponent::POSITION
-			| Graphic::PSComponent::VELOCITY | Graphic::PSComponent::LIFETIME
-			| Graphic::PSComponent::COLOR | Graphic::PSComponent::SIZE
-			| Graphic::PSComponent::DIRECTION> m_particles;
+			| Graphic::PSComponent::COLOR 
+			| Graphic::PSComponent::SIZE> m_particles;
+
+		CollisionComponent m_collisionComponent;
 	};
 
 	/* Rocket **************************************************
@@ -59,6 +63,8 @@ namespace Game {
 
 		void Process(float _deltaTime) override;
 		void RegisterComponents(class SceneGraph& _sceneGraph) override;
+
+		CollisionComponent& GetCollisionComponent() { return m_model; }
 	private:
 		float m_particleSpawnCount;
 

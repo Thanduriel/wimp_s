@@ -51,10 +51,10 @@ namespace Game {
 		{
 			return [=](Weapon& _weapon)
 			{
-				T& rocket = _weapon.m_factoryComponent.CopyP<T>(_prototype);
-				rocket.SetVelocity(_weapon.GetRotationMatrix() * rocket.GetVelocity());
-				rocket.SetRotation(ei::Quaternion(ei::Vec3(0.f, 0.f, 1.f), rocket.GetVelocity()));
-				rocket.m_model.SetType(CollisionComponent::Type::NonPlayer);
+				T& proj = _weapon.m_factoryComponent.CopyP<T>(_prototype);
+				proj.SetVelocity(_weapon.GetRotationMatrix() * proj.GetVelocity());
+				proj.SetRotation(ei::Quaternion(ei::Vec3(0.f, 0.f, 1.f), proj.GetVelocity()));
+				proj.GetCollisionComponent().SetType(CollisionComponent::Type::NonPlayer);
 			};
 		}
 		static Weapon::FireFunction FireDouble();

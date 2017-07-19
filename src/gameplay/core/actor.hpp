@@ -26,7 +26,7 @@ namespace Game {
 		void Translate(const ei::Vec3& _position) { m_position += _position; }
 
 		// Rotate around the given rotation.
-		void SetRotation(const ei::Quaternion& _rotation) { m_rotation = _rotation; }
+		void SetRotation(const ei::Quaternion& _rotation) { m_rotation = _rotation; UpdateMatrices();}
 		const ei::Quaternion& GetRotation() const { return m_rotation; }
 		void Rotate(const ei::Quaternion& _rotation) { m_rotation = _rotation * m_rotation; UpdateMatrices(); }
 

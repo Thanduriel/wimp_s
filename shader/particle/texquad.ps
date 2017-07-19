@@ -1,0 +1,14 @@
+#version 330
+
+in vec4 gs_color;
+in vec2 gs_texCoord;
+
+uniform sampler2D tex;
+
+layout(location = 0) out vec4 out_FragColor;
+layout(location = 1) out vec4 out_Normal;
+void main()
+{
+	out_FragColor = texture(tex, gs_texCoord) * gs_color;
+	out_Normal = vec4(0,0,1,0);
+}

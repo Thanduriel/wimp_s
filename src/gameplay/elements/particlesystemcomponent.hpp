@@ -32,13 +32,24 @@ namespace Game {
 			m_canTick = false;
 		}
 
+		ParticleSystemComponent(const Actor& _actor, const ei::Vec3& _position,
+			const Graphic::Texture& _texture)
+			: BaseParticleSystemComponent(_actor, _position),
+			m_system(Graphic::ParticleSystems::Manager::Get<PFlags>(
+				Graphic::ParticleSystems::RenderType::TEXQUAD,&_texture))
+		{
+			m_canTick = false;
+		}
+
 		ParticleSystemComponent(const Actor& _actor, const ParticleSystemComponent& _orig)
 			: BaseParticleSystemComponent(_actor, _orig.m_positionOffset),
 			m_system(_orig.m_system) 
 		{}
 
 
-		// Add a particle 
+		// Add a managed particle to the system.
+		// The arguments always follow the same order,
+		// ps components that are not part of the system are skipped.
 		template<typename... Args>
 		void AddParticle(const ei::Vec3& _position, const ei::Vec3& _velocity, Args&&... _args)
 		{
@@ -49,6 +60,13 @@ namespace Game {
 
 			m_system.AddParticle(position, velocity,
 				std::forward<Args>(_args)...);
+		}
+
+		template<typename... Args>
+		void AddParticle(const ei::Vec3& _position, Args&&... _args)
+		{
+			ei::Vec3 position = m_actor.GetRotationMatrix() * (_position + m_positionOffset) + m_actor.GetPosition();
+			m_system.AddParticle(position, std::forward<Args>(_args)...);
 		}
 
 	private:

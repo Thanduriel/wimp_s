@@ -59,7 +59,7 @@ namespace Game {
 		m_damage(_damage),
 		m_energyCost(1.f),
 		m_reloadImpl(_reloadFn ? std::move(_reloadFn) : WeaponTrait::ReloadDefault()),
-		m_fireImpl(_fireFn ? std::move(_fireFn) : WeaponTrait::FireDefault(Rocket(ei::Vec3(0.f), ei::Vec3(0.f,0.f,12.f),5.f)))
+		m_fireImpl(_fireFn ? std::move(_fireFn) : WeaponTrait::FireDefault(Bolt(ei::Vec3(0.f), ei::Vec3(0.f,0.f,82.f),5.f, 10.f)))
 	{
 
 	}

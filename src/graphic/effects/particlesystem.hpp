@@ -79,6 +79,7 @@ namespace Graphic {
 			template<typename T>
 			static void Add(const T&) {}
 			static void Remove(size_t _idx) {}
+			static void Clear() {}
 			static void AttachTo(VertexArrayBuffer& _vertexArray) {}
 		};
 
@@ -89,6 +90,7 @@ namespace Graphic {
 			std::shared_ptr< DataBuffer > m_positions;
 			void Add(const ei::Vec3& _pos);
 			void Remove(size_t _idx);
+			void Clear() { m_positions->Clear(); }
 			void AttachTo(VertexArrayBuffer& _vertexArray);
 		};
 
@@ -97,6 +99,7 @@ namespace Graphic {
 		{
 			std::vector<ei::Vec3> m_velocities;
 			void Add(const ei::Vec3& _vel) { m_velocities.push_back(_vel); }
+			void Clear() { m_velocities.clear(); }
 			void Remove(size_t _idx) { m_velocities[_idx] = m_velocities.back(); m_velocities.pop_back(); }
 		};
 
@@ -105,6 +108,7 @@ namespace Graphic {
 		{
 			std::vector<float> m_lifetimes;
 			void Add(float _life) { m_lifetimes.push_back(_life); }
+			void Clear() { m_lifetimes.clear(); }
 			void Remove(size_t _idx) { m_lifetimes[_idx] = m_lifetimes.back(); m_lifetimes.pop_back(); }
 		};
 
@@ -122,6 +126,7 @@ namespace Graphic {
 			std::shared_ptr< DataBuffer > m_colors;
 			void Add(uint32 _color);
 			void Remove(size_t _idx);
+			void Clear() { m_colors->Clear(); }
 			void AttachTo(VertexArrayBuffer& _vertexArray);
 		};
 
@@ -144,6 +149,7 @@ namespace Graphic {
 			std::shared_ptr< DataBuffer > m_sizes;
 			void Add(float _size);
 			void Remove(size_t _idx);
+			void Clear() { m_sizes->Clear(); }
 			void AttachTo(VertexArrayBuffer& _vertexArray);
 		};
 
@@ -166,6 +172,7 @@ namespace Graphic {
 			std::shared_ptr< DataBuffer > m_directions;
 			void Add(const ei::Vec3& _dir);
 			void Remove(size_t _idx);
+			void Clear() { m_directions->Clear(); }
 			void AttachTo(VertexArrayBuffer& _vertexArray);
 		};
 
@@ -174,6 +181,8 @@ namespace Graphic {
 		struct FuncNOP
 		{
 			void Run(float _deltaTime) {}
+
+			void Run() {}
 		};
 
 		/// \brief Simulation component. Automatically added when POSITION and VELOCITY are given
@@ -201,6 +210,15 @@ namespace Graphic {
 					if(m_lifetimes[i] < 0.0f)
 						this->Remove(i--);
 				}
+			}
+		};
+
+		template<typename Base>
+		struct FuncDieAll : public virtual Base
+		{
+			void Run()
+			{
+				this->Clear();
 			}
 		};
 
@@ -284,6 +302,19 @@ namespace Graphic {
 				inherit_conditional<(PFlags & Component::DIRECTION) != 0, DirectionComponents, NoComponent>::Remove(_idx);
 				m_numParticles--;
 			}
+
+			// Remove all particles
+			void Clear()
+			{
+				inherit_conditional<(PFlags & Component::POSITION) != 0, PositionComponents, NoComponent>::Clear();
+				inherit_conditional<(PFlags & Component::VELOCITY) != 0, VeloctiyComponents, NoComponent>::Clear();
+				inherit_conditional<(PFlags & Component::LIFETIME) != 0, LifetimeComponents, NoComponent>::Clear();
+				inherit_conditional<(PFlags & Component::COLOR) != 0, ColorComponents, PSColorComponent>::Clear();
+				inherit_conditional<(PFlags & Component::SIZE) != 0, SizeComponents, PSSizeComponent>::Clear();
+				inherit_conditional<(PFlags & Component::DIRECTION) != 0, DirectionComponents, NoComponent>::Clear();
+				m_numParticles = 0;
+			}
+
 			#undef PFlagsWOGlobal
 		protected:
 			uint32 m_numParticles;
@@ -295,14 +326,17 @@ namespace Graphic {
 		{
 		public:
 			SystemActions(RenderType _type);
+			SystemActions(const Texture& _texture);
 			virtual ~SystemActions() {}
 			virtual void Simulate(float _deltaTime) {}
+			virtual void CleanUp() {}
 			void Draw(size_t _numVertices);
 			RenderType GetRenderType() const { return m_renderer; }
 			virtual uint32 GetNumParticles() const { return 0; }
 		protected:
 			RenderType m_renderer;
 			VertexArrayBuffer m_particleVertices;
+			const Texture* m_texture; //< only used by RenderType::TEXQUAD
 		};
 
 		// The SubSystem extends the SubSystemData by mixing in functions conditional.
@@ -316,18 +350,20 @@ namespace Graphic {
 			public virtual SystemData<PFlags>,
 			public inherit_conditional<(PFlags & Component::POSITION) != 0 && (PFlags & Component::VELOCITY) != 0, FuncAdvection<SystemData<PFlags>>, FuncNOP<SystemData<PFlags>>>,
 			public inherit_conditional<(PFlags & Component::LIFETIME) != 0, FuncDie<SystemData<PFlags>>, FuncNOP<SystemData<PFlags>>>,
-			public inherit_conditional<(PFlags & Component::POSITION) != 0 && (PFlags & Component::VELOCITY) != 0 && (PFlags & Component::GRAVITATION) != 0, FuncGravitation<SystemData<PFlags>>, FuncNOP<SystemData<PFlags>>>
+			public inherit_conditional<(PFlags & Component::POSITION) != 0 && (PFlags & Component::VELOCITY) != 0 && (PFlags & Component::GRAVITATION) != 0, FuncGravitation<SystemData<PFlags>>, FuncNOP<SystemData<PFlags>>>,
+			public inherit_conditional<(PFlags & Component::LIFETIME) == 0, FuncDieAll<SystemData<PFlags>>, FuncNOP<SystemData<PFlags>>>
 		{
 		public:
 			System(RenderType _type)
 				: SystemActions(_type)
 			{
-				// The subconstructors of SystemData and SystemActions created all
-				// GPU resources, but they do not know each other.
-				inherit_conditional<(PFlags & Component::POSITION) != 0, PositionComponents, NoComponent>::AttachTo(m_particleVertices);
-				inherit_conditional<(PFlags & Component::COLOR) != 0, ColorComponents, PSColorComponent>::AttachTo(m_particleVertices);
-				inherit_conditional<(PFlags & Component::SIZE) != 0, SizeComponents, PSSizeComponent>::AttachTo(m_particleVertices);
-				inherit_conditional<(PFlags & Component::DIRECTION) != 0, DirectionComponents, NoComponent>::AttachTo(m_particleVertices);
+				Init();
+			}
+
+			System(const Texture& _texture)
+				: SystemActions(_texture)
+			{
+				Init();
 			}
 
 			void Simulate(float _deltaTime) override
@@ -337,7 +373,23 @@ namespace Graphic {
 				inherit_conditional<((PFlags & Component::POSITION) != 0) && ((PFlags & Component::VELOCITY) != 0) && ((PFlags & Component::GRAVITATION) != 0), FuncGravitation<SystemData<PFlags>>, FuncNOP<SystemData<PFlags>>>::Run(_deltaTime);
 			}
 
+			void CleanUp()
+			{
+				inherit_conditional<((PFlags & Component::LIFETIME) == 0), FuncDieAll<SystemData<PFlags>>, FuncNOP<SystemData<PFlags>>>::Run();
+			}
+
 			uint32 GetNumParticles() const { return m_numParticles; }
+
+		private:
+			void Init()
+			{
+				// The subconstructors of SystemData and SystemActions created all
+				// GPU resources, but they do not know each other.
+				inherit_conditional<(PFlags & Component::POSITION) != 0, PositionComponents, NoComponent>::AttachTo(m_particleVertices);
+				inherit_conditional<(PFlags & Component::COLOR) != 0, ColorComponents, PSColorComponent>::AttachTo(m_particleVertices);
+				inherit_conditional<(PFlags & Component::SIZE) != 0, SizeComponents, PSSizeComponent>::AttachTo(m_particleVertices);
+				inherit_conditional<(PFlags & Component::DIRECTION) != 0, DirectionComponents, NoComponent>::AttachTo(m_particleVertices);
+			}
 		};
 
 		const ei::uint BASIC_SYSTEM = Component::POSITION
@@ -353,12 +405,15 @@ namespace Graphic {
 
 			static void Draw(const Control::Camera& _camera);
 			static void Process(float _deltaTime);
+			static void CleanUp();
 
 			static size_t GetNumParticlesTotal();
 
 			template<uint PFlags>
-			static System<PFlags>& Get(RenderType _type)
+			static System<PFlags>& Get(RenderType _type, const Texture* _texture = nullptr)
 			{
+				Assert(_type != RenderType::TEXQUAD || _texture, "A TEXQUAD system requires a texture.");
+
 				PSKey key = std::make_pair(PFlags, _type);
 				auto it = std::find_if(m_particleSystems.begin(), m_particleSystems.end(), [=](const SystemPair& _sys)
 				{
@@ -366,8 +421,8 @@ namespace Graphic {
 				});
 				if (it == m_particleSystems.end())
 				{
-
-					auto sysPair = SystemPair(key, std::unique_ptr<System<PFlags>>( new System<PFlags>(_type)));
+					auto sysPair = SystemPair(key, std::unique_ptr<System<PFlags>>( 
+						_texture ? new System<PFlags>(*_texture) : new System<PFlags>(_type)));
 
 					// insert so that systems with the same RenderEffect are continuous
 					auto Pred = [](const SystemPair& _lhs, const SystemPair& _rhs)

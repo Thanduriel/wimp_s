@@ -147,6 +147,9 @@ namespace Game {
 	{
 		// todo: test performance; parallelize or perform less frequent
 
+		// clean up particles
+		Graphic::ParticleSystems::Manager::CleanUp();
+
 		// unregister components
 		RemoveDestroyed(m_geometryComponents);
 		RemoveDestroyed(m_lightComponents);

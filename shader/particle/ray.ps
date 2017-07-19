@@ -14,10 +14,10 @@ float noise(vec2 coordinate, in float seed)
 void main()
 {
 	// Fading along the line direction only close to the ends
-	float fadeLong = max(0, abs(gs_TexCoord.x) * 0.5f - 0.01f);
+	float fadeLong = max(0, abs(gs_TexCoord.x) * 1.0f - 0.0f);
 	fadeLong = max(0, 1 - fadeLong * fadeLong);
 	float distY = gs_TexCoord.y * gs_TexCoord.y;
-	// inner beam with constant transperancy, fading to 9 outside
-	float fadeShort = distY < 0.2*0.2 ? clamp(noise(gs_TexCoord, c_fTime), 0.7,1) : max(0, 0.9 - (distY /** (sin(c_fTime + gs_TexCoord.x * 32.f)*1.5 + 2.5)*/));
-	ps_FragColor = gs_Color * fadeShort;
+	// inner beam with constant transparency, fading to 9 outside
+	float fadeShort = distY < 0.2*0.2 ? 1 : max(0, 0.9 - (distY /** (sin(c_fTime + gs_TexCoord.x * 32.f)*1.5 + 2.5)*/));
+	ps_FragColor = gs_Color * fadeShort * fadeLong;
 }

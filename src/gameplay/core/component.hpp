@@ -19,16 +19,17 @@ namespace Game {
 			BaseComponent(T _owner) : m_actor(_owner), m_canTick(true) {}
 
 			// standard constructors do not work since they need to provide an owner
-			/*
 			BaseComponent() = delete;
 			BaseComponent(const BaseComponent&) = delete;
-			BaseComponent(BaseComponent&&) = delete;
 			BaseComponent& operator=(const BaseComponent&) = delete;
+			BaseComponent(BaseComponent&&) = delete;
 			BaseComponent& operator=(BaseComponent&&) = delete;
-			*/
+
 			const T GetActor() const { return m_actor; }
 
+			// Event called when the component is registered by the SceneGraph
 			virtual void OnRegister() {}
+			// Called every frame if m_canTick == true.
 			virtual void ProcessComponent(float _deltaTime) {}
 
 			// does nothing currently
@@ -52,6 +53,14 @@ namespace Game {
 	// Can be easily parallelized. Use this as base class if possible.
 	class ConstActorComponent : public Details::BaseComponent<const Actor&> { using Details::BaseComponent<const Actor&>::BaseComponent; };
 
+	/* CompositeComponent **********************************************
+	 * Mixin that makes handling a combination of components simpler.
+	 * When registering a CompositeComponent both subcomponents are 
+	 * automatically registered.
+	 * Usage: 
+	 *		class DoubleCompImpl : CompA, CompB {}; 
+	 *		typedef CompositeComponent<DoubleCompImpl, CompA, CompB> DoubleComp;
+	 */
 	template<typename T, typename T1, typename T2>
 	class CompositeComponent : public T
 	{
