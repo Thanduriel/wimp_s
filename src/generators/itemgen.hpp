@@ -49,4 +49,6 @@ namespace Generators {
 		std::string description;
 		bool isPrefix;
 	};
+
+	typedef std::pair<float, float> Range;
 }

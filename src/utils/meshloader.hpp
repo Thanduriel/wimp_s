@@ -16,13 +16,21 @@ namespace Utils {
 	class MeshLoader
 	{
 	public:
-		static const int FORMAT_VERSION = 3;
+		static const int FORMAT_VERSION = 4;
 
 		// general purpose binary read from file
 		template<typename T>
-		static void Read(std::ifstream& _stream, T& _data)
+		static void Read(std::istream& _stream, T& _data)
 		{
 			_stream.read(reinterpret_cast<char*>(&_data), sizeof(T));
+		}
+
+		// specialization to read a string
+		static void Read(std::istream& _stream, std::string& _data)
+		{
+			char c;
+			while ((_stream >> c, c != '\0'))
+				_data += c;
 		}
 
 		template<typename Fn>

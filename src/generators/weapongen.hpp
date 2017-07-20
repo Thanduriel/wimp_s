@@ -17,8 +17,20 @@ namespace Generators{
 	enum struct WeaponType {
 		Simple,
 		Rocket,
-		Ray // not implemented
+		Ray, // not implemented
+		Count
 	};
+
+	const std::array< Range, (size_t)WeaponType::Count> COOLDOWN_RANGE =
+	{ {
+		{0.2f, 2.f},
+		{2.f, 6.f}
+	} };
+
+	const std::array< Range, (size_t)WeaponType::Count> DAMAGE_RANGE =
+	{ {
+		{}
+	} };
 
 	class WeaponGenerator
 	{

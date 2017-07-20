@@ -68,9 +68,9 @@ namespace Game {
 	private:
 		float m_particleSpawnCount;
 
+		ModelComponent m_model;
 		PointLightComponent m_engineLight;
 		ParticleSystemComponent<Graphic::ParticleSystems::BASIC_SYSTEM> m_thrustParticles;
-		ModelComponent m_model;
 
 		friend class WeaponTrait;
 	};

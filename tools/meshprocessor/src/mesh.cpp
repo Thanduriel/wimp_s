@@ -31,6 +31,12 @@ const std::unordered_map<std::string, Mesh::Format> Mesh::FORMAT_NAMES =
 		_stream.write(reinterpret_cast<const char*>(&_data), sizeof(T));
 	}
 
+	void write(std::ofstream& _stream, const std::string& _str)
+	{
+		_stream << _str;
+		_stream << '\0';
+	}
+
 	void Mesh::Save(const std::string& _name, Format _format, bool _flatNormals)
 	{
 		Mesh::ComputeBoundingValues();
@@ -43,8 +49,7 @@ const std::unordered_map<std::string, Mesh::Format> Mesh::FORMAT_NAMES =
 		uint16_t format = static_cast<uint16_t>(_format);
 		write(file, format);
 		// texture name
-		file << m_texture;
-		file << ' ';
+		write(file, m_texture);
 
 		// computed parameters
 		write(file, m_boundingRadius);
@@ -64,7 +69,7 @@ const std::unordered_map<std::string, Mesh::Format> Mesh::FORMAT_NAMES =
 		}
 		else if (_format == Format::IndexedNormal)
 		{
-			assert(m_faces.size() == m_normals.size() && "Expecting one normal per face.");
+		//	assert(m_faces.size() == m_normals.size() && "Expecting one normal per face.");
 			uint32_t s = static_cast<uint32_t>(m_vertices.size());
 			write(file, s);
 			s = static_cast<uint32_t>(m_faces.size());
@@ -83,6 +88,15 @@ const std::unordered_map<std::string, Mesh::Format> Mesh::FORMAT_NAMES =
 			write(file, s);
 
 			file.write(reinterpret_cast<char*>(&vertices.front()), vertices.size() * sizeof(Vertex));
+		}
+
+		// sockets
+		uint32_t s = static_cast<uint32_t>(m_sockets.size());
+		write(file, s);
+		for (auto& socket : m_sockets)
+		{
+			write(file, socket.name);
+			write(file, socket.position);
 		}
 	}
 
@@ -159,6 +173,24 @@ const std::unordered_map<std::string, Mesh::Format> Mesh::FORMAT_NAMES =
 				std::string name = PathUtils::GetName(PathUtils::CanonicalizePath(textures[0]));
 				m_texture = name;
 			}
+		}
+
+		// sockets encoded as lights
+		for (unsigned i = 0; i < _scene->mNumLights; ++i)
+		{
+			Socket s;
+			s.name = _scene->mLights[i]->mName.C_Str();
+			auto node = _scene->mRootNode->FindNode(s.name.c_str());
+			aiQuaternion rot;
+			aiVector3D pos;
+			node->mTransformation.DecomposeNoScaling(rot, pos);
+			s.position = pos * 1.f/100.f;
+			// somehow this matrix is rotated when imported
+			// this should invert the rotation
+			float tmp = s.position[1];
+			s.position[1] = -s.position[2];
+			s.position[2] = tmp;
+			m_sockets.push_back(s);
 		}
 	}
 

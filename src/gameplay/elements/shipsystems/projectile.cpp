@@ -85,10 +85,10 @@ namespace Game {
 
 	Rocket::Rocket(const Vec3& _position, const ei::Vec3& _velocity, float _damage, float _lifeTime)
 		: Projectile(_position, _velocity, _damage, _lifeTime),
-		m_engineLight(THISACTOR, THRUSTEROFFSET * 1.3f, 2.5f, Utils::Color8U(0.4f, 0.2f, 0.9f)),
-		m_thrustParticles(THISACTOR, THRUSTEROFFSET),
-		m_particleSpawnCount(0.f),
-		m_model(THISACTOR, "testrocket")
+		m_model(THISACTOR, "testrocket"),
+		m_engineLight(THISACTOR, m_model.GetMesh().GetSocket("thruster"), 2.5f, Utils::Color8U(0.4f, 0.2f, 0.9f)),
+		m_thrustParticles(THISACTOR, m_model.GetMesh().GetSocket("thruster")),
+		m_particleSpawnCount(0.f)
 	{
 		SetInertiaTensor(m_model.ComputeInertiaTensor(m_mass));
 	}

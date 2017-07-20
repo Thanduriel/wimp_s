@@ -31,10 +31,24 @@ namespace Graphic {
 
 	void Mesh::Load(std::istream& _stream, size_t _numVertices)
 	{
+		using namespace Utils;
 		size_t s = sizeof(Vertex) * _numVertices;
 		Vertex* v = static_cast<Vertex*>(malloc(s));
 		_stream.read(reinterpret_cast<char*>(v), s);
 
 		m_vertices.GetBuffer(0)->SetData((void*&)v, (int)s);
+
+		// sockets
+		uint32_t numSockets;
+		MeshLoader::Read(_stream, numSockets);
+
+		for (; numSockets > 0; --numSockets)
+		{
+			std::string name;
+			Vec3 pos;
+			MeshLoader::Read(_stream, name);
+			MeshLoader::Read(_stream, pos);
+			m_sockets.emplace(name, pos);
+		}
 	}
 }

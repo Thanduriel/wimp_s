@@ -13,10 +13,7 @@ namespace Utils {
 		Read(_stream, format);
 		if (format != 2) LOG_ERROR("Currently only Format::Flat is supported.");
 
-		_stream >> _texName;
-		//discard ' '
-		char c;
-		Read(_stream, c);
+		Read(_stream, _texName);
 
 		Read(_stream, _info.boundingRadius);
 		Read(_stream, _info.lowerBound);

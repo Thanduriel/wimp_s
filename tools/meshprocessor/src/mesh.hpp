@@ -17,7 +17,7 @@ public:
 	};
 	const static std::unordered_map<std::string, Format> FORMAT_NAMES;
 
-	const static uint16_t FORMAT_VERSION = 3;
+	const static uint16_t FORMAT_VERSION = 4;
 
 	Mesh() = default;
 	Mesh(const std::string& _pFile);
@@ -35,6 +35,14 @@ private:
 	std::vector<Vec<int, 3>> m_faces;
 	std::vector<Vec3> m_normals;
 	std::string m_texture;
+
+	struct Socket
+	{
+		std::string name;
+		Vec3 position;
+	};
+
+	std::vector< Socket > m_sockets;
 
 	bool ImportModel(const std::string& _pFile);
 	void SceneProcessing(const aiScene* _scene);
