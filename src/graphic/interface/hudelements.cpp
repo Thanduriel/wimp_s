@@ -102,7 +102,7 @@ namespace Graphic
 		//Set backup position to a position inside of the field
 		Vec2 newPos = GetScreenSpacePosition() + 0.5f * Vec2(_element.GetSize().x, -_element.GetSize().y);
 		//Assumption: All draggable texture have the same width and height
-		int multiple = (int)((_element.GetSize().x * m_elements.size()) / GetSize().x);
+		int multiple = (int)((_element.GetSize().x * (m_elements.size() + 1)) / GetSize().x);
 		newPos.x += (_element.GetSize().x * m_elements.size()) - (multiple * GetSize().x);
 		newPos.y -= multiple * _element.GetSize().y;
 		_element.SetBackupPosition(newPos);
@@ -119,7 +119,7 @@ namespace Graphic
 			//Set backup position to a position inside of the field
 			Vec2 newPos = GetScreenSpacePosition() + 0.5f * Vec2(_element.GetSize().x, -_element.GetSize().y);
 			//Assumption: All draggable texture have the same width and height
-			int multiple = (int)((_element.GetSize().x * i) / GetSize().x);
+			int multiple = (int)((_element.GetSize().x * (i + 1)) / GetSize().x);
 			newPos.x += (_element.GetSize().x * i) - (multiple * GetSize().x);
 			newPos.y -= multiple * _element.GetSize().y;
 			m_elements[i]->SetBackupPosition(newPos);

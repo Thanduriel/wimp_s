@@ -3,6 +3,7 @@
 #include "../graphic/mesh.hpp"
 #include "gameplay/core/model.hpp"
 #include "gameplay/elements/ship.hpp"
+#include "gameplay/elements/enemyship.hpp"
 #include "control/camera.hpp"
 #include "control/playercontroller.hpp"
 #include "control/input.hpp"
@@ -43,7 +44,7 @@ namespace GameStates {
 		Control::g_camera.Attach(*ship);
 
 		// test actors
-		ship = new Ship("spaceship", Vec3(50.f,0.f,100.f));
+		ship = new EnemyShip("spaceship", Vec3(50.f,0.f,100.f), *ship);
 		m_sceneGraph.Add(*ship);
 		ship2 = ship;
 	}
