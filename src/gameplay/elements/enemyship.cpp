@@ -5,8 +5,8 @@ namespace Game
 	EnemyShip::EnemyShip(const string& _pFile, const Vec3& _position, Ship& _target)
 		: Ship(_pFile, _position),
 		m_target(&_target),
-		m_minDistance(50.0f),
-		m_maxDistance(200.0f),
+		m_minDistance(75.0f),
+		m_maxDistance(500.0f),
 		m_lookForTarget(false)
 	{
 		SetSpeed(50.0f);
@@ -17,6 +17,8 @@ namespace Game
 		//Do the AI stuff in here
 		ManageDistanceToTarget();
 
+		ManageShooting();
+
 		Ship::Process(_deltaTime);
 	}
 
@@ -24,15 +26,15 @@ namespace Game
 	{
 		SetTargetAngularVelocity(Vec3(0.0f, 0.0f, 0.0f));
 		Vec3 delta = m_target->GetPosition() - GetPosition();
-		Ray trajectoryForward = Ray(GetPosition(), normalize(GetRotationMatrix() * Vec3(0.0f, 0.0f, -1.0f)));
+		Ray trajectoryForward = Ray(GetPosition(), normalize(GetRotationMatrix() * Vec3(0.0f, 0.0f, 1.0f)));
 		if (len(delta) < m_minDistance)
 		{
-			//TODO: Check how this actually works
+			m_lookForTarget = false;
 			float distance = 0.0f;
 			if (m_target->GetCollisionComponent().RayCastFast(trajectoryForward, distance))
 			{
 				//Evade ship by pulling up
-				SetTargetAngularVelocity(GetRotationMatrix() * Vec3(2.0f, 0.0f, 0.0f));
+				SetTargetAngularVelocity(GetRotationMatrix() * Vec3(1.0f, 0.0f, 0.0f));
 			}
 		}
 		else if (len(delta) > m_maxDistance)
@@ -42,15 +44,27 @@ namespace Game
 
 		if (m_lookForTarget)
 		{
-			Ray trajectoryForward = Ray(GetPosition(), normalize(GetRotationMatrix() * Vec3(0.0f, 0.0f, -1.0f)));
-			float distance = 0.0;
-			if (m_target->GetCollisionComponent().RayCastFast(trajectoryForward, distance))
-				m_lookForTarget = false;
+			//Stop rotating when pointing at the target to avoid wobbling
+			Ray trajectoryForward = Ray(GetPosition(), normalize(GetRotationMatrix() * Vec3(0.0f, 0.0f, 1.0f)));
+			float distance;
+			if (m_target->GetCollisionComponent().RayCast(trajectoryForward, distance))
+				SetAngularVelocity(Vec3(0.0f));
 
 			//Turn towards target ship
-			Vec3 forward = GetRotationMatrix() * Vec3(0.0f, 0.0f, -1.0f);
-			Vec3 rotationVector = normalize(cross(delta, forward));
+			Vec3 forward = normalize(GetRotationMatrix() * Vec3(0.0f, 0.0f, 1.0f));
+			//Clamp the dot product to avoid getting a domain error
+			float angle = acosf(clamp(dot(normalize(delta), forward), -1.0f, 1.0f));
+			float factor = clamp(angle, 0.0f, ei::PI) / (ei::PI);
+			Vec3 rotationVector = normalize(cross(forward, delta)) * factor;
 			SetTargetAngularVelocity(rotationVector);
 		}
+	}
+
+	void EnemyShip::ManageShooting()
+	{
+		Ray ray = Ray(GetPosition(), normalize(GetRotationMatrix() * Vec3(0.0f, 0.0f, 1.0f)));
+		float distance;
+		if (m_target->GetCollisionComponent().RayCast(ray, distance))
+			Fire();
 	}
 }

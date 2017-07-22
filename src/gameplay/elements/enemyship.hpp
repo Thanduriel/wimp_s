@@ -13,6 +13,8 @@ namespace Game
 
 		void ManageDistanceToTarget();
 
+		void ManageShooting();
+
 		//Access the ships target
 		Ship* GetTarget() const { return m_target; };
 		void SetTarget(Ship& _target) { m_target = &_target; };
