@@ -47,11 +47,28 @@ namespace Game {
 		{}
 
 
-		// Add a managed particle to the system.
+		// Add a managed particle to the system associated with this Component.
 		// The arguments always follow the same order,
-		// ps components that are not part of the system are skipped.
+		// with ps-components that are not part of the system beeing skipped.
 		template<typename... Args>
-		void AddParticle(const ei::Vec3& _position, const ei::Vec3& _velocity, Args&&... _args)
+		void AddParticleRaw(Args&&... _args)
+		{
+			m_system.AddParticle(std::forward<Args>(_args)...);
+		}
+
+		// Adds a particle transforming its position
+		// to world space from this Components space.
+		template<typename... Args>
+		void AddParticle(const ei::Vec3& _position, Args&&... _args)
+		{
+			ei::Vec3 position = m_actor.GetRotationMatrix() * (_position + m_positionOffset) + m_actor.GetPosition();
+			m_system.AddParticle(position, std::forward<Args>(_args)...);
+		}
+
+		// Adds a particle transforming both position and velocity 
+		// to world space from this Components space.
+		template<typename... Args>
+		void AddParticleV(const ei::Vec3& _position, const ei::Vec3& _velocity, Args&&... _args)
 		{
 			// transform particle into global space
 			// only the actor has an extra rotation part
@@ -60,13 +77,6 @@ namespace Game {
 
 			m_system.AddParticle(position, velocity,
 				std::forward<Args>(_args)...);
-		}
-
-		template<typename... Args>
-		void AddParticle(const ei::Vec3& _position, Args&&... _args)
-		{
-			ei::Vec3 position = m_actor.GetRotationMatrix() * (_position + m_positionOffset) + m_actor.GetPosition();
-			m_system.AddParticle(position, std::forward<Args>(_args)...);
 		}
 
 	private:

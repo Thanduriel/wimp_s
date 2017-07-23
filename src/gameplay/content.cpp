@@ -34,6 +34,13 @@ namespace Game {
 		return *mesh;
 	}
 
+	const BoundingMesh& Content::GetBoundingMesh()
+	{
+		static BoundingMesh m;
+
+		return m;
+	}
+
 	void Content::Unload()
 	{
 		for (auto p : boundingMeshes)

@@ -115,12 +115,6 @@ namespace Game {
 		// since it is convex.
 		for (const Plane& plane : faces)
 		{
-			for (const Vec3& p : vertices)
-			{
-				float t = dot(plane.n, p) + plane.d;
-				if (t > 0.f)
-					int uiae = 125;
-			}
 			bool isSeperated = true;
 			for (const Vec3& p : othVertices)
 			{
@@ -222,16 +216,45 @@ namespace Game {
 	}
 
 	// *************************************************************** //
+	bool BoundingMesh::Intersects(const ei::Sphere& _other, const ei::Mat4x4& _transform, HitInfo& _info) const
+	{
+		Vec3 center = _transform * _other.center;
+
+		std::vector<Vec3> hits;
+
+		for (const Plane& plane : faces)
+		{
+			if (dot(plane.n, center) + plane.d - _other.radius >= 0.f)
+				return false;
+		}
+
+		_info.normal = normalize(Vec3(0.f) - center);
+		_info.position = _info.normal * _other.radius;
+		return true;
+	}
+
+	// *************************************************************** //
 	CollisionComponent::CollisionComponent(Actor& _actor, float _boundingRadius, 
 		const ei::Box& _boundingBox)
 		: ActorComponent(_actor),
+		m_boundingRadius(_boundingRadius),
 		m_boundingRadiusSq(_boundingRadius*_boundingRadius),
 		m_type(Type::Any),
 		m_boundingMesh(Content::GetBoundingMesh(std::make_pair(_boundingBox.min,_boundingBox.max)))
 	{
 		ei::Vec3 v = _boundingBox.max - _boundingBox.min;
 		m_volume = v.x * v.y * v.z;
-		m_boundingMesh.boundingRadius = _boundingRadius;
+	}
+
+	CollisionComponent::CollisionComponent(Actor& _actor, float _boundingRadius)
+		: ActorComponent(_actor),
+		m_boundingRadius(_boundingRadius),
+		m_boundingRadiusSq(_boundingRadius*_boundingRadius),
+		m_type(Type::Any),
+		m_boundingMesh(Content::GetBoundingMesh()),
+		m_isSimple(true)
+	{
+
 	}
 
 	// *************************************************************** //
@@ -242,24 +265,41 @@ namespace Game {
 	{
 		ei::Vec3 v = m_boundingMesh.upperBound - m_boundingMesh.lowerBound;
 		m_volume = v.x * v.y * v.z;
+		m_boundingRadius = m_boundingMesh.boundingRadius;
 		m_boundingRadiusSq = m_boundingMesh.boundingRadius * m_boundingMesh.boundingRadius;
 	}
 
 	// *************************************************************** //
 	CollisionComponent::CollisionComponent(Actor& _actor, const CollisionComponent& _orig)
 		: ActorComponent(_actor),
+		m_boundingRadius(_orig.m_boundingRadius),
 		m_boundingRadiusSq(_orig.m_boundingRadiusSq),
 		m_type(Type::Any),
 		m_volume(_orig.m_volume),
-		m_boundingMesh(_orig.m_boundingMesh)
+		m_boundingMesh(_orig.m_boundingMesh),
+		m_isSimple(_orig.m_isSimple)
 	{}
 
 	// *************************************************************** //
-	bool CollisionComponent::Check(const CollisionComponent& _other, HitInfo& _info)
+	bool CollisionComponent::Check(const CollisionComponent& _other, HitInfo& _info) const
 	{
-		Mat4x4 transform = m_actor.GetInverseTransformation() * _other.m_actor.GetTransformation();
-
-		bool b = m_boundingMesh.Intersects(_other.m_boundingMesh, transform, _info);
+		bool b;
+		
+		if (m_isSimple)
+		{
+			// this will cause the normal to be flipped
+			// todo: fix this
+			if (!_other.m_isSimple) return _other.Check(*this, _info);
+			// both are spheres, already done in pre pass
+			// todo: calc hit info and perform check when pre pass uses different technique
+			else return true;
+		}
+		else
+		{
+			Mat4x4 transform = m_actor.GetInverseTransformation() * _other.m_actor.GetTransformation();
+			if (_other.m_isSimple) b = m_boundingMesh.Intersects(ei::Sphere(Vec3(0.f), _other.GetBoundingRadius()), transform, _info);
+			else b = m_boundingMesh.Intersects(_other.m_boundingMesh, transform, _info);
+		}
 
 		// transform _info to global space
 		_info.normal = Vec3(m_actor.GetTransformation() * Vec4(_info.normal, 0.f));
@@ -271,7 +311,7 @@ namespace Game {
 	// *************************************************************** //
 	bool CollisionComponent::RayCastFast(const ei::Ray& _ray, float& _distance) const
 	{
-		Sphere sphere(m_actor.GetPosition(), m_boundingMesh.boundingRadius);
+		Sphere sphere(m_actor.GetPosition(), m_boundingRadius);
 
 		return intersects(sphere, _ray, _distance);
 	}

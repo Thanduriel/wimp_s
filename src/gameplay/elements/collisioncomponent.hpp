@@ -28,7 +28,8 @@ namespace Game {
 
 		void Load(std::ifstream& _stream, size_t _numVertices);
 
-		bool Intersects(const BoundingMesh& _other, const ei::Mat4x4& _transform,HitInfo& _info) const;
+		bool Intersects(const BoundingMesh& _other, const ei::Mat4x4& _transform, HitInfo& _info) const;
+		bool Intersects(const ei::Sphere& _other, const ei::Mat4x4& _transform, HitInfo& _info) const;
 	};
 
 	// While the collision component itself does not change the Actor
@@ -37,18 +38,19 @@ namespace Game {
 	{
 	public:
 		CollisionComponent(Actor& _actor, float _boundingRadius, const ei::Box& _boundingBox);
-
+		// Create a simple CollisionComponent that uses only the bounding sphere.
+		CollisionComponent(Actor& _actor, float _boundingRadius);
 		// Create a CollisionComponent from a BoundingMesh
 		CollisionComponent(Actor& _actor, const std::string& _name);
 		CollisionComponent(Actor& _actor, const CollisionComponent& _other);
 
-		bool Check(const CollisionComponent& _other, HitInfo& _info);
+		bool Check(const CollisionComponent& _other, HitInfo& _info) const;
 		// ray cast with the bounding sphere
 		bool RayCastFast(const ei::Ray& _ray, float& _distance) const;
 		// ray cast with the bounding mesh
 		bool RayCast(const ei::Ray& _ray, float& _distance) const;
 
-		float GetBoundingRadius() const { return m_boundingMesh.boundingRadius; }
+		float GetBoundingRadius() const { return m_boundingRadius; }
 		float GetBoundingRadiusSq() const { return m_boundingRadiusSq; }
 		const BoundingMesh& GetBoundingMesh() const { return m_boundingMesh; }
 		float GetVolume() const { return m_volume; }
@@ -69,8 +71,10 @@ namespace Game {
 		ei::Mat3x3 ComputeInertiaTensor(float _mass) const;
 	private:
 		float m_volume;
+		float m_boundingRadius;
 		float m_boundingRadiusSq;
 		Type m_type;
-		BoundingMesh& m_boundingMesh;
+		const BoundingMesh& m_boundingMesh;
+		bool m_isSimple = false; // this component can be approximated by its bounding sphere
 	};
 }

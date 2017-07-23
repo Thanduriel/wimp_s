@@ -19,6 +19,8 @@ namespace Game {
 
 		typedef std::pair<ei::Vec3, ei::Vec3> BoundingMeshKeyType;
 		static BoundingMesh& GetBoundingMesh(const BoundingMeshKeyType& _key);
+		// @Return an empty bounding mesh.
+		static const BoundingMesh& GetBoundingMesh();
 
 		static void Unload();
 	private:

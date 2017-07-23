@@ -51,7 +51,7 @@ namespace Game {
 	Bolt::Bolt(const ei::Vec3& _position, const ei::Vec3& _velocity, float _damage, float _lifeTime)
 		: Projectile(_position, _velocity, _damage, _lifeTime),
 		m_particles(THISACTOR, Vec3(0.f), Graphic::Resources::GetTexture("bolt")),
-		m_collisionComponent(THISACTOR, BOLT_SIZE, ei::Box(Vec3(sqrt(-BOLT_SIZE/2.f)), Vec3(sqrt(BOLT_SIZE/2.f))))
+		m_collisionComponent(THISACTOR, BOLT_SIZE /*, ei::Box(Vec3(sqrt(-BOLT_SIZE/2.f)), Vec3(sqrt(BOLT_SIZE/2.f)))*/)
 	{
 	}
 
@@ -81,13 +81,11 @@ namespace Game {
 	}
 
 	// ********************************************************************** //
-	const Vec3 THRUSTEROFFSET = Vec3(0.f, 0.f, -1.f);
-
 	Rocket::Rocket(const Vec3& _position, const ei::Vec3& _velocity, float _damage, float _lifeTime)
 		: Projectile(_position, _velocity, _damage, _lifeTime),
 		m_model(THISACTOR, "testrocket"),
-		m_engineLight(THISACTOR, m_model.GetMesh().GetSocket("thruster"), 2.5f, Utils::Color8U(0.4f, 0.2f, 0.9f)),
-		m_thrustParticles(THISACTOR, m_model.GetMesh().GetSocket("thruster")),
+		m_engineLight(THISACTOR, m_model.GetMesh().GetSocket("thruster")*1.1f, 2.5f, Utils::Color8U(0.4f, 0.2f, 0.9f)),
+		m_thrustParticles(THISACTOR, m_model.GetMesh().GetSocket("thruster") * 0.8f),
 		m_particleSpawnCount(0.f)
 	{
 		SetInertiaTensor(m_model.ComputeInertiaTensor(m_mass));
@@ -116,7 +114,7 @@ namespace Game {
 
 			Vec3 dir = (Vec3(0.f, 0.f, -1.f) + rng.Direction() * 0.2f) * rng.Uniform(0.3f, 2.f);
 			float col = rng.Uniform(0.2f, 0.7f);
-			m_thrustParticles.AddParticle(rng.Direction() * 0.1f, //position
+			m_thrustParticles.AddParticleV(rng.Direction() * 0.1f, //position
 				dir, //velocity
 				2.0f, //life time
 				Utils::Color8U(col, col, col, 1.f).RGBA(),
