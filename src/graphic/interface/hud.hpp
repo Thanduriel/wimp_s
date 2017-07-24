@@ -54,6 +54,12 @@ namespace Graphic {
 		/// \brief When scrollable all elements of the hud will move when a scroll-event is received
 		void SetScrollable(bool _scrollable) {m_scrollable = _scrollable;};
 
+		/// \brief The given texture will be reordered to be rendered on top of others.
+		/// Undefined when the texture is not known to this hud.
+		// todo: handle children
+		void MoveToFront(const ScreenTexture& _screenTex);
+	//	void MoveToBack(const ScreenTexture& _screenTex);
+
 		void ShowCursor(CursorType _cursor);
 		bool IsCursorVisible() const { return m_showCursor == CursorType::None; };
 

@@ -90,6 +90,22 @@ namespace Graphic
 	}
 
 	// ************************************************************************* //
+	void Hud::MoveToFront(const ScreenTexture& _screenTex)
+	{
+	//	for(auto& child : _screenTex.m_childs)
+		auto it = std::find(m_screenTextures.begin(), m_screenTextures.end(), &_screenTex);
+		Assert(it != m_screenTextures.end(), "The screenTexture needs to be known to the hud.");
+		auto itOv = std::find(m_screenOverlays.begin(), m_screenOverlays.end(), &_screenTex);
+
+		ScreenTexture* p = *it;
+		m_screenTextures.erase(it);
+		m_screenTextures.push_back(p);
+
+		m_screenOverlays.erase(itOv);
+		m_screenOverlays.push_back(p);
+	}
+
+	// ************************************************************************* //
 	void Hud::RenewBuffer()
 	{
 		m_characters.Clear();
