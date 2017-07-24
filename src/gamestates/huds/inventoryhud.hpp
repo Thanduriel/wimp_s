@@ -10,7 +10,6 @@ namespace GameStates
 		InventoryHud();
 	private:
 		//Graphic::ScreenTexture* m_inventoryBackground;
-		//Graphic::Button* m_button;
 		std::vector<Graphic::DraggableTexture*> m_vicinityItems;
 		Graphic::DropField* m_vicinityField;
 		Graphic::DropField* m_inventoryField;
