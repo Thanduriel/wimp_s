@@ -131,37 +131,7 @@ int main(int argc, char* argv[])
 			texQuads[i].texCoordX = bestFitRects[i].x;
 			texQuads[i].texCoordY = bestFitRects[i].y;
 		}
-		/*
-		sort( &images[0], &images[fileCount], cmp );
-		int borderX = images[fileCount-1]->Width()+1;
-		int borderY = 1;
-		for(int i = fileCount-1; i>=0; i--)
-		{
-			//already placed, jump over
-			if(texQuads[i].sizeX != 0.f) continue;
-			texQuads[i].sizeX = images[i]->Width();
-			texQuads[i].sizeY = images[i]->Height();
-			texQuads[i].texCoordX = 1; 
-			texQuads[i].texCoordY = borderY;//+texQuads[i].sizeY;
-			int borderTmp = texQuads[i].sizeX + 1;
-			int borderMax = borderY + texQuads[i].sizeY;
-			//search a smaller one that can be placed right from the previous one
-			for(int c = i-1; c>=0; c--)
-				if(images[c]->Width() < borderX - borderTmp)
-				{
-					if(texQuads[c].sizeX != 0) continue;
-					texQuads[c].sizeX = images[c]->Width();
-					texQuads[c].sizeY = images[c]->Height();
-					texQuads[c].texCoordX = borderTmp + 1;
-					texQuads[c].texCoordY = borderY;
-					borderTmp += texQuads[c].sizeX + 1;
-					if(borderMax < borderY + texQuads[c].sizeY) borderMax = borderY + texQuads[c].sizeY;
-				} 
-			//ensure that highest Y tex gets found
-			borderY = borderMax + 2;
-		}
-		borderX += 1;
-		*/
+
 		//write every img into one using the calculated positions
 		Jo::Files::ImageWrapper combinedImage(sizeX, sizeY, 4);
 		
@@ -170,17 +140,42 @@ int main(int argc, char* argv[])
 			for (int iy = 0; iy < sizeY; iy++)
 				combinedImage.Set(ix, iy, 3, 0.f);
 
-		for(int i = 0; i<fileCount; i++)
-			for(int ix = 0; ix < texQuads[i].sizeX; ix++)
-				for(int iy = 0; iy < texQuads[i].sizeY; iy++)
-				{
-					int finalX = ix + texQuads[i].texCoordX; 
-					int finalY = iy + texQuads[i].texCoordY;
-					combinedImage.Set(finalX,finalY, 0, images[i]->Get(ix,iy,0));
-					combinedImage.Set(finalX,finalY, 1, images[i]->Get(ix,iy,1));
-					combinedImage.Set(finalX,finalY, 2, images[i]->Get(ix,iy,2));
-					combinedImage.Set(finalX,finalY, 3, images[i]->Get(ix,iy,3));
-				}
+		for (int i = 0; i < fileCount; i++)
+		{
+			if (images[i]->NumChannels() == 4)
+			{
+				for (int ix = 0; ix < texQuads[i].sizeX; ix++)
+					for (int iy = 0; iy < texQuads[i].sizeY; iy++)
+					{
+						int finalX = ix + texQuads[i].texCoordX;
+						int finalY = iy + texQuads[i].texCoordY;
+
+						combinedImage.Set(finalX, finalY, 0, images[i]->Get(ix, iy, 0));
+						combinedImage.Set(finalX, finalY, 1, images[i]->Get(ix, iy, 1));
+						combinedImage.Set(finalX, finalY, 2, images[i]->Get(ix, iy, 2));
+						combinedImage.Set(finalX, finalY, 3, images[i]->Get(ix, iy, 3));
+					}
+			}
+			else if (images[i]->NumChannels() == 3)
+			{
+				for (int ix = 0; ix < texQuads[i].sizeX; ix++)
+					for (int iy = 0; iy < texQuads[i].sizeY; iy++)
+					{
+						int finalX = ix + texQuads[i].texCoordX;
+						int finalY = iy + texQuads[i].texCoordY;
+
+						combinedImage.Set(finalX, finalY, 0, images[i]->Get(ix, iy, 0));
+						combinedImage.Set(finalX, finalY, 1, images[i]->Get(ix, iy, 1));
+						combinedImage.Set(finalX, finalY, 2, images[i]->Get(ix, iy, 2));
+						combinedImage.Set(finalX, finalY, 3, 1.f);
+					}
+			}
+			else
+			{
+				std::cerr << names[i] << "has the wrong number of channels. " << "Only RGB format is supported.";
+				return -1;
+			}
+		}
 		try {
 			Jo::Files::HDDFile combinedFile("combined.png", Jo::Files::HDDFile::OVERWRITE);
 			combinedImage.Write(combinedFile, Jo::Files::Format::PNG);
