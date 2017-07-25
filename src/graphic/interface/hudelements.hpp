@@ -83,7 +83,8 @@ namespace Graphic {
 			ei::Vec2 _position, ei::Vec2 _size = ei::Vec2(0.f), DefinitionPoint _def = DefinitionPoint::TopLeft,
 			Anchor _anchor = Anchor(),
 			std::function<void()> _OnMouseUp = []() {return; },
-			const std::vector<DropField*>& _fields = std::vector<DropField*>());
+			const std::vector<DropField*>& _fields = std::vector<DropField*>(),
+			Hud* _hud = nullptr);
 
 		//override to apply vertex changes
 		virtual void MouseEnter() override;
@@ -107,9 +108,11 @@ namespace Graphic {
 	private:
 		State m_state;
 		ei::Vec2 m_backupPos;
-		void UpdatePosition(float _dx, float _dy);
+		void UpdatePosition();
 		std::vector<DropField*> m_fields;
 		DropField* m_parentField;
+		Hud* m_hud;
+		ei::Vec2 m_offset;
 	};
 
 	// ************************************************************* //

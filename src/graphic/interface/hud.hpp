@@ -65,6 +65,8 @@ namespace Graphic {
 
 		TextRender& GetDebugLabel() { return *m_dbgLabel; }
 
+		void SetFocus(ScreenOverlay& _element) { m_focus = &_element; }
+
 		/// \brief Mouse events
 		///	At least one is important so that dynamic_cast can work
 		virtual void MouseEnter() override;

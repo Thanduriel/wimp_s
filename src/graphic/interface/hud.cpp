@@ -132,6 +132,8 @@ namespace Graphic
 		if (m_cursor)	m_cursor->texture.m_vertex.position = cursorPos + m_cursor->offset;
 
 		//todo: include mousespeed in config  
+		if (m_focus)
+			m_focus->MouseMove(_dx, _dy);
 
 		//collision with hud elements
 		for(size_t i = m_screenOverlays.size(); i-- > 0; )
@@ -157,6 +159,7 @@ namespace Graphic
 				return;
 			}
 		}
+
 		//leave element; enter free space 
 		MouseLeave();
 	}

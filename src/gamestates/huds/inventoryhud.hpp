@@ -15,4 +15,3 @@ namespace GameStates
 		Graphic::DropField* m_inventoryField;
 	};
 }
-

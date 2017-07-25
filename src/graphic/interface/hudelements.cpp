@@ -130,12 +130,13 @@ namespace Graphic
 	// ************************************************************************ //
 	DraggableTexture::DraggableTexture(const std::string& _name, Vec2 _position, Vec2 _size,
 		DefinitionPoint _def, Anchor _anchor,
-		std::function<void()> _OnMouseUp, const std::vector<DropField*>& _fields) :
+		std::function<void()> _OnMouseUp, const std::vector<DropField*>& _fields, Hud* _hud) :
 		ScreenTexture(_name, _position, _size, _def, _anchor, _OnMouseUp)
 	{
 		m_backupPos = Vec2(0, 0);
 		m_fields = _fields;
 		m_parentField = nullptr;
+		m_hud = _hud;
 	}
 
 	void DraggableTexture::MouseEnter()
@@ -152,10 +153,10 @@ namespace Graphic
 		m_state = State::Base;
 	}
 
-	void DraggableTexture::UpdatePosition(float _dx, float _dy)
+	void DraggableTexture::UpdatePosition()
 	{
-		Vec2 offset = PixelOffset(_dx, -_dy);
-		SetPosition(GetPosition() + offset);
+		Vec2 cursor = Control::InputManager::GetCursorPosScreenSpace();
+		SetPosition(cursor + Vec2(GetSize().x * 0.5f, -GetSize().y * 0.5f) + m_offset);
 	}
 
 	void DraggableTexture::MouseMove(float _dx, float _dy)
@@ -166,17 +167,25 @@ namespace Graphic
 		{
 			m_backupPos = GetPosition();
 			m_state = State::Dragged;
-			UpdatePosition(_dx, _dy);
+			m_hud->MoveToFront(*this);
+			m_hud->SetFocus(*this);
+			UpdatePosition();
 		}
 		else if (m_state == State::Dragged)
-			UpdatePosition(_dx, _dy);
+			UpdatePosition();
 	}
 
 	bool DraggableTexture::KeyDown(int _key, int _modifiers, ei::Vec2 _pos)
 	{
 		ScreenOverlay::KeyDown(_key, _modifiers, _pos);
 
-		m_state = State::Pressed;
+		if (m_state != State::Dragged)
+		{
+			m_state = State::Pressed;
+			Vec2 cursor = Control::InputManager::GetCursorPosScreenSpace();
+			m_offset = GetScreenSpacePosition() - cursor;
+		}
+
 		//since an object(this) is hit, the return value is always true
 		return true;
 	}
