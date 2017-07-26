@@ -40,24 +40,31 @@ namespace Game {
 	{
 		return [](Weapon& _weapon)
 		{
-			Rocket& rocket = _weapon.m_factoryComponent.MakeP<Rocket>(ei::Vec3(-0.2f,0.f,0.f),
+	/*		Rocket& rocket = _weapon.m_factoryComponent.MakeP<Rocket>(ei::Vec3(-0.2f,0.f,0.f),
 				_weapon.GetRotationMatrix() * ei::Vec3(0.f, 0.f, 12.f), _weapon.m_damage);
 			rocket.m_model.SetType(CollisionComponent::Type::NonPlayer);
 
 			Rocket& rocket2 = _weapon.m_factoryComponent.MakeP<Rocket>(ei::Vec3(0.2f, 0.f, 0.f),
 				_weapon.GetRotationMatrix() * ei::Vec3(0.f, 0.f, 12.f), _weapon.m_damage);
-			rocket2.m_model.SetType(CollisionComponent::Type::NonPlayer);
+			rocket2.m_model.SetType(CollisionComponent::Type::NonPlayer);*/
 		};
 	}
 
+	void WeaponTrait::SetUpProjectile(Projectile& _proj, const Weapon& _weapon, const ei::Vec3& _vel)
+	{
+		_proj.SetVelocity(_weapon.GetRotationMatrix() * _vel);
+		_proj.SetRotation(ei::Quaternion(ei::Vec3(0.f, 0.f, 1.f), _proj.GetVelocity()));
+	}
+
 	// ********************************************************************* //
-	Weapon::Weapon(float _cooldown, float _damage, FireFunction&& _fireFn, ReloadFunction&& _reloadFn)
+	Weapon::Weapon(float _cooldown, float _range, FireFunction&& _fireFn, ReloadFunction&& _reloadFn)
 		: Actor(ei::Vec3()),
 		m_factoryComponent(THISACTOR),
 		m_cooldown(0.f),
 		m_cooldownMax(_cooldown),
-		m_damage(_damage),
+		m_range(_range),
 		m_energyCost(1.f),
+		m_beginSpeed(0.f),
 		m_reloadImpl(_reloadFn ? std::move(_reloadFn) : WeaponTrait::ReloadDefault()),
 		m_fireImpl(_fireFn ? std::move(_fireFn) : WeaponTrait::FireDefault(Bolt(ei::Vec3(0.f), ei::Vec3(0.f,0.f,82.f),5.f, 10.f)))
 	{

@@ -66,6 +66,10 @@ namespace Game
 		// Fire all weapons straight forward.
 		void Fire();
 
+		// Rotates the weapons to so that when fired the projectile 
+		//has its endpoint on the given ray in front of the ship.
+		void AdjustWeaponOrientation(const ei::Vec3& _targetDir);
+
 		// Activates the given weapon in _slot.
 		void SetWeapon(int _slot, class Weapon& _weapon);
 	private:

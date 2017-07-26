@@ -13,7 +13,7 @@ namespace Game {
 		typedef std::function<void(Weapon&)> FireFunction;
 		typedef std::function<void(Weapon&, float)> ReloadFunction;
 
-		Weapon(float _cooldown = 1.f, float _damage = 1.f, 
+		Weapon(float _cooldown = 1.f, float _range = 100.f, 
 			FireFunction&& _fireFn = FireFunction(),
 			ReloadFunction&& _reloadFn = ReloadFunction());
 
@@ -23,12 +23,18 @@ namespace Game {
 		// Fires this weapon if it is ready.
 		void Fire();
 
+		// Since a Weapon is not dynamic it needs a way to convey the current speed
+		// of the ship to spawned projectiles.
+		void SetBeginSpeed(float _beginSpeed) { m_beginSpeed = _beginSpeed; }
+
 		float GetEnergyCost() const { return m_energyCost; }
+		float GetRange() const { return m_range; }
 	protected:
 		float m_cooldown;
 		float m_cooldownMax;
-		float m_damage;
 		float m_energyCost;
+		float m_range;
+		float m_beginSpeed;
 	private:
 		FactoryComponent m_factoryComponent;
 		
@@ -52,11 +58,15 @@ namespace Game {
 			return [=](Weapon& _weapon)
 			{
 				T& proj = _weapon.m_factoryComponent.CopyP<T>(_prototype);
-				proj.SetVelocity(_weapon.GetRotationMatrix() * proj.GetVelocity());
-				proj.SetRotation(ei::Quaternion(ei::Vec3(0.f, 0.f, 1.f), proj.GetVelocity()));
+				ei::Vec3 vel = proj.GetVelocity();
+				vel.z += _weapon.m_beginSpeed;
+				SetUpProjectile(proj, _weapon, vel);
 				proj.GetCollisionComponent().SetType(CollisionComponent::Type::NonPlayer);
 			};
 		}
 		static Weapon::FireFunction FireDouble();
+
+	private:
+		static void SetUpProjectile(class Projectile& _proj, const Weapon& _weapon, const ei::Vec3& _vel);
 	};
 }

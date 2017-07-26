@@ -66,7 +66,7 @@ namespace Generators {
 		m_name = QUALITY_COLOR[(int)rarity] + m_name + "</c>";
 
 		return new Game::Weapon(cooldown,
-			damage,
+			speed * lifeTime,
 			std::move(fireFn),
 			std::move(reloadFn));
 	}

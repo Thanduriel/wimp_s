@@ -94,6 +94,8 @@ namespace Game
 		// Update angular velocity
 		UpdateAngularVelocity(_deltaTime);
 
+		AdjustWeaponOrientation(Vec3(0.f, 0.f, 1.f));
+
 		Model::Process(_deltaTime);
 	}
 
@@ -110,12 +112,28 @@ namespace Game
 	// ***************************************************************************** //
 	void Ship::Fire()
 	{
+		float speed = ei::len(m_velocity);
 		for (auto& sockets : m_weaponSockets)
 		{
 			Weapon* weapon = static_cast<Weapon*>(sockets.GetAttached());
 			if (!weapon) continue;
 
+			weapon->SetBeginSpeed(speed);
 			weapon->Fire();
+		}
+	}
+
+	void Ship::AdjustWeaponOrientation(const ei::Vec3& _targetDir)
+	{
+		for (auto& socket : m_weaponSockets)
+		{
+			Weapon* weapon = static_cast<Weapon*>(socket.GetAttached());
+			if (!weapon) continue;
+			Vec3 targetPos = _targetDir * weapon->GetRange();
+
+			Vec3 targetDir = targetPos - socket.GetPosition();
+
+			socket.SetRotation(normalize(targetDir));
 		}
 	}
 

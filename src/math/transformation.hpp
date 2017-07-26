@@ -15,8 +15,9 @@ public:
 	// Returns the combined matrix of this transformation.
 	const ei::Mat4x4& Get() { return m_transformation; }
 
-//	void Translate(const ei::Vec3& _direction);
-//	void Rotate(const ei::Quaternion& _rotation);
+	ei::Vec3 GetPosition() const;
+
+	void SetRotation(const ei::Vec3& _direction);
 
 private:
 	ei::Mat4x4 m_transformation;

@@ -16,7 +16,11 @@ namespace Game {
 		{
 			ei::Mat4x4 transform = Transformation::Get(m_actor.GetTransformation());
 			m_target->SetPosition(ei::Vec3(transform * ei::Vec4(0.f, 0.f, 0.f, 1.f)));
-			m_target->SetRotation(m_actor.GetRotation());
+
+			// stabilize numeric
+			ei::Mat3x3 rot = ei::Mat3x3(transform);
+			ei::orthonormalize(rot);
+			m_target->SetRotation(ei::Quaternion(rot));
 		}
 	}
 }
