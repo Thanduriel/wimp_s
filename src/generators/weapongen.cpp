@@ -3,10 +3,66 @@
 #include "gameplay/elements/shipsystems/projectile.hpp"
 
 namespace Generators {
+
+	enum WeaponTraitType {
+		Burst,
+		Twin,
+		ExtR,
+		ExtD,
+		ExtC,
+		HighPower,
+		WTTCOUNT // since this is not in its own name space
+	};
+
+	const std::array< TraitDescription, WTTCOUNT> WEAPON_TRAITS =
+	{ {
+		{"Burst", "cd increases with continues fire", true},
+		{"Twin", "fires additional projectile", true },
+		{"[EXT_R]", "10% increased rate of fire", false},
+		{"[EXT_D]", "12% increased damage", false},
+		{"[EXT_C]", "15% reduced power consumption", false},
+		{"High Power", "2x damage, 2x power consumption", true}
+	} };
+
+	enum struct WeaponType {
+		Simple,
+		Rocket,
+		Ray, // not implemented
+		Count
+	};
+
+	const std::array < std::string, (size_t)WeaponType::Count> NAMES =
+	{
+		"Blaster",
+		"Rocket Launcher",
+		"Laser Gun"
+	};
+
+	// base values for cooldown
+	const std::array< Range, (size_t)WeaponType::Count> COOLDOWN_RANGE =
+	{ {
+		{0.5f, 2.f},
+		{2.f, 6.f}
+	} };
+
+	// base values for damage
+	const std::array< Range, (size_t)WeaponType::Count> DAMAGE_RANGE =
+	{ {
+		{2.f, 5.f},
+		{8.f, 20.f}
+	} };
+
 	WeaponGenerator::WeaponGenerator()
 		: m_rng(clock()),
 		m_randomSampler(m_rng)
 	{
+	}
+
+	static std::string MakeNum(float _num)
+	{
+		std::string s = std::to_string(_num);
+		s.erase(s.find_first_of('.') + 2, std::string::npos);
+		return /*"<s 012>" +*/ s /*+ "</s>"*/;
 	}
 
 	using namespace Game;
@@ -27,36 +83,73 @@ namespace Generators {
 		auto qVec = QUALITY_RARITY * _qualityFactor;
 		Quality rarity = Quality::Unique;
 		while (float n = m_randomSampler.Uniform() > qVec[(int)rarity]) rarity = Quality((int)rarity - 1);
+		int numTraits = QUALITY_NUM_TRAITS[(int)rarity];
 
 		// roll basic type; -2 since lasers are not implemented
-		WeaponType type = (WeaponType)m_randomSampler.Uniform(0, (int32_t)NAMES.size()-2);
+		WeaponType type = (WeaponType)m_randomSampler.Uniform(0, (int32_t)NAMES.size()-((int)rarity> 0 ? 2 : 3));
 		m_name = NAMES[(int)type];
+		if (type == WeaponType::Rocket) numTraits -= 1;
 		m_description.clear();
 
 		// attributes
 		Range damageRange = GetDamageRange(DAMAGE_RANGE[(int)type], _power);
 		float damage = m_randomSampler.Uniform(damageRange);
-		m_description += "damage: " + std::to_string(damage) + "\n";
+		m_description += "damage:    " + MakeNum(damage) + "\n";
 
 		Range cdRange = GetCooldownRange(COOLDOWN_RANGE[(int)type], _power);
 		float cooldown = m_randomSampler.Uniform(cdRange);
-		m_description += "cooldown: " + std::to_string(cooldown) + "s\n";
+		m_description += "cooldown:  " + MakeNum(cooldown) + "[s]\n";
 
 		float speed = type == WeaponType::Simple ? Projectile::DEFAULT_SPEED : Rocket::DEFAULT_SPEED;
 		float lifeTime = m_randomSampler.Uniform(5.f, 10.f);
 
 		float eCost = damage / (cooldown * _power);
-		m_description += "energy(per shot): " + std::to_string(eCost) + "\n";
+		m_description += "power use: " + MakeNum(eCost) + "[J]\n";
 
-		m_description += "speed: " + std::to_string(speed);
+		m_description += "speed:     " + MakeNum(speed) + "[m/s]\n";
 		Weapon::FireFunction fireFn;
 		Weapon::ReloadFunction reloadFn;
 
+		m_description += "-----";
+		// traits that have to be added after projectile generation has finished
+		std::vector< WeaponTraitType > lateTraits;
+		std::vector< int > hasTrait(numTraits);
+		memset(&hasTrait.begin(), 0, sizeof(int) * numTraits);
+
+		while(numTraits)
+		{
+			WeaponTraitType trait = (WeaponTraitType)m_randomSampler.Uniform(0, WTTCOUNT-1);
+			if (hasTrait[trait]) continue; // every trait can only occur once
+			--numTraits;
+
+			hasTrait[trait] = 1;
+			AddTrait(WEAPON_TRAITS[trait]);
+			switch (trait)
+			{
+			case WeaponTraitType::Burst: lateTraits.push_back(Burst);
+				break;
+			case WeaponTraitType::Twin: lateTraits.push_back(Twin);
+				break;
+			case WeaponTraitType::ExtR: cooldown *= 0.9f;
+				break;
+			case WeaponTraitType::ExtD: damage *= 1.12f;
+				break;
+			case WeaponTraitType::ExtC: eCost *= 0.85f;
+				break;
+			case WeaponTraitType::HighPower: damage *= 2.f; eCost *= 2.f;
+				break;
+			default:
+				Assert(false, "Trait not implemented.");
+			}
+		}
+
+		// construct projectile generator
 		WeaponTrait::GenerationFunction projGenerator;
 		switch (type)
 		{
 		case WeaponType::Simple:
-			projGenerator = WeaponTrait::CreateProjectileFn(Bolt(ei::Vec3(0.f), ei::Vec3(0.f, 0.f, speed), damage, lifeTime));
+			projGenerator = WeaponTrait::CreateProjectileFn(Bolt(ei::Vec3(0.f), ei::Vec3(0.f, 0.f, speed), damage, lifeTime,
+				Utils::Color8U(m_randomSampler.Uniform(), m_randomSampler.Uniform(), m_randomSampler.Uniform())));
 			break;
 		case WeaponType::Rocket:
 			projGenerator = WeaponTrait::CreateProjectileFn(Rocket(ei::Vec3(0.f), ei::Vec3(0.f, 0.f, speed), damage, lifeTime));
@@ -65,16 +158,17 @@ namespace Generators {
 			Assert(false, "This type is not implemented.");
 		}
 
-	//	if (rarity == Quality::Unique)
+		// add traits that require the generator
+		for (auto trait : lateTraits)
 		{
-			switch (m_randomSampler.Uniform(0, 1))
+			switch (trait) 
 			{
-			case 0: fireFn = WeaponTrait::FireDouble(std::move(projGenerator));
-				AddTrait(WEAPON_TRAITS[1]);
+			case Burst: reloadFn = WeaponTrait::ReloadBurstFire();
 				break;
-			case 1: reloadFn = WeaponTrait::ReloadBurstFire();
-				AddTrait(WEAPON_TRAITS[0]);
+			case Twin: fireFn = WeaponTrait::FireDouble(std::move(projGenerator));
 				break;
+			default:
+				Assert(false, "This trait should not be added late");
 			}
 		}
 		if (!fireFn) fireFn = WeaponTrait::FireDefault(std::move(projGenerator));

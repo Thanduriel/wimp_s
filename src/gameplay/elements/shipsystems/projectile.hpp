@@ -31,7 +31,7 @@ namespace Game {
 		void OnDestroy() override;
 		void OnCollision(Actor& _other) override;
 		void RegisterComponents(class SceneGraph& _sceneGraph) override;
-	private:
+	protected:
 		float m_damage;
 
 		LifeTimeComponent m_lifeTimeComponent;
@@ -40,7 +40,8 @@ namespace Game {
 	class Bolt : public Projectile
 	{
 	public:
-		Bolt(const ei::Vec3& _position, const ei::Vec3& _velocity, float _damage, float _lifeTime );
+		Bolt(const ei::Vec3& _position, const ei::Vec3& _velocity, float _damage, float _lifeTime, 
+			const Utils::Color8U& _color = Utils::Color8U(0.7f, 0.5f, 0.3f) );
 		Bolt(const Bolt& _orig);
 
 		void Process(float _deltaTime) override;
@@ -52,6 +53,7 @@ namespace Game {
 			| Graphic::PSComponent::COLOR 
 			| Graphic::PSComponent::SIZE> m_particles;
 
+		Utils::Color8U m_color;
 		CollisionComponent m_collisionComponent;
 	};
 

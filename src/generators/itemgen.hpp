@@ -43,6 +43,14 @@ namespace Generators {
 		"<c 222 75 44>"
 	};
 
+	const std::array<int, (size_t)Quality::COUNT> QUALITY_NUM_TRAITS =
+	{
+		0,
+		1,
+		2,
+		3
+	};
+
 	struct TraitDescription
 	{
 		std::string name;

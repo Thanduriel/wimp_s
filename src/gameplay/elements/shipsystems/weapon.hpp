@@ -61,7 +61,10 @@ namespace Game {
 		template<typename T>
 		static GenerationFunction CreateProjectileFn(const T& _prototype)
 		{
-			return [=](Weapon& _weapon) -> Projectile& {return _weapon.m_factoryComponent.CopyP<T>(_prototype); };
+			return [=](Weapon& _weapon) -> Projectile& 
+			{
+				return _weapon.m_factoryComponent.CopyP<T>(_prototype); 
+			};
 		}
 	private:
 

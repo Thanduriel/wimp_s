@@ -48,9 +48,10 @@ namespace Game {
 
 	// ********************************************************************** //
 	const float BOLT_SIZE = 0.2f;
-	Bolt::Bolt(const ei::Vec3& _position, const ei::Vec3& _velocity, float _damage, float _lifeTime)
+	Bolt::Bolt(const ei::Vec3& _position, const ei::Vec3& _velocity, float _damage, float _lifeTime, const Utils::Color8U& _color)
 		: Projectile(_position, _velocity, _damage, _lifeTime),
 		m_particles(THISACTOR, Vec3(0.f), Graphic::Resources::GetTexture("bolt")),
+		m_color(_color),
 		m_collisionComponent(THISACTOR, BOLT_SIZE /*, ei::Box(Vec3(sqrt(-BOLT_SIZE/2.f)), Vec3(sqrt(BOLT_SIZE/2.f)))*/)
 	{
 	}
@@ -58,6 +59,7 @@ namespace Game {
 	Bolt::Bolt(const Bolt& _orig)
 		: Projectile(_orig),
 		m_particles(THISACTOR, _orig.m_particles),
+		m_color(_orig.m_color),
 		m_collisionComponent(THISACTOR, _orig.m_collisionComponent)
 	{
 
@@ -68,8 +70,8 @@ namespace Game {
 		Projectile::Process(_deltaTime);
 
 		m_particles.AddParticle(Vec3(0.f), //position
-			Utils::Color8U(0.5f, 1.0f, 0.5f, 1.0f).RGBA(),
-			0.7f);// size
+			m_color.RGBA(),
+			m_damage / 8.f);// size
 	}
 
 	void Bolt::RegisterComponents(SceneGraph& _sceneGraph)

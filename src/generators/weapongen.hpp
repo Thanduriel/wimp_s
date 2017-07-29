@@ -6,42 +6,6 @@
 
 namespace Generators{
 
-
-
-	const std::array< TraitDescription, 2> WEAPON_TRAITS =
-	{ {
-		{"Burst", "cd increases with continues fire", true},
-		{"Twin", "fires additional projectile", true }
-	} };
-
-	enum struct WeaponType {
-		Simple,
-		Rocket,
-		Ray, // not implemented
-		Count
-	};
-
-	const std::array < std::string, (size_t)WeaponType::Count> NAMES =
-	{
-		"Blaster",
-		"Rocket Launcher",
-		"Laser Gun"
-	};
-
-	// base values for cooldown
-	const std::array< Range, (size_t)WeaponType::Count> COOLDOWN_RANGE =
-	{ {
-		{0.5f, 2.f},
-		{2.f, 6.f}
-	} };
-
-	// base values for damage
-	const std::array< Range, (size_t)WeaponType::Count> DAMAGE_RANGE =
-	{ {
-		{2.f, 5.f},
-		{8.f, 20.f}
-	} };
-
 	class WeaponGenerator
 	{
 	public:
