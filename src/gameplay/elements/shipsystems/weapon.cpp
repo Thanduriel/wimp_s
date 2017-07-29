@@ -36,17 +36,31 @@ namespace Game {
 		return Functor();
 	}
 
-	Weapon::FireFunction WeaponTrait::FireDouble()
+	Weapon::FireFunction WeaponTrait::FireDefault(GenerationFunction&& _generator)
 	{
-		return [](Weapon& _weapon)
+		return [=](Weapon& _weapon)
 		{
-	/*		Rocket& rocket = _weapon.m_factoryComponent.MakeP<Rocket>(ei::Vec3(-0.2f,0.f,0.f),
-				_weapon.GetRotationMatrix() * ei::Vec3(0.f, 0.f, 12.f), _weapon.m_damage);
-			rocket.m_model.SetType(CollisionComponent::Type::NonPlayer);
+			Projectile& proj = _generator(_weapon);
+			ei::Vec3 vel = proj.GetVelocity();
+			vel.z += _weapon.m_beginSpeed;
+			SetUpProjectile(proj, _weapon, vel);
+			//	proj.GetCollisionComponent().SetType(CollisionComponent::Type::NonPlayer);
+		};
+	}
 
-			Rocket& rocket2 = _weapon.m_factoryComponent.MakeP<Rocket>(ei::Vec3(0.2f, 0.f, 0.f),
-				_weapon.GetRotationMatrix() * ei::Vec3(0.f, 0.f, 12.f), _weapon.m_damage);
-			rocket2.m_model.SetType(CollisionComponent::Type::NonPlayer);*/
+	Weapon::FireFunction WeaponTrait::FireDouble(GenerationFunction&& _generator)
+	{
+		return [=](Weapon& _weapon)
+		{
+			Projectile& proj1 = _generator(_weapon);
+			ei::Vec3 vel = proj1.GetVelocity();
+			vel.z += _weapon.m_beginSpeed;
+			SetUpProjectile(proj1, _weapon, vel);
+			proj1.Translate(_weapon.GetRotationMatrix() * ei::Vec3(-0.4f, 0.f, 0.f));
+
+			Projectile& proj2 = _generator(_weapon);
+			SetUpProjectile(proj2, _weapon, vel);
+			proj2.Translate(_weapon.GetRotationMatrix() * ei::Vec3(0.4f, 0.f, 0.f));
 		};
 	}
 
@@ -57,16 +71,16 @@ namespace Game {
 	}
 
 	// ********************************************************************* //
-	Weapon::Weapon(float _cooldown, float _range, FireFunction&& _fireFn, ReloadFunction&& _reloadFn)
+	Weapon::Weapon(float _cooldown, float _range, float _energyCost, FireFunction&& _fireFn, ReloadFunction&& _reloadFn)
 		: Actor(ei::Vec3()),
 		m_factoryComponent(THISACTOR),
 		m_cooldown(0.f),
 		m_cooldownMax(_cooldown),
 		m_range(_range),
-		m_energyCost(1.f),
+		m_energyCost(_energyCost),
 		m_beginSpeed(0.f),
 		m_reloadImpl(_reloadFn ? std::move(_reloadFn) : WeaponTrait::ReloadDefault()),
-		m_fireImpl(_fireFn ? std::move(_fireFn) : WeaponTrait::FireDefault(Bolt(ei::Vec3(0.f), ei::Vec3(0.f,0.f,82.f),5.f, 10.f)))
+		m_fireImpl(_fireFn ? std::move(_fireFn) : WeaponTrait::FireDefault(WeaponTrait::CreateProjectileFn(Bolt(ei::Vec3(0.f), ei::Vec3(0.f,0.f,82.f),5.f, 10.f))))
 	{
 
 	}
@@ -83,10 +97,11 @@ namespace Game {
 		m_reloadImpl(*this, _deltaTime);
 	}
 
-	void Weapon::Fire()
+	void Weapon::Fire(float _speed)
 	{
 		if (m_cooldown <= 0.f)
 		{
+			m_beginSpeed = _speed;
 			m_cooldown = m_cooldownMax;
 			m_fireImpl(*this);
 		}

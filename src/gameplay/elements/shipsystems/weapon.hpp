@@ -4,6 +4,7 @@
 
 #include "gameplay/core/actor.hpp"
 #include "gameplay/elements/factorycomponent.hpp"
+#include "projectile.hpp"
 
 namespace Game {
 
@@ -13,7 +14,7 @@ namespace Game {
 		typedef std::function<void(Weapon&)> FireFunction;
 		typedef std::function<void(Weapon&, float)> ReloadFunction;
 
-		Weapon(float _cooldown = 1.f, float _range = 100.f, 
+		Weapon(float _cooldown = 1.f, float _range = 100.f, float _energyCost = 1.f, 
 			FireFunction&& _fireFn = FireFunction(),
 			ReloadFunction&& _reloadFn = ReloadFunction());
 
@@ -21,11 +22,9 @@ namespace Game {
 
 		void Process(float _deltaTime) override;
 		// Fires this weapon if it is ready.
-		void Fire();
-
-		// Since a Weapon is not dynamic it needs a way to convey the current speed
-		// of the ship to spawned projectiles.
-		void SetBeginSpeed(float _beginSpeed) { m_beginSpeed = _beginSpeed; }
+		// @param _speed Speed added to a new projectile in addition to its intrinsic speed
+		//		  to emulate the weapon itself moving
+		void Fire(float _speed);
 
 		float GetEnergyCost() const { return m_energyCost; }
 		float GetRange() const { return m_range; }
@@ -47,26 +46,25 @@ namespace Game {
 	class WeaponTrait
 	{
 	public:
+		typedef std::function<Projectile&(Weapon&)> GenerationFunction;
+
 		// reload behavior altering traits
 		static Weapon::ReloadFunction ReloadDefault();
 		static Weapon::ReloadFunction ReloadBurstFire(float _highFactor = 2.f, float _lowFactor = 0.25f, int _numShots = 10);
 
 		// fire traits
-		template<typename T>
-		static Weapon::FireFunction FireDefault(const T& _prototype)
-		{
-			return [=](Weapon& _weapon)
-			{
-				T& proj = _weapon.m_factoryComponent.CopyP<T>(_prototype);
-				ei::Vec3 vel = proj.GetVelocity();
-				vel.z += _weapon.m_beginSpeed;
-				SetUpProjectile(proj, _weapon, vel);
-				proj.GetCollisionComponent().SetType(CollisionComponent::Type::NonPlayer);
-			};
-		}
-		static Weapon::FireFunction FireDouble();
+		// this functions require a generator function that can spawn a single projectile.
+		static Weapon::FireFunction FireDefault(GenerationFunction&& _generator);
+		static Weapon::FireFunction FireDouble(GenerationFunction&& _generator);
 
+		// Encapsulates the creation of projectiles based on a prototype
+		template<typename T>
+		static GenerationFunction CreateProjectileFn(const T& _prototype)
+		{
+			return [=](Weapon& _weapon) -> Projectile& {return _weapon.m_factoryComponent.CopyP<T>(_prototype); };
+		}
 	private:
-		static void SetUpProjectile(class Projectile& _proj, const Weapon& _weapon, const ei::Vec3& _vel);
+
+		static void SetUpProjectile(Projectile& _proj, const Weapon& _weapon, const ei::Vec3& _vel);
 	};
 }

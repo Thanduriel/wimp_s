@@ -47,7 +47,7 @@ namespace Game {
 	}
 
 	// ********************************************************************** //
-	const float BOLT_SIZE = 1.f;
+	const float BOLT_SIZE = 0.2f;
 	Bolt::Bolt(const ei::Vec3& _position, const ei::Vec3& _velocity, float _damage, float _lifeTime)
 		: Projectile(_position, _velocity, _damage, _lifeTime),
 		m_particles(THISACTOR, Vec3(0.f), Graphic::Resources::GetTexture("bolt")),

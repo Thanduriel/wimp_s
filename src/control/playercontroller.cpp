@@ -99,7 +99,7 @@ namespace Control
 				Graphic::ScreenPosition::Anchor(Graphic::DefP::TopLeft, &m_hud));
 			label.SetDefaultSize(0.5f);
 			Generators::WeaponGenerator gen;
-			Game::Weapon* w = gen.Generate(2.f);
+			Game::Weapon* w = gen.Generate(5.f, 2.f);
 			label.SetText(gen.GetName() + "\n-----\n" + gen.GetDescr());
 			m_ship->SetWeapon(0, *w);
 		}

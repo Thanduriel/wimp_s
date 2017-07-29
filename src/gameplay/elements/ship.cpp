@@ -118,8 +118,7 @@ namespace Game
 			Weapon* weapon = static_cast<Weapon*>(sockets.GetAttached());
 			if (!weapon) continue;
 
-			weapon->SetBeginSpeed(speed);
-			weapon->Fire();
+			weapon->Fire(speed);
 		}
 	}
 

@@ -13,6 +13,10 @@ namespace Game {
 	class Projectile : public DynamicActor
 	{
 	public:
+		// projectile speed is constant for now
+		// since hitting moving targets is near impossible otherwise
+		static constexpr float DEFAULT_SPEED = 42.f;
+
 		enum struct Visual {
 			Simple,
 			Rocket
@@ -58,6 +62,8 @@ namespace Game {
 	class Rocket : public Projectile
 	{
 	public:
+		static constexpr float DEFAULT_SPEED = 10.f;
+
 		Rocket(const ei::Vec3& _position, const ei::Vec3& _velocity, float _damage, float _lifeTime = 10.f);
 		Rocket(const Rocket& _orig);
 

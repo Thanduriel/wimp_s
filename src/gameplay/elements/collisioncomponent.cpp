@@ -318,6 +318,8 @@ namespace Game {
 
 	bool CollisionComponent::RayCast(const ei::Ray& _ray, float& _distance) const
 	{
+		if (m_isSimple) return RayCastFast(_ray, _distance);
+
 		Ray ray(m_actor.GetInverseTransformation() * _ray.origin, normalize(m_actor.GetInverseRotationMatrix() * _ray.direction));
 
 		for (auto& triangle : m_boundingMesh.triangles)

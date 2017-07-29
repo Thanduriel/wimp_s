@@ -104,6 +104,11 @@ namespace Generators {
 			return float(_min + scale * m_generator());
 		}
 
+		float Uniform(std::pair<float, float> _range)
+		{
+			return Uniform(_range.first, _range.second);
+		}
+
 		// normal distribution
 		float Normal(float _variance)
 		{
