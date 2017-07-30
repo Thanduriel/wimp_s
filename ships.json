@@ -1,0 +1,9 @@
+{
+  "TestShip": {
+    "Mesh": "spaceship",
+	"BoundingMesh": "spaceshipbm",
+    "WeaponSockets": ["LeftTurret", "RightTurret", "CenterTurret"],
+	"DriveSockets" : ["LeftDrive", "RightDrive", "bla"],
+    "BaseHealth" : 132.0
+  }
+}

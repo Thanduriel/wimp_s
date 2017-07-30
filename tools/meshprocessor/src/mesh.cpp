@@ -191,6 +191,7 @@ const std::unordered_map<std::string, Mesh::Format> Mesh::FORMAT_NAMES =
 			s.position[1] = -s.position[2];
 			s.position[2] = tmp;
 			m_sockets.push_back(s);
+			std::clog << "found socket: " << s.name << " with position (" << s.position[0] << "; " << s.position[1] << "; " << s.position[2] << ")" << std::endl;
 		}
 	}
 

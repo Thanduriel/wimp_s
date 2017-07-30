@@ -2,6 +2,7 @@
 #include "../scenegraph.hpp"
 #include "shipsystems/weapon.hpp"
 #include "generators/weapongen.hpp"
+#include "gameplay/content.hpp"
 
 namespace Game
 {
@@ -9,7 +10,7 @@ namespace Game
 	using namespace std;
 
 	Ship::Ship(const string& _pFile, const Vec3& _position, CollisionComponent::Type _collisionType)
-		: Model(_pFile, _pFile + "bm", _position, qidentity()),
+		: Model(Content::GetShipData()[_pFile]["Mesh"s], Content::GetShipData()[_pFile]["BoundingMesh"s], _position, qidentity()),
 		m_thrust(50.0f),
 		m_speed(1.0f),
 		m_minSpeed(0.0f),
@@ -19,11 +20,19 @@ namespace Game
 		m_sprayRadius(0.0f),
 		m_angularAcceleration(1.0f),
 		m_targetAngularVelocity(0.f),
-		m_weaponSockets{ {{THISACTOR, Vec3(3.f,1.5f,0.f)}, {THISACTOR, Vec3(-3.f,1.5f,0.f)} } },
+		m_weaponSockets(Content::GetShipData()[_pFile]["WeaponSockets"s].Size()),
+	//	m_weaponSockets{ {{THISACTOR, Vec3(3.f,1.5f,0.f)}, {THISACTOR, Vec3(-3.f,1.5f,0.f)} } },
 		m_staticLights{ {{THISACTOR, Vec3(3.f, 0.f, -6.f), 5.f, Utils::Color8U(0.f,1.f,0.f)},
 		{THISACTOR, Vec3(-3.f, 0.f, -6.f), 5.f, Utils::Color8U(0.f,1.f,0.f)} } }
 	{
-		m_health = 100;
+		auto& node = Content::GetShipData()[_pFile];
+
+		auto& weaponsNode = node["WeaponSockets"s];
+		for (int i = 0; i < m_weaponSockets.capacity(); ++i)
+			m_weaponSockets.emplace(THISACTOR, GetGeometryComponent().GetMesh().GetSocket(weaponsNode[i]));
+		m_health = node["BaseHealth"s].Get(42.f);
+
+
 		m_canTakeDamage = true;
 		m_mass = 1.f;
 		GetCollisionComponent().SetType(_collisionType);
@@ -32,7 +41,7 @@ namespace Game
 		Weapon& weapon1 = FactoryActor::GetThreadLocalInstance().Make<Weapon>();
 		Weapon& weapon2 = FactoryActor::GetThreadLocalInstance().Make<Weapon>();
 		m_weaponSockets[0].Attach(weapon1);
-		m_weaponSockets[1].Attach(weapon2);
+		m_weaponSockets[2].Attach(weapon2);
 	}
 
 	float Ship::GetCurrentSpeed() const
@@ -102,7 +111,7 @@ namespace Game
 	void Ship::RegisterComponents(SceneGraph& _sceneGraph)
 	{
 		Model::RegisterComponents(_sceneGraph);
-		for (auto& socket : m_weaponSockets)
+		for(auto& socket : m_weaponSockets)
 			_sceneGraph.RegisterComponent(socket);
 
 		for (auto& light : m_staticLights)

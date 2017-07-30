@@ -113,8 +113,8 @@ namespace Generators {
 		m_description += "-----";
 		// traits that have to be added after projectile generation has finished
 		std::vector< WeaponTraitType > lateTraits;
-		std::vector< int > hasTrait(numTraits);
-		memset(&hasTrait.begin(), 0, sizeof(int) * numTraits);
+		std::vector< int > hasTrait(WeaponTraitType::WTTCOUNT);
+		memset(&hasTrait.begin(), 0, sizeof(int) * hasTrait.size());
 
 		while(numTraits)
 		{

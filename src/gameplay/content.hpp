@@ -6,6 +6,7 @@
 #include "ei/stdextensions.hpp"
 #include "utils/stdextensions.hpp"
 #include "predeclarations.hpp"
+#include "jofilelib.hpp"
 
 namespace Game {
 
@@ -22,9 +23,14 @@ namespace Game {
 		// @Return an empty bounding mesh.
 		static const BoundingMesh& GetBoundingMesh();
 
+		// @Return Tree of ship types
+		static const Jo::Files::MetaFileWrapper& GetShipData();
+
 		static void Unload();
 	private:
 		static std::unordered_map<std::string, BoundingMesh*> boundingMeshes;
 		static std::unordered_map<BoundingMeshKeyType, BoundingMesh*> anonymBoundingMeshes;
+
+		static Jo::Files::MetaFileWrapper* shipData;
 	};
 }

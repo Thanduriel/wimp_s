@@ -101,7 +101,7 @@ namespace Control
 			Generators::WeaponGenerator gen;
 			Game::Weapon* w = gen.Generate(5.f, 2.f);
 			label.SetText(gen.GetName() + "\n-----\n" + gen.GetDescr());
-			m_ship->SetWeapon(0, *w);
+			m_ship->SetWeapon(2, *w);
 		}
 	}
 

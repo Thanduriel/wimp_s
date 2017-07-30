@@ -6,6 +6,7 @@
 #include "factorycomponent.hpp"
 #include "gameplay/elements/socketcomponent.hpp"
 #include "gameplay/elements/light.hpp"
+#include "utils/fixedarray.hpp"
 
 namespace Game
 {
@@ -91,6 +92,6 @@ namespace Game
 		float m_angularAcceleration;
 
 		std::array < PointLightComponent, 2 > m_staticLights;
-		std::array < SocketComponent, 2> m_weaponSockets;
+		FixedArray<SocketComponent> m_weaponSockets;
 	};
 }

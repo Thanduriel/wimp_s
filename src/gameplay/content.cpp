@@ -6,6 +6,8 @@ namespace Game {
 	std::unordered_map<std::string, BoundingMesh*> Content::boundingMeshes;
 	std::unordered_map<Content::BoundingMeshKeyType, BoundingMesh*> Content::anonymBoundingMeshes;
 
+	Jo::Files::MetaFileWrapper* Content::shipData;
+
 	BoundingMesh& Content::GetBoundingMesh(const std::string& _name)
 	{
 		auto it = boundingMeshes.find(_name);
@@ -41,6 +43,29 @@ namespace Game {
 		return m;
 	}
 
+	const Jo::Files::MetaFileWrapper& Content::GetShipData()
+	{
+		if (!shipData)
+		{
+			try {
+				Jo::Files::HDDFile file("ships.json");
+
+				// the arrays of string in this file cause leaks
+				// todo: fix this
+				int flags = _CrtSetDbgFlag(_CRTDBG_REPORT_FLAG);
+				_CrtSetDbgFlag(flags & ~_CRTDBG_ALLOC_MEM_DF);
+
+				shipData = new Jo::Files::MetaFileWrapper(file, Jo::Files::Format::JSON);
+				
+				_CrtSetDbgFlag(flags);
+			}
+			catch (std::string _message) {
+				LOG_ERROR("Failed to load ship data file with message:\n" + _message + '\n' + "\n");
+			}
+		}
+		return *shipData;
+	}
+
 	void Content::Unload()
 	{
 		for (auto p : boundingMeshes)
@@ -48,5 +73,7 @@ namespace Game {
 
 		for (auto p : anonymBoundingMeshes)
 			delete p.second;
+
+		if(shipData) delete shipData;
 	}
 }
