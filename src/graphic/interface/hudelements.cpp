@@ -12,7 +12,7 @@ namespace Graphic
 	ScreenTexture::ScreenTexture(const std::string& _name, Vec2 _position, Vec2 _size,
 		DefinitionPoint _def, Anchor _anchor,
 		std::function<void()> _OnMouseUp) :
-		ScreenOverlay(_position, _size, _def, _anchor, _OnMouseUp)
+		ScreenOverlay(_position, _size, _def, _anchor)
 	{
 		Jo::Files::MetaFileWrapper& posMap = Resources::GetTextureMap();
 		m_vertex.position = m_position;
@@ -29,6 +29,7 @@ namespace Graphic
 		}
 		else
 			m_vertex.screenSize = _size;
+		m_vertex.color = Utils::Color8U(255_uc, 255_uc, 255_uc);
 	}
 
 	void ScreenTexture::Register(Hud& _hud)

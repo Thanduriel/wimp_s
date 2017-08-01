@@ -46,6 +46,9 @@ namespace Game {
 		const ei::Mat3x3& GetRotationMatrix() const { return m_rotationMatrix; }
 		const ei::Mat3x3& GetInverseRotationMatrix() const { return m_inverseRotationMatrix; }
 
+		float GetHealth() const { return m_health; }
+		float GetMaxHealth() const { return m_maxHealth; }
+
 		// Destroys the object
 		void Destroy();
 		// Is object to be destroyed?
@@ -79,6 +82,7 @@ namespace Game {
 		// shows if the object is to be destroyed
 		bool m_isDestroyed;
 		float m_health;
+		float m_maxHealth;
 	};
 
 

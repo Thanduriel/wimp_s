@@ -46,6 +46,7 @@ namespace Game
 			m_thrustLights.emplace(THISACTOR, m_drivePositions[i], 2.f, Utils::Color8U(0.f, 1.f, 0.f));
 		}
 		m_health = _node["BaseHealth"s].Get(42.f);
+		m_maxHealth = m_health;
 
 		// todo: make depended on acceleration
 		static thread_local Generators::RandomGenerator rng(0x614AA);

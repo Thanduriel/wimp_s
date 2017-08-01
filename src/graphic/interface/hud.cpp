@@ -12,7 +12,9 @@ namespace Graphic
 	Hud::Hud(Vec2 _pos, Vec2 _size, const std::string& _texture, CursorType _cursor) :
 		ScreenOverlay(ei::Vec2(_pos[0],_pos[1] + _size[1]), _size),
 
-		m_characters( VertexArrayBuffer::PrimitiveType::POINT, {{VertexAttribute::VEC2, 11}, {VertexAttribute::VEC2, 12}, {VertexAttribute::VEC2, 13}, {VertexAttribute::VEC2, 14}} ),
+		m_characters( VertexArrayBuffer::PrimitiveType::POINT, {{VertexAttribute::VEC2, 11}, 
+			{VertexAttribute::VEC2, 12}, {VertexAttribute::VEC2, 13}, {VertexAttribute::VEC2, 14},
+			{VertexAttribute::COLOR, 15} }),
 		m_texContainer(Resources::GetTexture(_texture)),
 		m_preElem(nullptr),
 		m_showCursor(_cursor),

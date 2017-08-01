@@ -15,6 +15,7 @@ namespace GameStates {
 		void UpdateCrossHair(float _sprayRadius);
 		
 		Graphic::FillBar& GetEnergyBar() { return *m_energyBar; }
+		Graphic::FillBar& GetHealthBar() { return *m_healthBar; }
 	private:
 		Graphic::ScreenTexture* m_outerSpeedBar;
 		Graphic::ScreenTexture* m_innerSpeedBar;
@@ -25,5 +26,6 @@ namespace GameStates {
 		Graphic::ScreenTexture* m_crossHairRight;
 
 		Graphic::FillBar* m_energyBar;
+		Graphic::FillBar* m_healthBar;
 	};
 }

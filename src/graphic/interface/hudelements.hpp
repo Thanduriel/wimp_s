@@ -15,6 +15,7 @@ namespace Graphic {
 		ei::Vec2 screenSize;
 		ei::Vec2 texCoord;	///< Texture position (XY = [0,1]x[0,1]) relative to the lower left corner (0,0)
 		ei::Vec2 size;		///< Width and height relative to the texture size [0,1]x[0,1]
+		Utils::Color8U color;
 	};
 
 	/// \brief A 2d screen overlay texture 
@@ -32,6 +33,9 @@ namespace Graphic {
 		virtual void SetPosition(ei::Vec2 _pos) override;
 		virtual void SetSize(ei::Vec2 _size) override;
 		virtual void Scale(ei::Vec2 _scale) override;
+
+		// The color sampled from the texture is multiplied by this color.
+		void SetColor(Utils::Color8U _color) { m_vertex.color = _color; }
 
 		/// \brief scales the rectangle of the source texture that is used
 		/// \param _scale the new size relative to the initial size
