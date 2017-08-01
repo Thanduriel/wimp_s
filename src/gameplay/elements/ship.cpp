@@ -27,7 +27,7 @@ namespace Game
 		m_targetAngularVelocity(0.f),
 		m_maxEnergy(10.f),
 		m_energy(m_maxEnergy),
-		m_energyRecharge(0.5f),
+		m_energyRecharge(1.5f),
 		m_drivePositions(_node["DriveSockets"s].Size()),
 		m_weaponSockets(_node["WeaponSockets"s].Size()),
 		m_thrustParticles(m_drivePositions.capacity()),

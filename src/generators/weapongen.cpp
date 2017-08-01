@@ -11,6 +11,7 @@ namespace Generators {
 		ExtD,
 		ExtC,
 		HighPower,
+		Gatling,
 		WTTCOUNT // since this is not in its own name space
 	};
 
@@ -21,7 +22,8 @@ namespace Generators {
 		{"[EXT_R]", "10% increased rate of fire", false},
 		{"[EXT_D]", "12% increased damage", false},
 		{"[EXT_C]", "15% reduced power consumption", false},
-		{"High Power", "2x damage, 2x power consumption", true}
+		{"of High Power", "2x damage, 2x power consumption", false},
+		{"Gatling", "fire rate increases with continues fire", false}
 	} };
 
 	enum struct WeaponType {
@@ -127,6 +129,7 @@ namespace Generators {
 			switch (trait)
 			{
 			case WeaponTraitType::Burst: lateTraits.push_back(Burst);
+				hasTrait[Gatling] = 1; // prevent these two traits to appear on the same weapon
 				break;
 			case WeaponTraitType::Twin: lateTraits.push_back(Twin);
 				break;
@@ -137,6 +140,9 @@ namespace Generators {
 			case WeaponTraitType::ExtC: eCost *= 0.85f;
 				break;
 			case WeaponTraitType::HighPower: damage *= 2.f; eCost *= 2.f;
+				break;
+			case WeaponTraitType::Gatling: lateTraits.push_back(Gatling);
+				hasTrait[Burst] = 1;
 				break;
 			default:
 				Assert(false, "Trait not implemented.");
@@ -166,6 +172,8 @@ namespace Generators {
 			case Burst: reloadFn = WeaponTrait::ReloadBurstFire();
 				break;
 			case Twin: fireFn = WeaponTrait::FireDouble(std::move(projGenerator));
+				break;
+			case Gatling: reloadFn = WeaponTrait::ReloadBuildUp();
 				break;
 			default:
 				Assert(false, "This trait should not be added late");

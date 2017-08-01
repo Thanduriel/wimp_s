@@ -52,7 +52,8 @@ namespace Game {
 
 		// reload behavior altering traits
 		static Weapon::ReloadFunction ReloadDefault();
-		static Weapon::ReloadFunction ReloadBurstFire(float _highFactor = 2.f, float _lowFactor = 0.25f, int _numShots = 10);
+		static Weapon::ReloadFunction ReloadBurstFire(float _highFactor = 2.5f, float _lowFactor = 0.25f, int _numShots = 10);
+		static Weapon::ReloadFunction ReloadBuildUp(float _speedUp = 2.f, int _numShots = 6);
 
 		// fire traits
 		// this functions require a generator function that can spawn a single projectile.

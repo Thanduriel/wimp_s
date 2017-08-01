@@ -17,25 +17,66 @@ namespace Game {
 	{
 		struct Functor
 		{
-			float cdMod = 0.f;
+			Functor(float _h, float _l, int _n)
+				: highFactor(_h), lowFactor(_l), numShots(_n),
+				a((lowFactor - highFactor) / (numShots*numShots))
+			{}
+
+			float x = 0.f;
+			float highFactor;
+			float lowFactor;
+			int numShots;
+			float a;
 			void operator()(Weapon& _weapon, float _deltaTime)
 			{
-				float fact = cdMod < 1.f ? 0.5f : 2.f;
-				fact *= _deltaTime;
-				if (_weapon.m_cooldown < 0.f)
+				// factor for recovery
+				float y = a * x * x + highFactor;
+				// effective time reduced
+				float f = _deltaTime * y;
+				if (_weapon.m_cooldown <= 0.f)
 				{
-					// store additional shots
-					cdMod = ei::min(cdMod + _deltaTime * 2.f, 5.f);
+					// cool down to zero
+					x = ei::max(0.f, x - _deltaTime / _weapon.m_cooldownMax);
 				}
-				else
-					cdMod = ei::max(cdMod - fact, 0.f);
-				_weapon.m_cooldown -= fact;
+				else // heat up
+					x = ei::min(x+f/_weapon.m_cooldownMax, (float)numShots);
+				_weapon.m_cooldown -= f;
 			}
 		};
 
-		return Functor();
+		return Functor(_highFactor, _lowFactor, _numShots);
 	}
 
+	Weapon::ReloadFunction WeaponTrait::ReloadBuildUp(float _speedUp, int _numShots)
+	{
+		struct Functor
+		{
+			Functor(float _speedUp, int _numShots) : speedUp(_speedUp-1.f), numShots(_numShots) {}
+			float speedUp;
+			int numShots;
+			float x = 0.f;
+
+			void operator()(Weapon& _weapon, float _deltaTime)
+			{
+				float y = 1.f + speedUp * x / numShots;
+				float f = _deltaTime * y;
+
+				if (_weapon.m_cooldown <= 0.f)
+				{
+					// cool down to zero
+					x = ei::max(0.f, x - _deltaTime/ _weapon.m_cooldownMax);
+				}
+				else // build up
+					x = ei::min(x + f/ _weapon.m_cooldownMax, (float)numShots);
+
+				_weapon.m_cooldown -= f;
+			}
+		};
+
+		return Functor(_speedUp, _numShots);
+	}
+
+	// ********************************************************************* //
 	Weapon::FireFunction WeaponTrait::FireDefault(GenerationFunction&& _generator)
 	{
 		return [=](Weapon& _weapon)
