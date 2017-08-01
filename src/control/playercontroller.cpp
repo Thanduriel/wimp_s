@@ -199,9 +199,12 @@ namespace Control
 
 		m_ship->SetTargetAngularVelocity(m_ship->GetRotationMatrix() * Vec3(-cursor[1], cursor[0], z));
 
+		// update stats on the hud
+		// this might not be the best place for this
 		m_hud.UpdateSpeedLabel(m_ship->GetCurrentSpeed());
 		m_hud.UpdateSpeedBar(m_ship->GetCurrentSpeed(), m_ship->GetMaxSpeed());
 		m_hud.UpdateTargetSpeedSlider(m_targetSpeed, m_ship->GetMaxSpeed());
+		m_hud.GetEnergyBar().SetFillLevel(m_ship->GetEnergy() / m_ship->GetMaxEnergy());
 	//	m_hud.UpdateCrossHair(m_ship->GetSprayRadius());
 	}
 }

@@ -25,6 +25,9 @@ namespace Game
 		m_sprayRadius(0.0f),
 		m_angularAcceleration(1.0f),
 		m_targetAngularVelocity(0.f),
+		m_maxEnergy(10.f),
+		m_energy(m_maxEnergy),
+		m_energyRecharge(0.5f),
 		m_drivePositions(_node["DriveSockets"s].Size()),
 		m_weaponSockets(_node["WeaponSockets"s].Size()),
 		m_thrustParticles(m_drivePositions.capacity()),
@@ -114,6 +117,7 @@ namespace Game
 
 	void Ship::Process(float _deltaTime)
 	{
+		m_energy = ei::min(m_energy + _deltaTime * m_energyRecharge, m_maxEnergy);
 		// Get current speed here for performance reasons
 		float currentSpeed = GetCurrentSpeed();
 
@@ -150,7 +154,7 @@ namespace Game
 			Weapon* weapon = static_cast<Weapon*>(sockets.GetAttached());
 			if (!weapon) continue;
 
-			weapon->Fire(speed);
+			m_energy -= weapon->Fire(speed, m_energy);
 		}
 	}
 

@@ -24,7 +24,9 @@ namespace Game {
 		// Fires this weapon if it is ready.
 		// @param _speed Speed added to a new projectile in addition to its intrinsic speed
 		//		  to emulate the weapon itself moving
-		void Fire(float _speed);
+		// @param _energyAvailable The energy that can be used to fire this weapon.
+		// @return The energy consumed.
+		float Fire(float _speed, float _energyAvailable);
 
 		float GetEnergyCost() const { return m_energyCost; }
 		float GetRange() const { return m_range; }

@@ -65,6 +65,9 @@ namespace Game
 		void SetAngularAcceleration(const float _angularAcceleration) { m_angularAcceleration = _angularAcceleration; };
 		float GetAngularAcceleration() const { return m_angularAcceleration; };
 
+		float GetEnergy() const { return m_energy; }
+		float GetMaxEnergy() const { return m_maxEnergy; }
+
 		void RegisterComponents(class SceneGraph& _sceneGraph);
 		// Fire all weapons straight forward.
 		void Fire();
@@ -95,6 +98,10 @@ namespace Game
 		float m_sprayRadius;
 		Vec3 m_targetAngularVelocity;
 		float m_angularAcceleration;
+
+		float m_maxEnergy;
+		float m_energyRecharge;
+		float m_energy;
 
 	//	ParticleSystemComponent<Graphic::ParticleSystems::BASIC_SYSTEM, true> m_thrustParticles;
 		float m_particleSpawnCount;

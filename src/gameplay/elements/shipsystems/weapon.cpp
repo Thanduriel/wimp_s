@@ -97,13 +97,16 @@ namespace Game {
 		m_reloadImpl(*this, _deltaTime);
 	}
 
-	void Weapon::Fire(float _speed)
+	float Weapon::Fire(float _speed, float _energyAvailable)
 	{
-		if (m_cooldown <= 0.f)
+		if (m_cooldown <= 0.f && m_energyCost < _energyAvailable)
 		{
 			m_beginSpeed = _speed;
 			m_cooldown = m_cooldownMax;
 			m_fireImpl(*this);
+
+			return m_energyCost;
 		}
+		return 0.f;
 	}
 }

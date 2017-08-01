@@ -13,6 +13,8 @@ namespace GameStates {
 		void UpdateSpeedBar(float _speed, float _maxSpeed);
 		void UpdateTargetSpeedSlider(float _targetSpeed, float _maxSpeed);
 		void UpdateCrossHair(float _sprayRadius);
+		
+		Graphic::FillBar& GetEnergyBar() { return *m_energyBar; }
 	private:
 		Graphic::ScreenTexture* m_outerSpeedBar;
 		Graphic::ScreenTexture* m_innerSpeedBar;
@@ -21,5 +23,7 @@ namespace GameStates {
 		Graphic::ScreenTexture* m_crossHairDot;
 		Graphic::ScreenTexture* m_crossHairLeft;
 		Graphic::ScreenTexture* m_crossHairRight;
+
+		Graphic::FillBar* m_energyBar;
 	};
 }
