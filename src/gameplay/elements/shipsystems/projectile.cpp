@@ -109,7 +109,7 @@ namespace Game {
 		SetVelocity(GetVelocity() + m_rotationMatrix * Vec3(0.f, 0.f, _deltaTime) * 5.f);
 
 		m_particleSpawnCount += _deltaTime * PARTICLESPAWN;
-		static Generators::RandomGenerator rng(0x614AA);
+		static thread_local Generators::RandomGenerator rng(0x614AA);
 		while (m_particleSpawnCount > 1.f)
 		{
 			--m_particleSpawnCount;

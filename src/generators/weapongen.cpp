@@ -52,8 +52,8 @@ namespace Generators {
 		{8.f, 20.f}
 	} };
 
-	WeaponGenerator::WeaponGenerator()
-		: m_rng(clock()),
+	WeaponGenerator::WeaponGenerator(uint32_t _seed)
+		: m_rng(_seed ? _seed : clock()),
 		m_randomSampler(m_rng)
 	{
 	}
@@ -186,6 +186,14 @@ namespace Generators {
 			std::move(reloadFn));
 	}
 
+	Game::Weapon* WeaponGenerator::Generate(uint32_t _seed, float _power, float _qualityFactor)
+	{
+		m_rng.seed(_seed);
+
+		return Generate(_power, _qualityFactor);
+	}
+
+	// *************************************************************** //
 	Range WeaponGenerator::GetDamageRange(Range _base, float _power)
 	{
 		float f = 1.f + _power / 10.f;

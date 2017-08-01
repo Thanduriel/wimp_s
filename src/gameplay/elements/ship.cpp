@@ -9,8 +9,13 @@ namespace Game
 	using namespace ei;
 	using namespace std;
 
+	//delegate constructor with the node to reduce amount of indirections of the file access
 	Ship::Ship(const string& _pFile, const Vec3& _position, CollisionComponent::Type _collisionType)
-		: Model(Content::GetShipData()[_pFile]["Mesh"s], Content::GetShipData()[_pFile]["BoundingMesh"s], _position, qidentity()),
+		: Ship(Content::GetShipData()[_pFile], _position, _collisionType)
+	{}
+
+	Ship::Ship(const Jo::Files::MetaFileWrapper::Node& _node, const Vec3& _position, CollisionComponent::Type _collisionType)
+		: Model(_node["Mesh"s], _node["BoundingMesh"s], _position, qidentity()),
 		m_thrust(50.0f),
 		m_speed(1.0f),
 		m_minSpeed(0.0f),
@@ -20,18 +25,33 @@ namespace Game
 		m_sprayRadius(0.0f),
 		m_angularAcceleration(1.0f),
 		m_targetAngularVelocity(0.f),
-		m_weaponSockets(Content::GetShipData()[_pFile]["WeaponSockets"s].Size()),
-	//	m_weaponSockets{ {{THISACTOR, Vec3(3.f,1.5f,0.f)}, {THISACTOR, Vec3(-3.f,1.5f,0.f)} } },
-		m_staticLights{ {{THISACTOR, Vec3(3.f, 0.f, -6.f), 5.f, Utils::Color8U(0.f,1.f,0.f)},
-		{THISACTOR, Vec3(-3.f, 0.f, -6.f), 5.f, Utils::Color8U(0.f,1.f,0.f)} } }
+		m_drivePositions(_node["DriveSockets"s].Size()),
+		m_weaponSockets(_node["WeaponSockets"s].Size()),
+		m_thrustParticles(m_drivePositions.capacity()),
+		m_thrustLights(m_drivePositions.capacity()),
+		m_particleSpawnCount(0.f)
 	{
-		auto& node = Content::GetShipData()[_pFile];
-
-		auto& weaponsNode = node["WeaponSockets"s];
+		auto& weaponsNode = _node["WeaponSockets"s];
 		for (int i = 0; i < m_weaponSockets.capacity(); ++i)
 			m_weaponSockets.emplace(THISACTOR, GetGeometryComponent().GetMesh().GetSocket(weaponsNode[i]));
-		m_health = node["BaseHealth"s].Get(42.f);
 
+		auto& drivesNode = _node["DriveSockets"s];
+		for (int i = 0; i < m_drivePositions.capacity(); ++i)
+		{
+			m_drivePositions.emplace(GetGeometryComponent().GetMesh().GetSocket(drivesNode[i]));
+			m_thrustParticles.emplace(THISACTOR, m_drivePositions[i]);
+			m_thrustLights.emplace(THISACTOR, m_drivePositions[i], 2.f, Utils::Color8U(0.f, 1.f, 0.f));
+		}
+		m_health = _node["BaseHealth"s].Get(42.f);
+
+		// todo: make depended on acceleration
+		static thread_local Generators::RandomGenerator rng(0x614AA);
+		for(int i = 0; i < m_drivePositions.size(); ++i)
+			m_thrustParticles[i].SetEmitter(200.f, [=]() {return rng.Direction() * 0.1f; },
+				[]() {return Vec3(0.f, 0.f, -1.f); },
+				[=]() {return rng.Uniform(1.f, 3.f); },
+				[]() {return Utils::Color8U(0.5f, 0.2f, 0.7f, 1.f).RGBA(); },
+				[]() {return 0.1f; });
 
 		m_canTakeDamage = true;
 		m_mass = 1.f;
@@ -114,8 +134,11 @@ namespace Game
 		for(auto& socket : m_weaponSockets)
 			_sceneGraph.RegisterComponent(socket);
 
-		for (auto& light : m_staticLights)
+		for (auto& light : m_thrustLights)
 			_sceneGraph.RegisterComponent(light);
+
+		for(auto& ps : m_thrustParticles)
+			_sceneGraph.RegisterComponent(ps);
 	}
 
 	// ***************************************************************************** //

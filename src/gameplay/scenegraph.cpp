@@ -92,7 +92,7 @@ namespace Game {
 
 	void SceneGraph::RegisterComponent(BaseParticleSystemComponent& _component)
 	{
-		RegisterComponent(component_cast<ConstActorComponent>(_component));
+	//	RegisterComponent(component_cast<ConstActorComponent>(_component));
 		RegisterBaseComponent(_component);
 	}
 

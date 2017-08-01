@@ -20,7 +20,7 @@ namespace Game {
 		ei::Vec3 m_positionOffset;
 	};
 
-	template<ei::uint PFlags>
+	template<ei::uint PFlags, bool CanEmit = false>
 	class ParticleSystemComponent : public BaseParticleSystemComponent
 	{
 	public:
@@ -29,7 +29,7 @@ namespace Game {
 			: BaseParticleSystemComponent(_actor, _position),
 			m_system(Graphic::ParticleSystems::Manager::Get<PFlags>(_type))
 		{
-			m_canTick = false;
+			m_canTick = CanEmit;
 		}
 
 		ParticleSystemComponent(const Actor& _actor, const ei::Vec3& _position,
@@ -38,13 +38,17 @@ namespace Game {
 			m_system(Graphic::ParticleSystems::Manager::Get<PFlags>(
 				Graphic::ParticleSystems::RenderType::TEXQUAD,&_texture))
 		{
-			m_canTick = false;
+			m_canTick = CanEmit;
 		}
 
 		ParticleSystemComponent(const Actor& _actor, const ParticleSystemComponent& _orig)
 			: BaseParticleSystemComponent(_actor, _orig.m_positionOffset),
-			m_system(_orig.m_system) 
-		{}
+			m_system(_orig.m_system),
+			m_generatorFunc(_orig.m_generatorFunc),
+			m_spawnCount(_orig.m_spawnCount)
+		{
+			m_canTick = CanEmit;
+		}
 
 
 		// Add a managed particle to the system associated with this Component.
@@ -79,9 +83,33 @@ namespace Game {
 				std::forward<Args>(_args)...);
 		}
 
+		template<typename... Args>
+		void SetEmitter(float _numP, Args&&... _args)
+		{
+			Assert(CanEmit, "CanEmit has to be true to setup an Emitter.");
+			m_output = _numP;
+			m_spawnCount = 0.f;
+			m_generatorFunc = [=]()
+			{
+				AddParticleV(_args()...);
+			};
+		}
+		
+		void ProcessComponent(float _deltaTime) override
+		{
+//			Assert(m_generatorFunc, "A generator has to be setup with SetEmitter.");
+			m_spawnCount += m_output * _deltaTime;
+			while (m_spawnCount > 1.f)
+			{
+				--m_spawnCount;
+				m_generatorFunc();
+			}
+		}
 	private:
 		Graphic::ParticleSystems::System<PFlags>& m_system;
-		std::function<void(const ParticleSystemComponent&)> m_generatorFunc;
+		std::function<void()> m_generatorFunc;
+		float m_spawnCount;
+		float m_output;
 	};
 
 	template<ei::uint PFlags>

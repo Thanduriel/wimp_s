@@ -9,7 +9,7 @@ namespace Generators{
 	class WeaponGenerator
 	{
 	public:
-		WeaponGenerator();
+		WeaponGenerator(uint32_t _seed = 0x0);
 
 		/* Generate() **********************
 		 * Generates a random weapon.
@@ -19,6 +19,7 @@ namespace Generators{
 		 *		 p = damage / (energy * cooldown)
 		 */
 		Game::Weapon* Generate(float _power, float _qualityFactor = 1.f);
+		Game::Weapon* Generate(uint32_t _seed, float _power, float _qualityFactor = 1.f);
 
 		// Returns the description of the last item.
 		// Only temporary, this should be handled by Item

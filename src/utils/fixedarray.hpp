@@ -13,6 +13,14 @@ public:
 		m_size(0)
 	{}
 
+	~FixedArray()
+	{
+		for (size_t i = 0; i < m_size; ++i)
+			m_data[i].~T();
+
+		delete[] reinterpret_cast<char*>(m_data);
+	}
+
 	template<typename... Args>
 	void emplace(Args&&... _args)
 	{
@@ -26,10 +34,10 @@ public:
 
 	size_t size() const { return m_size; }
 	size_t capacity() const { return m_capacity; }
-	T* begin() { return &m_data[0]; }
-	T* end() { return m_data.get() + m_size; }
+	T* begin() { return m_data; }
+	T* end() { return m_data + m_size; }
 private:
-	std::unique_ptr<T[]> m_data;
+	T* m_data;
 	size_t m_size;
 	size_t m_capacity;
 };

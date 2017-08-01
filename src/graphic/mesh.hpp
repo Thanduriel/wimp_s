@@ -20,7 +20,7 @@ namespace Graphic {
 		// positioned at point 0, that contains all vertices.
 		const Utils::MeshInfo& GetMeshBounds() const { return m_meshBounds; }
 
-		const ei::Vec3& GetSocket (const std::string& _name) const { return m_sockets.at(_name); }
+		const ei::Vec3& GetSocket(const std::string& _name) const;
 	private:
 		struct Vertex
 		{

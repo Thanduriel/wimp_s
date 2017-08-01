@@ -7,6 +7,8 @@
 #include "gameplay/elements/socketcomponent.hpp"
 #include "gameplay/elements/light.hpp"
 #include "utils/fixedarray.hpp"
+#include "jofilelib.hpp"
+#include "particlesystemcomponent.hpp"
 
 namespace Game
 {
@@ -74,6 +76,9 @@ namespace Game
 		// Activates the given weapon in _slot.
 		void SetWeapon(int _slot, class Weapon& _weapon);
 	private:
+		// actual constructor
+		Ship(const Jo::Files::MetaFileWrapper::Node& _node, const Vec3& _position, CollisionComponent::Type _collisionType);
+
 		// the power of acceleration
 		float m_thrust;
 		// the speed at which the ship will fly
@@ -91,7 +96,11 @@ namespace Game
 		Vec3 m_targetAngularVelocity;
 		float m_angularAcceleration;
 
-		std::array < PointLightComponent, 2 > m_staticLights;
+	//	ParticleSystemComponent<Graphic::ParticleSystems::BASIC_SYSTEM, true> m_thrustParticles;
+		float m_particleSpawnCount;
+		FixedArray<ei::Vec3> m_drivePositions;
+		FixedArray<ParticleSystemComponent<Graphic::ParticleSystems::BASIC_SYSTEM, true>> m_thrustParticles;
+		FixedArray< PointLightComponent > m_thrustLights;
 		FixedArray<SocketComponent> m_weaponSockets;
 	};
 }

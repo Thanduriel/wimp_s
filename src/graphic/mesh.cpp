@@ -29,6 +29,12 @@ namespace Graphic {
 		Device::DrawVertices(m_vertices, 0, m_vertices.GetNumVertices());
 	}
 
+	const ei::Vec3& Mesh::GetSocket(const std::string& _name) const
+	{
+		Assert(m_sockets.find(_name) != m_sockets.end(), "No socket with the name " + _name + " found.");
+		return m_sockets.at(_name);
+	}
+
 	void Mesh::Load(std::istream& _stream, size_t _numVertices)
 	{
 		using namespace Utils;
