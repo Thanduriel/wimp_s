@@ -187,10 +187,11 @@ namespace Game {
 	}
 
 	// *********************************************************** //
-	CollisionComponent* SceneGraph::RayCast(const ei::Ray& _ray, float _maxDist)
+	CollisionComponent* SceneGraph::RayCast(const ei::Ray& _ray, float _maxDist, uint32_t _type)
 	{
 		for (CollisionComponent* component : m_collisionComponents)
 		{
+			if (!(component->GetType() & _type)) continue;
 			float d;
 			if (component->RayCastFast(_ray, d) && d < _maxDist && component->RayCast(_ray, d))
 			{
@@ -206,13 +207,14 @@ namespace Game {
 		using namespace ei;
 		// todo order components to perform less checks
 		for (size_t i = 0; i < m_collisionComponents.size(); ++i)
+		{
+			CollisionComponent* slfComp = m_collisionComponents[i];
+			if (!slfComp->GetType() & CollisionComponent::Type::Any) continue;
+
 			for (size_t j = i + 1; j < m_collisionComponents.size(); ++j)
 			{
-				CollisionComponent* slfComp = m_collisionComponents[i];
 				CollisionComponent* othComp = m_collisionComponents[j];
-				if (slfComp->GetType() == CollisionComponent::Type::NonPlayer
-					&& othComp->GetType() == CollisionComponent::Type::NonPlayer)
-					continue;
+				if (!othComp->GetType() & CollisionComponent::Type::Any) continue;
 
 				Actor& slf = slfComp->GetActor();
 				Actor& oth = othComp->GetActor();
@@ -229,11 +231,13 @@ namespace Game {
 						slf.OnCollision(oth);
 						oth.OnCollision(slf);
 
-						// some very simple impulse
-						DynamicActor* slfDyn = dynamic_cast<DynamicActor*>(&slf);
-						DynamicActor* othDyn = dynamic_cast<DynamicActor*>(&oth);
-						if (slfDyn && othDyn)
+						static const uint32_t PHYSICSBODY = CollisionComponent::Type::Solid;
+						// resolve impulse
+						if (slfComp->GetType() & PHYSICSBODY && othComp->GetType() & PHYSICSBODY)
 						{
+							DynamicActor* slfDyn = static_cast<DynamicActor*>(&slf);
+							DynamicActor* othDyn = static_cast<DynamicActor*>(&oth);
+
 							Vec3 radiusSlf = hitInfo.position - slf.GetPosition(); //point
 							Vec3 radiusOth = hitInfo.position - oth.GetPosition();
 							float massSlf = slfDyn->GetMass();
@@ -263,5 +267,6 @@ namespace Game {
 					}
 				}
 			}
+		}
 	}
 }

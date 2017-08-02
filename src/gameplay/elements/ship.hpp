@@ -18,7 +18,7 @@ namespace Game
 	class Ship : public Model
 	{
 	public:
-		Ship(const string& _pFile, const Vec3& _position, CollisionComponent::Type _collisionType = CollisionComponent::Type::Any);
+		Ship(const string& _pFile, const Vec3& _position);
 
 		void Process(float _deltaTime) override;
 
@@ -80,7 +80,7 @@ namespace Game
 		void SetWeapon(int _slot, class Weapon& _weapon);
 	private:
 		// actual constructor
-		Ship(const Jo::Files::MetaFileWrapper::Node& _node, const Vec3& _position, CollisionComponent::Type _collisionType);
+		Ship(const Jo::Files::MetaFileWrapper::Node& _node, const Vec3& _position);
 
 		// the power of acceleration
 		float m_thrust;

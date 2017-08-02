@@ -38,7 +38,7 @@ namespace GameStates {
 			Utils::Color32F(0.f, 1.f, 0.f, 0.6f), 2.f, 2.f,
 			50.f, GridComponent::TransitionInfo(4800.f, 0.25f));
 		m_sceneGraph.Add(*grid);
-		Ship* ship = new Ship("TestShip", Vec3(0.f), CollisionComponent::Type::NonPlayer);
+		Ship* ship = new Ship("TestShip", Vec3(0.f));
 		m_sceneGraph.Add(*ship);
 		m_playerController = new Control::PlayerController(*ship, *grid, *blackHole, m_hud, m_gameTimeControl);
 		Control::g_camera.Attach(*ship);

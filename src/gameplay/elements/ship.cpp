@@ -10,11 +10,11 @@ namespace Game
 	using namespace std;
 
 	//delegate constructor with the node to reduce amount of indirections of the file access
-	Ship::Ship(const string& _pFile, const Vec3& _position, CollisionComponent::Type _collisionType)
-		: Ship(Content::GetShipData()[_pFile], _position, _collisionType)
+	Ship::Ship(const string& _pFile, const Vec3& _position)
+		: Ship(Content::GetShipData()[_pFile], _position)
 	{}
 
-	Ship::Ship(const Jo::Files::MetaFileWrapper::Node& _node, const Vec3& _position, CollisionComponent::Type _collisionType)
+	Ship::Ship(const Jo::Files::MetaFileWrapper::Node& _node, const Vec3& _position)
 		: Model(_node["Mesh"s], _node["BoundingMesh"s], _position, qidentity()),
 		m_thrust(50.0f),
 		m_speed(1.0f),
@@ -59,7 +59,8 @@ namespace Game
 
 		m_canTakeDamage = true;
 		m_mass = 1.f;
-		GetCollisionComponent().SetType(_collisionType);
+		GetCollisionComponent().SetType(CollisionComponent::Type::Any | CollisionComponent::Type::Solid 
+			| CollisionComponent::Type::Ship | CollisionComponent::Type::Dynamic);
 
 		// temporary weapon setup
 		Weapon& weapon1 = FactoryActor::GetThreadLocalInstance().Make<Weapon>();

@@ -37,11 +37,11 @@ namespace Game {
 	class CollisionComponent : public ActorComponent
 	{
 	public:
-		CollisionComponent(Actor& _actor, float _boundingRadius, const ei::Box& _boundingBox);
+		CollisionComponent(Actor& _actor, float _boundingRadius, const ei::Box& _boundingBox, uint32_t _type);
 		// Create a simple CollisionComponent that uses only the bounding sphere.
-		CollisionComponent(Actor& _actor, float _boundingRadius);
+		CollisionComponent(Actor& _actor, float _boundingRadius, uint32_t _type);
 		// Create a CollisionComponent from a BoundingMesh
-		CollisionComponent(Actor& _actor, const std::string& _name);
+		CollisionComponent(Actor& _actor, const std::string& _name, uint32_t _type);
 		CollisionComponent(Actor& _actor, const CollisionComponent& _other);
 
 		bool Check(const CollisionComponent& _other, HitInfo& _info) const;
@@ -55,25 +55,27 @@ namespace Game {
 		const BoundingMesh& GetBoundingMesh() const { return m_boundingMesh; }
 		float GetVolume() const { return m_volume; }
 
-		// Restricts which sets of components can collide with each other.
-		// x indicates that the types can collide.
-		//     Any NP
-		// Any  x  x
-		// NP   x  -
-		enum struct Type 
-		{
-			Any,
-			NonPlayer
+		// Restricts collisions and raycasts with this component.
+		// A CollisionComponent with the Any bit set will be considered for intersection.
+		// Only if both Objects are solid physical resolve is done.
+		struct Type{
+			enum Value
+			{
+				Any = 1,
+				Solid = 2,
+				Dynamic = 4,
+				Ship = 8
+			};
 		};
-		Type GetType() const { return m_type; }
-		void SetType(Type _type) { m_type = _type; }
+		uint32_t GetType() const { return m_type; }
+		void SetType(uint32_t _type) { m_type = _type; }
 
 		ei::Mat3x3 ComputeInertiaTensor(float _mass) const;
 	private:
 		float m_volume;
 		float m_boundingRadius;
 		float m_boundingRadiusSq;
-		Type m_type;
+		uint32_t m_type;
 		const BoundingMesh& m_boundingMesh;
 		bool m_isSimple = false; // this component can be approximated by its bounding sphere
 	};

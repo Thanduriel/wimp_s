@@ -235,22 +235,22 @@ namespace Game {
 
 	// *************************************************************** //
 	CollisionComponent::CollisionComponent(Actor& _actor, float _boundingRadius, 
-		const ei::Box& _boundingBox)
+		const ei::Box& _boundingBox, uint32_t _type)
 		: ActorComponent(_actor),
 		m_boundingRadius(_boundingRadius),
 		m_boundingRadiusSq(_boundingRadius*_boundingRadius),
-		m_type(Type::Any),
+		m_type(_type),
 		m_boundingMesh(Content::GetBoundingMesh(std::make_pair(_boundingBox.min,_boundingBox.max)))
 	{
 		ei::Vec3 v = _boundingBox.max - _boundingBox.min;
 		m_volume = v.x * v.y * v.z;
 	}
 
-	CollisionComponent::CollisionComponent(Actor& _actor, float _boundingRadius)
+	CollisionComponent::CollisionComponent(Actor& _actor, float _boundingRadius, uint32_t _type)
 		: ActorComponent(_actor),
 		m_boundingRadius(_boundingRadius),
 		m_boundingRadiusSq(_boundingRadius*_boundingRadius),
-		m_type(Type::Any),
+		m_type(_type),
 		m_boundingMesh(Content::GetBoundingMesh()),
 		m_isSimple(true)
 	{
@@ -258,10 +258,10 @@ namespace Game {
 	}
 
 	// *************************************************************** //
-	CollisionComponent::CollisionComponent(Actor& _actor, const std::string& _name)
+	CollisionComponent::CollisionComponent(Actor& _actor, const std::string& _name, uint32_t _type)
 		:ActorComponent(_actor),
 		m_boundingMesh(Content::GetBoundingMesh(_name)),
-		m_type(Type::Any)
+		m_type(_type)
 	{
 		ei::Vec3 v = m_boundingMesh.upperBound - m_boundingMesh.lowerBound;
 		m_volume = v.x * v.y * v.z;
@@ -274,7 +274,7 @@ namespace Game {
 		: ActorComponent(_actor),
 		m_boundingRadius(_orig.m_boundingRadius),
 		m_boundingRadiusSq(_orig.m_boundingRadiusSq),
-		m_type(Type::Any),
+		m_type(_orig.m_type),
 		m_volume(_orig.m_volume),
 		m_boundingMesh(_orig.m_boundingMesh),
 		m_isSimple(_orig.m_isSimple)
