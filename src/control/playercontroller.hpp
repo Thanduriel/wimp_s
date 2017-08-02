@@ -2,11 +2,13 @@
 
 #include "ei/vector.hpp"
 #include "gameplay/elements/grid.hpp"
+#include "gameplay/core/actor.hpp"
 
 namespace Game {
 	class Model;
 	class Actor;
 	class Ship;
+	class SceneGraph;
 }
 
 namespace GameStates {
@@ -46,6 +48,7 @@ namespace Control
 		void SetMouseSensitivity(const Vec2& _sensitivity) { m_mouseSensitivity = _sensitivity; };
 		const Vec2& GetMouseSensitivity() const { return m_mouseSensitivity; };
 
+		static void SetSceneGraph(Game::SceneGraph& _graph) { s_sceneGraph = &_graph; }
 	private:
 		enum struct TargetingMode
 		{
@@ -72,5 +75,9 @@ namespace Control
 		Game::Actor& m_indicator;
 		GameStates::MainHud& m_hud;
 		GameTimeControl& m_controlParams;
+
+		Game::Actor::Handle m_focus;
+
+		static Game::SceneGraph* s_sceneGraph;
 	};
 }

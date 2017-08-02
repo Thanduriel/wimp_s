@@ -102,11 +102,19 @@ namespace Game {
 	{}
 
 	// ********************************************************************** //
+	const float TARGETING_STRENGTH = 0.2f;
 	void Rocket::Process(float _deltaTime)
 	{
 		Projectile::Process(_deltaTime);
 
-		SetVelocity(GetVelocity() + m_rotationMatrix * Vec3(0.f, 0.f, _deltaTime) * 5.f);
+		if (m_target && *m_target)
+		{
+			float l = ei::len(m_velocity);
+			SetVelocity(GetVelocity() * (1.f - TARGETING_STRENGTH * _deltaTime) + normalize((**m_target)->GetPosition() - m_position) 
+				* _deltaTime * (15.f + l * TARGETING_STRENGTH));
+			SetRotation(ei::Quaternion(ei::Vec3(0.f, 0.f, 1.f), GetVelocity()));
+		}
+		else SetVelocity(GetVelocity() + m_rotationMatrix * Vec3(0.f, 0.f, _deltaTime) * 15.f);
 
 		m_particleSpawnCount += _deltaTime * PARTICLESPAWN;
 		static thread_local Generators::RandomGenerator rng(0x614AA);

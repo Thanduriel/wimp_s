@@ -31,6 +31,8 @@ namespace GameStates {
 		: m_starbackground(2000, 20000.f, 14000),
 		m_gameTimeControl{1.f}
 	{
+		PlayerController::SetSceneGraph(m_sceneGraph);
+
 		// setup player controller
 		blackHole = new BlackHole(ei::Vec3(-15.f), 5.f);
 		m_sceneGraph.Add(*blackHole);
@@ -44,7 +46,7 @@ namespace GameStates {
 		Control::g_camera.Attach(*ship);
 
 		// test actors
-		ship = new EnemyShip("TestShip", Vec3(50.f,0.f,100.f), *ship);
+		ship = new EnemyShip("TestShip", Vec3(50.f,0.f,100.f), ship->GetHandle());
 		m_sceneGraph.Add(*ship);
 		ship2 = ship;
 	}
@@ -64,10 +66,6 @@ namespace GameStates {
 	//	ei::Ray ray(Vec3(m_playerController->GetShip().GetPosition()),
 	//		normalize(m_playerController->GetShip().GetRotationMatrix() * Vec3(0.f, 0.f, 1.f)));
 	//	ray.origin += ray.direction * (m_playerController->GetShip().GetCollisionComponent().GetBoundingRadius()+1.f);
-		if (m_sceneGraph.RayCast(g_camera.GetRay(Vec2(0.f, 0.f)), 200.f))
-			m_hud.UpdateCrossHair(1.f);
-		else
-			m_hud.UpdateCrossHair(0.f);
 
 	//	ship2->SetPosition(m_playerController->GetShip().GetPosition());
 	//	ship2->SetRotation(m_playerController->GetShip().GetRotation());

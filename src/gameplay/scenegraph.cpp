@@ -187,7 +187,7 @@ namespace Game {
 	}
 
 	// *********************************************************** //
-	CollisionComponent* SceneGraph::RayCast(const ei::Ray& _ray, float _maxDist, uint32_t _type)
+	Actor::Handle SceneGraph::RayCast(const ei::Ray& _ray, float _maxDist, uint32_t _type)
 	{
 		for (CollisionComponent* component : m_collisionComponents)
 		{
@@ -195,10 +195,10 @@ namespace Game {
 			float d;
 			if (component->RayCastFast(_ray, d) && d < _maxDist && component->RayCast(_ray, d))
 			{
-				return component;
+				return component->GetActor().GetHandle();
 			}
 		}
-		return nullptr;
+		return Actor::NullHandle;
 	}
 
 	// *********************************************************** //

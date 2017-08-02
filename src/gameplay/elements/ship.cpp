@@ -174,6 +174,16 @@ namespace Game
 		}
 	}
 
+	void Ship::SetWeaponTarget(const Actor& _actor)
+	{
+		for (auto& socket : m_weaponSockets)
+		{
+			Weapon* weapon = static_cast<Weapon*>(socket.GetAttached());
+			if (weapon)
+				weapon->SetTarget(_actor);
+		}
+	}
+
 	void Ship::SetWeapon(int _slot, Weapon& _weapon)
 	{
 		m_weaponSockets[_slot].GetAttached()->Destroy();

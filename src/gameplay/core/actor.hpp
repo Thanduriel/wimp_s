@@ -15,6 +15,12 @@ namespace Game {
 	public:
 		Actor();
 		Actor(const ei::Vec3& _position, const ei::Quaternion& _rotation = ei::qidentity());
+		Actor(const Actor& _orig);
+		// this could be implemented sensibly but the auto generated version does not work due to m_handle
+		Actor(Actor&&) = delete;
+		Actor& operator=(const Actor&) = delete;
+		Actor& operator=(Actor&&) = delete;
+
 		virtual ~Actor();
 
 		// Override this to register components.
@@ -64,6 +70,26 @@ namespace Game {
 		virtual void Process(float _deltaTime) {}
 
 		bool CanTick() const { return m_canTick; }
+
+		struct HandleImpl
+		{
+			HandleImpl(Actor& _actor) : actor(&_actor) {}
+
+			Actor* operator*()
+			{
+				return actor;
+			}
+
+			operator bool() { return actor != nullptr; }
+		private:
+			friend class Actor;
+			Actor* actor;
+		};
+		typedef std::shared_ptr<HandleImpl> Handle;
+		static const Handle NullHandle;
+
+		Handle GetHandle() { return m_handle; }
+		const Handle GetHandle() const { return m_handle; }
 	protected:
 		void UpdateMatrices();
 
@@ -83,6 +109,8 @@ namespace Game {
 		bool m_isDestroyed;
 		float m_health;
 		float m_maxHealth;
+
+		Handle m_handle;
 	};
 
 

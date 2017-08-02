@@ -76,6 +76,8 @@ namespace Game
 		//has its endpoint on the given ray in front of the ship.
 		void AdjustWeaponOrientation(const ei::Vec3& _targetDir);
 
+		void SetWeaponTarget(const Actor& _actor);
+
 		// Activates the given weapon in _slot.
 		void SetWeapon(int _slot, class Weapon& _weapon);
 	private:

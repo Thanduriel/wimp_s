@@ -9,6 +9,7 @@
 #include "gameplay/core/component.hpp"
 #include "gameplay/elements/ship.hpp"
 #include "gamestates/huds/mainhud.hpp"
+#include "gameplay/scenegraph.hpp"
 
 // test
 #include "generators/weapongen.hpp"
@@ -16,6 +17,8 @@
 namespace Control
 {
 	using namespace ei;
+
+	Game::SceneGraph* PlayerController::s_sceneGraph = nullptr;
 
 	const float TACTICALCAM_DIST = 32.f;
 
@@ -35,6 +38,15 @@ namespace Control
 	{
 		// Apply the input to the model
 		HandleInput(_deltaTime);
+
+		auto hndl = s_sceneGraph->RayCast(g_camera.GetRay(Vec2(0.f, 0.f)), 200.f, Game::CollisionComponent::Type::Ship);
+		if (hndl)
+		{
+			m_hud.UpdateCrossHair(1.f);
+			m_focus = std::move(hndl);
+		}
+		else
+			m_hud.UpdateCrossHair(0.f);
 
 		if (m_targetingMode == TargetingMode::Tactical)
 		{
@@ -141,7 +153,10 @@ namespace Control
 		else
 		{
 			if (InputManager::IsVirtualKeyPressed(Control::VirtualKey::FIRE))
+			{
+				if(m_focus) m_ship->SetWeaponTarget(***m_focus);
 				m_ship->Fire();
+			}
 
 			bool approximateTargetSpeed = true;
 			if (InputManager::IsVirtualKeyPressed(Control::VirtualKey::ADJUST_TARGET_ACC))

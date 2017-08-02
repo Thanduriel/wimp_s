@@ -5,8 +5,11 @@ namespace Game {
 
 	using namespace ei;
 
+	const Actor::Handle Actor::NullHandle(nullptr);
+
 	Actor::Actor()
-		: m_position(0.f), m_rotation(ei::qidentity()), m_isDestroyed(false)
+		: m_position(0.f), m_rotation(ei::qidentity()), m_isDestroyed(false),
+		m_handle(std::make_shared<HandleImpl>(*this))
 	{
 		UpdateMatrices();
 	}
@@ -16,13 +19,30 @@ namespace Game {
 		m_rotation(_rotation),
 		m_isDestroyed(false),
 		m_canTakeDamage(false),
-		m_health(0.f)
+		m_health(0.f),
+		m_handle(std::make_shared<HandleImpl>(*this))
 	{
 		UpdateMatrices();
 	}
 
+	Actor::Actor(const Actor& _orig)
+		: m_canTick(_orig.m_canTick),
+		m_canTakeDamage(_orig.m_canTakeDamage),
+		m_position(_orig.m_position),
+		m_rotation(_orig.m_rotation),
+		m_rotationMatrix(_orig.m_rotationMatrix),
+		m_inverseRotationMatrix(_orig.m_inverseRotationMatrix),
+		m_transformation(_orig.m_transformation),
+		m_inverseTransformation(_orig.m_inverseTransformation),
+		m_isDestroyed(false),
+		m_health(_orig.m_health),
+		m_maxHealth(_orig.m_maxHealth),
+		m_handle(std::make_shared<HandleImpl>(*this))
+	{}
+
 	Actor::~Actor()
 	{
+		m_handle->actor = nullptr;
 	}
 
 	void Actor::UpdateMatrices()
