@@ -28,11 +28,6 @@ namespace Game {
 
 	}
 
-	void Projectile::OnDestroy()
-	{
-		FactoryActor::GetThreadLocalInstance().MakeP<Explosion>(m_position, 20.f, 0.f);
-	}
-
 	void Projectile::OnCollision(Actor& _other)
 	{
 		_other.Damage(m_damage, *this);
@@ -82,6 +77,11 @@ namespace Game {
 		_sceneGraph.RegisterComponent(m_collisionComponent);
 	}
 
+	void Bolt::OnDestroy()
+	{
+		FactoryActor::GetThreadLocalInstance().MakeP<Explosion>(m_position, 3.f, 0.f, m_color);
+	}
+
 	// ********************************************************************** //
 	Rocket::Rocket(const Vec3& _position, const ei::Vec3& _velocity, float _damage, float _lifeTime)
 		: Projectile(_position, _velocity, _damage, _lifeTime),
@@ -91,6 +91,8 @@ namespace Game {
 		m_particleSpawnCount(0.f)
 	{
 		SetInertiaTensor(m_model.ComputeInertiaTensor(m_mass));
+		// a small grace period to not collide with the owner
+		GetCollisionComponent().SetType(0);
 	}
 
 	Rocket::Rocket(const Rocket& _orig)
@@ -103,15 +105,20 @@ namespace Game {
 
 	// ********************************************************************** //
 	const float TARGETING_STRENGTH = 0.2f;
+	const float SETUP_TIME = 0.8f;
 	void Rocket::Process(float _deltaTime)
 	{
 		Projectile::Process(_deltaTime);
 
-		if (m_target && *m_target)
+		float passed = m_lifeTimeComponent.GetLifeTimeMax() - m_lifeTimeComponent.GetLifeTimeLeft();
+		if (passed > SETUP_TIME && m_target && *m_target)
 		{
+			GetCollisionComponent().SetType(CollisionComponent::Type::Any | CollisionComponent::Type::Solid);
 			float l = ei::len(m_velocity);
+			// have both acceleration and conversion of TARGETING_STRENGTH in the desired direction
 			SetVelocity(GetVelocity() * (1.f - TARGETING_STRENGTH * _deltaTime) + normalize((**m_target)->GetPosition() - m_position) 
 				* _deltaTime * (15.f + l * TARGETING_STRENGTH));
+			// movement direction changes -> update rotation
 			SetRotation(ei::Quaternion(ei::Vec3(0.f, 0.f, 1.f), GetVelocity()));
 		}
 		else SetVelocity(GetVelocity() + m_rotationMatrix * Vec3(0.f, 0.f, _deltaTime) * 15.f);
@@ -140,5 +147,10 @@ namespace Game {
 		_sceneGraph.RegisterComponent(m_engineLight);
 		_sceneGraph.RegisterComponent(m_thrustParticles);
 		_sceneGraph.RegisterComponent(m_model);
+	}
+
+	void Rocket::OnDestroy()
+	{
+		FactoryActor::GetThreadLocalInstance().MakeP<Explosion>(m_position, 20.f, 0.f);
 	}
 }

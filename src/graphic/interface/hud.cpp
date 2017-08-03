@@ -33,7 +33,7 @@ namespace Graphic
 		
 		m_cursors.emplace_back("cursor");
 		m_cursors.back().texture.SetActive(false);
-		m_cursors.emplace_back("cursorAlt", Vec2(-0.035f, 0.035f));
+		m_cursors.emplace_back("cursorAlt", DefP::MidMid);
 		m_cursors.back().texture.SetActive(false);
 
 		//cursor occupies address [0]
@@ -131,7 +131,7 @@ namespace Graphic
 	{
 		// Get cursor converted to screen coordinates
 		Vec2 cursorPos = Control::InputManager::GetCursorPosScreenSpace();
-		if (m_cursor)	m_cursor->texture.m_vertex.position = cursorPos + m_cursor->offset;
+		if (m_cursor)	m_cursor->texture.SetPosition(cursorPos);
 
 		//todo: include mousespeed in config  
 		if (m_focus)
@@ -264,19 +264,18 @@ namespace Graphic
 	{ 
 		m_showCursor = _cursor;
 		if (_cursor != CursorType::None)
-		{
+		{ 
 			m_cursor = &m_cursors[(int)_cursor - 1];
 
 			//cursor position is only updated on mouse move
-			m_cursor->texture.m_vertex.position = Control::InputManager::GetCursorPosScreenSpace() + m_cursor->offset;
+			m_cursor->texture.SetPosition(Control::InputManager::GetCursorPosScreenSpace()) ;
 
 			m_screenOverlays[0] = &m_cursor->texture;
 		}
 	}
 
-	Hud::CursorData::CursorData(const std::string& _name, Vec2 _off)
-		: texture(_name, Vec2(0.f)),
-		offset(_off)
+	Hud::CursorData::CursorData(const std::string& _name, DefinitionPoint _defP)
+		: texture(_name, Vec2(0.f), Vec2(0.f), _defP)
 	{
 		texture.Scale(Vec2(0.5f));
 	};

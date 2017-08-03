@@ -1,6 +1,7 @@
 #include "explosion.hpp"
 #include "../scenegraph.hpp"
 #include "generators/random.hpp"
+#include "graphic/resources.hpp"
 
 namespace Game {
 
@@ -10,24 +11,24 @@ namespace Game {
 	const float EXPANSIONTIME = 1.f;
 
 	// ********************************************************************** //
-	Explosion::Explosion(const ei::Vec3& _position, float _radius, float _damage)
+	Explosion::Explosion(const ei::Vec3& _position, float _radius, float _damage, Utils::Color8U _color)
 		: Actor(_position),
 		m_lifeTimeComponent(THISACTOR, 2.f),
 		m_light(THISACTOR, Vec3(0.f), _radius, Utils::Color8U(0.0f, 0.0f, 1.0f)),
-		m_particles(THISACTOR, Vec3(0.f)),
+		m_particles(THISACTOR, Vec3(0.f), Graphic::Resources::GetTexture("mist")),
 		m_radius(_radius)
 	{
-		for (int i = 0; i < 1000; ++i)
+		for (int i = 0; i < _radius * 20.f; ++i)
 		{
-			static Generators::RandomGenerator rng(0x614AA);
+			static thread_local Generators::RandomGenerator rng(0x614AA);
 			float t = EXPANSIONTIME * _radius;
-			Vec3 dir = rng.Direction() * rng.Uniform(t - 5.f, t + 5.f);
-			float col = rng.Uniform(0.2f, 0.7f);
+			Vec3 dir = rng.Direction() * rng.Uniform(t - 2.f, t + 2.f);
+		//	float col = rng.Uniform(0.2f, 0.7f);
 			m_particles.AddParticle(Vec3(), //position
 				dir, //velocity
 				5.0f, //life time
-				Utils::Color8U(0.7f, 0.8f, col, 1.f).RGBA(),
-				0.2f); // size
+				_color.RGBA(),
+				0.9f); // size
 		}
 	}
 

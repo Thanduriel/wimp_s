@@ -3,6 +3,7 @@
 #include "shipsystems/weapon.hpp"
 #include "generators/weapongen.hpp"
 #include "gameplay/content.hpp"
+#include "ei/3dintersection.hpp"
 
 namespace Game
 {
@@ -129,7 +130,7 @@ namespace Game
 		// Update angular velocity
 		UpdateAngularVelocity(_deltaTime);
 
-		AdjustWeaponOrientation(Vec3(0.f, 0.f, 1.f));
+	//	AdjustWeaponOrientation(Vec3(0.f, 0.f, 1.f));
 
 		Model::Process(_deltaTime);
 	}
@@ -160,15 +161,20 @@ namespace Game
 		}
 	}
 
-	void Ship::AdjustWeaponOrientation(const ei::Vec3& _targetDir)
+	void Ship::AdjustWeaponOrientation(const ei::Ray& _targetRay)
 	{
 		for (auto& socket : m_weaponSockets)
 		{
 			Weapon* weapon = static_cast<Weapon*>(socket.GetAttached());
 			if (!weapon) continue;
-			Vec3 targetPos = _targetDir * weapon->GetRange();
 
-			Vec3 targetDir = targetPos - socket.GetPosition();
+			Vec3 pos = socket.GetPosition();
+			float d;
+			// this should always be true since d >> d(ray.position,socket.GetPosition());
+			bool b = ei::intersects(_targetRay, ei::Sphere(pos, weapon->GetRange()), d);
+			Vec3 targetPos = _targetRay.origin + _targetRay.direction * d;
+
+			Vec3 targetDir = targetPos - pos;
 
 			socket.SetRotation(normalize(targetDir));
 		}

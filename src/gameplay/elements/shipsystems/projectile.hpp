@@ -15,12 +15,7 @@ namespace Game {
 	public:
 		// projectile speed is constant for now
 		// since hitting moving targets is near impossible otherwise
-		static constexpr float DEFAULT_SPEED = 42.f;
-
-		enum struct Visual {
-			Simple,
-			Rocket
-		};
+		static constexpr float DEFAULT_SPEED = 256.f;
 
 		Projectile(const ei::Vec3& _position, const ei::Vec3& _velocity,
 			float _damage, float _lifeTime);
@@ -28,7 +23,6 @@ namespace Game {
 		// does a correct copy of the given projectile including components
 		Projectile(const Projectile& _proj);
 
-		void OnDestroy() override;
 		void OnCollision(Actor& _other) override;
 		void RegisterComponents(class SceneGraph& _sceneGraph) override;
 	protected:
@@ -46,6 +40,7 @@ namespace Game {
 
 		void Process(float _deltaTime) override;
 		void RegisterComponents(class SceneGraph& _sceneGraph) override;
+		void OnDestroy() override;
 
 		CollisionComponent& GetCollisionComponent() { return m_collisionComponent; }
 	private:
@@ -71,6 +66,7 @@ namespace Game {
 
 		void Process(float _deltaTime) override;
 		void RegisterComponents(class SceneGraph& _sceneGraph) override;
+		void OnDestroy() override;
 
 		CollisionComponent& GetCollisionComponent() { return m_model; }
 	private:

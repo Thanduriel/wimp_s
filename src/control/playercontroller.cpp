@@ -10,6 +10,7 @@
 #include "gameplay/elements/ship.hpp"
 #include "gamestates/huds/mainhud.hpp"
 #include "gameplay/scenegraph.hpp"
+#include "math/extensions.hpp"
 
 // test
 #include "generators/weapongen.hpp"
@@ -62,6 +63,17 @@ namespace Control
 	// ************************************************************ //
 	void PlayerController::MouseMove(float _dx, float _dy)
 	{
+		Ray ray = g_camera.GetRay(InputManager::GetCursorPosScreenSpace());
+		// transform to local space
+		ray.origin = m_ship->GetInverseTransformation() * ray.origin;
+		ray.direction = m_ship->GetInverseRotationMatrix() * ray.direction;
+
+		// put origin outside of the sphere and invert direction
+		// so that the intersection test finds the right point
+		ray.origin += ray.direction * 100000.f;
+		ray.direction *= -1.f;
+
+		m_ship->AdjustWeaponOrientation( ray );
 		m_mouseMovement = Vec2(_dx, _dy);
 	}
 

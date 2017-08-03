@@ -74,7 +74,7 @@ namespace Game
 
 		// Rotates the weapons to so that when fired the projectile 
 		//has its endpoint on the given ray in front of the ship.
-		void AdjustWeaponOrientation(const ei::Vec3& _targetDir);
+		void AdjustWeaponOrientation(const ei::Ray& _targetRay);
 
 		void SetWeaponTarget(const Actor& _actor);
 

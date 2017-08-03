@@ -111,10 +111,9 @@ namespace Graphic {
 		struct CursorData
 		{
 			CursorData(const std::string& _name,
-				ei::Vec2 _off = ei::Vec2(0.f));
+				DefinitionPoint _defP = DefinitionPoint::TopLeft);
 
 			ScreenTexture texture;
-			ei::Vec2 offset;
 		};
 
 		std::vector < CursorData > m_cursors; ///< all available cursors

@@ -11,7 +11,6 @@ namespace Utils {
 			+ std::to_string(FORMAT_VERSION) + ", but found " + std::to_string(ver));
 		uint16_t format;
 		Read(_stream, format);
-		if (format != 2) LOG_ERROR("Currently only Format::Flat is supported.");
 
 		Read(_stream, _texName);
 
