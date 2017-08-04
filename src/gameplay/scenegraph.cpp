@@ -42,6 +42,7 @@ namespace Game {
 		for (auto component : m_markerComponents)
 			component->ProcessComponent(_realdTime);
 
+		SortAxis();
 		// check collisions
 		ResolveCollisions();
 	}
@@ -133,6 +134,23 @@ namespace Game {
 	}
 
 	// *********************************************************** //
+	void SceneGraph::SortAxis()
+	{
+		std::sort(m_collisionComponents.begin(), m_collisionComponents.end(), [](const CollisionComponent* _lhs, const CollisionComponent* _rhs)
+		{
+			return _lhs->m_AABB.max.x < _rhs->m_AABB.max.x;
+		});
+
+		int n = (int)m_collisionComponents.size() - 1;
+		m_collisionComponents[n]->m_minOfAllMin = m_collisionComponents[n]->m_AABB.min.x;
+		for (--n; n >= 0; --n)
+		{
+			float globalMin = ei::min(m_collisionComponents[n]->m_AABB.min.x, m_collisionComponents[n + 1]->m_minOfAllMin);
+			m_collisionComponents[n]->m_minOfAllMin = globalMin;
+		}
+	}
+
+	// *********************************************************** //
 	template <typename T>
 	void RemoveDestroyed(std::vector<T*>& _container)
 	{
@@ -149,7 +167,7 @@ namespace Game {
 
 		// clean up particles
 		Graphic::ParticleSystems::Manager::CleanUp();
-
+		
 		// unregister components
 		RemoveDestroyed(m_geometryComponents);
 		RemoveDestroyed(m_lightComponents);
@@ -187,31 +205,77 @@ namespace Game {
 	}
 
 	// *********************************************************** //
-	Actor::Handle SceneGraph::RayCast(const ei::Ray& _ray, float _maxDist, uint32_t _type)
+	Actor::Handle SceneGraph::RayCast(const ei::Ray& _ray, float _maxDist, uint32_t _type) const
 	{
-		for (CollisionComponent* component : m_collisionComponents)
+		using namespace ei;
+
+		// flip ray to always have increasing x coordinates
+		Vec3 origin;
+		Vec3 direction;
+		if (_ray.direction.x < 0.f) { origin = _ray.origin + _ray.direction * _maxDist;  direction = -_ray.direction; } 
+		else { origin = _ray.origin; direction = _ray.direction; }
+
+		// split into boxes where the ray is the diagonal
+		const int BOX_SIZE = 64;
+		int numSplits = max(1, int(_maxDist) / BOX_SIZE);
+		Vec3 offset = _maxDist / numSplits * direction;
+		Vec3 rayEnd = origin + offset;
+		Box box(min(origin, rayEnd), max(origin, rayEnd));
+
+		auto startit = std::lower_bound(m_collisionComponents.begin(), m_collisionComponents.end(), box.min.x, [](const CollisionComponent* _i, const float _ref) 
+		{ return _i->m_AABB.max.x < _ref; });
+		if (startit == m_collisionComponents.end()) return nullptr;
+
+		// Check all the CollisionComponents inside box and return closest intersection
+		Actor::Handle closestHit;
+		for (int step = 0; step < numSplits; ++step)
 		{
-			if (!(component->GetType() & _type)) continue;
-			float d;
-			if (component->RayCastFast(_ray, d) && d < _maxDist && component->RayCast(_ray, d))
+			auto it = startit;
+			// Iterate as long as the element intersects in x
+			while ((*it)->m_minOfAllMin <= box.max[0])
 			{
-				return component->GetActor().GetHandle();
+				// The current element intersects in x direction. Does it also intersect
+				// in the others?
+				if ((*it)->m_AABB.min[1] < box.max[1] && (*it)->m_AABB.max[1] > box.min[1] &&
+					(*it)->m_AABB.min[2] < box.max[2] && (*it)->m_AABB.max[2] > box.min[2] &&
+					(*it)->GetType() & _type)
+				{
+					float d;
+					// todo: verify that the precheck with RayCastFast is an overall performance increase
+					if ((*it)->RayCastFast(_ray, d) && d < _maxDist && (*it)->RayCast(_ray, d))
+					{
+						closestHit = (*it)->GetActor().GetHandle();
+					}
+				}
+				++it;
+				if (it == m_collisionComponents.end())
+					break;
+				if ((*startit)->m_AABB.max[0] <= box.max[0])
+					++startit;
 			}
+			// Ray march to a next box segment
+			box.min = rayEnd;
+			rayEnd = rayEnd + offset;
+			box.max = max(box.min, rayEnd);
+			box.min = min(box.min, rayEnd);
 		}
-		return Actor::NullHandle;
+
+		return closestHit;
 	}
 
 	// *********************************************************** //
 	void SceneGraph::ResolveCollisions()
 	{
 		using namespace ei;
-		// todo order components to perform less checks
-		for (size_t i = 0; i < m_collisionComponents.size(); ++i)
+		for (int i = (int)m_collisionComponents.size()-1; i >= 0; --i)
 		{
 			CollisionComponent* slfComp = m_collisionComponents[i];
+			// skip if the component can not collide
 			if (!slfComp->GetType() & CollisionComponent::Type::Any) continue;
 
-			for (size_t j = i + 1; j < m_collisionComponents.size(); ++j)
+			// only need to check components where the AABB overlaps on the x axis
+			for (int j = i - 1; j >= 0 
+				&& m_collisionComponents[j]->m_AABB.max.x > slfComp->m_AABB.min.x; --j)
 			{
 				CollisionComponent* othComp = m_collisionComponents[j];
 				if (!othComp->GetType() & CollisionComponent::Type::Any) continue;

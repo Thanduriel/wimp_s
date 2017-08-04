@@ -44,6 +44,8 @@ namespace Game {
 		CollisionComponent(Actor& _actor, const std::string& _name, uint32_t _type);
 		CollisionComponent(Actor& _actor, const CollisionComponent& _other);
 
+		void ProcessComponent(float _deltaTime) override;
+
 		bool Check(const CollisionComponent& _other, HitInfo& _info) const;
 		// ray cast with the bounding sphere
 		bool RayCastFast(const ei::Ray& _ray, float& _distance) const;
@@ -75,8 +77,13 @@ namespace Game {
 		float m_volume;
 		float m_boundingRadius;
 		float m_boundingRadiusSq;
+		ei::Box m_AABBOrigin; // size of the axis aligned bounding box
+		ei::Box m_AABB; // actual box in world space
+		float m_minOfAllMin; // smallest x value of all CollisionComponents that have a larger x max then this.
 		uint32_t m_type;
 		const BoundingMesh& m_boundingMesh;
 		bool m_isSimple = false; // this component can be approximated by its bounding sphere
+
+		friend class SceneGraph; // the SceneGraph handles all intersection queries
 	};
 }

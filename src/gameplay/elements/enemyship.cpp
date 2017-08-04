@@ -27,7 +27,7 @@ namespace Game
 
 	void EnemyShip::ManageDistanceToTarget()
 	{
-		Ship* target = static_cast<Ship*>(**m_target);
+		Ship* target = static_cast<Ship*>(&**m_target);
 
 
 		SetTargetAngularVelocity(Vec3(0.0f, 0.0f, 0.0f));
@@ -68,7 +68,7 @@ namespace Game
 
 	void EnemyShip::ManageShooting()
 	{
-		Ship* target = static_cast<Ship*>(**m_target);
+		Ship* target = static_cast<Ship*>(&**m_target);
 
 		Ray ray = Ray(GetPosition(), normalize(GetRotationMatrix() * Vec3(0.0f, 0.0f, 1.0f)));
 		float distance;

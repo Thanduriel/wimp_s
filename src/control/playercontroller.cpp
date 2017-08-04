@@ -166,7 +166,7 @@ namespace Control
 		{
 			if (InputManager::IsVirtualKeyPressed(Control::VirtualKey::FIRE))
 			{
-				if(m_focus) m_ship->SetWeaponTarget(***m_focus);
+				if(m_focus) m_ship->SetWeaponTarget(**m_focus);
 				m_ship->Fire();
 			}
 

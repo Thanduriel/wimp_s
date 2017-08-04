@@ -116,7 +116,7 @@ namespace Game {
 			GetCollisionComponent().SetType(CollisionComponent::Type::Any | CollisionComponent::Type::Solid);
 			float l = ei::len(m_velocity);
 			// have both acceleration and conversion of TARGETING_STRENGTH in the desired direction
-			SetVelocity(GetVelocity() * (1.f - TARGETING_STRENGTH * _deltaTime) + normalize((**m_target)->GetPosition() - m_position) 
+			SetVelocity(GetVelocity() * (1.f - TARGETING_STRENGTH * _deltaTime) + normalize((**m_target).GetPosition() - m_position) 
 				* _deltaTime * (15.f + l * TARGETING_STRENGTH));
 			// movement direction changes -> update rotation
 			SetRotation(ei::Quaternion(ei::Vec3(0.f, 0.f, 1.f), GetVelocity()));

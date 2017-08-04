@@ -56,14 +56,17 @@ namespace Game {
 
 		// removes all destroyed components and associated components.
 		void CleanUp();
-
 		// Registers Actors created by Factories to the scene.
 		void AddActors();
 
 		// Performs a ray cast on all objects in the scene.
 		// @Return The closest object that is hit by the ray.
-		Actor::Handle RayCast(const ei::Ray& _ray, float _maxDist, uint32_t _type = CollisionComponent::Type::Any);
+		Actor::Handle RayCast(const ei::Ray& _ray, float _maxDist, uint32_t _type = CollisionComponent::Type::Any) const;
 	private:
+		// Repairs the order of the internal CollisionComponent structure.
+		// Only afterwards collision checks can be done.
+		void SortAxis();
+
 		void RegisterBaseComponent(ConstActorComponent& _component) { RegisterComponent(_component); }
 		void RegisterBaseComponent(ActorComponent& _component) { RegisterComponent(_component); }
 

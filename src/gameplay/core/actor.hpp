@@ -71,13 +71,22 @@ namespace Game {
 
 		bool CanTick() const { return m_canTick; }
 
+		// Since Actors can be destroyed a persistent reference to an Actor
+		// works like a weak_ptr.
+		// A Handle can have multiple states.
+		// When not coming directly from an Actor the handle itself might be invalid:
+		// if(handle) cout << "is valid";
+		// After an Actor has been destroyed all valid handles point on a nullptr:
+		// if(*handle) cout << "The Actor still exists.";
+		// Then the Actor can be accessed:
+		// Actor& act = **m_handle;
 		struct HandleImpl
 		{
 			HandleImpl(Actor& _actor) : actor(&_actor) {}
 
-			Actor* operator*()
+			Actor& operator*()
 			{
-				return actor;
+				return *actor;
 			}
 
 			operator bool() { return actor != nullptr; }
