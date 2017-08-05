@@ -37,6 +37,7 @@ namespace Game {
 		// If the component does not require special treatment the least specific one is chosen.
 		void RegisterComponent(ConstActorComponent& _component);
 		void RegisterComponent(ActorComponent& _component);
+		void RegisterComponent(SceneComponent& _component);
 		void RegisterComponent(class BaseParticleSystemComponent& _component);
 		void RegisterComponent(GeometryComponent& _component);
 		void RegisterComponent(class PointLightComponent& _component);
@@ -61,7 +62,11 @@ namespace Game {
 
 		// Performs a ray cast on all objects in the scene.
 		// @Return The closest object that is hit by the ray.
-		Actor::Handle RayCast(const ei::Ray& _ray, float _maxDist, uint32_t _type = CollisionComponent::Type::Any) const;
+		Actor::Handle RayCast(const ei::Ray& _ray, float _maxDist, CollisionFlags _type = CollisionComponent::Type::Any) const;
+
+		// @Return All objects that have their center inside the given _sphere
+		//	and their squared distance to the center.
+		std::vector<std::pair<Actor*,float>> SphereQuery(const ei::Sphere& _sphere, CollisionFlags _flags) const;
 	private:
 		// Repairs the order of the internal CollisionComponent structure.
 		// Only afterwards collision checks can be done.
@@ -77,6 +82,7 @@ namespace Game {
 		std::vector <ActorComponent*> m_actorComponents;
 		std::vector<ConstActorComponent*> m_constActorComponents;
 		std::vector<BaseParticleSystemComponent*> m_particleSystemComponents;
+		std::vector<SceneComponent*> m_sceneComponents;
 
 		std::vector<PostProcessComponent*> m_postProcessComponents;
 		std::vector<PointLightComponent*> m_lightComponents;

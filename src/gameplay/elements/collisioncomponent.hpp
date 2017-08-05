@@ -32,6 +32,8 @@ namespace Game {
 		bool Intersects(const ei::Sphere& _other, const ei::Mat4x4& _transform, HitInfo& _info) const;
 	};
 
+	typedef uint32_t CollisionFlags;
+
 	// While the collision component itself does not change the Actor
 	// the solver needs to alter the Actors state through the component.
 	class CollisionComponent : public ActorComponent
@@ -69,8 +71,8 @@ namespace Game {
 				Ship = 8
 			};
 		};
-		uint32_t GetType() const { return m_type; }
-		void SetType(uint32_t _type) { m_type = _type; }
+		CollisionFlags GetType() const { return m_type; }
+		void SetType(CollisionFlags _type) { m_type = _type; }
 
 		ei::Mat3x3 ComputeInertiaTensor(float _mass) const;
 	private:
