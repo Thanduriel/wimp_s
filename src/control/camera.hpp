@@ -50,6 +50,10 @@ namespace Control {
 
 		// Gets the distance to the target ship
 		ei::Vec3 GetDistance() const;
+
+		float GetFov() const { return m_fov; };
+
+		float GetAspectRatio() const { return m_aspectRatio; };
 	private:
 		void ProcessFreeMove(float _deltaTime);
 
@@ -57,6 +61,7 @@ namespace Control {
 		ei::Mat4x4 m_projection;
 		ei::Mat4x4 m_viewProjection;
 		ei::Mat4x4 m_view;
+		float m_aspectRatio;
 
 		ei::Vec3 m_targetPosition;
 		ei::Quaternion m_targetRotation;

@@ -11,7 +11,7 @@ namespace Control
 	class WaspController : public Controller
 	{
 	public:
-		WaspController(Game::Ship& _ship, Game::Actor::Handle _target);
+		WaspController(Game::Ship& _ship, Game::Actor::Handle _target, GameStates::MainHud& _hud);
 
 		void Process(float _deltaTime) override;
 

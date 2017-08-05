@@ -23,8 +23,7 @@ namespace Control
 	const float TACTICALCAM_DIST = 32.f;
 
 	PlayerController::PlayerController(Game::Ship& _ship, Game::Grid& _grid, Game::Actor& _indicator, GameStates::MainHud& _hud, GameTimeControl& _params)
-		: Controller(_ship),
-		m_hud(_hud),
+		: Controller(_ship, _hud),
 		m_mouseSensitivity(10.0f),
 		m_sliderSensitivity(100.0f),
 		m_targetSpeed(10.0f),
@@ -47,6 +46,8 @@ namespace Control
 		}
 		else
 			m_hud.UpdateCrossHair(0.f);
+
+		m_hud.UpdateIndicators(GetShip().GetPosition());
 
 		if (m_targetingMode == TargetingMode::Tactical)
 		{

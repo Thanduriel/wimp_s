@@ -18,6 +18,7 @@ namespace Control {
 	Camera::Camera(const Vec3& _position, const Quaternion& _rotation, float _fov, float _aspectRatio)
 		: DynamicActor(_position, _rotation),
 		m_fov(_fov),
+		m_aspectRatio(_aspectRatio),
 		m_projection(ei::perspectiveGL(_fov, _aspectRatio, 0.1f, 50000.f)),
 		m_viewProjection(),
 		m_mode(Mode::Follow),

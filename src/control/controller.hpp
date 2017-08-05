@@ -5,12 +5,16 @@ namespace Game {
 	class Ship;
 }
 
+namespace GameStates {
+	class MainHud;
+}
+
 namespace Control
 {
 	class Controller
 	{
 	public:
-		Controller(Game::Ship& _ship);
+		Controller(Game::Ship& _ship, GameStates::MainHud& _hud);
 
 		virtual void Process(float _deltaTime) abstract;
 
@@ -22,5 +26,7 @@ namespace Control
 
 	protected:
 		static Game::SceneGraph* s_sceneGraph;
+
+		GameStates::MainHud& m_hud;
 	};
 }

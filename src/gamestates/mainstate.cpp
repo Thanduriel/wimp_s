@@ -3,7 +3,6 @@
 #include "../graphic/mesh.hpp"
 #include "gameplay/core/model.hpp"
 #include "gameplay/elements/ship.hpp"
-#include "gameplay/elements/enemyship.hpp"
 #include "control/camera.hpp"
 #include "control/playercontroller.hpp"
 #include "control/waspcontroller.hpp"

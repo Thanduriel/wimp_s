@@ -1,18 +1,20 @@
 #include "waspcontroller.hpp"
 #include "gameplay/elements/ship.hpp"
+#include "gamestates/huds/mainhud.hpp"
 
 namespace Control
 {
 	using namespace ei;
 
-	WaspController::WaspController(Game::Ship& _ship, Game::Actor::Handle _target)
-		: Controller(_ship),
+	WaspController::WaspController(Game::Ship& _ship, Game::Actor::Handle _target, GameStates::MainHud& _hud)
+		: Controller(_ship, _hud),
 		m_target(_target),
 		m_minDistance(75.0f),
 		m_maxDistance(500.0f),
 		m_lookForTarget(false)
 	{
 		GetShip().SetSpeed(50.0f);
+		m_hud.AddIndicator();
 	}
 
 	void WaspController::Process(float _deltaTime)

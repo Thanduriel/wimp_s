@@ -4,6 +4,8 @@
 
 namespace GameStates {
 
+	using namespace ei;
+
 	class MainHud : public Graphic::Hud
 	{
 	public:
@@ -13,6 +15,9 @@ namespace GameStates {
 		void UpdateSpeedBar(float _speed, float _maxSpeed);
 		void UpdateTargetSpeedSlider(float _targetSpeed, float _maxSpeed);
 		void UpdateCrossHair(float _sprayRadius);
+		void UpdateIndicators(Vec3 _playerPos);
+
+		void AddIndicator();
 		
 		Graphic::FillBar& GetEnergyBar() { return *m_energyBar; }
 		Graphic::FillBar& GetHealthBar() { return *m_healthBar; }
@@ -27,5 +32,7 @@ namespace GameStates {
 
 		Graphic::FillBar* m_energyBar;
 		Graphic::FillBar* m_healthBar;
+
+		std::vector<ScreenTexture*> m_indicators;
 	};
 }

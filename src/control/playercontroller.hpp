@@ -69,7 +69,6 @@ namespace Control
 
 		Game::Grid& m_grid;
 		Game::Actor& m_indicator;
-		GameStates::MainHud& m_hud;
 		GameTimeControl& m_controlParams;
 
 		Game::Actor::Handle m_focus;

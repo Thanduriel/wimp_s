@@ -4,8 +4,9 @@ namespace Control
 {
 	Game::SceneGraph* Controller::s_sceneGraph = nullptr;
 
-	Controller::Controller(Game::Ship& _ship)
-		: m_ship(_ship)
+	Controller::Controller(Game::Ship& _ship, GameStates::MainHud& _hud)
+		: m_ship(_ship),
+		m_hud(_hud)
 	{
 	}
 }
