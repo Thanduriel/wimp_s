@@ -6,8 +6,10 @@
 #include "gameplay/elements/enemyship.hpp"
 #include "control/camera.hpp"
 #include "control/playercontroller.hpp"
+#include "control/waspcontroller.hpp"
 #include "control/input.hpp"
 #include "graphic/effects/lightsystem.hpp"
+#include "control/controller.hpp"
 
 #include "graphic/interface/pixelcoords.hpp"
 #include "gameplay/elements/grid.hpp"
@@ -31,7 +33,7 @@ namespace GameStates {
 		: m_starbackground(2000, 20000.f, 14000),
 		m_gameTimeControl{1.f}
 	{
-		PlayerController::SetSceneGraph(m_sceneGraph);
+		Controller::SetSceneGraph(m_sceneGraph);
 
 		// setup player controller
 		blackHole = new BlackHole(ei::Vec3(-15.f), 5.f);
@@ -43,17 +45,18 @@ namespace GameStates {
 		Ship* ship = new Ship("TestShip", Vec3(0.f));
 		m_sceneGraph.Add(*ship);
 		m_playerController = new Control::PlayerController(*ship, *grid, *blackHole, m_hud, m_gameTimeControl);
+		m_controllers.emplace_back(m_playerController);
 		Control::g_camera.Attach(*ship);
 
 		// test actors
-		ship = new EnemyShip("TestShip", Vec3(50.f,0.f,100.f), ship->GetHandle());
+		ship = new Ship("TestShip", Vec3(50.f,0.f,100.f));
 		m_sceneGraph.Add(*ship);
+		m_controllers.emplace_back(new Control::WaspController(*ship, m_playerController->GetShip().GetHandle()));
 		ship2 = ship;
 	}
 
 	MainState::~MainState()
 	{
-		delete m_playerController;
 	}
 
 	void MainState::Process(float _deltaTime)
@@ -71,7 +74,10 @@ namespace GameStates {
 	//	ship2->SetRotation(m_playerController->GetShip().GetRotation());
 
 		m_sceneGraph.Process(m_gameTimeControl.m_timeScale * _deltaTime, _deltaTime);
-		m_playerController->Process(_deltaTime);
+		for (auto& ptr : m_controllers)
+		{
+			ptr->Process(_deltaTime);
+		}
 		Control::g_camera.Process(_deltaTime);
 	}
 

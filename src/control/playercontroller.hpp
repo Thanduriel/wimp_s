@@ -3,6 +3,7 @@
 #include "ei/vector.hpp"
 #include "gameplay/elements/grid.hpp"
 #include "gameplay/core/actor.hpp"
+#include "controller.hpp"
 
 namespace Game {
 	class Model;
@@ -26,7 +27,7 @@ namespace Control
 	/* PlayerController *******************************
 	 * Handles the player input and applies movement to the player's model.
 	 */
-	class PlayerController
+	class PlayerController : public Controller
 	{
 	public:
 
@@ -35,20 +36,16 @@ namespace Control
 			GameTimeControl& _params);
 
 		// The basic processing method called once per frame
-		void Process(float _deltaTime);
+		void Process(float _deltaTime) override;
 
 		void MouseMove(float _dx, float _dy);
 		void KeyClick(int _key);
 		void KeyDown(int _key, int _modifiers);
 		void Scroll(float _dx, float _dy);
 
-		const Game::Ship& GetShip() const { return *m_ship; }
-
 		// Setter and getter for the mouse sensitivity
 		void SetMouseSensitivity(const Vec2& _sensitivity) { m_mouseSensitivity = _sensitivity; };
 		const Vec2& GetMouseSensitivity() const { return m_mouseSensitivity; };
-
-		static void SetSceneGraph(Game::SceneGraph& _graph) { s_sceneGraph = &_graph; }
 	private:
 		enum struct TargetingMode
 		{
@@ -70,14 +67,11 @@ namespace Control
 		// Control the input of the player
 		void HandleInput(float _deltaTime);
 
-		Game::Ship* m_ship;
 		Game::Grid& m_grid;
 		Game::Actor& m_indicator;
 		GameStates::MainHud& m_hud;
 		GameTimeControl& m_controlParams;
 
 		Game::Actor::Handle m_focus;
-
-		static Game::SceneGraph* s_sceneGraph;
 	};
 }

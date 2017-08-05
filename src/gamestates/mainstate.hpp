@@ -41,6 +41,7 @@ namespace GameStates{
 	private:
 		Graphic::Starbackground m_starbackground;
 
+		std::vector<std::unique_ptr<Control::Controller>> m_controllers;
 		Control::PlayerController* m_playerController;
 		Control::GameTimeControl m_gameTimeControl;
 

@@ -11,6 +11,7 @@
 #include "gamestates/huds/mainhud.hpp"
 #include "gameplay/scenegraph.hpp"
 #include "math/extensions.hpp"
+#include "controller.hpp"
 
 // test
 #include "generators/weapongen.hpp"
@@ -19,12 +20,10 @@ namespace Control
 {
 	using namespace ei;
 
-	Game::SceneGraph* PlayerController::s_sceneGraph = nullptr;
-
 	const float TACTICALCAM_DIST = 32.f;
 
 	PlayerController::PlayerController(Game::Ship& _ship, Game::Grid& _grid, Game::Actor& _indicator, GameStates::MainHud& _hud, GameTimeControl& _params)
-		: m_ship(&_ship),
+		: Controller(_ship),
 		m_hud(_hud),
 		m_mouseSensitivity(10.0f),
 		m_sliderSensitivity(100.0f),
@@ -65,15 +64,15 @@ namespace Control
 	{
 		Ray ray = g_camera.GetRay(InputManager::GetCursorPosScreenSpace());
 		// transform to local space
-		ray.origin = m_ship->GetInverseTransformation() * ray.origin;
-		ray.direction = m_ship->GetInverseRotationMatrix() * ray.direction;
+		ray.origin = GetShip().GetInverseTransformation() * ray.origin;
+		ray.direction = GetShip().GetInverseRotationMatrix() * ray.direction;
 
 		// put origin outside of the sphere and invert direction
 		// so that the intersection test finds the right point
 		ray.origin += ray.direction * 100000.f;
 		ray.direction *= -1.f;
 
-		m_ship->AdjustWeaponOrientation( ray );
+		GetShip().AdjustWeaponOrientation( ray );
 		m_mouseMovement = Vec2(_dx, _dy);
 	}
 
@@ -86,11 +85,11 @@ namespace Control
 				m_targetingMode = TargetingMode::Tactical;
 				const float angle = PI / 3.2f;
 
-				m_tacticalDirSign = m_ship->GetPosition().y < g_camera.GetPosition().y ? 1.f : -1.f;
+				m_tacticalDirSign = GetShip().GetPosition().y < g_camera.GetPosition().y ? 1.f : -1.f;
 				Quaternion rot = m_tacticalDirSign < 0.f ? Quaternion(Vec3(0.f, 0.f, 1.f), PI) : qidentity();
 				// shift the camera back so that the player is in the center
 				g_camera.FixRotation(ei::Quaternion(Vec3(1.f, 0.f, 0.f), m_tacticalDirSign * angle) * rot,
-					m_ship->GetPosition() + Vec3(0.f, m_tacticalDirSign * TACTICALCAM_DIST, -TACTICALCAM_DIST / tan(angle)));
+					GetShip().GetPosition() + Vec3(0.f, m_tacticalDirSign * TACTICALCAM_DIST, -TACTICALCAM_DIST / tan(angle)));
 				/*		Vec3 shift = m_model->GetRotationMatrix() * Vec3(0.f, 0.f, -1.f);
 						shift.y = 0.f;
 						shift = normalize(shift) * 32.f / tan(angle);
@@ -102,7 +101,7 @@ namespace Control
 						g_camera.FixRotation(Quaternion(rotAxis, angle),
 							pos);*/
 
-				m_grid.SetPosition(m_ship->GetPosition());
+				m_grid.SetPosition(GetShip().GetPosition());
 				component_cast<Game::GridComponent>(m_grid).ReverseTransition();
 				m_controlParams.m_timeScale = 0.02f;
 			}
@@ -111,7 +110,7 @@ namespace Control
 				m_targetingMode = TargetingMode::Normal;
 				component_cast<Game::GridComponent>(m_grid).ReverseTransition();
 				m_mouseMovement = Vec2(0.f);
-				g_camera.Attach(*m_ship);
+				g_camera.Attach(GetShip());
 				m_controlParams.m_timeScale = 1.f;
 			}
 		}
@@ -125,7 +124,7 @@ namespace Control
 			Generators::WeaponGenerator gen;
 			Game::Weapon* w = gen.Generate(5.f, 2.f);
 			label.SetText(gen.GetName() + "\n-----\n" + gen.GetDescr());
-			m_ship->SetWeapon(2, *w);
+			GetShip().SetWeapon(2, *w);
 		}
 	}
 
@@ -166,8 +165,8 @@ namespace Control
 		{
 			if (InputManager::IsVirtualKeyPressed(Control::VirtualKey::FIRE))
 			{
-				if(m_focus) m_ship->SetWeaponTarget(**m_focus);
-				m_ship->Fire();
+				if(m_focus) GetShip().SetWeaponTarget(**m_focus);
+				GetShip().Fire();
 			}
 
 			bool approximateTargetSpeed = true;
@@ -175,37 +174,37 @@ namespace Control
 			{
 				// control target speed slider
 				if (InputManager::IsVirtualKeyPressed(Control::VirtualKey::ACC_FORWARD))
-					m_targetSpeed = ei::min(m_targetSpeed + m_sliderSensitivity * _deltaTime, m_ship->GetMaxSpeed());
+					m_targetSpeed = ei::min(m_targetSpeed + m_sliderSensitivity * _deltaTime, GetShip().GetMaxSpeed());
 				if (InputManager::IsVirtualKeyPressed(Control::VirtualKey::ACC_BACKWARD))
-					m_targetSpeed = ei::max(m_targetSpeed - m_sliderSensitivity * _deltaTime, m_ship->GetMinSpeed());
+					m_targetSpeed = ei::max(m_targetSpeed - m_sliderSensitivity * _deltaTime, GetShip().GetMinSpeed());
 			}
 			else
 			{
 				// control ship speed manually
 				if (InputManager::IsVirtualKeyPressed(Control::VirtualKey::ACC_FORWARD))
 				{
-					float newSpeed = m_ship->GetSpeed() + (m_ship->GetThrust() / m_ship->GetMass()) * _deltaTime;
-					m_ship->SetSpeed(newSpeed);
+					float newSpeed = GetShip().GetSpeed() + (GetShip().GetThrust() / GetShip().GetMass()) * _deltaTime;
+					GetShip().SetSpeed(newSpeed);
 					approximateTargetSpeed = false;
 				}
 				if (InputManager::IsVirtualKeyPressed(Control::VirtualKey::ACC_BACKWARD))
 				{
-					m_ship->SetSpeed(m_ship->GetSpeed() - (m_ship->GetThrust() / m_ship->GetMass()) * _deltaTime);
+					GetShip().SetSpeed(GetShip().GetSpeed() - (GetShip().GetThrust() / GetShip().GetMass()) * _deltaTime);
 					approximateTargetSpeed = false;
 				}
 			}
 			// approximate target speed with ship's (target) speed
 			if (approximateTargetSpeed)
 			{
-				if (m_targetSpeed > m_ship->GetSpeed())
+				if (m_targetSpeed > GetShip().GetSpeed())
 				{
 					// accelerate ship's (target) speed
-					m_ship->SetSpeed(min(m_ship->GetSpeed() + (m_ship->GetThrust() / m_ship->GetMass()) * _deltaTime, m_targetSpeed));
+					GetShip().SetSpeed(min(GetShip().GetSpeed() + (GetShip().GetThrust() / GetShip().GetMass()) * _deltaTime, m_targetSpeed));
 				}
-				else if (m_targetSpeed < m_ship->GetSpeed())
+				else if (m_targetSpeed < GetShip().GetSpeed())
 				{
 					// decelerate ship's (target) speed
-					m_ship->SetSpeed(max(m_ship->GetSpeed() - (m_ship->GetThrust() / m_ship->GetMass()) * _deltaTime, m_targetSpeed));
+					GetShip().SetSpeed(max(GetShip().GetSpeed() - (GetShip().GetThrust() / GetShip().GetMass()) * _deltaTime, m_targetSpeed));
 				}
 			}
 		}
@@ -224,15 +223,15 @@ namespace Control
 		cursor.x = clamp(cursor.x * Graphic::Device::GetAspectRatio(), -1.f, 1.f);
 		cursor = Vec2(sgn(cursor[0]), sgn(cursor[1])) * cursor * cursor;
 
-		m_ship->SetTargetAngularVelocity(m_ship->GetRotationMatrix() * Vec3(-cursor[1], cursor[0], z));
+		GetShip().SetTargetAngularVelocity(GetShip().GetRotationMatrix() * Vec3(-cursor[1], cursor[0], z));
 
 		// update stats on the hud
 		// this might not be the best place for this
-		m_hud.UpdateSpeedLabel(m_ship->GetCurrentSpeed());
-		m_hud.UpdateSpeedBar(m_ship->GetCurrentSpeed(), m_ship->GetMaxSpeed());
-		m_hud.UpdateTargetSpeedSlider(m_targetSpeed, m_ship->GetMaxSpeed());
-		m_hud.GetEnergyBar().SetFillLevel(m_ship->GetEnergy() / m_ship->GetMaxEnergy());
-		m_hud.GetHealthBar().SetFillLevel(m_ship->GetHealth() / m_ship->GetMaxHealth());
+		m_hud.UpdateSpeedLabel(GetShip().GetCurrentSpeed());
+		m_hud.UpdateSpeedBar(GetShip().GetCurrentSpeed(), GetShip().GetMaxSpeed());
+		m_hud.UpdateTargetSpeedSlider(m_targetSpeed, GetShip().GetMaxSpeed());
+		m_hud.GetEnergyBar().SetFillLevel(GetShip().GetEnergy() / GetShip().GetMaxEnergy());
+		m_hud.GetHealthBar().SetFillLevel(GetShip().GetHealth() / GetShip().GetMaxHealth());
 	//	m_hud.UpdateCrossHair(m_ship->GetSprayRadius());
 	}
 }
