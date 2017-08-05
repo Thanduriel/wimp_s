@@ -239,7 +239,7 @@ namespace Game {
 		: ActorComponent(_actor),
 		m_boundingRadius(_boundingRadius),
 		m_boundingRadiusSq(_boundingRadius*_boundingRadius),
-		m_AABBOrigin(Vec3(-_boundingRadius), Vec3(_boundingRadius)),
+		m_AABBOrigin(_boundingBox),
 		m_AABB(m_AABBOrigin),
 		m_type(_type),
 		m_boundingMesh(Content::GetBoundingMesh(std::make_pair(_boundingBox.min,_boundingBox.max)))
@@ -272,8 +272,8 @@ namespace Game {
 		m_boundingRadius = m_boundingMesh.boundingRadius;
 		m_boundingRadiusSq = m_boundingMesh.boundingRadius * m_boundingMesh.boundingRadius;
 
-		m_AABBOrigin.min = Vec3(-m_boundingRadius);
-		m_AABBOrigin.max = Vec3(m_boundingRadius);
+		m_AABBOrigin.min = m_boundingMesh.lowerBound;
+		m_AABBOrigin.max = m_boundingMesh.upperBound;
 		m_AABB = m_AABBOrigin;
 	}
 
@@ -292,7 +292,10 @@ namespace Game {
 	// *************************************************************** //
 	void CollisionComponent::ProcessComponent(float _deltaTime)
 	{
-		m_AABB = Box(m_AABBOrigin.min + m_actor.GetPosition(), m_AABBOrigin.max + m_actor.GetPosition());
+		OBox box(m_actor.GetRotation(), m_AABBOrigin);
+		m_AABB = Box(box);
+		m_AABB.min += m_actor.GetPosition();
+		m_AABB.max += m_actor.GetPosition();
 	}
 
 

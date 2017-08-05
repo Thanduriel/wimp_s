@@ -47,7 +47,7 @@ namespace Game {
 		: Projectile(_position, _velocity, _damage, _lifeTime),
 		m_particles(THISACTOR, Vec3(0.f), Graphic::Resources::GetTexture("bolt")),
 		m_color(_color),
-		m_collisionComponent(THISACTOR, BOLT_SIZE, CollisionComponent::Type::Any /*, ei::Box(Vec3(sqrt(-BOLT_SIZE/2.f)), Vec3(sqrt(BOLT_SIZE/2.f)))*/)
+		m_collisionComponent(THISACTOR, BOLT_SIZE, CollisionComponent::Type::Any | CollisionComponent::Type::Dynamic /*, ei::Box(Vec3(sqrt(-BOLT_SIZE/2.f)), Vec3(sqrt(BOLT_SIZE/2.f)))*/)
 	{
 	}
 

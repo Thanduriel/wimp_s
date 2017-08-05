@@ -89,6 +89,16 @@ namespace Game {
 
 		virtual void Draw() = 0;
 	};
+
+	// A component that can perform queries on the SceneGraph.
+	class SceneComponent :public ConstActorComponent
+	{
+	public:
+		using ConstActorComponent::ConstActorComponent;
+
+		// This function is called after regular processing and after the SceneGraph is sorted.
+		virtual void ProcessComponent(float _deltaTime, const class SceneGraph& _sceneGraph) = 0;
+	};
 }
 
 // Casts an Actor that consists of components by inheritance to the desired component.

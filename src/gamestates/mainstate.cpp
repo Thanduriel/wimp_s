@@ -34,7 +34,7 @@ namespace GameStates {
 		PlayerController::SetSceneGraph(m_sceneGraph);
 
 		// setup player controller
-		blackHole = new BlackHole(ei::Vec3(-15.f), 5.f);
+		blackHole = new BlackHole(ei::Vec3(-15.f), 50.f);
 		m_sceneGraph.Add(*blackHole);
 		Grid* grid = new Game::Grid(ei::Vec3(0.f), 
 			Utils::Color32F(0.f, 1.f, 0.f, 0.6f), 2.f, 2.f,

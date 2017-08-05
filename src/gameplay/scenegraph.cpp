@@ -45,6 +45,8 @@ namespace Game {
 		SortAxis();
 		// check collisions
 		ResolveCollisions();
+		for (auto component : m_sceneComponents)
+			component->ProcessComponent(_deltaTime, *this);
 	}
 
 	void SceneGraph::Draw()
@@ -89,6 +91,11 @@ namespace Game {
 	{
 		_component.OnRegister();
 		if (_component.m_canTick) m_actorComponents.push_back(&_component);
+	}
+
+	void SceneGraph::RegisterComponent(SceneComponent& _sceneComponent)
+	{
+		m_sceneComponents.push_back(&_sceneComponent);
 	}
 
 	void SceneGraph::RegisterComponent(BaseParticleSystemComponent& _component)
@@ -178,6 +185,7 @@ namespace Game {
 		RemoveDestroyed(m_constActorComponents);
 		RemoveDestroyed(m_actorComponents);
 		RemoveDestroyed(m_collisionComponents);
+		RemoveDestroyed(m_sceneComponents);
 
 		// actual destruction is last
 		auto it = std::remove_if(m_actors.begin(), m_actors.end(), [](const std::unique_ptr<Actor>& _actor)
@@ -262,6 +270,29 @@ namespace Game {
 
 		return closestHit;
 	}
+	// *********************************************************** //
+	std::vector<std::pair<Actor*, float>> SceneGraph::SphereQuery(const ei::Sphere& _sphere, CollisionFlags _flags) const
+	{
+		std::vector<std::pair<Actor*, float>> results;
+
+		auto it = std::upper_bound(m_collisionComponents.begin(), m_collisionComponents.end(), _sphere.center.x - _sphere.radius,
+			[](const float _ref, const CollisionComponent* _comp)
+		{
+			return _comp->m_AABB.max.x > _ref;
+		});
+
+		float upper = _sphere.center.x + _sphere.radius;
+		float rSqr = _sphere.radius * _sphere.radius;
+		for (; it != m_collisionComponents.end() && (*it)->m_minOfAllMin < upper; ++it)
+		{
+			Actor& actor = (*it)->GetActor();
+			float dSqr = ei::lensq(actor.GetPosition() - _sphere.center);
+			if (dSqr < rSqr && (*it)->GetType() & _flags)
+				results.emplace_back(&(*it)->GetActor(), dSqr);
+		}
+
+		return std::move(results);
+	}
 
 	// *********************************************************** //
 	void SceneGraph::ResolveCollisions()
@@ -295,7 +326,7 @@ namespace Game {
 						slf.OnCollision(oth);
 						oth.OnCollision(slf);
 
-						static const uint32_t PHYSICSBODY = CollisionComponent::Type::Solid;
+						static const uint32_t PHYSICSBODY = CollisionComponent::Type::Solid | CollisionComponent::Type::Dynamic;
 						// resolve impulse
 						if (slfComp->GetType() & PHYSICSBODY && othComp->GetType() & PHYSICSBODY)
 						{
