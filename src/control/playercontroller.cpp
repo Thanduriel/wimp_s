@@ -15,6 +15,7 @@
 
 // test
 #include "generators/weapongen.hpp"
+#include "gameplay/elements/blackhole.hpp"
 
 namespace Control
 {
@@ -38,11 +39,11 @@ namespace Control
 		// Apply the input to the model
 		HandleInput(_deltaTime);
 
-		auto hndl = s_sceneGraph->RayCast(g_camera.GetRay(Vec2(0.f, 0.f)), 200.f, Game::CollisionComponent::Type::Ship);
-		if (hndl)
+		auto actor = s_sceneGraph->RayCast(g_camera.GetRay(Vec2(0.f, 0.f)), 200.f, Game::CollisionComponent::Type::Ship);
+		if (actor)
 		{
 			m_hud.UpdateCrossHair(1.f);
-			m_focus = std::move(hndl);
+			m_focus = actor->GetHandle();
 		}
 		else
 			m_hud.UpdateCrossHair(0.f);
@@ -82,38 +83,14 @@ namespace Control
 		if (_key == GLFW_KEY_SPACE)
 		{
 			if (m_targetingMode == TargetingMode::Normal)
-			{
-				m_targetingMode = TargetingMode::Tactical;
-				const float angle = PI / 3.2f;
-
-				m_tacticalDirSign = GetShip().GetPosition().y < g_camera.GetPosition().y ? 1.f : -1.f;
-				Quaternion rot = m_tacticalDirSign < 0.f ? Quaternion(Vec3(0.f, 0.f, 1.f), PI) : qidentity();
-				// shift the camera back so that the player is in the center
-				g_camera.FixRotation(ei::Quaternion(Vec3(1.f, 0.f, 0.f), m_tacticalDirSign * angle) * rot,
-					GetShip().GetPosition() + Vec3(0.f, m_tacticalDirSign * TACTICALCAM_DIST, -TACTICALCAM_DIST / tan(angle)));
-				/*		Vec3 shift = m_model->GetRotationMatrix() * Vec3(0.f, 0.f, -1.f);
-						shift.y = 0.f;
-						shift = normalize(shift) * 32.f / tan(angle);
-						shift.y = 32.f;
-						Vec3 pos = m_model->GetPosition() + shift;
-						Vec3 rotAxis = xaxis(m_model->GetRotation());
-						rotAxis.y = 0.f;
-						rotAxis = normalize(rotAxis);
-						g_camera.FixRotation(Quaternion(rotAxis, angle),
-							pos);*/
-
-				m_grid.SetPosition(GetShip().GetPosition());
-				component_cast<Game::GridComponent>(m_grid).ReverseTransition();
-				m_controlParams.m_timeScale = 0.02f;
-			}
+				SwitchTargetingMode(TargetingMode::Tactical);
 			else
-			{
-				m_targetingMode = TargetingMode::Normal;
-				component_cast<Game::GridComponent>(m_grid).ReverseTransition();
-				m_mouseMovement = Vec2(0.f);
-				g_camera.Attach(GetShip());
-				m_controlParams.m_timeScale = 1.f;
-			}
+				SwitchTargetingMode(TargetingMode::Normal);
+		}
+		if (InputManager::IsVirtualKey(_key, VirtualKey::FIRE) && m_targetingMode == TargetingMode::Tactical)
+		{
+			SwitchTargetingMode(TargetingMode::Normal);
+			s_sceneGraph->Add(*new Game::BlackHole(m_indicator.GetPosition(), 50.f, 10.f, 10.f));
 		}
 
 		// test stuff
@@ -234,5 +211,34 @@ namespace Control
 		m_hud.GetEnergyBar().SetFillLevel(GetShip().GetEnergy() / GetShip().GetMaxEnergy());
 		m_hud.GetHealthBar().SetFillLevel(GetShip().GetHealth() / GetShip().GetMaxHealth());
 	//	m_hud.UpdateCrossHair(m_ship->GetSprayRadius());
+	}
+
+	void PlayerController::SwitchTargetingMode(TargetingMode _newMode)
+	{
+		m_targetingMode = _newMode;
+		if (_newMode == TargetingMode::Tactical)
+		{
+			const float angle = PI / 3.2f;
+
+			m_tacticalDirSign = GetShip().GetPosition().y < g_camera.GetPosition().y ? 1.f : -1.f;
+			Quaternion rot = m_tacticalDirSign < 0.f ? Quaternion(Vec3(0.f, 0.f, 1.f), PI) : qidentity();
+			// shift the camera back so that the player is in the center
+			g_camera.FixRotation(ei::Quaternion(Vec3(1.f, 0.f, 0.f), m_tacticalDirSign * angle) * rot,
+				GetShip().GetPosition() + Vec3(0.f, m_tacticalDirSign * TACTICALCAM_DIST, -TACTICALCAM_DIST / tan(angle)));
+
+			m_grid.SetPosition(GetShip().GetPosition());
+			component_cast<Game::GridComponent>(m_grid).ReverseTransition();
+			m_controlParams.m_timeScale = 0.02f;
+
+			component_cast<Game::BlackHoleComponent>(static_cast<Game::BlackHoleVis&>(m_indicator)).SetActive(true);
+		}
+		else
+		{
+			component_cast<Game::BlackHoleComponent>(static_cast<Game::BlackHoleVis&>(m_indicator)).SetActive(false);
+			component_cast<Game::GridComponent>(m_grid).ReverseTransition();
+			m_mouseMovement = Vec2(0.f);
+			g_camera.Attach(GetShip());
+			m_controlParams.m_timeScale = 1.f;
+		}
 	}
 }

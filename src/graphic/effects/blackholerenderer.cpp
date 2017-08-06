@@ -22,9 +22,11 @@ namespace Graphic {
 	{
 		// temporary refresh
 		auto vbGuard = m_vertices.GetBuffer(0);
+		vbGuard->Clear();
 		Vertex vertex;
 		vertex.position = _position;
 		vertex.radius = _radius;
+		
 		vbGuard->Add(vertex);
 	}
 

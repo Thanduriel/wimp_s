@@ -61,8 +61,8 @@ namespace Game {
 		void AddActors();
 
 		// Performs a ray cast on all objects in the scene.
-		// @Return The closest object that is hit by the ray.
-		Actor::Handle RayCast(const ei::Ray& _ray, float _maxDist, CollisionFlags _type = CollisionComponent::Type::Any) const;
+		// @Return The closest object that is hit by the ray or nullptr if none is in range.
+		Actor* RayCast(const ei::Ray& _ray, float _maxDist, CollisionFlags _type = CollisionComponent::Type::Any) const;
 
 		// @Return All objects that have their center inside the given _sphere
 		//	and their squared distance to the center.

@@ -25,7 +25,7 @@ namespace GameStates {
 	using namespace Control;
 	using namespace Game;
 
-	Game::BlackHole* blackHole;
+	Game::BlackHoleVis* blackHole;
 	Game::Ship* ship2;
 
 	MainState::MainState()
@@ -35,7 +35,7 @@ namespace GameStates {
 		Controller::SetSceneGraph(m_sceneGraph);
 
 		// setup player controller
-		blackHole = new BlackHole(ei::Vec3(-15.f), 50.f);
+		blackHole = new BlackHoleVis(ei::Vec3(-15.f), 3.f);
 		m_sceneGraph.Add(*blackHole);
 		Grid* grid = new Game::Grid(ei::Vec3(0.f), 
 			Utils::Color32F(0.f, 1.f, 0.f, 0.6f), 2.f, 2.f,

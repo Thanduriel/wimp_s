@@ -95,7 +95,6 @@ namespace Game {
 			Actor* actor;
 		};
 		typedef std::shared_ptr<HandleImpl> Handle;
-		static const Handle NullHandle;
 
 		Handle GetHandle() { return m_handle; }
 		const Handle GetHandle() const { return m_handle; }
