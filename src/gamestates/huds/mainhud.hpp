@@ -1,6 +1,7 @@
 #pragma once
 
 #include "graphic/interface/hud.hpp"
+#include "gameplay/elements/ship.hpp"
 
 namespace GameStates {
 
@@ -17,7 +18,7 @@ namespace GameStates {
 		void UpdateCrossHair(float _sprayRadius);
 		void UpdateIndicators(Vec3 _playerPos);
 
-		void AddIndicator();
+		void AddIndicator(Game::Ship& _ship);
 		
 		Graphic::FillBar& GetEnergyBar() { return *m_energyBar; }
 		Graphic::FillBar& GetHealthBar() { return *m_healthBar; }
@@ -33,6 +34,6 @@ namespace GameStates {
 		Graphic::FillBar* m_energyBar;
 		Graphic::FillBar* m_healthBar;
 
-		std::vector<ScreenTexture*> m_indicators;
+		std::vector<Graphic::Indicator*> m_indicators;
 	};
 }

@@ -14,7 +14,7 @@ namespace Control
 		m_lookForTarget(false)
 	{
 		GetShip().SetSpeed(50.0f);
-		m_hud.AddIndicator();
+		m_hud.AddIndicator(this->GetShip());
 	}
 
 	void WaspController::Process(float _deltaTime)

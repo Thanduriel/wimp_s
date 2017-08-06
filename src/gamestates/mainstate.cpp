@@ -50,7 +50,7 @@ namespace GameStates {
 		// test actors
 		ship = new Ship("TestShip", Vec3(50.f,0.f,100.f));
 		m_sceneGraph.Add(*ship);
-		m_controllers.emplace_back(new Control::WaspController(*ship, m_playerController->GetShip().GetHandle()));
+		m_controllers.emplace_back(new Control::WaspController(*ship, m_playerController->GetShip().GetHandle(), m_hud));
 		ship2 = ship;
 	}
 

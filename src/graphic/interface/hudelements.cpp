@@ -348,6 +348,14 @@ namespace Graphic
 
 	// ************************************************************** //
 
+	Indicator::Indicator(Vec2 _position, Game::Ship& _ship, Anchor _anchor)
+		: ScreenTexture("crosshair_right", _position, PixelOffset(50, 50), DefinitionPoint::MidMid, _anchor),
+		m_ship(_ship)
+	{
+
+	}
+
+	// ************************************************************** //
 
 	EditField::EditField(Vec2 _position, Vec2 _size, Font* _font, int _lines, float _fontSize) :
 		ScreenTexture("componentBtnDefault", _position, _size),

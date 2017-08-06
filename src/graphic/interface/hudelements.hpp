@@ -4,6 +4,7 @@
 #include "game.hpp"
 #include "screenoverlay.hpp"
 #include "graphic/resources.hpp"
+#include "gameplay/elements/ship.hpp"
 
 #include <memory>
 
@@ -169,6 +170,18 @@ namespace Graphic {
 
 		ei::Vec<bool,2> m_autoCenter;
 		State m_btnState; // 0 - default; 1 - mouseover; 2 - down
+	};
+
+	// ************************************************************* //
+
+	class Indicator : public ScreenTexture
+	{
+	public:
+		Indicator(ei::Vec2 _position, Game::Ship& _ship, Anchor _anchor);
+
+		Game::Ship& GetShip() { return m_ship; };
+	private:
+		Game::Ship& m_ship;
 	};
 
 	// ************************************************************* //
