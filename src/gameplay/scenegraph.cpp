@@ -78,7 +78,7 @@ namespace Game {
 
 		// post processing reads from the frame-buffer and writes to the back-buffer
 		for (auto component : m_postProcessComponents)
-		component->Draw();
+			if(component->IsActive()) component->Draw();
 	}
 
 	// *********************************************************** //
@@ -213,7 +213,7 @@ namespace Game {
 	}
 
 	// *********************************************************** //
-	Actor::Handle SceneGraph::RayCast(const ei::Ray& _ray, float _maxDist, uint32_t _type) const
+	Actor* SceneGraph::RayCast(const ei::Ray& _ray, float _maxDist, uint32_t _type) const
 	{
 		using namespace ei;
 
@@ -235,7 +235,7 @@ namespace Game {
 		if (startit == m_collisionComponents.end()) return nullptr;
 
 		// Check all the CollisionComponents inside box and return closest intersection
-		Actor::Handle closestHit;
+		Actor* closestHit = nullptr;
 		for (int step = 0; step < numSplits; ++step)
 		{
 			auto it = startit;
@@ -252,7 +252,7 @@ namespace Game {
 					// todo: verify that the precheck with RayCastFast is an overall performance increase
 					if ((*it)->RayCastFast(_ray, d) && d < _maxDist && (*it)->RayCast(_ray, d))
 					{
-						closestHit = (*it)->GetActor().GetHandle();
+						closestHit = &(*it)->GetActor();
 					}
 				}
 				++it;

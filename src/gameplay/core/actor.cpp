@@ -5,8 +5,6 @@ namespace Game {
 
 	using namespace ei;
 
-	const Actor::Handle Actor::NullHandle(nullptr);
-
 	Actor::Actor()
 		: m_position(0.f), m_rotation(ei::qidentity()), m_isDestroyed(false),
 		m_handle(std::make_shared<HandleImpl>(*this))

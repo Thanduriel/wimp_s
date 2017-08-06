@@ -32,7 +32,7 @@ namespace Game {
 			// Called every frame if m_canTick == true.
 			virtual void ProcessComponent(float _deltaTime) {}
 
-			// does nothing currently
+			// dynamically change whether the Component should be processed/drawn 
 			void SetActive(bool _isActive) { m_isActive = _isActive; }
 			bool IsActive() const { return m_isActive; }
 		protected:

@@ -33,6 +33,6 @@ namespace GameStates {
 		Graphic::FillBar* m_energyBar;
 		Graphic::FillBar* m_healthBar;
 
-		std::vector<ScreenTexture*> m_indicators;
+		std::vector<Graphic::ScreenTexture*> m_indicators;
 	};
 }
