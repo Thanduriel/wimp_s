@@ -17,6 +17,7 @@ namespace Graphic {
 		void Remove();
 
 		void SetLinesShown(int _num) { m_numVertices = _num * 2; }
+		void SetColor(const Utils::Color32F& _color) { m_color = _color; }
 
 		void Draw(const ei::Mat4x4& _worldViewProjection);
 	private:

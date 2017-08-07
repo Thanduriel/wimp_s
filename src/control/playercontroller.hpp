@@ -31,8 +31,7 @@ namespace Control
 	{
 	public:
 
-		PlayerController(Game::Ship& _ship, Game::Grid& _grid, 
-			Game::Actor& _indicator, GameStates::MainHud& _hud,
+		PlayerController(Game::Ship& _ship, GameStates::MainHud& _hud,
 			GameTimeControl& _params);
 
 		// The basic processing method called once per frame
@@ -70,8 +69,9 @@ namespace Control
 		// Control the input of the player
 		void HandleInput(float _deltaTime);
 
-		Game::Grid& m_grid;
-		Game::Actor& m_indicator;
+		// helpers for special weapon placement
+		Game::Grid& m_referenceGrid;
+		Game::Actor* m_indicator;
 		GameTimeControl& m_controlParams;
 
 		Game::Actor::Handle m_focus;

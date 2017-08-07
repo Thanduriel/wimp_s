@@ -8,7 +8,7 @@
 
 namespace Game {
 
-
+	// A set of lines in 3d space that share the same transformation.
 	class GridComponent : public MarkerComponent
 	{
 	public:
@@ -31,11 +31,22 @@ namespace Game {
 			ComparisonFunc comparisonFunction;
 		};
 
+		// Create a 2d grid on the xz plane withe given size and resolution.
 		// Pass the transitionInfo as rvalue if copying the function is expensive.
-		GridComponent(Actor& _actor, const Utils::Color32F& _color,
+		GridComponent(const Actor& _actor, const Utils::Color32F& _color,
 			float _resolutionX = 1.f, float _resolutionZ = 1.f,
 			float _radius = 50.f,
 			TransitionInfo&& _transitionInfo = TransitionInfo{});
+
+		// Create a circle.
+		// @param _numLines The number of lines that form one circle.
+		GridComponent(const Actor& _actor, const Utils::Color32F& _color, int _numLines,
+			float _radius);
+
+		// Create a sphere from circles.
+		// @param _numCircles The number of circles in one direction.
+		GridComponent(const Actor& _actor, const Utils::Color32F& _color, int _numLinesCircle,
+			int _numCircles, float _radius);
 
 		void ProcessComponent(float _deltaTime) override;
 		void Draw() override;
@@ -44,7 +55,13 @@ namespace Game {
 		// Switches between adding and removing lines.
 		void ReverseTransition() { m_fadeIn = !m_fadeIn; }
 
-	private:
+		void SetColor(const Utils::Color32F& _color) { m_lineRenderer.SetColor(_color); }
+
+	protected:
+		GridComponent(const Actor& _actor, const Utils::Color32F& _color, TransitionInfo&& _transitionInfo = TransitionInfo{});
+
+		void AddCircle(int _numSegments, float _radius, const ei::Mat4x4& _transform = ei::identity4x4());
+
 		static bool closerToCenter(const std::pair<ei::Vec3, ei::Vec3>&,
 			const std::pair<ei::Vec3, ei::Vec3>&);
 
