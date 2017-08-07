@@ -144,13 +144,35 @@ namespace GameStates {
 				});
 				std::tuple<float, Vec3, ScreenBorder> element = intersectedPlanes[std::distance(std::begin(intersectedPlanes), smallest)];
 				Vec4 projected = Control::g_camera.GetViewProjection() * Vec4(std::get<1>(element));
-				i->SetPosition(Vec2(ei::clamp(projected.x / projected.w, -1.0f, 1.0f), ei::clamp(projected.y / projected.w, -1.0f, 1.0f)));
+				Vec2 pos = Vec2(ei::clamp(projected.x / projected.w, -1.0f + i->GetSize().x / 2.0f, 1.0f - i->GetSize().x / 2.0f), ei::clamp(projected.y / projected.w, -1.0f + i->GetSize().y / 2.0f, 1.0f - i->GetSize().y / 2.0f));
+				if (abs(pos.x) < 1.0f - i->GetSize().x / 2.0f && abs(pos.y) < 1.0f - i->GetSize().y / 2.0f)
+				{
+					switch (std::get<2>(element))
+					{
+					case Direction::Up:
+						pos.y = 1.0f - i->GetSize().y / 2.0f;
+						break;
+					case Direction::Down:
+						pos.y = -1.0f + i->GetSize().y / 2.0f;
+						break;
+					case Direction::Left:
+						pos.x = -1.0f + i->GetSize().x / 2.0f;
+						break;
+					case Direction::Right:
+						pos.x = 1.0f - i->GetSize().x / 2.0f;
+						break;
+					}
+				}
+				i->SetDirection((Direction)(int)std::get<2>(element));
+				i->SetPosition(pos);
 			}
+			else
+				i->SetDirection(Direction::None);
 		}
 	}
 
 	void MainHud::AddIndicator(Game::Ship& _ship)
 	{
-		m_indicators.push_back(&CreateScreenElement<Indicator>(PixelCoord(0.0f, 0.0f), _ship, Anchor(DefinitionPoint::MidMid, this)));
+		m_indicators.push_back(&CreateScreenElement<Indicator>(PixelCoord(0.0f, 0.0f), _ship, *this, Anchor(DefinitionPoint::MidMid, this)));
 	}
 }

@@ -348,11 +348,34 @@ namespace Graphic
 
 	// ************************************************************** //
 
-	Indicator::Indicator(Vec2 _position, Game::Ship& _ship, Anchor _anchor)
-		: ScreenTexture("crosshair_right", _position, PixelOffset(50, 50), DefinitionPoint::MidMid, _anchor),
+	Indicator::Indicator(Vec2 _position, Game::Ship& _ship, Hud& _hud, Anchor _anchor)
+		: ScreenTexture("", _position, PixelOffset(32, 32), DefinitionPoint::MidMid, _anchor),
 		m_ship(_ship)
 	{
+		SetVisible(false);
+		m_textures[0] = &_hud.CreateScreenElement<ScreenTexture>("indicator_up", _position, PixelOffset(32, 32), DefinitionPoint::MidMid, _anchor);
+		m_textures[1] = &_hud.CreateScreenElement<ScreenTexture>("indicator_down", _position, PixelOffset(32, 32), DefinitionPoint::MidMid, _anchor);
+		m_textures[2] = &_hud.CreateScreenElement<ScreenTexture>("indicator_left", _position, PixelOffset(32, 32), DefinitionPoint::MidMid, _anchor);
+		m_textures[3] = &_hud.CreateScreenElement<ScreenTexture>("indicator_right", _position, PixelOffset(32, 32), DefinitionPoint::MidMid, _anchor);
+		for (int i = 0; i < 4; i++)
+			m_textures[i]->SetVisible(false);
+		m_direction = Direction::Up;
+	}
 
+	void Indicator::SetDirection(Direction _direction)
+	{
+		if (m_direction != Direction::None)
+			m_textures[m_direction]->SetVisible(false);
+		if (_direction != Direction::None)
+			m_textures[_direction]->SetVisible(true);
+		m_direction = _direction;
+	}
+
+	void Indicator::SetPosition(Vec2 _pos)
+	{
+		ScreenTexture::SetPosition(_pos);
+		for (int i = 0; i < 4; i++)
+			m_textures[i]->SetPosition(_pos);
 	}
 
 	// ************************************************************** //

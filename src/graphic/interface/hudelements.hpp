@@ -174,14 +174,29 @@ namespace Graphic {
 
 	// ************************************************************* //
 
+	enum Direction
+	{
+		Up,
+		Down,
+		Left,
+		Right,
+		None
+	};
+
 	class Indicator : public ScreenTexture
 	{
 	public:
-		Indicator(ei::Vec2 _position, Game::Ship& _ship, Anchor _anchor);
+		Indicator(ei::Vec2 _position, Game::Ship& _ship, Hud& _hud, Anchor _anchor);
+		
+		void SetPosition(ei::Vec2 _pos) override;
+		Direction GetDirection() const { return m_direction; };
 
+		void SetDirection(Direction _direction);
 		Game::Ship& GetShip() { return m_ship; };
 	private:
+		Direction m_direction;
 		Game::Ship& m_ship;
+		ScreenTexture* m_textures[4];
 	};
 
 	// ************************************************************* //
