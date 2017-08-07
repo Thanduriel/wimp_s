@@ -7,7 +7,7 @@ namespace Game {
 		: PostProcessComponent(_actor)
 	{
 		m_canTick = false;
-
+		m_isActive = true;
 		m_renderer.Add(ei::Vec3(0.f), _radius);
 	}
 
@@ -30,6 +30,9 @@ namespace Game {
 	{
 		// no regular tick
 		m_canTick = false;
+
+		// no dynamic behavior
+		m_isActive = false;
 	}
 
 	void BlackHoleGravitationComponent::ProcessComponent(float _deltaTime, const SceneGraph& _sceneGraph)
@@ -53,7 +56,8 @@ namespace Game {
 		m_gravitationComponent(THISACTOR, _radius, _strength),
 		m_visualComponent(THISACTOR, EVENT_HORIZON * _radius),
 		m_lifeTime(THISACTOR, _duration),
-		m_collisionComponent(THISACTOR, EVENT_HORIZON * _radius, CollisionComponent::Type::Any)
+		m_grid(THISACTOR, Utils::Color32F(0.2f,0.85f,0.4f, 0.7f), 32, 16, _radius),
+		m_collisionComponent(THISACTOR, EVENT_HORIZON * _radius, 0) // no collision at first
 	{}
 
 	void BlackHole::Process(float _deltaTime)
@@ -72,6 +76,7 @@ namespace Game {
 		_sceneGraph.RegisterComponent(m_gravitationComponent);
 		_sceneGraph.RegisterComponent(m_visualComponent);
 		_sceneGraph.RegisterComponent(m_lifeTime);
+		_sceneGraph.RegisterComponent(m_grid);
 		_sceneGraph.RegisterComponent(m_collisionComponent);
 	}
 
@@ -79,5 +84,12 @@ namespace Game {
 	void BlackHole::OnCollision(Actor& _other)
 	{
 		_other.Damage(DAMAGE_PER_SECOND * _other.GetMaxHealth() * m_deltaTime, *this);
+	}
+
+	void BlackHole::Activate()
+	{
+		m_gravitationComponent.SetActive(true);
+		m_collisionComponent.SetType(CollisionComponent::Type::Any);
+		m_grid.SetColor(Utils::Color32F(0.1f, 0.1f, 0.9f, 0.18f));
 	}
 }

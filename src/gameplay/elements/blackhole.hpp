@@ -4,6 +4,7 @@
 #include "graphic/effects/blackholerenderer.hpp"
 #include "lifetimecomponent.hpp"
 #include "collisioncomponent.hpp"
+#include "grid.hpp"
 
 namespace Game
 {
@@ -27,6 +28,7 @@ namespace Game
 		BlackHoleGravitationComponent(const Actor& _actor, float _radius, float _strength);
 		void ProcessComponent(float _deltaTime, const class SceneGraph& _sceneGraph) override;
 	private:
+
 		float m_radius;
 		float m_fact;
 	};
@@ -44,12 +46,16 @@ namespace Game
 
 		void RegisterComponents(class SceneGraph& _sceneGraph) override;
 		void OnCollision(Actor& _other) override;
+
+		// When created the blackhole has no gravitation or collision.
+		void Activate();
 	private:
 		float m_deltaTime; // current delta time is stored to apply damage over time on collision
 
 		BlackHoleGravitationComponent m_gravitationComponent;
 		BlackHoleComponent m_visualComponent;
 		LifeTimeComponent m_lifeTime;
+		GridComponent m_grid; // indicator to improve visibility
 		CollisionComponent m_collisionComponent; // the event horizon
 	};
 }

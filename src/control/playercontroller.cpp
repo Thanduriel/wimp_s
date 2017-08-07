@@ -12,6 +12,7 @@
 #include "gameplay/scenegraph.hpp"
 #include "math/extensions.hpp"
 #include "controller.hpp"
+#include "gameplay/elements/factorycomponent.hpp"
 
 // test
 #include "generators/weapongen.hpp"
@@ -21,18 +22,23 @@ namespace Control
 {
 	using namespace ei;
 
-	const float TACTICALCAM_DIST = 32.f;
+	const float TACTICALCAM_DIST = 52.f;
 
-	PlayerController::PlayerController(Game::Ship& _ship, Game::Grid& _grid, Game::Actor& _indicator, GameStates::MainHud& _hud, GameTimeControl& _params)
+	PlayerController::PlayerController(Game::Ship& _ship, GameStates::MainHud& _hud, GameTimeControl& _params)
 		: Controller(_ship, _hud),
 		m_mouseSensitivity(10.0f),
 		m_sliderSensitivity(100.0f),
 		m_targetSpeed(10.0f),
 		m_targetingMode(TargetingMode::Normal),
-		m_grid(_grid),
-		m_indicator(_indicator),
+		m_referenceGrid(*new Game::Grid(ei::Vec3(0.f),
+			Utils::Color32F(0.f, 1.f, 0.f, 0.6f), 2.f, 2.f,
+			50.f, Game::GridComponent::TransitionInfo(4800.f, 0.25f))),
+		m_indicator(nullptr),
 		m_controlParams(_params)
-	{};
+	{
+		s_sceneGraph->Add(m_referenceGrid);
+	//	s_sceneGraph->Add(*m_indicator);
+	};
 
 	void PlayerController::Process(float _deltaTime)
 	{
@@ -52,12 +58,12 @@ namespace Control
 
 		if (m_targetingMode == TargetingMode::Tactical)
 		{
-			Vec3 pos = m_grid.GetPosition();
+			Vec3 pos = m_referenceGrid.GetPosition();
 
 			Plane plane(Vec3(0.f, 1.f, 0.f), pos);
 			Ray ray = g_camera.GetRay(InputManager::GetCursorPosScreenSpace());
 			float d = dot((pos - ray.origin), plane.n) / dot(ray.direction, plane.n);
-			m_indicator.SetPosition(ray.origin + d * ray.direction);
+			m_indicator->SetPosition(ray.origin + d * ray.direction);
 		}
 	}
 
@@ -83,14 +89,22 @@ namespace Control
 		if (_key == GLFW_KEY_SPACE)
 		{
 			if (m_targetingMode == TargetingMode::Normal)
+			{
+				m_indicator = new Game::BlackHole(Vec3(0.f), 25.f, 10.f, 10.f);
+				Game::FactoryActor::GetThreadLocalInstance().Add(*m_indicator);
+
 				SwitchTargetingMode(TargetingMode::Tactical);
+			}
 			else
+			{
 				SwitchTargetingMode(TargetingMode::Normal);
+				m_indicator->Destroy();
+			}
 		}
 		if (InputManager::IsVirtualKey(_key, VirtualKey::FIRE) && m_targetingMode == TargetingMode::Tactical)
 		{
+			static_cast<Game::BlackHole*>(m_indicator)->Activate();
 			SwitchTargetingMode(TargetingMode::Normal);
-			s_sceneGraph->Add(*new Game::BlackHole(m_indicator.GetPosition(), 50.f, 10.f, 10.f));
 		}
 
 		// test stuff
@@ -115,7 +129,7 @@ namespace Control
 		if (m_targetingMode == TargetingMode::Tactical)
 		{
 			g_camera.Translate(Vec3(0.f, _dy, 0.f));
-			m_grid.Translate(Vec3(0.f, _dy, 0.f));
+			m_referenceGrid.Translate(Vec3(0.f, _dy, 0.f));
 		}
 	}
 
@@ -137,7 +151,7 @@ namespace Control
 			if (InputManager::IsKeyPressed(GLFW_KEY_D))
 				camVel.x += tacticalCamSpeed * m_tacticalDirSign;
 			g_camera.Translate(camVel * _deltaTime);
-			m_grid.Translate(camVel * _deltaTime);
+			m_referenceGrid.Translate(camVel * _deltaTime);
 		}
 		else
 		{
@@ -226,16 +240,13 @@ namespace Control
 			g_camera.FixRotation(ei::Quaternion(Vec3(1.f, 0.f, 0.f), m_tacticalDirSign * angle) * rot,
 				GetShip().GetPosition() + Vec3(0.f, m_tacticalDirSign * TACTICALCAM_DIST, -TACTICALCAM_DIST / tan(angle)));
 
-			m_grid.SetPosition(GetShip().GetPosition());
-			component_cast<Game::GridComponent>(m_grid).ReverseTransition();
+			m_referenceGrid.SetPosition(GetShip().GetPosition());
+			component_cast<Game::GridComponent>(m_referenceGrid).ReverseTransition();
 			m_controlParams.m_timeScale = 0.02f;
-
-			component_cast<Game::BlackHoleComponent>(static_cast<Game::BlackHoleVis&>(m_indicator)).SetActive(true);
 		}
 		else
 		{
-			component_cast<Game::BlackHoleComponent>(static_cast<Game::BlackHoleVis&>(m_indicator)).SetActive(false);
-			component_cast<Game::GridComponent>(m_grid).ReverseTransition();
+			component_cast<Game::GridComponent>(m_referenceGrid).ReverseTransition();
 			m_mouseMovement = Vec2(0.f);
 			g_camera.Attach(GetShip());
 			m_controlParams.m_timeScale = 1.f;

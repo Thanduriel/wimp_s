@@ -20,17 +20,7 @@ namespace Game {
 		SceneGraph();
 
 		// Add an heap allocated object to the scene management.
-		template<class T>
-		void Add(T& _element)
-		{
-			static_assert(std::is_base_of<Actor, T>::value, "Only Actors can be managed by the SceneGraph.");
-
-			// ownership is taken here
-			m_actors.emplace_back(&_element);
-
-			// let the actor register its own components
-			_element.RegisterComponents(*this);
-		}
+		void Add(Actor& _element);
 
 		// register methods for specific components
 		// The correct one will be selected by the compiler if the static type is supplied.

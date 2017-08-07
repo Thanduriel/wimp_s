@@ -25,6 +25,15 @@ namespace Game {
 		FactoryActor::m_instances.push_back(factory);
 	}
 
+	void SceneGraph::Add(Actor& _element)
+	{
+		// ownership is taken here
+		m_actors.emplace_back(&_element);
+
+		// let the actor register its own components
+		_element.RegisterComponents(*this);
+	}
+
 	void SceneGraph::Process(float _deltaTime, float _realdTime)
 	{
 		// for now all actors are processed
@@ -46,7 +55,7 @@ namespace Game {
 		// check collisions
 		ResolveCollisions();
 		for (auto component : m_sceneComponents)
-			component->ProcessComponent(_deltaTime, *this);
+			if(component->IsActive()) component->ProcessComponent(_deltaTime, *this);
 	}
 
 	void SceneGraph::Draw()
