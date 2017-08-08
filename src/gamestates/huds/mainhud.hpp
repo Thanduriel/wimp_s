@@ -20,6 +20,7 @@ namespace GameStates {
 
 		void AddIndicator(Game::Ship& _ship);
 		
+		void ShowSpecialMoveMarker(bool _show) { m_specialMoveIndicator->SetVisible(_show); }
 		Graphic::FillBar& GetEnergyBar() { return *m_energyBar; }
 		Graphic::FillBar& GetHealthBar() { return *m_healthBar; }
 	private:
@@ -31,6 +32,7 @@ namespace GameStates {
 		Graphic::ScreenTexture* m_crossHairLeft;
 		Graphic::ScreenTexture* m_crossHairRight;
 
+		Graphic::ScreenTexture* m_specialMoveIndicator;
 		Graphic::FillBar* m_energyBar;
 		Graphic::FillBar* m_healthBar;
 

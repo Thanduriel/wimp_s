@@ -15,7 +15,6 @@ namespace Graphic
 		ScreenOverlay(_position, _size, _def, _anchor)
 	{
 		Jo::Files::MetaFileWrapper& posMap = Resources::GetTextureMap();
-		m_vertex.position = m_position;
 		m_vertex.texCoord = Vec2((float)posMap.RootNode[_name][std::string("positionX")], (float)posMap.RootNode[_name][std::string("positionY")]);
 		m_vertex.size = Vec2((float)posMap.RootNode[_name][std::string("sizeX")], (float)posMap.RootNode[_name][std::string("sizeY")]);
 		m_textureSize = m_vertex.size;
@@ -29,6 +28,7 @@ namespace Graphic
 		}
 		else
 			m_vertex.screenSize = _size;
+		m_vertex.position = m_position;
 		m_vertex.color = Utils::Color8U(255_uc, 255_uc, 255_uc);
 	}
 

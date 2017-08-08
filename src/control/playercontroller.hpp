@@ -71,7 +71,6 @@ namespace Control
 
 		// helpers for special weapon placement
 		Game::Grid& m_referenceGrid;
-		Game::Actor* m_indicator;
 		GameTimeControl& m_controlParams;
 
 		Game::Actor::Handle m_focus;

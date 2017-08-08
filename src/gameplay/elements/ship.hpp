@@ -15,10 +15,13 @@ namespace Game
 	using namespace std;
 	using namespace ei;
 
+	class SpecialMove;
+
 	class Ship : public Model
 	{
 	public:
 		Ship(const string& _pFile, const Vec3& _position);
+		~Ship();
 
 		void Process(float _deltaTime) override;
 
@@ -80,6 +83,9 @@ namespace Game
 
 		// Activates the given weapon in _slot.
 		void SetWeapon(int _slot, class Weapon& _weapon);
+
+		void SetSpecialMove(SpecialMove& _sm);
+		SpecialMove* GetSpecialMove() const { return m_specialMove.get(); }
 	private:
 		// actual constructor
 		Ship(const Jo::Files::MetaFileWrapper::Node& _node, const Vec3& _position);
@@ -105,11 +111,12 @@ namespace Game
 		float m_energyRecharge;
 		float m_energy;
 
-	//	ParticleSystemComponent<Graphic::ParticleSystems::BASIC_SYSTEM, true> m_thrustParticles;
 		float m_particleSpawnCount;
 		FixedArray<ei::Vec3> m_drivePositions;
 		FixedArray<ParticleSystemComponent<Graphic::ParticleSystems::BASIC_SYSTEM, true>> m_thrustParticles;
 		FixedArray< PointLightComponent > m_thrustLights;
 		FixedArray<SocketComponent> m_weaponSockets;
+
+		std::unique_ptr< class SpecialMove > m_specialMove;
 	};
 }
