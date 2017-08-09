@@ -4,6 +4,7 @@
 #include "graphic/core/device.hpp"
 #include "gamestates/mainstate.hpp"
 #include "gamestates/inventorystate.hpp"
+#include "gamestates/mainmenustate.hpp"
 #include "graphic/core/texture.hpp"
 #include "graphic/resources.hpp"
 #include "control/input.hpp"
@@ -55,7 +56,7 @@ Wimp_s::Wimp_s()
 
 	LightSystem::Initialize();
 
-	m_gameStates.emplace_back(new GameStates::MainState());
+	m_gameStates.emplace_back(new GameStates::MainMenuState());
 }
 
 Wimp_s::~Wimp_s()
