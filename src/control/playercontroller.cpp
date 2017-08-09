@@ -13,6 +13,7 @@
 #include "math/extensions.hpp"
 #include "controller.hpp"
 #include "gameplay/elements/factorycomponent.hpp"
+#include "gameplay/elements/shipsystems/specialmove.hpp"
 
 // test
 #include "generators/weapongen.hpp"
@@ -33,11 +34,10 @@ namespace Control
 		m_referenceGrid(*new Game::Grid(ei::Vec3(0.f),
 			Utils::Color32F(0.f, 1.f, 0.f, 0.6f), 2.f, 2.f,
 			50.f, Game::GridComponent::TransitionInfo(4800.f, 0.25f))),
-		m_indicator(nullptr),
 		m_controlParams(_params)
 	{
 		s_sceneGraph->Add(m_referenceGrid);
-	//	s_sceneGraph->Add(*m_indicator);
+		_ship.SetSpecialMove(*new Game::BlackHoleGenerator(4.f)); // small cd for testing
 	};
 
 	void PlayerController::Process(float _deltaTime)
@@ -54,6 +54,7 @@ namespace Control
 		else
 			m_hud.UpdateCrossHair(0.f);
 
+		m_hud.ShowSpecialMoveMarker(m_ship.GetSpecialMove()->GetState() != Game::SpecialMove::State::Charging);
 		m_hud.UpdateIndicators(GetShip().GetPosition());
 
 		if (m_targetingMode == TargetingMode::Tactical)
@@ -63,7 +64,7 @@ namespace Control
 			Plane plane(Vec3(0.f, 1.f, 0.f), pos);
 			Ray ray = g_camera.GetRay(InputManager::GetCursorPosScreenSpace());
 			float d = dot((pos - ray.origin), plane.n) / dot(ray.direction, plane.n);
-			m_indicator->SetPosition(ray.origin + d * ray.direction);
+			m_ship.GetSpecialMove()->SetIndicator(ray.origin + d * ray.direction);
 		}
 	}
 
@@ -90,20 +91,22 @@ namespace Control
 		{
 			if (m_targetingMode == TargetingMode::Normal)
 			{
-				m_indicator = new Game::BlackHole(Vec3(0.f), 25.f, 10.f, 10.f);
-				Game::FactoryActor::GetThreadLocalInstance().Add(*m_indicator);
-
-				SwitchTargetingMode(TargetingMode::Tactical);
+				Game::SpecialMove* sm = m_ship.GetSpecialMove();
+				if (sm->GetState() == Game::SpecialMove::State::Ready)
+				{
+					sm->Target();
+					SwitchTargetingMode(TargetingMode::Tactical);
+				}
 			}
 			else
 			{
+				m_ship.GetSpecialMove()->Dismiss();
 				SwitchTargetingMode(TargetingMode::Normal);
-				m_indicator->Destroy();
 			}
 		}
 		if (InputManager::IsVirtualKey(_key, VirtualKey::FIRE) && m_targetingMode == TargetingMode::Tactical)
 		{
-			static_cast<Game::BlackHole*>(m_indicator)->Activate();
+			m_ship.GetSpecialMove()->Activate();
 			SwitchTargetingMode(TargetingMode::Normal);
 		}
 

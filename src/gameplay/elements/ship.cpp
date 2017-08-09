@@ -4,6 +4,7 @@
 #include "generators/weapongen.hpp"
 #include "gameplay/content.hpp"
 #include "ei/3dintersection.hpp"
+#include "shipsystems/specialmove.hpp"
 
 namespace Game
 {
@@ -14,6 +15,9 @@ namespace Game
 	Ship::Ship(const string& _pFile, const Vec3& _position)
 		: Ship(Content::GetShipData()[_pFile], _position)
 	{}
+
+	// use default implementation in the source file to allow SpecialMove to be predeclared
+	Ship::~Ship() = default;
 
 	Ship::Ship(const Jo::Files::MetaFileWrapper::Node& _node, const Vec3& _position)
 		: Model(_node["Mesh"s], _node["BoundingMesh"s], _position, qidentity()),
@@ -33,7 +37,8 @@ namespace Game
 		m_weaponSockets(_node["WeaponSockets"s].Size()),
 		m_thrustParticles(m_drivePositions.capacity()),
 		m_thrustLights(m_drivePositions.capacity()),
-		m_particleSpawnCount(0.f)
+		m_particleSpawnCount(0.f),
+		m_specialMove()
 	{
 		auto& weaponsNode = _node["WeaponSockets"s];
 		for (int i = 0; i < m_weaponSockets.capacity(); ++i)
@@ -121,6 +126,9 @@ namespace Game
 	void Ship::Process(float _deltaTime)
 	{
 		m_energy = ei::min(m_energy + _deltaTime * m_energyRecharge, m_maxEnergy);
+		// toto: remove this from here and let SpecialMove be an Actor/Component
+		if (m_specialMove) m_specialMove->Process(_deltaTime);
+
 		// Get current speed here for performance reasons
 		float currentSpeed = GetCurrentSpeed();
 
@@ -195,5 +203,10 @@ namespace Game
 		m_weaponSockets[_slot].GetAttached()->Destroy();
 		m_weaponSockets[_slot].Attach(_weapon);
 		FactoryActor::GetThreadLocalInstance().Add(_weapon);
+	}
+
+	void Ship::SetSpecialMove(SpecialMove& _sm)
+	{
+		m_specialMove = std::unique_ptr<SpecialMove>(&_sm);
 	}
 }

@@ -22,10 +22,9 @@ namespace Control
 		Game::Ship& GetShip() const { return m_ship; };
 
 		static void SetSceneGraph(Game::SceneGraph& _graph) { s_sceneGraph = &_graph; }
-	private:
-		Game::Ship& m_ship;
 
 	protected:
+		Game::Ship& m_ship;
 		static Game::SceneGraph* s_sceneGraph;
 
 		GameStates::MainHud& m_hud;
