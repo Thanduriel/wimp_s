@@ -25,6 +25,9 @@ namespace GameStates
 		void KeyRelease(int _key) override;
 		void KeyClick(int _key) override;
 		void KeyDoubleClick(int _key) override;
+
+	private:
+		Game::Ship& m_ship;
 	};
 }
 

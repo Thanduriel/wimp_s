@@ -18,6 +18,7 @@ namespace GameStates
 	const ei::Vec2 SHIP_VIEW_SIZE = ei::Vec2(0.9f, 0.5f);
 
 	InventoryState::InventoryState(Game::Ship& _ship)
+		: m_ship(_ship)
 	{
 		using namespace Game;
 		int i = 0;
@@ -26,11 +27,15 @@ namespace GameStates
 			const float r = 1.f / _ship.GetGeometryComponent().GetMesh().GetMeshBounds().boundingRadius;
 			ei::Vec3 pos = socket.GetPosition() * r;
 			auto& socketField = m_hud.CreateScreenElement<DropField>("box_uncut", Vec2(pos.x, pos.z) * SHIP_VIEW_SIZE + SHIP_VIEW_SHIFT, PixelOffset(84, 84), DefP::MidMid, ScreenPosition::Anchor(),
-				[&_ship,i](DraggableTexture& _tex) 
+				[&,i](DropField& _this, DraggableTexture& _tex) 
 			{
-				const Game::Weapon* itm = static_cast<const Game::Weapon*>(_tex.GetContent());
-				// the inventory does not change the weapon's state; but here full access is required
-				_ship.SetWeapon(i, const_cast<Game::Weapon*>(itm));
+				// if the field alraidy contains an element put that one back to the main inventory
+				if (_this.GetElements().size())
+				{
+					DraggableTexture& tex = *_this.GetElements().back();
+					m_hud.m_inventoryField->DropElement(tex);
+					tex.SetPosition(tex.GetBackupPosition());
+				}
 			});
 			m_hud.m_weaponFields.push_back(&socketField);
 
@@ -46,6 +51,19 @@ namespace GameStates
 
 	InventoryState::~InventoryState()
 	{
+		// update changed weapons
+		// the first field is the inventory
+		for (size_t i = 1; i < m_hud.m_weaponFields.size(); ++i)
+		{
+			auto& elements = m_hud.m_weaponFields[i]->GetElements();
+			if (elements.size())
+			{
+				const Game::Weapon* itm = static_cast<const Game::Weapon*>(elements.front()->GetContent());
+				// the inventory does not change the weapon's state; but here full access is required
+				m_ship.SetWeapon(i-1, const_cast<Game::Weapon*>(itm));
+			}
+			else m_ship.SetWeapon(i - 1, nullptr);
+		}
 	}
 
 	void InventoryState::Process(float _deltaTime)

@@ -13,7 +13,6 @@ namespace GameStates
 /*		std::vector<DropField*> dropFields = std::vector<DropField*>();
 		m_vicinityItems = std::vector<DraggableTexture*>();
 		m_vicinityField = &CreateScreenElement<DropField>("box_uncut", PixelOffset(0, 0), PixelOffset(500, 500), DefP::TopLeft, Anchor(DefP::TopLeft, this));
-		m_inventoryField = &CreateScreenElement<DropField>("box_uncut", PixelOffset(0, 0), PixelOffset(500, 500), DefP::TopRight, Anchor(DefP::TopRight, this));
 		dropFields.push_back(m_vicinityField);
 		dropFields.push_back(m_inventoryField);
 		//Create some items for testing purposes
@@ -24,6 +23,8 @@ namespace GameStates
 			m_vicinityField->DropElement(*item);
 			item->SetPosition(item->GetBackupPosition());
 		}*/
+		m_inventoryField = &CreateScreenElement<DropField>("box_uncut", PixelOffset(0, 0), PixelOffset(400, 400), DefP::TopRight, Anchor(DefP::TopRight, this));
+		m_weaponFields.push_back(m_inventoryField);
 		m_descriptionLabel = &CreateScreenElement<TextRender>(Vec2(0.05f,0.05f), ScreenPosition::Anchor(DefP::MidLeft, this));
 		m_descriptionLabel->SetDefaultSize(0.5f);
 	}

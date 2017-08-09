@@ -69,7 +69,7 @@ namespace Graphic
 	// ************************************************************************ //
 
 	DropField::DropField(const std::string& _name, Vec2 _position, Vec2 _size,
-		DefinitionPoint _def, Anchor _anchor, std::function<void(DraggableTexture&)> _onDrop)
+		DefinitionPoint _def, Anchor _anchor, DropEventFn _onDrop)
 		: ScreenTexture(_name, _position, _size, _def, _anchor),
 		m_onDrop(_onDrop)
 	{
@@ -96,7 +96,7 @@ namespace Graphic
 		else if (_element.GetParentField() != nullptr)
 			_element.GetParentField()->DetachElement(_element);
 
-		if (m_onDrop) m_onDrop(_element);
+		if (m_onDrop) m_onDrop(*this, _element);
 		AppendElement(_element);
 	}
 
@@ -170,8 +170,6 @@ namespace Graphic
 		{
 			m_backupPos = GetPosition();
 			m_state = State::Dragged;
-		//	m_hud->MoveToFront(*this);
-		//	m_hud->SetFocus(*this);
 			UpdatePosition();
 		}
 		else if (m_state == State::Dragged)

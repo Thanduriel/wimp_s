@@ -54,10 +54,12 @@ namespace Graphic {
 	class DropField : public ScreenTexture
 	{
 	public:
+		typedef std::function<void(DropField&,DraggableTexture&)> DropEventFn;
+
 		DropField(const std::string& _name,
 			ei::Vec2 _position, ei::Vec2 _size = ei::Vec2(0.f), DefinitionPoint _def = DefinitionPoint::TopLeft,
 			Anchor _anchor = Anchor(),
-			std::function<void(DraggableTexture&)> _onDrop = [](DraggableTexture&) {});
+			DropEventFn _onDrop = [](DropField&,DraggableTexture&) {});
 
 		//override to apply vertex changes
 		virtual void MouseEnter() override;
@@ -67,6 +69,8 @@ namespace Graphic {
 		void AppendElement(DraggableTexture& _element);
 		void DetachElement(DraggableTexture& _element);
 
+		std::vector<DraggableTexture*>& GetElements() { return m_elements; }
+
 		enum struct State
 		{
 			Base,
@@ -75,7 +79,7 @@ namespace Graphic {
 	private:
 		State m_state;
 		std::vector<DraggableTexture*> m_elements;
-		std::function<void(DraggableTexture&)> m_onDrop;
+		DropEventFn m_onDrop;
 	};
 
 	// ************************************************************* //
