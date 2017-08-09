@@ -23,7 +23,7 @@ namespace Game
 		: Model(_node["Mesh"s], _node["BoundingMesh"s], _position, qidentity()),
 		m_thrust(50.0f),
 		m_speed(1.0f),
-		m_minSpeed(0.0f),
+		m_minSpeed(-10.0f),
 		m_maxSpeed(100.0f),
 		m_minSprayRadius(0.0f),
 		m_maxSprayRadius(1.0f),
@@ -96,7 +96,7 @@ namespace Game
 			float deltaSpeed = acceleration * _deltaTime;
 			// Apply the velocity to the player ship in the current direction
 			// min() to prevent ship from freaking out at low framerates
-			Vec3 newVel = ei::min(len(GetVelocity()) + deltaSpeed, m_speed) * forward;
+			Vec3 newVel = ei::min(sign(m_speed) * len(GetVelocity()) + deltaSpeed, m_speed) * forward;
 			SetVelocity(newVel);
 		}
 		else if (m_speed < currentSpeed)
@@ -105,7 +105,7 @@ namespace Game
 			float deceleration = -m_thrust / m_mass;
 			float deltaSpeed = deceleration * _deltaTime;
 			// max() to prevent ship from freaking out at low framerates
-			Vec3 newVel = ei::max(len(GetVelocity()) + deltaSpeed, m_speed) * forward;
+			Vec3 newVel = ei::max(sign(m_speed) * len(GetVelocity()) + deltaSpeed, m_speed) * forward;
 			SetVelocity(newVel);
 		}
 	}

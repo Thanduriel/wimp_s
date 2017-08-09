@@ -40,11 +40,6 @@ namespace GameStates
 		m_hud.Draw(_deltaTime);
 	}
 
-	void MainMenuState::StartGame()
-	{
-		m_newState = new MainState();
-	}
-
 	void MainMenuState::Dispose()
 	{
 	}
