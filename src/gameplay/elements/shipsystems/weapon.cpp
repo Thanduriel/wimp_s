@@ -112,8 +112,10 @@ namespace Game {
 	}
 
 	// ********************************************************************* //
-	Weapon::Weapon(float _cooldown, float _range, float _energyCost, FireFunction&& _fireFn, ReloadFunction&& _reloadFn)
+	Weapon::Weapon(float _cooldown, float _range, float _energyCost, FireFunction&& _fireFn, ReloadFunction&& _reloadFn,
+		const std::string& _name, const std::string& _description)
 		: Actor(ei::Vec3()),
+		Item(_name, _description),
 		m_factoryComponent(THISACTOR),
 		m_cooldown(0.f),
 		m_cooldownMax(_cooldown),

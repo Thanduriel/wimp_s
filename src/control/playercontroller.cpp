@@ -18,6 +18,7 @@
 // test
 #include "generators/weapongen.hpp"
 #include "gameplay/elements/blackhole.hpp"
+#include "gameplay/elements/factorycomponent.hpp"
 
 namespace Control
 {
@@ -118,8 +119,8 @@ namespace Control
 			label.SetDefaultSize(0.5f);
 			Generators::WeaponGenerator gen;
 			Game::Weapon* w = gen.Generate(5.f, 2.f);
-			label.SetText(gen.GetName() + "\n-----\n" + gen.GetDescr());
-			GetShip().SetWeapon(2, *w);
+			Game::FactoryActor::GetThreadLocalInstance().Add(*w);
+			GetShip().SetWeapon(2, w);
 		}
 	}
 

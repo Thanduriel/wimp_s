@@ -8,10 +8,17 @@ namespace GameStates
 	{
 	public:
 		InventoryHud();
+
+		void MouseMove(float _dx, float _dy) override;
 	private:
 		//Graphic::ScreenTexture* m_inventoryBackground;
 		std::vector<Graphic::DraggableTexture*> m_vicinityItems;
 		Graphic::DropField* m_vicinityField;
 		Graphic::DropField* m_inventoryField;
+
+		std::vector<Graphic::DropField*> m_weaponFields;
+		Graphic::TextRender* m_descriptionLabel;
+
+		friend class InventoryState; // state and hud are heavily depended
 	};
 }

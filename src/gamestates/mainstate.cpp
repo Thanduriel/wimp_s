@@ -53,11 +53,6 @@ namespace GameStates {
 
 	void MainState::Process(float _deltaTime)
 	{
-		if (InputManager::IsVirtualKeyPressed(Control::VirtualKey::INVENTORY))
-		{
-			// Change to inventory state
-			m_newState = new GameStates::InventoryState();
-		}
 	//	ei::Ray ray(Vec3(m_playerController->GetShip().GetPosition()),
 	//		normalize(m_playerController->GetShip().GetRotationMatrix() * Vec3(0.f, 0.f, 1.f)));
 	//	ray.origin += ray.direction * (m_playerController->GetShip().GetCollisionComponent().GetBoundingRadius()+1.f);
@@ -112,6 +107,11 @@ namespace GameStates {
 	}
 	void MainState::KeyRelease(int _key)  
 	{ 
+		if (InputManager::IsVirtualKey(_key, Control::VirtualKey::INVENTORY))
+		{
+			// Change to inventory state
+			m_newState = new GameStates::InventoryState(m_playerController->GetShip());
+		}
 		if(m_hud.KeyUp(_key, 0)) return; 
 	}
 	void MainState::KeyClick(int _key)  

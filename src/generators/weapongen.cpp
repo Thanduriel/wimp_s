@@ -191,7 +191,9 @@ namespace Generators {
 			speed * lifeTime,
 			eCost,
 			std::move(fireFn),
-			std::move(reloadFn));
+			std::move(reloadFn),
+			std::move(m_name),
+			std::move(m_description));
 	}
 
 	Game::Weapon* WeaponGenerator::Generate(uint32_t _seed, float _power, float _qualityFactor)

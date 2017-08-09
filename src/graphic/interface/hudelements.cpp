@@ -69,9 +69,9 @@ namespace Graphic
 	// ************************************************************************ //
 
 	DropField::DropField(const std::string& _name, Vec2 _position, Vec2 _size,
-		DefinitionPoint _def, Anchor _anchor,
-		std::function<void()> _OnMouseUp) :
-		ScreenTexture(_name, _position, _size, _def, _anchor, _OnMouseUp)
+		DefinitionPoint _def, Anchor _anchor, std::function<void(DraggableTexture&)> _onDrop)
+		: ScreenTexture(_name, _position, _size, _def, _anchor),
+		m_onDrop(_onDrop)
 	{
 	}
 
@@ -95,6 +95,8 @@ namespace Graphic
 			return;
 		else if (_element.GetParentField() != nullptr)
 			_element.GetParentField()->DetachElement(_element);
+
+		if (m_onDrop) m_onDrop(_element);
 		AppendElement(_element);
 	}
 
@@ -130,14 +132,14 @@ namespace Graphic
 
 	// ************************************************************************ //
 	DraggableTexture::DraggableTexture(const std::string& _name, Vec2 _position, Vec2 _size,
-		DefinitionPoint _def, Anchor _anchor,
-		std::function<void()> _OnMouseUp, const std::vector<DropField*>& _fields, Hud* _hud) :
-		ScreenTexture(_name, _position, _size, _def, _anchor, _OnMouseUp)
+		DefinitionPoint _def, Anchor _anchor, std::vector<DropField*>& _fields, const void* _content) :
+		ScreenTexture(_name, _position, _size, _def, _anchor),
+		m_content(_content),
+		m_fields(_fields)
 	{
 		m_backupPos = Vec2(0, 0);
 		m_fields = _fields;
 		m_parentField = nullptr;
-		m_hud = _hud;
 	}
 
 	void DraggableTexture::MouseEnter()
@@ -168,8 +170,8 @@ namespace Graphic
 		{
 			m_backupPos = GetPosition();
 			m_state = State::Dragged;
-			m_hud->MoveToFront(*this);
-			m_hud->SetFocus(*this);
+		//	m_hud->MoveToFront(*this);
+		//	m_hud->SetFocus(*this);
 			UpdatePosition();
 		}
 		else if (m_state == State::Dragged)

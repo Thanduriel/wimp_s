@@ -66,6 +66,7 @@ namespace Graphic {
 		TextRender& GetDebugLabel() { return *m_dbgLabel; }
 
 		void SetFocus(ScreenOverlay& _element) { m_focus = &_element; }
+		ScreenOverlay* GetFocus() const { return m_focus; }
 
 		/// \brief Mouse events
 		///	At least one is important so that dynamic_cast can work
@@ -82,6 +83,9 @@ namespace Graphic {
 		const Jo::Files::MetaFileWrapper* GetTexContainerMap() const { return m_texContainerMap; }
 
 		~Hud();
+
+	protected:
+		ScreenOverlay* m_preElem;///< Handle to the screenTexture which the cursor points to 
 	private:
 
 		ScreenOverlay* m_focus;///< object which currently takes the input
@@ -105,8 +109,6 @@ namespace Graphic {
 		std::vector<ScreenOverlay*> m_screenOverlays;
 		std::vector<Hud*> m_subHuds;
 		std::vector<ScreenTexture*> m_screenTextures;
-
-		ScreenOverlay* m_preElem;///< Handle to the screenTexture which the cursor points to 
 
 		struct CursorData
 		{

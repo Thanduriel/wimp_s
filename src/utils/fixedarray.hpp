@@ -36,6 +36,9 @@ public:
 	size_t capacity() const { return m_capacity; }
 	T* begin() { return m_data; }
 	T* end() { return m_data + m_size; }
+
+	const T* begin() const { return m_data; }
+	const T* end() const { return m_data + m_size; }
 private:
 	T* m_data;
 	size_t m_size;

@@ -81,8 +81,10 @@ namespace Game
 
 		void SetWeaponTarget(const Actor& _actor);
 
-		// Activates the given weapon in _slot.
-		void SetWeapon(int _slot, class Weapon& _weapon);
+		// Activates the given weapon in _slot, overwriting the current one.
+		// When a nullptr is given the slot is just deactivated.
+		void SetWeapon(int _slot, class Weapon* _weapon);
+		const FixedArray<SocketComponent>& GetWeaponSockets() const { return m_weaponSockets; }
 
 		void SetSpecialMove(SpecialMove& _sm);
 		SpecialMove* GetSpecialMove() const { return m_specialMove.get(); }

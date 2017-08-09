@@ -3,12 +3,16 @@
 #include "huds/inventoryhud.hpp"
 #include "graphic/interface/hud.hpp"
 
+namespace Game {
+	class Ship;
+}
+
 namespace GameStates
 {
 	class InventoryState : public GameStateHT<InventoryHud>
 	{
 	public:
-		InventoryState();
+		InventoryState(Game::Ship& _ship);
 		~InventoryState();
 
 		void Process(float _deltaTime) override;

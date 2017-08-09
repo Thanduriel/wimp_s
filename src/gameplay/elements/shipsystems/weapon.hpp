@@ -5,10 +5,11 @@
 #include "gameplay/core/actor.hpp"
 #include "gameplay/elements/factorycomponent.hpp"
 #include "projectile.hpp"
+#include "item.hpp"
 
 namespace Game {
 
-	class Weapon : public Actor
+	class Weapon : public Actor, public Item
 	{
 	public:
 		typedef std::function<void(Weapon&)> FireFunction;
@@ -16,7 +17,9 @@ namespace Game {
 
 		Weapon(float _cooldown = 1.f, float _range = 2560.f, float _energyCost = 1.f, 
 			FireFunction&& _fireFn = FireFunction(),
-			ReloadFunction&& _reloadFn = ReloadFunction());
+			ReloadFunction&& _reloadFn = ReloadFunction(),
+			const std::string& _name = "Default Weapon",
+			const std::string& _decsription = "does something");
 
 		void RegisterComponents(class SceneGraph& _sceneGraph) override;
 

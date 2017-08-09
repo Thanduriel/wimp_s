@@ -57,7 +57,7 @@ namespace Graphic {
 		DropField(const std::string& _name,
 			ei::Vec2 _position, ei::Vec2 _size = ei::Vec2(0.f), DefinitionPoint _def = DefinitionPoint::TopLeft,
 			Anchor _anchor = Anchor(),
-			std::function<void()> _OnMouseUp = []() {return; });
+			std::function<void(DraggableTexture&)> _onDrop = [](DraggableTexture&) {});
 
 		//override to apply vertex changes
 		virtual void MouseEnter() override;
@@ -75,6 +75,7 @@ namespace Graphic {
 	private:
 		State m_state;
 		std::vector<DraggableTexture*> m_elements;
+		std::function<void(DraggableTexture&)> m_onDrop;
 	};
 
 	// ************************************************************* //
@@ -83,11 +84,9 @@ namespace Graphic {
 	{
 	public:
 		DraggableTexture(const std::string& _name,
-			ei::Vec2 _position, ei::Vec2 _size = ei::Vec2(0.f), DefinitionPoint _def = DefinitionPoint::TopLeft,
-			Anchor _anchor = Anchor(),
-			std::function<void()> _OnMouseUp = []() {return; },
-			const std::vector<DropField*>& _fields = std::vector<DropField*>(),
-			Hud* _hud = nullptr);
+			ei::Vec2 _position, ei::Vec2 _size, DefinitionPoint _def,
+			Anchor _anchor,
+			std::vector<DropField*>& _fields, const void* _content = nullptr);
 
 		//override to apply vertex changes
 		virtual void MouseEnter() override;
@@ -101,6 +100,7 @@ namespace Graphic {
 		DropField* GetParentField() const { return m_parentField; };
 		void SetParentField(DropField* _field) { m_parentField = _field; };
 
+		const void* GetContent() const { return m_content; }
 		enum struct State
 		{
 			Base,
@@ -112,10 +112,11 @@ namespace Graphic {
 		State m_state;
 		ei::Vec2 m_backupPos;
 		void UpdatePosition();
-		std::vector<DropField*> m_fields;
+		std::vector<DropField*>& m_fields;
 		DropField* m_parentField;
-		Hud* m_hud;
 		ei::Vec2 m_offset;
+
+		const void* m_content;
 	};
 
 	// ************************************************************* //

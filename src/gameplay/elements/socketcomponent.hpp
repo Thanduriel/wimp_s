@@ -12,7 +12,7 @@ namespace Game {
 
 		void Attach(Actor& _target) { m_target = &_target; }
 		void Detach() { m_target = nullptr; }
-		Actor* GetAttached() { return m_target; }
+		Actor* GetAttached() const { return m_target; }
 
 		void ProcessComponent(float _deltaTime) override;
 	private:

@@ -198,11 +198,11 @@ namespace Game
 		}
 	}
 
-	void Ship::SetWeapon(int _slot, Weapon& _weapon)
+	void Ship::SetWeapon(int _slot, Weapon* _weapon)
 	{
-		m_weaponSockets[_slot].GetAttached()->Destroy();
-		m_weaponSockets[_slot].Attach(_weapon);
-		FactoryActor::GetThreadLocalInstance().Add(_weapon);
+	//	m_weaponSockets[_slot].GetAttached()->Destroy();
+		m_weaponSockets[_slot].Detach();
+		if(_weapon) m_weaponSockets[_slot].Attach(*_weapon);
 	}
 
 	void Ship::SetSpecialMove(SpecialMove& _sm)

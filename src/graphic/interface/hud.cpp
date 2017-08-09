@@ -26,7 +26,7 @@ namespace Graphic
 		{
 			m_dbgLabel = std::make_unique<TextRender>();//DEFAULT
 			m_dbgLabel->SetPosition(Vec2(0.5f, 0.8f));
-			RegisterElement(*m_dbgLabel.get());
+			RegisterElement(*m_dbgLabel);
 		}
 
 	//	m_texContainerMap = &Graphic::Resources::GetTextureMap();
@@ -152,7 +152,7 @@ namespace Graphic
 				//enter new element; leave old
 				if(m_preElem != screenOverlay) 
 				{
-					if(m_preElem != NULL){ m_preElem->MouseLeave(); m_preElem = nullptr;}
+					if(m_preElem != nullptr){ m_preElem->MouseLeave(); m_preElem = nullptr;}
 					screenOverlay->MouseEnter();	
 					m_preElem = screenOverlay;
 				}
@@ -172,10 +172,12 @@ namespace Graphic
 		//clicking on a screenOverlay
 		if(_key == GLFW_MOUSE_BUTTON_LEFT && m_preElem != nullptr)
 		{
+			if (m_focus = dynamic_cast<DraggableTexture*>(m_preElem))
+				MoveToFront(static_cast<ScreenTexture&>(*m_focus));
 			return m_preElem->KeyDown(_key, _modifiers);
 		}
 
-		//focused object recieves input
+		//focused object receives input
 		if (m_focus)
 		{
 			return m_focus->KeyDown(_key, _modifiers);
@@ -189,10 +191,11 @@ namespace Graphic
 		if(_key == GLFW_MOUSE_BUTTON_LEFT && m_preElem != nullptr)
 		{
 			m_focus = dynamic_cast<EditField*>(m_preElem);
+
 			return	m_preElem->KeyUp(_key, _modifiers);
 		}
 
-		//focused object recieves input
+		//focused object receives input
 		if (m_focus)
 		{
 			return m_focus->KeyUp(_key, _modifiers);
