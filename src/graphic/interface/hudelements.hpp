@@ -20,7 +20,6 @@ namespace Graphic {
 	};
 
 	/// \brief A 2d screen overlay texture 
-	/// \details To preserve the ratio defined in size one can define _rDim so that the other dimension is scaled to fit the needs
 	class ScreenTexture : public ScreenOverlay
 	{
 	public:
@@ -80,7 +79,6 @@ namespace Graphic {
 
 	// ************************************************************* //
 	/// \brief A draggable 2d screen overlay texture 
-	/// \details To preserve the ratio defined in size one can define _rDim so that the other dimension is scaled to fit the needs
 	class DraggableTexture : public ScreenTexture
 	{
 	public:

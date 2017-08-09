@@ -2,6 +2,8 @@
 #include "mainstate.hpp"
 #include "huds/mainmenuhud.hpp"
 #include "graphic/interface/hud.hpp"
+#include "graphic/interface/pixelcoords.hpp"
+#include "graphic/interface/hudelements.hpp"
 #include "control/input.hpp"
 
 namespace GameStates
@@ -11,7 +13,8 @@ namespace GameStates
 
 	MainMenuState::MainMenuState()
 	{
-
+		using namespace Graphic;
+		m_hud.GetStartButton().SetOnMouseUp([&]() { m_newState = new MainState(); });
 	}
 
 	MainMenuState::~MainMenuState()

@@ -1,7 +1,6 @@
 #pragma once
 
 #include "graphic/interface/hud.hpp"
-#include "gamestates/mainmenustate.hpp"
 
 namespace GameStates
 {
@@ -9,6 +8,8 @@ namespace GameStates
 	{
 	public:
 		MainMenuHud();
+
+		Graphic::Button& GetStartButton() { return *m_startButton; }
 	private:
 		Graphic::ScreenTexture* m_background;
 		Graphic::Button* m_startButton;

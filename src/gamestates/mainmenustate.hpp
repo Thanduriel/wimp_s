@@ -1,8 +1,6 @@
 #pragma once
 #include "gamestate.hpp"
 #include "huds/mainmenuhud.hpp"
-#include "huds/inventoryhud.hpp"
-#include "graphic/interface/hud.hpp"
 
 namespace GameStates
 {
