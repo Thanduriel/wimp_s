@@ -71,7 +71,7 @@ namespace Generators {
 
 	Game::Weapon* WeaponGenerator::Generate(float _power, float _qualityFactor)
 	{
-		static bool killer = false;
+	/*	static bool killer = false;
 		if (!killer)
 		{
 			killer = true;
@@ -79,12 +79,12 @@ namespace Generators {
 			m_description = "damage: " + std::to_string(std::numeric_limits<float>::infinity())
 				+ "\n" + "cooldown: 0.0";
 			return new Weapon(0.f);
-		}
+		}*/
 
 		// decide on quality
 		auto qVec = QUALITY_RARITY * _qualityFactor;
-		Quality rarity = Quality::Unique;
-		while (float n = m_randomSampler.Uniform() > qVec[(int)rarity]) rarity = Quality((int)rarity - 1);
+		Item::Quality rarity = Item::Quality::Unique;
+		while (float n = m_randomSampler.Uniform() > qVec[(int)rarity]) rarity = Item::Quality((int)rarity - 1);
 		int numTraits = QUALITY_NUM_TRAITS[(int)rarity];
 
 		// roll basic type; -2 since lasers are not implemented
@@ -185,13 +185,14 @@ namespace Generators {
 		m_description += "\n-----\ndps: " + std::to_string(1.f / cooldown * damage)
 			+ "\nrange: " + std::to_string(speed * lifeTime);
 
-		m_name = QUALITY_COLOR[(int)rarity] + m_name + "</c>";
+		m_name = Item::QUALITY_COLOR_STR[(int)rarity] + m_name + "</c>";
 
 		return new Game::Weapon(cooldown,
 			speed * lifeTime,
 			eCost,
 			std::move(fireFn),
 			std::move(reloadFn),
+			rarity,
 			std::move(m_name),
 			std::move(m_description));
 	}

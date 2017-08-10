@@ -9,6 +9,7 @@
 #include "utils/fixedarray.hpp"
 #include "jofilelib.hpp"
 #include "particlesystemcomponent.hpp"
+#include "shipsystems/inventory.hpp"
 
 namespace Game
 {
@@ -85,6 +86,8 @@ namespace Game
 		// When a nullptr is given the slot is just deactivated.
 		void SetWeapon(int _slot, class Weapon* _weapon);
 		const FixedArray<SocketComponent>& GetWeaponSockets() const { return m_weaponSockets; }
+		const Inventory& GetInventory() const { return m_inventory; }
+		Inventory& GetInventory() { return m_inventory; }
 
 		void SetSpecialMove(SpecialMove& _sm);
 		SpecialMove* GetSpecialMove() const { return m_specialMove.get(); }
@@ -119,6 +122,7 @@ namespace Game
 		FixedArray< PointLightComponent > m_thrustLights;
 		FixedArray<SocketComponent> m_weaponSockets;
 
+		Inventory m_inventory;
 		std::unique_ptr< class SpecialMove > m_specialMove;
 	};
 }

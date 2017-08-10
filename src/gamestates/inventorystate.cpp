@@ -1,3 +1,4 @@
+#include <unordered_map>
 #include "inventorystate.hpp"
 #include "mainstate.hpp"
 #include "gamestate.hpp"
@@ -21,9 +22,23 @@ namespace GameStates
 		: m_ship(_ship)
 	{
 		using namespace Game;
+
+		// remember item -> texture relation to find them when handling equipped weapons
+		std::unordered_map<const Item*, DraggableTexture*> itemIcons;
+		for (const Item* item : _ship.GetInventory())
+		{
+			// since Weapon uses multi-inheritance Item has to be casted first to get the actual weapon pointer
+			auto& tex = m_hud.CreateScreenElement<DraggableTexture>("weaponIcon", Vec2(0.f), PixelOffset(64, 64), DefP::MidMid, ScreenPosition::Anchor(DefP::MidMid, &m_hud), m_hud.m_weaponFields, static_cast<const Weapon*>(item));
+			tex.SetColor(Item::QUALITY_COLOR[(int)item->GetQuality()]);
+			m_hud.m_inventoryField->DropElement(tex);
+
+			itemIcons.emplace(item, &tex);
+		}
+
 		int i = 0;
 		for (auto& socket : _ship.GetWeaponSockets())
 		{
+			// project socket coordinates to screen rectangle
 			const float r = 1.f / _ship.GetGeometryComponent().GetMesh().GetMeshBounds().boundingRadius;
 			ei::Vec3 pos = socket.GetPosition() * r;
 			auto& socketField = m_hud.CreateScreenElement<DropField>("box_uncut", Vec2(pos.x, pos.z) * SHIP_VIEW_SIZE + SHIP_VIEW_SHIFT, PixelOffset(84, 84), DefP::MidMid, ScreenPosition::Anchor(),
@@ -41,9 +56,12 @@ namespace GameStates
 
 			if (const Weapon* weapon = static_cast<const Weapon*>(socket.GetAttached()))
 			{
-				auto& tex = m_hud.CreateScreenElement<DraggableTexture>("box_uncut", Vec2(0.f), PixelOffset(64, 64), DefP::MidMid, ScreenPosition::Anchor(DefP::MidMid, &m_hud), m_hud.m_weaponFields, weapon);
-				socketField.DropElement(tex);
-				tex.SetPosition(tex.GetBackupPosition());
+				auto it = itemIcons.find(static_cast<const Item*>(weapon));
+				Assert(it != itemIcons.end(), "The equipped weapon is not found in the inventory.");
+				socketField.DropElement(*it->second);
+
+				// since the icons are created first the sockets are in front of them
+				m_hud.MoveToFront(*it->second);
 			}
 			++i;
 		}
@@ -60,9 +78,9 @@ namespace GameStates
 			{
 				const Game::Weapon* itm = static_cast<const Game::Weapon*>(elements.front()->GetContent());
 				// the inventory does not change the weapon's state; but here full access is required
-				m_ship.SetWeapon(i-1, const_cast<Game::Weapon*>(itm));
+				m_ship.SetWeapon(int(i-1), const_cast<Game::Weapon*>(itm));
 			}
-			else m_ship.SetWeapon(i - 1, nullptr);
+			else m_ship.SetWeapon(int(i - 1), nullptr);
 		}
 	}
 

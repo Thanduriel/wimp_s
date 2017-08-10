@@ -114,13 +114,10 @@ namespace Control
 		// test stuff
 		if (_key == GLFW_KEY_R)
 		{
-			static Graphic::TextRender& label = m_hud.CreateScreenElement<Graphic::TextRender>(Vec2(0.f),
-				Graphic::ScreenPosition::Anchor(Graphic::DefP::TopLeft, &m_hud));
-			label.SetDefaultSize(0.5f);
 			Generators::WeaponGenerator gen;
 			Game::Weapon* w = gen.Generate(5.f, 2.f);
 			Game::FactoryActor::GetThreadLocalInstance().Add(*w);
-			GetShip().SetWeapon(2, w);
+			m_ship.GetInventory().Add(*w);
 		}
 	}
 

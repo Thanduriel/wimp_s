@@ -71,6 +71,8 @@ namespace Game
 		// temporary weapon setup
 		Weapon& weapon1 = FactoryActor::GetThreadLocalInstance().Make<Weapon>();
 		Weapon& weapon2 = FactoryActor::GetThreadLocalInstance().Make<Weapon>();
+		m_inventory.Add(weapon1);
+		m_inventory.Add(weapon2);
 		m_weaponSockets[0].Attach(weapon1);
 		m_weaponSockets[2].Attach(weapon2);
 	}

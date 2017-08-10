@@ -110,6 +110,7 @@ namespace Graphic
 		newPos.y -= multiple * _element.GetSize().y;
 		_element.SetBackupPosition(newPos);
 		_element.SetParentField(this);
+		_element.SetPosition(newPos);
 		m_elements.push_back(&_element);
 	}
 
