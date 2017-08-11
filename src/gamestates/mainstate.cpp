@@ -9,13 +9,15 @@
 #include "control/input.hpp"
 #include "graphic/effects/lightsystem.hpp"
 #include "control/controller.hpp"
-
+// test related
 #include "graphic/interface/pixelcoords.hpp"
 #include "gameplay/elements/grid.hpp"
 #include "gameplay/elements/blackhole.hpp"
 #include "gameplay/elements/light.hpp"
 #include "generators/random.hpp"
 #include "gameplay/elements/shipsystems/projectile.hpp"
+#include "gameplay/events/event.hpp"
+#include "gameplay/events/conditions.hpp"
 
 namespace GameStates {
 
@@ -45,6 +47,10 @@ namespace GameStates {
 		m_sceneGraph.Add(*ship);
 		m_controllers.emplace_back(new Control::WaspController(*ship, m_playerController->GetShip().GetHandle(), m_hud));
 		ship2 = ship;
+
+		// test events
+		auto eventWin = new Event<Conditions::OnDestroy>([&]() { m_isFinished = true; }, std::vector<Actor::Handle>({ ship2->GetHandle() }), 1);
+		m_sceneGraph.Add(*eventWin);
 	}
 
 	MainState::~MainState()
