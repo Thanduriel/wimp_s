@@ -70,103 +70,40 @@ namespace GameStates {
 		m_crossHairRight->SetPosition(PixelOffset(spread, 0));
 	}
 
-	enum ScreenBorder
-	{
-		Top,
-		Bottom,
-		Left,
-		Right
-	};
-
 	void MainHud::UpdateIndicators(Vec3 _playerPos)
 	{
-		//Get the normals of the 4 planes limiting the view frustum (near and far plane excluded)
-		Vec3 v1 = Control::g_camera.GetRotationMatrix() *  Vec3(0, -1.0f, 0);
-		Vec3 perp1 = Control::g_camera.GetRotationMatrix() * Vec3(-1.0f, 0, 0);
-		Vec3 normalDown = ei::rotation(perp1, Control::g_camera.GetFov() / 2.0f) * v1;
-		Vec3 v2 = Control::g_camera.GetRotationMatrix() *  Vec3(0, 1.0f, 0);
-		Vec3 perp2 = Control::g_camera.GetRotationMatrix() * Vec3(1.0f, 0, 0);
-		Vec3 normalUp = ei::rotation(perp2, Control::g_camera.GetFov() / 2.0f) * v2;
-		float horizontalFov = Control::g_camera.GetFov() * Control::g_camera.GetAspectRatio();
-		Vec3 v3 = Control::g_camera.GetRotationMatrix() *  Vec3(1.0f, 0, 0);
-		Vec3 perp3 = Control::g_camera.GetRotationMatrix() * Vec3(0, -1.0f, 0);
-		Vec3 normalRight = ei::rotation(perp3, horizontalFov / 2.0f) * v3;
-		Vec3 v4 = Control::g_camera.GetRotationMatrix() *  Vec3(-1.0f, 0, 0);
-		Vec3 perp4 = Control::g_camera.GetRotationMatrix() * Vec3(0, 1.0f, 0);
-		Vec3 normalLeft = ei::rotation(perp4, horizontalFov / 2.0f) * v4;
-
 		for (auto& i : m_indicators)
 		{
-			//Calculate the distance of the ships to the planes
-			Vec3 pos = i->GetShip().GetPosition() - Control::g_camera.GetPosition();
-			float dTop = dot(normalDown, pos);
-			float dBot = dot(normalUp, pos);
-			float dLeft = dot(normalRight, pos);
-			float dRight = dot(normalLeft, pos);
-			Vec3 delta = i->GetShip().GetPosition() - _playerPos;
-			std::vector<std::tuple<float, Vec3, ScreenBorder>> intersectedPlanes;
-			//If ship is outside of plane, then calculate intersection point
-			if (dTop < 0.0f)
+			bool shipInSight = false;
+			//Project enemy ship to screen space
+			Vec4 projected = Control::g_camera.GetViewProjection() * Vec4(i->GetShip().GetPosition().x, i->GetShip().GetPosition().y, i->GetShip().GetPosition().z, 1.0f);
+			Vec2 projectedPos = Vec2(projected.x / projected.w, projected.y / projected.w);
+			if (dot(i->GetShip().GetPosition() - Control::g_camera.GetPosition(), Control::g_camera.GetRotationMatrix() * Vec3(0.0f, 0.0f, 1.0f)) > 0)
 			{
-				Vec3 dist = dTop * normalDown;
-				Vec3 x = (pow(len(dist), 3) * len(delta) / (dot(dist, delta))) * delta;
-				Vec3 p = i->GetShip().GetPosition() - x;
-				float d = len(p - _playerPos);
-				intersectedPlanes.push_back(std::make_tuple(d, p, ScreenBorder::Top));
+				//If ship is on screen, don't show indicator
+				if (abs(projectedPos.y) <= 1.0f && abs(projectedPos.x) <= 1.0f)
+					shipInSight = true;
 			}
-			if (dBot < 0.0f)
+			if (!shipInSight)
 			{
-				Vec3 dist = dBot * normalUp;
-				Vec3 x = (pow(len(dist), 3) * len(delta) / (dot(dist, delta))) * delta;
-				Vec3 p = i->GetShip().GetPosition() - x;
-				float d = len(p - _playerPos);
-				intersectedPlanes.push_back(std::make_tuple(d, p, ScreenBorder::Bottom));
-			}
-			if (dRight < 0.0f)
-			{
-				Vec3 dist = dRight * normalLeft;
-				Vec3 x = (pow(len(dist), 3) * len(delta) / (dot(dist, delta))) * delta;
-				Vec3 p = i->GetShip().GetPosition() - x;
-				float d = len(p - _playerPos);
-				intersectedPlanes.push_back(std::make_tuple(d, p, ScreenBorder::Right));
-			}
-			if (dLeft < 0.0f)
-			{
-				Vec3 dist = dLeft * normalRight;
-				Vec3 x = (pow(len(dist), 3) * len(delta) / (dot(dist, delta))) * delta;
-				Vec3 p = i->GetShip().GetPosition() - x;
-				float d = len(p - _playerPos);
-				intersectedPlanes.push_back(std::make_tuple(d, p, ScreenBorder::Left));
-			}
-
-			if (intersectedPlanes.size() > 0)
-			{
-				std::vector<std::tuple<float, Vec3, ScreenBorder>>::iterator smallest = std::min_element(intersectedPlanes.begin(), intersectedPlanes.end(), [](auto& lhs, auto& rhs)
-				{
-					return std::get<0>(lhs) < std::get<0>(rhs);
-				});
-				std::tuple<float, Vec3, ScreenBorder> element = intersectedPlanes[std::distance(std::begin(intersectedPlanes), smallest)];
-				Vec4 projected = Control::g_camera.GetViewProjection() * Vec4(std::get<1>(element));
-				Vec2 pos = Vec2(ei::clamp(projected.x / projected.w, -1.0f + i->GetSize().x / 2.0f, 1.0f - i->GetSize().x / 2.0f), ei::clamp(projected.y / projected.w, -1.0f + i->GetSize().y / 2.0f, 1.0f - i->GetSize().y / 2.0f));
-				if (abs(pos.x) < 1.0f - i->GetSize().x / 2.0f && abs(pos.y) < 1.0f - i->GetSize().y / 2.0f)
-				{
-					switch (std::get<2>(element))
-					{
-					case Direction::Up:
-						pos.y = 1.0f - i->GetSize().y / 2.0f;
-						break;
-					case Direction::Down:
-						pos.y = -1.0f + i->GetSize().y / 2.0f;
-						break;
-					case Direction::Left:
-						pos.x = -1.0f + i->GetSize().x / 2.0f;
-						break;
-					case Direction::Right:
-						pos.x = 1.0f - i->GetSize().x / 2.0f;
-						break;
-					}
-				}
-				i->SetDirection((Direction)(int)std::get<2>(element));
+				Direction dir;
+				//Calculate the intersections of the vector to the projected position with the borders of the screen
+				float factorY = 1.0f / abs(projectedPos.y);
+				Vec2 yIntersection = factorY * projectedPos;
+				float factorX = 1.0f / abs(projectedPos.x);
+				Vec2 xIntersection = factorX * projectedPos;
+				//Get closest intersection
+				Vec2 pos = len(yIntersection) <= len(xIntersection) ? yIntersection : xIntersection;
+				pos = Vec2(pos.x - sign(pos.x) * i->GetSize().x / 2.0f, pos.y - sign(pos.y) * i->GetSize().y / 2.0f);
+				//Invert position when on the wrong side
+				if (dot(Control::g_camera.GetRotationMatrix() * Vec3(0.0f, 0.0f, 1.0f), i->GetShip().GetPosition() - Control::g_camera.GetPosition()) < 0.0f)
+					pos *= -1;
+				//Set the orientation of the indicator
+				if (len(yIntersection) <= len(xIntersection))
+					dir = pos.y < 0 ? Direction::Down : Direction::Up;
+				else
+					dir = pos.x < 0 ? Direction::Left : Direction::Right;
+				i->SetDirection(dir);
 				i->SetPosition(pos);
 			}
 			else
