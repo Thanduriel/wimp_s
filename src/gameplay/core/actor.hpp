@@ -6,6 +6,12 @@
 
 namespace Game {
 
+	enum struct DamageType
+	{
+		Normal,
+		Pure
+	};
+
 	/* Actor *************************************
 	 * Basic class for objects that exist in the world.
 	 */
@@ -56,17 +62,17 @@ namespace Game {
 		float GetMaxHealth() const { return m_maxHealth; }
 
 		// Destroys the object
-		void Destroy();
+		void Destroy(bool _callOnDestroy = true);
 		// Is object to be destroyed?
 		bool IsDestroyed() const { return m_isDestroyed; }
-		void Damage(float _amount, Actor& _source);
+		void Damage(float _amount, Actor& _source, DamageType _type = DamageType::Normal);
 
 		virtual void OnDestroy() {}
 		// Collision with another Actor was registered.
 		virtual void OnCollision(Actor& _other) {}
 		// Decide how damage is handled.
 		// Overwrite to implement custom behavior such as reduction or absorption.
-		virtual float OnDamageTaken(float _amount, Actor& _source) { return _amount; }
+		virtual float OnDamageTaken(float _amount, Actor& _source, DamageType _type) { return _amount; }
 		virtual void Process(float _deltaTime) {}
 
 		bool CanTick() const { return m_canTick; }

@@ -77,10 +77,12 @@ namespace Control {
 		ACC_LEFT,
 		ACC_RIGHT,
 		ADJUST_TARGET_ACC,
+		BRAKE,
 		FIRE,
 		ROLL_CW,
 		ROLL_CCW,
 		INVENTORY,
+		SWITCH_TACTICAL,
 		COUNT
 	};
 

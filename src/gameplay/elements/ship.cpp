@@ -20,9 +20,9 @@ namespace Game
 	Ship::~Ship() = default;
 
 	Ship::Ship(const Jo::Files::MetaFileWrapper::Node& _node, const Vec3& _position)
-		: Model(_node["Mesh"s], _node["BoundingMesh"s], _position, qidentity()),
-		m_thrust(50.0f),
-		m_speed(1.0f),
+		: Model(_node["Mesh"s], _node["BoundingMesh"s], _position, qidentity(), _node["Mass"s].Get(1000.f)),
+		m_thrust(50000.0f),
+		m_speed(0.0f),
 		m_minSpeed(-10.0f),
 		m_maxSpeed(100.0f),
 		m_minSprayRadius(0.0f),
@@ -64,7 +64,6 @@ namespace Game
 				[]() {return 0.1f; });
 
 		m_canTakeDamage = true;
-		m_mass = 1.f;
 		GetCollisionComponent().SetType(CollisionComponent::Type::Any | CollisionComponent::Type::Solid 
 			| CollisionComponent::Type::Ship | CollisionComponent::Type::Dynamic);
 

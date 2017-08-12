@@ -88,7 +88,7 @@ namespace Control
 
 	void PlayerController::KeyClick(int _key)
 	{
-		if (_key == GLFW_KEY_SPACE)
+		if (InputManager::IsVirtualKey(_key, VirtualKey::SWITCH_TACTICAL))
 		{
 			if (m_targetingMode == TargetingMode::Normal)
 			{
@@ -110,6 +110,9 @@ namespace Control
 			m_ship.GetSpecialMove()->Activate();
 			SwitchTargetingMode(TargetingMode::Normal);
 		}
+
+		if (InputManager::IsVirtualKey(_key, VirtualKey::BRAKE))
+			m_targetSpeed = 0.f;
 
 		// test stuff
 		if (_key == GLFW_KEY_R)
@@ -158,7 +161,7 @@ namespace Control
 		{
 			if (InputManager::IsVirtualKeyPressed(Control::VirtualKey::FIRE))
 			{
-				if(m_focus) GetShip().SetWeaponTarget(**m_focus);
+				if(*m_focus) GetShip().SetWeaponTarget(**m_focus);
 				GetShip().Fire();
 			}
 

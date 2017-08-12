@@ -41,8 +41,8 @@ namespace Game {
 	{
 	public:
 		// @param _pFile is the name of the mesh file without ending
-		Model(const std::string& _pFile, const ei::Vec3&_position, const ei::Quaternion&_rotation);
-		Model(const std::string& _meshName, const std::string& _boundingMeshName, const ei::Vec3&_position, const ei::Quaternion& _rotation);
+		Model(const std::string& _pFile, const ei::Vec3&_position, const ei::Quaternion&_rotation, float _mass = 1.f);
+		Model(const std::string& _meshName, const std::string& _boundingMeshName, const ei::Vec3&_position, const ei::Quaternion& _rotation, float _mass = 1.f);
 		Model(const Model& _orig);
 
 		void RegisterComponents(class SceneGraph& _sceneGraph) override;

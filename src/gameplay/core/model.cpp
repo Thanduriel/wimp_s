@@ -53,17 +53,19 @@ namespace Game {
 	}
 
 	// ********************************************************************** //
-	Model::Model(const std::string& _pFile, const ei::Vec3&_position, const ei::Quaternion&_rotation)
+	Model::Model(const std::string& _pFile, const ei::Vec3&_position, const ei::Quaternion&_rotation, float _mass)
 		: DynamicActor(_position, _rotation),
 		m_component(THISACTOR, _pFile)
 	{
+		m_mass = _mass;
 		SetInertiaTensor(m_component.ComputeInertiaTensor(m_mass));
 	}
 
-	Model::Model(const std::string& _meshName, const std::string& _boundingMeshName, const ei::Vec3&_position, const ei::Quaternion&_rotation)
+	Model::Model(const std::string& _meshName, const std::string& _boundingMeshName, const ei::Vec3&_position, const ei::Quaternion&_rotation, float _mass)
 		: DynamicActor(_position, _rotation),
 		m_component(THISACTOR, _meshName, _boundingMeshName)
 	{
+		m_mass = _mass;
 		SetInertiaTensor(m_component.ComputeInertiaTensor(m_mass));
 	}
 

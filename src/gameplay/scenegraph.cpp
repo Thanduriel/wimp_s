@@ -357,16 +357,21 @@ namespace Game {
 
 							float epsilon = 0.04f;
 
+							Vec3 rotInertialSlf = slfDyn->GetInverseInertiaTensor()* cross(radiusSlf, normal);
+							Vec3 rotInertiaOth = othDyn->GetInverseInertiaTensor() * cross(radiusOth, normal);
 							float impulse = -(1 + epsilon) * dot((velocitySlf - velocityOth), normal);
-							impulse /= (1 / massSlf + 1 / massOth) + dot(normal, cross(slfDyn->GetInverseInertiaTensor()* cross(radiusSlf, normal), radiusSlf)
-								+ cross(othDyn->GetInverseInertiaTensor()* cross(radiusOth, normal), radiusOth));
+							impulse /= (1 / massSlf + 1 / massOth) + dot(normal, cross(rotInertialSlf, radiusSlf)
+								+ cross(rotInertiaOth, radiusOth));
 
 							slfDyn->AddVelocity(impulse / massSlf * normal);
 							othDyn->AddVelocity(-impulse / massOth * normal);
 
-							slfDyn->AddAngularVelocity(slfDyn->GetInverseInertiaTensor() * cross(radiusSlf, normal) * 1.f * impulse);
-							othDyn->AddAngularVelocity(othDyn->GetInverseInertiaTensor() * cross(radiusOth, normal) *-1.f * impulse);
+							slfDyn->AddAngularVelocity(rotInertialSlf * 1.f * impulse);
+							othDyn->AddAngularVelocity(rotInertiaOth *-1.f * impulse);
 
+							float damage = impulse * epsilon * 0.33f;
+							slfDyn->Damage(damage, *othDyn);
+							othDyn->Damage(damage, *slfDyn);
 						}
 					}
 				}

@@ -83,7 +83,7 @@ namespace Game {
 	const float DAMAGE_PER_SECOND = 0.2f;
 	void BlackHole::OnCollision(Actor& _other)
 	{
-		_other.Damage(DAMAGE_PER_SECOND * _other.GetMaxHealth() * m_deltaTime, *this);
+		_other.Damage(DAMAGE_PER_SECOND * _other.GetMaxHealth() * m_deltaTime, *this, DamageType::Pure);
 	}
 
 	void BlackHole::Activate()

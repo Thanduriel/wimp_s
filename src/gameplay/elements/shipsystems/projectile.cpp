@@ -17,6 +17,8 @@ namespace Game {
 		m_lifeTimeComponent(THISACTOR, _lifeTime),
 		m_damage(_damage)
 	{
+		m_health = 0.0001f;
+		m_canTakeDamage = true;
 		SetVelocity(_velocity);
 	}
 
@@ -31,7 +33,7 @@ namespace Game {
 	void Projectile::OnCollision(Actor& _other)
 	{
 		_other.Damage(m_damage, *this);
-		Destroy();
+	//	Destroy();
 	}
 
 	void Projectile::RegisterComponents(SceneGraph& _sceneGraph)

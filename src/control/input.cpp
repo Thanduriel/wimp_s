@@ -41,10 +41,12 @@ namespace Control {
 		InputManagerInstance.m_keyMap[(int)VirtualKey::ACC_LEFT] = &_keyConfig[string("AccLeft")];
 		InputManagerInstance.m_keyMap[(int)VirtualKey::ACC_RIGHT] = &_keyConfig[string("AccRight")];
 		InputManagerInstance.m_keyMap[(int)VirtualKey::ADJUST_TARGET_ACC] = &_keyConfig[string("AdjustTargetAcc")];
+		InputManagerInstance.m_keyMap[(int)VirtualKey::BRAKE] = &_keyConfig[string("Brake")];
 		InputManagerInstance.m_keyMap[(int)VirtualKey::FIRE] = &_keyConfig[string("Fire")];
 		InputManagerInstance.m_keyMap[(int)VirtualKey::ROLL_CW] = &_keyConfig[string("RollCW")];
 		InputManagerInstance.m_keyMap[(int)VirtualKey::ROLL_CCW] = &_keyConfig[string("RollCCW")];
 		InputManagerInstance.m_keyMap[(int)VirtualKey::INVENTORY] = &_keyConfig[string("Inventory")];
+		InputManagerInstance.m_keyMap[(int)VirtualKey::SWITCH_TACTICAL] = &_keyConfig[string("SwitchTactical")];
 	}
 
 	// ********************************************************************* //

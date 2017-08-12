@@ -131,10 +131,12 @@ void Wimp_s::BuildDefaultConfig()
 	cinput[std::string("AccLeft")][0] = GLFW_KEY_A;
 	cinput[std::string("AccRight")][0] = GLFW_KEY_D;
 	cinput[std::string("AdjustTargetAcc")][0] = GLFW_KEY_LEFT_SHIFT;
+	cinput[std::string("Brake")][0] = GLFW_KEY_TAB;
 	cinput[std::string("Fire")][0] = GLFW_MOUSE_BUTTON_LEFT;
 	cinput[std::string("RollCW")][0] = GLFW_KEY_E;
 	cinput[std::string("RollCCW")][0] = GLFW_KEY_Q;
 	cinput[std::string("Inventory")][0] = GLFW_KEY_I;
+	cinput[std::string("SwitchTactical")][0] = GLFW_KEY_SPACE;
 	
 /*	auto& cgame = m_config[std::string("Game")];
 	cgame[std::string("Language")] = "english.json";

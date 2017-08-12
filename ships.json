@@ -4,6 +4,7 @@
 	"BoundingMesh": "spaceshipbm",
     "WeaponSockets": ["LeftTurret", "RightTurret", "CenterTurret"],
 	"DriveSockets" : ["LeftDrive", "RightDrive"],
-    "BaseHealth" : 132.0
+    "BaseHealth" : 132.0,
+	"Mass" : 1000.0
   }
 }

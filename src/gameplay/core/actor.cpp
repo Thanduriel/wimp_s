@@ -18,6 +18,7 @@ namespace Game {
 		m_isDestroyed(false),
 		m_canTakeDamage(false),
 		m_health(0.f),
+		m_maxHealth(1.f),
 		m_handle(std::make_shared<HandleImpl>(*this))
 	{
 		UpdateMatrices();
@@ -52,19 +53,19 @@ namespace Game {
 		m_inverseTransformation = Mat4x4(m_inverseRotationMatrix) * translation(-m_position);
 	}
 
-	void Actor::Destroy()
+	void Actor::Destroy(bool _callOnDestroy)
 	{
 		m_isDestroyed = true;
-		OnDestroy();
+		if(_callOnDestroy) OnDestroy();
 	}
 
-	void Actor::Damage(float _amount, Actor& _source)
+	void Actor::Damage(float _amount, Actor& _source, DamageType _type)
 	{
-		float amount = OnDamageTaken(_amount, _source);
 		if (m_canTakeDamage)
 		{
+			float amount = OnDamageTaken(_amount, _source, _type);
 			m_health -= amount;
-			if (m_health < 0.f) Destroy();
+			if (m_health <= 0.f) Destroy(_type != DamageType::Pure);
 		}
 	}
 
