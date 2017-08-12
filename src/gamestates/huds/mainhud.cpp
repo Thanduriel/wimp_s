@@ -84,7 +84,12 @@ namespace GameStates {
 				if (abs(projectedPos.y) <= 1.0f && abs(projectedPos.x) <= 1.0f)
 					shipInSight = true;
 			}
-			if (!shipInSight)
+			if (shipInSight)
+			{
+				i->SetPosition(projectedPos);
+				i->SetDirection(Direction::None);
+			}
+			else
 			{
 				Direction dir;
 				//Calculate the intersections of the vector to the projected position with the borders of the screen
@@ -106,8 +111,6 @@ namespace GameStates {
 				i->SetDirection(dir);
 				i->SetPosition(pos);
 			}
-			else
-				i->SetDirection(Direction::None);
 		}
 	}
 

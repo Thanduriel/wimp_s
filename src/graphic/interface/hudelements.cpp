@@ -358,24 +358,23 @@ namespace Graphic
 		m_textures[1] = &_hud.CreateScreenElement<ScreenTexture>("indicator_down", _position, PixelOffset(32, 32), DefinitionPoint::MidMid, _anchor);
 		m_textures[2] = &_hud.CreateScreenElement<ScreenTexture>("indicator_left", _position, PixelOffset(32, 32), DefinitionPoint::MidMid, _anchor);
 		m_textures[3] = &_hud.CreateScreenElement<ScreenTexture>("indicator_right", _position, PixelOffset(32, 32), DefinitionPoint::MidMid, _anchor);
-		for (int i = 0; i < 4; i++)
+		m_textures[4] = &_hud.CreateScreenElement<ScreenTexture>("focus_indicator", _position, PixelOffset(64, 64), DefinitionPoint::MidMid, _anchor);
+		for (int i = 0; i < 5; i++)
 			m_textures[i]->SetVisible(false);
-		m_direction = Direction::Up;
+		m_direction = Direction::None;
 	}
 
 	void Indicator::SetDirection(Direction _direction)
 	{
-		if (m_direction != Direction::None)
-			m_textures[m_direction]->SetVisible(false);
-		if (_direction != Direction::None)
-			m_textures[_direction]->SetVisible(true);
+		m_textures[m_direction]->SetVisible(false);
+		m_textures[_direction]->SetVisible(true);
 		m_direction = _direction;
 	}
 
 	void Indicator::SetPosition(Vec2 _pos)
 	{
 		ScreenTexture::SetPosition(_pos);
-		for (int i = 0; i < 4; i++)
+		for (int i = 0; i < 5; i++)
 			m_textures[i]->SetPosition(_pos);
 	}
 

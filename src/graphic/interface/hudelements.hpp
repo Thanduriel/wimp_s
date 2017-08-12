@@ -199,7 +199,7 @@ namespace Graphic {
 	private:
 		Direction m_direction;
 		Game::Ship& m_ship;
-		ScreenTexture* m_textures[4];
+		ScreenTexture* m_textures[5];
 	};
 
 	// ************************************************************* //
