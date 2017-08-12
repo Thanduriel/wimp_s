@@ -12,6 +12,9 @@ namespace Generators {
 		ExtC,
 		HighPower,
 		Gatling,
+	//	Discharge,
+		Iterative,
+		LowPower,
 		WTTCOUNT // since this is not in its own name space
 	};
 
@@ -23,7 +26,10 @@ namespace Generators {
 		{"[EXT_D]", "12% increased damage", false},
 		{"[EXT_C]", "15% reduced power consumption", false},
 		{"of High Power", "2x damage, 2x power consumption", false},
-		{"Gatling", "fire rate increases with continues fire", false}
+		{"Gatling", "fire rate increases with continues fire", false},
+		{ "Iterative", "every 3rth shot deals 2xdamage", true },
+		{ "of Low Power", "95% reduced consumption, 80% less damage", false }
+//		{"Discharging", "can fire even without sufficient energy", true}
 	} };
 
 	enum struct WeaponType {
@@ -92,27 +98,23 @@ namespace Generators {
 		m_name = NAMES[(int)type];
 		if (type == WeaponType::Rocket) numTraits -= 1;
 		m_description.clear();
+		m_baseStats.clear();
 
 		// attributes
 		Range damageRange = GetDamageRange(DAMAGE_RANGE[(int)type], _power);
 		float damage = m_randomSampler.Uniform(damageRange);
-		m_description += "damage:    " + MakeNum(damage) + "\n";
 
 		Range cdRange = GetCooldownRange(COOLDOWN_RANGE[(int)type], _power);
 		float cooldown = m_randomSampler.Uniform(cdRange);
-		m_description += "cooldown:  " + MakeNum(cooldown) + "[s]\n";
 
 		float speed = type == WeaponType::Simple ? Projectile::DEFAULT_SPEED : Rocket::DEFAULT_SPEED;
 		float lifeTime = m_randomSampler.Uniform(5.f, 10.f);
 
 		float eCost = damage / (cooldown * _power);
-		m_description += "power use: " + MakeNum(eCost) + "[J]\n";
 
-		m_description += "speed:     " + MakeNum(speed) + "[m/s]\n";
 		Weapon::FireFunction fireFn;
 		Weapon::ReloadFunction reloadFn;
 
-		m_description += "-----";
 		// traits that have to be added after projectile generation has finished
 		std::vector< WeaponTraitType > lateTraits;
 		std::vector< int > hasTrait(WeaponTraitType::WTTCOUNT);
@@ -124,14 +126,17 @@ namespace Generators {
 			if (hasTrait[trait]) continue; // every trait can only occur once
 			--numTraits;
 
+			// every trait can appear only once
 			hasTrait[trait] = 1;
 			AddTrait(WEAPON_TRAITS[trait]);
 			switch (trait)
 			{
+			// reload functions
 			case WeaponTraitType::Burst: lateTraits.push_back(Burst);
 				hasTrait[Gatling] = 1; // prevent these two traits to appear on the same weapon
 				break;
-			case WeaponTraitType::Twin: lateTraits.push_back(Twin);
+			case WeaponTraitType::Gatling: lateTraits.push_back(Gatling);
+				hasTrait[Burst] = 1;
 				break;
 			case WeaponTraitType::ExtR: cooldown *= 0.9f;
 				break;
@@ -140,9 +145,18 @@ namespace Generators {
 			case WeaponTraitType::ExtC: eCost *= 0.85f;
 				break;
 			case WeaponTraitType::HighPower: damage *= 2.f; eCost *= 2.f;
+				hasTrait[LowPower] = 1;
 				break;
-			case WeaponTraitType::Gatling: lateTraits.push_back(Gatling);
-				hasTrait[Burst] = 1;
+			case WeaponTraitType::LowPower: eCost *= 0.05f;
+				damage *= 0.1f;
+				hasTrait[HighPower] = 1;
+				break;
+			// fire functions
+			case WeaponTraitType::Twin: lateTraits.push_back(Twin);
+				hasTrait[Iterative] = 1;
+				break;
+			case WeaponTraitType::Iterative: lateTraits.push_back(Iterative);
+				hasTrait[Twin] = 1;
 				break;
 			default:
 				Assert(false, "Trait not implemented.");
@@ -175,12 +189,20 @@ namespace Generators {
 				break;
 			case Gatling: reloadFn = WeaponTrait::ReloadBuildUp();
 				break;
+			case Iterative: fireFn = WeaponTrait::FireIterative(std::move(projGenerator));
+				break;
 			default:
 				Assert(false, "This trait should not be added late");
 			}
 		}
 		if (!fireFn) fireFn = WeaponTrait::FireDefault(std::move(projGenerator));
 
+		m_baseStats += "damage:    " + MakeNum(damage) + "\n";
+		m_baseStats += "cooldown:  " + MakeNum(cooldown) + "[s]\n";
+		m_baseStats += "power use: " + MakeNum(eCost) + "[J]\n";
+		//	m_description += "speed:     " + MakeNum(speed) + "[m/s]\n";
+
+		m_description = m_baseStats + "-----" + m_description;
 		// accumulated stats
 		m_description += "\n-----\ndps: " + std::to_string(1.f / cooldown * damage)
 			+ "\nrange: " + std::to_string(speed * lifeTime);

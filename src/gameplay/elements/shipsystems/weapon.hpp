@@ -67,6 +67,8 @@ namespace Game {
 		// this functions require a generator function that can spawn a single projectile.
 		static Weapon::FireFunction FireDefault(GenerationFunction&& _generator);
 		static Weapon::FireFunction FireDouble(GenerationFunction&& _generator);
+	//	static Weapon::FireFunction FireTripple(GenerationFunction&& _generator);
+		static Weapon::FireFunction FireIterative(GenerationFunction&& _generator);
 
 		// Encapsulates the creation of projectiles based on a prototype
 		template<typename T>

@@ -29,6 +29,7 @@ namespace Game {
 		float m_damage;
 
 		LifeTimeComponent m_lifeTimeComponent;
+		friend class WeaponTrait;
 	};
 
 	class Bolt : public Projectile

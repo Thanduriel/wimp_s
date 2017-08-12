@@ -32,6 +32,7 @@ namespace Generators{
 		void AddTrait(const TraitDescription& _traitDescr);
 
 		std::string m_name;
+		std::string m_baseStats;
 		std::string m_description;
 
 		DefaultRandomGen m_rng;

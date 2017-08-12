@@ -85,7 +85,6 @@ namespace Game {
 			ei::Vec3 vel = proj.GetVelocity();
 			vel.z += _weapon.m_beginSpeed;
 			SetUpProjectile(proj, _weapon, vel);
-			//	proj.GetCollisionComponent().SetType(CollisionComponent::Type::NonPlayer);
 		};
 	}
 
@@ -102,6 +101,22 @@ namespace Game {
 			Projectile& proj2 = _generator(_weapon);
 			SetUpProjectile(proj2, _weapon, vel);
 			proj2.Translate(_weapon.GetRotationMatrix() * ei::Vec3(0.4f, 0.f, 0.f));
+		};
+	}
+
+	Weapon::FireFunction WeaponTrait::FireIterative(GenerationFunction&& _generator)
+	{
+		int count = 0;
+		return [=](Weapon& _weapon) mutable
+		{
+			Projectile& proj = _generator(_weapon);
+			ei::Vec3 vel = proj.GetVelocity();
+			vel.z += _weapon.m_beginSpeed;
+			SetUpProjectile(proj, _weapon, vel);
+
+			++count;
+			if(count % 3 == 0)
+				proj.m_damage *= 2.f;
 		};
 	}
 
