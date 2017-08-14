@@ -2,6 +2,7 @@
 #include "gameplay/core/actor.hpp"
 #include "gameplay/elements/blackhole.hpp"
 #include "gameplay/elements/factorycomponent.hpp"
+#include "gameplay/scenegraph.hpp"
 
 namespace Game {
 
@@ -49,6 +50,22 @@ namespace Game {
 	}
 
 	// **************************************************************** //
+	void BlackHoleGenerator::TestPlacement(const SceneGraph& _sceneGraph)
+	{
+		BlackHole& blackHole = *static_cast<Game::BlackHole*>(m_indicator);
+		if (blackHole.IsColliding())
+		{
+			static_cast<Game::BlackHole*>(m_indicator)->SetInvalid(true);
+			m_state = State::Invalid;		
+		}
+		else
+		{
+			static_cast<Game::BlackHole*>(m_indicator)->SetInvalid(false);
+			m_state = State::Active;
+
+		}
+	}
+
 	void BlackHoleGenerator::OnTarget()
 	{
 		m_indicator = new Game::BlackHole(ei::Vec3(0.f), 25.f, 10.f, 10.f);

@@ -66,6 +66,7 @@ namespace Control
 			Ray ray = g_camera.GetRay(InputManager::GetCursorPosScreenSpace());
 			float d = dot((pos - ray.origin), plane.n) / dot(ray.direction, plane.n);
 			m_ship.GetSpecialMove()->SetIndicator(ray.origin + d * ray.direction);
+			m_ship.GetSpecialMove()->TestPlacement(*s_sceneGraph);
 		}
 	}
 
@@ -105,7 +106,8 @@ namespace Control
 				SwitchTargetingMode(TargetingMode::Normal);
 			}
 		}
-		if (InputManager::IsVirtualKey(_key, VirtualKey::FIRE) && m_targetingMode == TargetingMode::Tactical)
+		if (InputManager::IsVirtualKey(_key, VirtualKey::FIRE) && m_targetingMode == TargetingMode::Tactical
+			&& m_ship.GetSpecialMove()->GetState() == Game::SpecialMove::State::Active)
 		{
 			m_ship.GetSpecialMove()->Activate();
 			SwitchTargetingMode(TargetingMode::Normal);

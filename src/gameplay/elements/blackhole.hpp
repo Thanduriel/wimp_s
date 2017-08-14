@@ -49,8 +49,13 @@ namespace Game
 
 		// When created the blackhole has no gravitation or collision.
 		void Activate();
+		bool IsColliding() const { return m_isColliding; }
+		void SetInvalid(bool _inv);
+
+		float GetEventHorizonRadius() const { return m_collisionComponent.GetBoundingRadius(); }
 	private:
 		float m_deltaTime; // current delta time is stored to apply damage over time on collision
+		bool m_isColliding; // some ship is partly inside the event horizon
 
 		BlackHoleGravitationComponent m_gravitationComponent;
 		BlackHoleComponent m_visualComponent;

@@ -16,6 +16,7 @@ namespace Game {
 			Charging,
 			Ready,
 			Targeting,
+			Invalid,
 			Active
 		};
 
@@ -27,6 +28,9 @@ namespace Game {
 
 		// leave targeting without placement
 		void Dismiss();
+
+		// @return Is the current position of the indicator valid
+		virtual void TestPlacement(const class SceneGraph& _sceneGraph) {}
 
 		void SetIndicator(const ei::Vec3& _position, const ei::Quaternion& _rotation = ei::qidentity());
 
@@ -47,6 +51,8 @@ namespace Game {
 	{
 	public:
 		using SpecialMove::SpecialMove;
+
+		void TestPlacement(const class SceneGraph& _sceneGraph) override;
 	protected:
 		void OnTarget() override;
 		void OnActivate() override;

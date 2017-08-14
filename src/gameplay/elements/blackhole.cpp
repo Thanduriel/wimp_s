@@ -51,13 +51,15 @@ namespace Game {
 
 	// radius of the event horizon as ratio to _radius
 	const float EVENT_HORIZON = 0.1f;
+	const Utils::Color32F BASE_GRID_COLOR = Utils::Color32F(0.2f, 0.85f, 0.4f, 0.7f);
+	const Utils::Color32F INVALID_GRID_COLOR = Utils::Color32F(1.0f, 0.2f, 0.2f, 0.7f);
 	BlackHole::BlackHole(const ei::Vec3& _position, float _radius, float _strength, float _duration)
 		: Actor(_position),
 		m_gravitationComponent(THISACTOR, _radius, _strength),
 		m_visualComponent(THISACTOR, EVENT_HORIZON * _radius),
 		m_lifeTime(THISACTOR, _duration),
-		m_grid(THISACTOR, Utils::Color32F(0.2f,0.85f,0.4f, 0.7f), 32, 16, _radius),
-		m_collisionComponent(THISACTOR, EVENT_HORIZON * _radius, 0) // no collision at first
+		m_grid(THISACTOR, BASE_GRID_COLOR, 32, 16, _radius),
+		m_collisionComponent(THISACTOR, EVENT_HORIZON * _radius, CollisionComponent::Type::Any) // no collision at first
 	{}
 
 	void BlackHole::Process(float _deltaTime)
@@ -69,6 +71,7 @@ namespace Game {
 			m_visualComponent.SetRadius(m_collisionComponent.GetBoundingRadius() * m_lifeTime.GetLifeTimeLeft());
 
 		m_deltaTime = _deltaTime;
+		m_isColliding = false;
 	}
 
 	void BlackHole::RegisterComponents(SceneGraph& _sceneGraph)
@@ -83,7 +86,9 @@ namespace Game {
 	const float DAMAGE_PER_SECOND = 0.2f;
 	void BlackHole::OnCollision(Actor& _other)
 	{
-		_other.Damage(DAMAGE_PER_SECOND * _other.GetMaxHealth() * m_deltaTime, *this, DamageType::Pure);
+		m_isColliding = true;
+		if(m_gravitationComponent.IsActive())
+			_other.Damage(DAMAGE_PER_SECOND * _other.GetMaxHealth() * m_deltaTime, *this, DamageType::Pure);
 	}
 
 	void BlackHole::Activate()
@@ -91,5 +96,10 @@ namespace Game {
 		m_gravitationComponent.SetActive(true);
 		m_collisionComponent.SetType(CollisionComponent::Type::Any);
 		m_grid.SetColor(Utils::Color32F(0.1f, 0.1f, 0.9f, 0.18f));
+	}
+
+	void BlackHole::SetInvalid(bool _inv)
+	{
+		m_grid.SetColor(_inv ? INVALID_GRID_COLOR : BASE_GRID_COLOR);
 	}
 }
