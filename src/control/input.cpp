@@ -47,6 +47,7 @@ namespace Control {
 		InputManagerInstance.m_keyMap[(int)VirtualKey::ROLL_CCW] = &_keyConfig[string("RollCCW")];
 		InputManagerInstance.m_keyMap[(int)VirtualKey::INVENTORY] = &_keyConfig[string("Inventory")];
 		InputManagerInstance.m_keyMap[(int)VirtualKey::SWITCH_TACTICAL] = &_keyConfig[string("SwitchTactical")];
+		InputManagerInstance.m_keyMap[(int)VirtualKey::PAUSE] = &_keyConfig[string("Pause")];
 	}
 
 	// ********************************************************************* //

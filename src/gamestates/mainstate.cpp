@@ -1,5 +1,6 @@
 #include "mainstate.hpp"
 #include "inventorystate.hpp"
+#include "pausestate.hpp"
 #include "../graphic/mesh.hpp"
 #include "gameplay/core/model.hpp"
 #include "gameplay/elements/ship.hpp"
@@ -117,6 +118,11 @@ namespace GameStates {
 		{
 			// Change to inventory state
 			m_newState = new GameStates::InventoryState(m_playerController->GetShip());
+		}
+
+		if (InputManager::IsVirtualKey(_key, Control::VirtualKey::PAUSE))
+		{
+			m_newState = new GameStates::PauseState(*this);
 		}
 		if(m_hud.KeyUp(_key, 0)) return; 
 	}

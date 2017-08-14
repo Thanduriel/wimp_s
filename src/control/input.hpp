@@ -83,6 +83,7 @@ namespace Control {
 		ROLL_CCW,
 		INVENTORY,
 		SWITCH_TACTICAL,
+		PAUSE,
 		COUNT
 	};
 
