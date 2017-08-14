@@ -22,6 +22,7 @@ namespace Game {
 		// register general factories
 		FactoryActor* factory = new FactoryActor(ei::Vec3(0.f));
 		Add(*factory);
+		FactoryActor::m_instances.clear();
 		FactoryActor::m_instances.push_back(factory);
 	}
 

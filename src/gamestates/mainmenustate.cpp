@@ -14,7 +14,8 @@ namespace GameStates
 	MainMenuState::MainMenuState()
 	{
 		using namespace Graphic;
-		m_hud.GetStartButton().SetOnMouseUp([&]() { m_newState = new MainState(); });
+		m_hud.m_startButton->SetOnMouseUp([&]() { m_newState = new MainState(); });
+		m_hud.m_exitButton->SetOnMouseUp([&]() { m_isFinished = true; });
 	}
 
 	MainMenuState::~MainMenuState()

@@ -161,7 +161,7 @@ namespace Control
 		{
 			if (InputManager::IsVirtualKeyPressed(Control::VirtualKey::FIRE))
 			{
-				if(*m_focus) GetShip().SetWeaponTarget(**m_focus);
+				if(m_focus && *m_focus) GetShip().SetWeaponTarget(**m_focus);
 				GetShip().Fire();
 			}
 

@@ -9,11 +9,12 @@ namespace GameStates
 	public:
 		MainMenuHud();
 
-		Graphic::Button& GetStartButton() { return *m_startButton; }
 	private:
 		Graphic::ScreenTexture* m_background;
 		Graphic::Button* m_startButton;
 		Graphic::Button* m_exitButton;
 		//GameStates::MainMenuState* m_state;
+
+		friend class MainMenuState;
 	};
 }

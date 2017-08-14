@@ -30,6 +30,7 @@ namespace GameStates {
 		// Returns a newly created state.
 		GameState* FetchNewState() { GameState* s = m_newState; m_newState = nullptr; return s; }
 		bool IsFinished() const { return m_isFinished; }
+		void Finish() { m_isFinished = true; }
 	protected:
 		bool m_isFinished;
 		GameState* m_newState;

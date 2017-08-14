@@ -108,7 +108,8 @@ void Wimp_s::Run()
 
 		// state managment with a stack
 		GameState* newState = current.FetchNewState();
-		if (current.IsFinished()) m_gameStates.pop_back();
+		// check older states to prevent another frame of them being rendered
+		while (m_gameStates.size() && m_gameStates.back()->IsFinished()) m_gameStates.pop_back();
 		if (newState) m_gameStates.emplace_back(newState);
 
 		// todo: move this when general input handling is implemented
@@ -137,6 +138,8 @@ void Wimp_s::BuildDefaultConfig()
 	cinput[std::string("RollCCW")][0] = GLFW_KEY_Q;
 	cinput[std::string("Inventory")][0] = GLFW_KEY_I;
 	cinput[std::string("SwitchTactical")][0] = GLFW_KEY_SPACE;
+	cinput[std::string("Pause")][0] = GLFW_KEY_P;
+
 	
 /*	auto& cgame = m_config[std::string("Game")];
 	cgame[std::string("Language")] = "english.json";

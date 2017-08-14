@@ -14,9 +14,9 @@ namespace GameStates
 	{
 		using namespace Graphic;
 		m_oldState = &_oldState;
-		m_hud.GetContinueButton().SetOnMouseUp([&]() { m_newState = m_oldState; });
+		m_hud.GetContinueButton().SetOnMouseUp([&]() { m_isFinished = true; });
 		m_hud.GetOptionsButton().SetOnMouseUp([&]() { });
-		m_hud.GetMenuButton().SetOnMouseUp([&]() { m_newState = new MainMenuState(); });
+		m_hud.GetMenuButton().SetOnMouseUp([&]() { m_isFinished = true; m_oldState->Finish(); });
 	}
 
 	PauseState::~PauseState()
