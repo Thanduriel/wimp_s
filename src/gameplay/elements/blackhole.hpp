@@ -25,7 +25,7 @@ namespace Game
 	class BlackHoleGravitationComponent : public SceneComponent
 	{
 	public:
-		BlackHoleGravitationComponent(const Actor& _actor, float _radius, float _strength);
+		BlackHoleGravitationComponent(Actor& _actor, float _radius, float _strength);
 		void ProcessComponent(float _deltaTime, const class SceneGraph& _sceneGraph) override;
 	private:
 

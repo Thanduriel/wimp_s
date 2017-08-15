@@ -25,6 +25,7 @@ namespace Game
 		~Ship();
 
 		void Process(float _deltaTime) override;
+		void OnDestroy() override;
 
 		// Update speed
 		void UpdateSpeed(float currentSpeed, float _deltaTime);

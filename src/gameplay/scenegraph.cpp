@@ -335,6 +335,10 @@ namespace Game {
 					{
 						slf.OnCollision(oth);
 						oth.OnCollision(slf);
+						// apply some damage to kill projectiles
+						// todo: move this back closer to Projectile
+						slf.Damage(0.001f, oth);
+						oth.Damage(0.001f, slf);
 
 						static const uint32_t PHYSICSBODY = CollisionComponent::Type::Solid | CollisionComponent::Type::Dynamic;
 						// resolve impulse

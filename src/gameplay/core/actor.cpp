@@ -55,8 +55,9 @@ namespace Game {
 
 	void Actor::Destroy(bool _callOnDestroy)
 	{
+		// OnDestroy should be only called once
+		if (_callOnDestroy && !m_isDestroyed) OnDestroy();
 		m_isDestroyed = true;
-		if(_callOnDestroy) OnDestroy();
 	}
 
 	void Actor::Damage(float _amount, Actor& _source, DamageType _type)

@@ -50,8 +50,8 @@ namespace GameStates {
 		ship2 = ship;
 
 		// test events
-		auto eventWin = new Event<Conditions::OnDestroy>([&]() { m_isFinished = true; }, std::vector<Actor::Handle>({ ship2->GetHandle() }), 1);
-		m_sceneGraph.Add(*eventWin);
+	//	auto eventWin = new Event<Conditions::OnDestroy>([&]() { m_isFinished = true; }, std::vector<Actor::Handle>({ ship2->GetHandle() }), 1);
+	//	m_sceneGraph.Add(*eventWin);
 	}
 
 	MainState::~MainState()

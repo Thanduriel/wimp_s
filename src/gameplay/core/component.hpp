@@ -91,10 +91,10 @@ namespace Game {
 	};
 
 	// A component that can perform queries on the SceneGraph.
-	class SceneComponent :public ConstActorComponent
+	class SceneComponent :public ActorComponent
 	{
 	public:
-		using ConstActorComponent::ConstActorComponent;
+		using ActorComponent::ActorComponent;
 
 		// This function is called after regular processing and after the SceneGraph is sorted.
 		virtual void ProcessComponent(float _deltaTime, const class SceneGraph& _sceneGraph) = 0;

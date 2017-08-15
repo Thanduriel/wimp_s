@@ -23,7 +23,7 @@ namespace Game {
 
 //	const float G = 6.67408-e11;
 	const float STRENGTH_TRESHHOLD = 100.f;
-	BlackHoleGravitationComponent::BlackHoleGravitationComponent(const Actor& _actor, float _radius, float _strength)
+	BlackHoleGravitationComponent::BlackHoleGravitationComponent(Actor& _actor, float _radius, float _strength)
 		: SceneComponent(_actor),
 		m_radius(_radius),
 		m_fact(_strength * _radius * _radius)

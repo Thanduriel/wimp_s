@@ -5,6 +5,7 @@
 #include "gameplay/content.hpp"
 #include "ei/3dintersection.hpp"
 #include "shipsystems/specialmove.hpp"
+#include "crate.hpp"
 
 namespace Game
 {
@@ -51,7 +52,7 @@ namespace Game
 			m_thrustParticles.emplace(THISACTOR, m_drivePositions[i]);
 			m_thrustLights.emplace(THISACTOR, m_drivePositions[i], 2.f, Utils::Color8U(0.f, 1.f, 0.f));
 		}
-		m_health = _node["BaseHealth"s].Get(42.f);
+		m_health = 10;//_node["BaseHealth"s].Get(42.f);
 		m_maxHealth = m_health;
 
 		// todo: make depended on acceleration
@@ -76,6 +77,14 @@ namespace Game
 		m_weaponSockets[2].Attach(weapon2);
 	}
 
+	void Ship::OnDestroy()
+	{
+		// leave items behind
+		FactoryActor::GetThreadLocalInstance().Make<Crate>(m_position, m_inventory);
+		Model::OnDestroy();
+	}
+
+	// ****************************************************************** //
 	float Ship::GetCurrentSpeed() const
 	{
 		Vec3 forward = ei::rotation(GetRotation()) * Vec3(0.0f, 0.0f, 1.0f);
