@@ -29,11 +29,7 @@ namespace GameStates
 
 	void PauseState::Draw(float _deltaTime)
 	{
-		Texture& tex = *Device::GetCurrentFramebufferBinding()->GetColorAttachments().begin()->pTexture;
-		Device::BindFramebuffer(nullptr);
-		Device::SetEffect(Resources::GetEffect(Effects::SCREEN_OUTPUT));
-		Device::SetTexture(tex, 0);
-		Device::DrawFullscreen();
+		m_oldState->Draw(_deltaTime);
 		m_hud.Draw(_deltaTime);
 	}
 
