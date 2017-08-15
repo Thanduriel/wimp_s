@@ -1,5 +1,6 @@
 #pragma once
 #include "gameplay/core/actor.hpp"
+#include "gameplay/elements/ship.hpp"
 
 namespace Game {
 	class Ship;
@@ -22,6 +23,8 @@ namespace Control
 		Game::Ship& GetShip() const { return m_ship; };
 
 		static void SetSceneGraph(Game::SceneGraph& _graph) { s_sceneGraph = &_graph; }
+
+		void RotateTowards(ei::Vec3 _pos);
 
 	protected:
 		Game::Ship& m_ship;

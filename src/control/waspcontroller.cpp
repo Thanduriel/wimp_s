@@ -10,10 +10,15 @@ namespace Control
 		: Controller(_ship, _hud),
 		m_target(_target),
 		m_minDistance(75.0f),
-		m_maxDistance(500.0f),
-		m_lookForTarget(false)
+		m_maxDistance(250.0f),
+		m_lookForTarget(false),
+		m_followTimeCounter(0.0f),
+		m_maxFollowTime(5.0f),
+		m_evasionTime(5.0f),
+		m_evading(-1.0f)
 	{
 		GetShip().SetSpeed(50.0f);
+		GetShip().SetAngularAcceleration(2.0f);
 		m_hud.AddIndicator(this->GetShip());
 	}
 
@@ -24,6 +29,8 @@ namespace Control
 		{
 			ManageDistanceToTarget();
 
+			EvadeShipBehind(_deltaTime);
+
 			ManageShooting();
 		}
 	}
@@ -31,7 +38,6 @@ namespace Control
 	void WaspController::ManageDistanceToTarget()
 	{
 		Game::Ship* target = static_cast<Game::Ship*>(&**m_target);
-
 
 		GetShip().SetTargetAngularVelocity(Vec3(0.0f, 0.0f, 0.0f));
 		Vec3 delta = target->GetPosition() - GetShip().GetPosition();
@@ -60,12 +66,45 @@ namespace Control
 				GetShip().SetAngularVelocity(Vec3(0.0f));
 
 			//Turn towards target ship
-			Vec3 forward = normalize(GetShip().GetRotationMatrix() * Vec3(0.0f, 0.0f, 1.0f));
-			//Clamp the dot product to avoid getting a domain error
-			float angle = acosf(clamp(dot(normalize(delta), forward), -1.0f, 1.0f));
-			float factor = clamp(angle, 0.0f, ei::PI) / (ei::PI);
-			Vec3 rotationVector = normalize(cross(forward, delta)) * factor;
-			GetShip().SetTargetAngularVelocity(rotationVector);
+			RotateTowards(target->GetPosition());
+		}
+	}
+
+	void WaspController::EvadeShipBehind(float _deltaTime)
+	{
+		Game::Ship* target = static_cast<Game::Ship*>(&**m_target);
+
+		Vec3 delta = target->GetPosition() - m_ship.GetPosition();
+		Vec3 forward = normalize(m_ship.GetRotationMatrix() * Vec3(0.0f, 0.0f, 1.0f));
+
+		if (m_evading > 0.0f)
+		{
+			RotateTowards(target->GetPosition() + delta * 10.0f);
+			m_evading -= _deltaTime;
+		}
+		else
+		{
+			//Is the enemy behind me and do the trajectories align?
+			if (dot(delta, forward) < 0.0f && dot(target->GetVelocity(), GetShip().GetVelocity()) > 0.0f)
+			{
+				//Check if ship is in a cone of sight of a 45 degree angle and also flies in the same direction
+				float angle = acosf(clamp(dot(normalize(-delta), forward), -1.0f, 1.0f));
+				float velocityAngle = acosf(clamp(dot(normalize(target->GetVelocity()), normalize(GetShip().GetVelocity())), -1.0f, 1.0f));
+				if (angle < ei::PI / 4.0f && velocityAngle < ei::PI / 4.0f)
+				{
+					//Ship seems to look at us
+					m_followTimeCounter += _deltaTime;
+				}
+				else
+					m_followTimeCounter = 0.0f;
+
+				if (m_followTimeCounter > m_maxFollowTime)
+				{
+					//Start evasion maneuver
+					m_evading = m_evasionTime;
+					m_followTimeCounter = 0.0f;
+				}
+			}
 		}
 	}
 
@@ -73,9 +112,14 @@ namespace Control
 	{
 		Game::Ship* target = static_cast<Game::Ship*>(&**m_target);
 
-		Ray ray = Ray(GetShip().GetPosition(), normalize(GetShip().GetRotationMatrix() * Vec3(0.0f, 0.0f, 1.0f)));
+		Vec3 delta = target->GetPosition() - GetShip().GetPosition();
+		Vec3 forward = GetShip().GetRotationMatrix() * Vec3(0.0f, 0.0f, 1.0f);
 		float distance;
-		if (target->GetCollisionComponent().RayCast(ray, distance))
-			GetShip().Fire();
+		if (dot(delta, forward) > 0.0f)
+		{
+			float angle = acosf(clamp(dot(normalize(delta), forward), -1.0f, 1.0f));
+			if (angle < ei::PI / 4.0f)
+				GetShip().Fire();
+		}
 	}
 }

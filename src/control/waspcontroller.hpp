@@ -17,6 +17,8 @@ namespace Control
 
 		void ManageDistanceToTarget();
 
+		void EvadeShipBehind(float _deltaTime);
+
 		void ManageShooting();
 
 		float GetMaxDistance() const { return m_maxDistance; }
@@ -29,5 +31,9 @@ namespace Control
 		float m_maxDistance;
 		float m_minDistance;
 		bool m_lookForTarget;
+		float m_followTimeCounter;
+		float m_maxFollowTime;
+		float m_evading;
+		float m_evasionTime;
 	};
 }
