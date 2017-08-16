@@ -36,6 +36,6 @@ namespace GameStates {
 		Graphic::FillBar* m_energyBar;
 		Graphic::FillBar* m_healthBar;
 
-		std::vector<Graphic::Indicator*> m_indicators;
+		std::vector<std::unique_ptr<Graphic::Indicator>> m_indicators;
 	};
 }

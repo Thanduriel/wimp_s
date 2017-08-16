@@ -20,6 +20,7 @@ namespace Control
 		GetShip().SetSpeed(50.0f);
 		GetShip().SetAngularAcceleration(2.0f);
 		m_hud.AddIndicator(this->GetShip());
+		GetShip().SetHealth(1.0f);
 	}
 
 	void WaspController::Process(float _deltaTime)

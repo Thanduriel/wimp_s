@@ -189,16 +189,18 @@ namespace Graphic {
 	class Indicator : public ScreenTexture
 	{
 	public:
-		Indicator(ei::Vec2 _position, Game::Ship& _ship, Hud& _hud, Anchor _anchor);
+		Indicator(ei::Vec2 _position, Game::Actor& _target, Hud& _hud);
 		
 		void SetPosition(ei::Vec2 _pos) override;
 		Direction GetDirection() const { return m_direction; };
 
 		void SetDirection(Direction _direction);
-		Game::Ship& GetShip() { return m_ship; };
+		Game::Actor& GetTarget() { return m_target; };
+
+		void Update();
 	private:
 		Direction m_direction;
-		Game::Ship& m_ship;
+		Game::Actor& m_target;
 		ScreenTexture* m_textures[5];
 	};
 

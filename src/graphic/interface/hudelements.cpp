@@ -349,16 +349,16 @@ namespace Graphic
 
 	// ************************************************************** //
 
-	Indicator::Indicator(Vec2 _position, Game::Ship& _ship, Hud& _hud, Anchor _anchor)
-		: ScreenTexture("", _position, PixelOffset(32, 32), DefinitionPoint::MidMid, _anchor),
-		m_ship(_ship)
+	Indicator::Indicator(Vec2 _position, Game::Actor& _target, Hud& _hud)
+		: ScreenTexture("", _position, PixelOffset(32, 32), DefinitionPoint::MidMid, Anchor(DefinitionPoint::MidMid, &_hud)),
+		m_target(_target)
 	{
 		SetVisible(false);
-		m_textures[0] = &_hud.CreateScreenElement<ScreenTexture>("indicator_up", _position, PixelOffset(32, 32), DefinitionPoint::MidMid, _anchor);
-		m_textures[1] = &_hud.CreateScreenElement<ScreenTexture>("indicator_down", _position, PixelOffset(32, 32), DefinitionPoint::MidMid, _anchor);
-		m_textures[2] = &_hud.CreateScreenElement<ScreenTexture>("indicator_left", _position, PixelOffset(32, 32), DefinitionPoint::MidMid, _anchor);
-		m_textures[3] = &_hud.CreateScreenElement<ScreenTexture>("indicator_right", _position, PixelOffset(32, 32), DefinitionPoint::MidMid, _anchor);
-		m_textures[4] = &_hud.CreateScreenElement<ScreenTexture>("focus_indicator", _position, PixelOffset(64, 64), DefinitionPoint::MidMid, _anchor);
+		m_textures[0] = &_hud.CreateScreenElement<ScreenTexture>("indicator_up", _position, PixelOffset(32, 32), DefinitionPoint::MidMid, Anchor(DefinitionPoint::MidMid, &_hud));
+		m_textures[1] = &_hud.CreateScreenElement<ScreenTexture>("indicator_down", _position, PixelOffset(32, 32), DefinitionPoint::MidMid, Anchor(DefinitionPoint::MidMid, &_hud));
+		m_textures[2] = &_hud.CreateScreenElement<ScreenTexture>("indicator_left", _position, PixelOffset(32, 32), DefinitionPoint::MidMid, Anchor(DefinitionPoint::MidMid, &_hud));
+		m_textures[3] = &_hud.CreateScreenElement<ScreenTexture>("indicator_right", _position, PixelOffset(32, 32), DefinitionPoint::MidMid, Anchor(DefinitionPoint::MidMid, &_hud));
+		m_textures[4] = &_hud.CreateScreenElement<ScreenTexture>("focus_indicator", _position, PixelOffset(64, 64), DefinitionPoint::MidMid, Anchor(DefinitionPoint::MidMid, &_hud));
 		for (int i = 0; i < 5; i++)
 			m_textures[i]->SetVisible(false);
 		m_direction = Direction::None;
@@ -376,6 +376,47 @@ namespace Graphic
 		ScreenTexture::SetPosition(_pos);
 		for (int i = 0; i < 5; i++)
 			m_textures[i]->SetPosition(_pos);
+	}
+
+	void Indicator::Update()
+	{
+		bool inSight = false;
+		//Project enemy ship to screen space
+		Vec4 projected = Control::g_camera.GetViewProjection() * Vec4(GetTarget().GetPosition().x, GetTarget().GetPosition().y, GetTarget().GetPosition().z, 1.0f);
+		Vec2 projectedPos = Vec2(projected.x / projected.w, projected.y / projected.w);
+		if (dot(GetTarget().GetPosition() - Control::g_camera.GetPosition(), Control::g_camera.GetRotationMatrix() * Vec3(0.0f, 0.0f, 1.0f)) > 0)
+		{
+			//If ship is on screen, don't show indicator
+			if (abs(projectedPos.y) <= 1.0f && abs(projectedPos.x) <= 1.0f)
+				inSight = true;
+		}
+		if (inSight)
+		{
+			SetPosition(projectedPos);
+			SetDirection(Direction::None);
+		}
+		else
+		{
+			Direction dir;
+			//Calculate the intersections of the vector to the projected position with the borders of the screen
+			float factorY = 1.0f / abs(projectedPos.y);
+			Vec2 yIntersection = factorY * projectedPos;
+			float factorX = 1.0f / abs(projectedPos.x);
+			Vec2 xIntersection = factorX * projectedPos;
+			//Get closest intersection
+			Vec2 pos = len(yIntersection) <= len(xIntersection) ? yIntersection : xIntersection;
+			pos = Vec2(pos.x - sign(pos.x) * GetSize().x / 2.0f, pos.y - sign(pos.y) * GetSize().y / 2.0f);
+			//Invert position when on the wrong side
+			if (dot(Control::g_camera.GetRotationMatrix() * Vec3(0.0f, 0.0f, 1.0f), GetTarget().GetPosition() - Control::g_camera.GetPosition()) < 0.0f)
+				pos *= -1;
+			//Set the orientation of the indicator
+			if (len(yIntersection) <= len(xIntersection))
+				dir = pos.y < 0 ? Direction::Down : Direction::Up;
+			else
+				dir = pos.x < 0 ? Direction::Left : Direction::Right;
+			SetDirection(dir);
+			SetPosition(pos);
+		}
 	}
 
 	// ************************************************************** //

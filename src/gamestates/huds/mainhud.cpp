@@ -72,50 +72,22 @@ namespace GameStates {
 
 	void MainHud::UpdateIndicators(Vec3 _playerPos)
 	{
+		int destroy = 0;
 		for (auto& i : m_indicators)
 		{
-			bool shipInSight = false;
-			//Project enemy ship to screen space
-			Vec4 projected = Control::g_camera.GetViewProjection() * Vec4(i->GetShip().GetPosition().x, i->GetShip().GetPosition().y, i->GetShip().GetPosition().z, 1.0f);
-			Vec2 projectedPos = Vec2(projected.x / projected.w, projected.y / projected.w);
-			if (dot(i->GetShip().GetPosition() - Control::g_camera.GetPosition(), Control::g_camera.GetRotationMatrix() * Vec3(0.0f, 0.0f, 1.0f)) > 0)
-			{
-				//If ship is on screen, don't show indicator
-				if (abs(projectedPos.y) <= 1.0f && abs(projectedPos.x) <= 1.0f)
-					shipInSight = true;
-			}
-			if (shipInSight)
-			{
-				i->SetPosition(projectedPos);
-				i->SetDirection(Direction::None);
-			}
+			if (&(i->GetTarget()) != nullptr)
+				i->Update();
 			else
 			{
-				Direction dir;
-				//Calculate the intersections of the vector to the projected position with the borders of the screen
-				float factorY = 1.0f / abs(projectedPos.y);
-				Vec2 yIntersection = factorY * projectedPos;
-				float factorX = 1.0f / abs(projectedPos.x);
-				Vec2 xIntersection = factorX * projectedPos;
-				//Get closest intersection
-				Vec2 pos = len(yIntersection) <= len(xIntersection) ? yIntersection : xIntersection;
-				pos = Vec2(pos.x - sign(pos.x) * i->GetSize().x / 2.0f, pos.y - sign(pos.y) * i->GetSize().y / 2.0f);
-				//Invert position when on the wrong side
-				if (dot(Control::g_camera.GetRotationMatrix() * Vec3(0.0f, 0.0f, 1.0f), i->GetShip().GetPosition() - Control::g_camera.GetPosition()) < 0.0f)
-					pos *= -1;
-				//Set the orientation of the indicator
-				if (len(yIntersection) <= len(xIntersection))
-					dir = pos.y < 0 ? Direction::Down : Direction::Up;
-				else
-					dir = pos.x < 0 ? Direction::Left : Direction::Right;
-				i->SetDirection(dir);
-				i->SetPosition(pos);
+				std::iter_swap(&i, m_indicators.end());
+				destroy++;
 			}
 		}
+		m_indicators.resize(m_indicators.size() - destroy);
 	}
 
 	void MainHud::AddIndicator(Game::Ship& _ship)
 	{
-		m_indicators.push_back(&CreateScreenElement<Indicator>(PixelCoord(0.0f, 0.0f), _ship, *this, Anchor(DefinitionPoint::MidMid, this)));
+		m_indicators.push_back(std::make_unique<Indicator>(CreateScreenElement<Indicator>(PixelCoord(0.0f, 0.0f), _ship, *this)));
 	}
 }

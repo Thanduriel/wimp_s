@@ -59,6 +59,7 @@ namespace Game {
 		const ei::Mat3x3& GetInverseRotationMatrix() const { return m_inverseRotationMatrix; }
 
 		float GetHealth() const { return m_health; }
+		void SetHealth(float _health) { m_health = _health; }
 		float GetMaxHealth() const { return m_maxHealth; }
 
 		// Destroys the object
