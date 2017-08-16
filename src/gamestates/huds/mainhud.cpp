@@ -75,15 +75,20 @@ namespace GameStates {
 		int destroy = 0;
 		for (auto& i : m_indicators)
 		{
-			if (&(i->GetTarget()) != nullptr)
+			if (i->GetTarget().GetHealth() > 0)
 				i->Update();
 			else
 			{
-				std::iter_swap(&i, m_indicators.end());
+				std::swap(i, m_indicators.back());
 				destroy++;
 			}
 		}
-		m_indicators.resize(m_indicators.size() - destroy);
+		if (destroy > 0)
+		{
+			for (int i = m_indicators.size() - destroy; i < destroy; i++)
+				DeleteScreenElement(*(m_indicators[i]));
+			m_indicators.resize(m_indicators.size() - destroy);
+		}
 	}
 
 	void MainHud::AddIndicator(Game::Ship& _ship)

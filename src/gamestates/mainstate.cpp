@@ -7,6 +7,7 @@
 #include "control/camera.hpp"
 #include "control/playercontroller.hpp"
 #include "control/waspcontroller.hpp"
+#include "control/kamikazecontroller.hpp"
 #include "control/input.hpp"
 #include "graphic/effects/lightsystem.hpp"
 #include "control/controller.hpp"
@@ -46,7 +47,7 @@ namespace GameStates {
 		// test actors
 		ship = new Ship("TestShip", Vec3(50.f,0.f,100.f));
 		m_sceneGraph.Add(*ship);
-		m_controllers.emplace_back(new Control::WaspController(*ship, m_playerController->GetShip().GetHandle(), m_hud));
+		m_controllers.emplace_back(new Control::KamikazeController(*ship, m_playerController->GetShip().GetHandle(), m_hud));
 		ship2 = ship;
 
 		// test events

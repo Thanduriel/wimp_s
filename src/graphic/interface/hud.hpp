@@ -33,6 +33,21 @@ namespace Graphic {
 
 			return *ptr;
 		}
+
+		template< typename _T, typename = std::enable_if< std::is_base_of<ScreenPosition, _T>::value >::type >//only ScreenPositions should be made with this
+		void DeleteScreenElement(_T& _element)
+		{
+			_element.Unregister(*this);
+			for (int i = 0; i < m_screenElements.size(); i++)
+			{
+				if (m_screenElements[i]->m_position == _element.m_position
+					&& m_screenElements[i]->m_positionDef == _element.m_positionDef)
+				{
+					m_screenElements.erase(m_screenElements.begin() + i);
+					break;
+				}
+			}
+		}
 		/// \brief Creates an container in the current Hud and returns it as Hud* to fill it with elements 
 		Hud* CreateContainer(ei::Vec2 _pos=ei::Vec2(-1.f,-1.f) , ei::Vec2 _size=ei::Vec2(2.f,2.f));
 
@@ -44,12 +59,18 @@ namespace Graphic {
 		/// \brief Adds an ScreenOverlay to the input focus management
 		void RegisterElement(ScreenOverlay& _screenOverlay);
 
+		void UnregisterElement(ScreenOverlay& _screenOverlay);
+
 		/// \brief Adds an existing TextRender to the auto draw management.
 		/// \details Size gets adjusted relative to the hud it is member of.
 		void RegisterElement(TextRender& _textRender);
 
+		void UnregisterElement(TextRender& _textRender);
+
 		/// \brief Adds an existing screenTexture to the auto draw and collision management.
 		void RegisterElement(ScreenTexture& _screenTexture);
+
+		void UnregisterElement(ScreenTexture& _screenTexture);
 
 		/// \brief When scrollable all elements of the hud will move when a scroll-event is received
 		void SetScrollable(bool _scrollable) {m_scrollable = _scrollable;};

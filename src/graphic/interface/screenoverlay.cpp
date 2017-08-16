@@ -60,6 +60,11 @@ namespace Graphic{
 		_hud.RegisterElement(*this);
 	}
 
+	void ScreenOverlay::Unregister(Hud& _hud)
+	{
+		_hud.UnregisterElement(*this);
+	}
+
 	// ************************************************* //
 
 	void ScreenOverlay::SetSize(Vec2 _size)

@@ -251,16 +251,32 @@ namespace Graphic
 		m_screenOverlays.push_back(&_screenOverlay);
 	}
 
+	void Hud::UnregisterElement(ScreenOverlay& _screenOverlay)
+	{
+		m_screenOverlays.erase(std::remove(m_screenOverlays.begin(), m_screenOverlays.end(), &_screenOverlay), m_screenOverlays.end());
+	}
+
 	void Hud::RegisterElement(TextRender& _textRender)
 	{
 		_textRender.SetPosition((_textRender.GetPosition() + Vec2(1.f, -1.f)) * m_size * 0.5f + m_position);
 		m_textRenders.push_back(&_textRender);
 	}
 
+	void Hud::UnregisterElement(TextRender& _textRender)
+	{
+		m_textRenders.erase(std::remove(m_textRenders.begin(), m_textRenders.end(), &_textRender), m_textRenders.end());
+	}
+
 	void Hud::RegisterElement(ScreenTexture& _screenTexture)
 	{
 		m_screenTextures.push_back(&_screenTexture);
 		RegisterElement(*static_cast<ScreenOverlay*>(&_screenTexture));
+	}
+
+	void Hud::UnregisterElement(ScreenTexture& _screenTexture)
+	{
+		UnregisterElement(*static_cast<ScreenOverlay*>(&_screenTexture));
+		m_screenTextures.erase(std::remove(m_screenTextures.begin(), m_screenTextures.end(), &_screenTexture), m_screenTextures.end());
 	}
 
 	void Hud::ShowCursor(CursorType _cursor)

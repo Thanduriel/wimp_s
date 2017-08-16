@@ -49,6 +49,8 @@ namespace Graphic{
 		/// \details The hud should take full ownership of all elements.
 		virtual void Register(class Hud& _hud) {};
 
+		virtual void Unregister(class Hud& _hud) {};
+
 		const Anchor& GetAnchor() const { return m_anchor; }
 	protected:
 		void UpdateParams();
@@ -82,6 +84,8 @@ namespace Graphic{
 		virtual ~ScreenOverlay() {}
 
 		virtual void Register(class Hud& _hud) override;
+
+		virtual void Unregister(class Hud& _hud) override;
 
 		void SetPosition(ei::Vec2 _pos) override;
 		/// \brief Sets the base size. Scale will still be applied to this value.
