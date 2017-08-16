@@ -12,13 +12,10 @@ namespace GameStates {
 
 namespace Control
 {
-	class Controller
+	class Controller : public Game::DynamicComponent<Game::SceneComponent>
 	{
 	public:
 		Controller(Game::Ship& _ship, GameStates::MainHud& _hud);
-		virtual ~Controller() {};
-
-		virtual void Process(float _deltaTime) abstract;
 
 		Game::Ship& GetShip() const { return m_ship; };
 

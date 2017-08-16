@@ -169,9 +169,9 @@ namespace Game {
 
 	// *********************************************************** //
 	template <typename T>
-	void RemoveDestroyed(std::vector<T*>& _container)
+	void RemoveDestroyed(std::vector<T>& _container)
 	{
-		auto it = std::remove_if(_container.begin(), _container.end(), [](const T* _component)
+		auto it = std::remove_if(_container.begin(), _container.end(), [](const T& _component)
 		{
 			return _component->GetActor().IsDestroyed();
 		});
@@ -196,6 +196,7 @@ namespace Game {
 		RemoveDestroyed(m_actorComponents);
 		RemoveDestroyed(m_collisionComponents);
 		RemoveDestroyed(m_sceneComponents);
+		RemoveDestroyed(m_dynamicComponents);
 
 		// actual destruction is last
 		auto it = std::remove_if(m_actors.begin(), m_actors.end(), [](const std::unique_ptr<Actor>& _actor)

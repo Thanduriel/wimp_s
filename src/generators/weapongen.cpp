@@ -89,6 +89,7 @@ namespace Generators {
 
 		// decide on quality
 		auto qVec = QUALITY_RARITY * _qualityFactor;
+		qVec.x = 1.f; // everything is at least of normal quality
 		Item::Quality rarity = Item::Quality::Unique;
 		while (float n = m_randomSampler.Uniform() > qVec[(int)rarity]) rarity = Item::Quality((int)rarity - 1);
 		int numTraits = QUALITY_NUM_TRAITS[(int)rarity];

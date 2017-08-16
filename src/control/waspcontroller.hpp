@@ -2,10 +2,6 @@
 #include "gameplay/core/actor.hpp"
 #include "controller.hpp"
 
-namespace Game {
-	class Ship;
-}
-
 namespace Control
 {
 	class WaspController : public Controller
@@ -13,7 +9,7 @@ namespace Control
 	public:
 		WaspController(Game::Ship& _ship, Game::Actor::Handle _target, GameStates::MainHud& _hud);
 
-		void Process(float _deltaTime) override;
+		void ProcessComponent(float _deltaTime, const Game::SceneGraph& _sceneGraph) override;
 
 		void ManageDistanceToTarget();
 

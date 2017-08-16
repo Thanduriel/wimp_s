@@ -22,7 +22,7 @@ namespace Control
 		m_hud.AddIndicator(this->GetShip());
 	}
 
-	void WaspController::Process(float _deltaTime)
+	void WaspController::ProcessComponent(float _deltaTime, const Game::SceneGraph& _sceneGraph)
 	{
 		//Do the AI stuff in here
 		if (*m_target)

@@ -53,6 +53,34 @@ namespace Game {
 	// Can be easily parallelized. Use this as base class if possible.
 	class ConstActorComponent : public Details::BaseComponent<const Actor&> { using Details::BaseComponent<const Actor&>::BaseComponent; };
 
+	class DynamicComponentImpl
+	{
+	public:
+		DynamicComponentImpl(const Actor& _actor) : m_actor(_actor) {}
+		virtual ~DynamicComponentImpl() {}
+
+		const Actor& GetActor() const { return m_actor; }
+	private:
+		const Actor& m_actor;
+	};
+
+	// Mixin that allows component T to be added dynamically, that is after the Actor has been created.
+	template<typename T>
+	class DynamicComponent : public T, DynamicComponentImpl
+	{
+		static_assert(std::is_base_of_v<Game::ActorComponent, T>
+			|| std::is_base_of_v<Game::ConstActorComponent, T>, "The target type is not an component type.");
+	public:
+		template<typename U, typename... Args>
+		DynamicComponent(U& _actor, Args&&... _args)
+			: T(_actor, std::forward<Args>(_args)...),
+			DynamicComponentImpl(_actor)
+		{}
+
+	private:
+		friend class SceneGraph; // the only thing that needs to access m_dynamicCompImpl
+	};
+
 	/* CompositeComponent **********************************************
 	 * Mixin that makes handling a combination of components simpler.
 	 * When registering a CompositeComponent both subcomponents are 

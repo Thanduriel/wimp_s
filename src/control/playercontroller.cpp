@@ -41,12 +41,12 @@ namespace Control
 		_ship.SetSpecialMove(*new Game::BlackHoleGenerator(4.f)); // small cd for testing
 	};
 
-	void PlayerController::Process(float _deltaTime)
+	void PlayerController::ProcessComponent(float _deltaTime, const Game::SceneGraph& _sceneGraph)
 	{
 		// Apply the input to the model
 		HandleInput(_deltaTime);
 
-		auto actor = s_sceneGraph->RayCast(g_camera.GetRay(Vec2(0.f, 0.f)), 200.f, Game::CollisionComponent::Type::Ship);
+		auto actor = _sceneGraph.RayCast(g_camera.GetRay(Vec2(0.f, 0.f)), 200.f, Game::CollisionComponent::Type::Ship);
 		if (actor)
 		{
 			m_hud.UpdateCrossHair(1.f);
@@ -66,7 +66,7 @@ namespace Control
 			Ray ray = g_camera.GetRay(InputManager::GetCursorPosScreenSpace());
 			float d = dot((pos - ray.origin), plane.n) / dot(ray.direction, plane.n);
 			m_ship.GetSpecialMove()->SetIndicator(ray.origin + d * ray.direction);
-			m_ship.GetSpecialMove()->TestPlacement(*s_sceneGraph);
+			m_ship.GetSpecialMove()->TestPlacement(_sceneGraph);
 		}
 	}
 

@@ -3,6 +3,7 @@
 #include <vector>
 #include <functional>
 #include "gameplay/core/actor.hpp"
+#include "gameplay/core/component.hpp"
 
 namespace Game {
 

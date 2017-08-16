@@ -7,7 +7,6 @@
 #include "control/camera.hpp"
 #include "control/playercontroller.hpp"
 #include "control/waspcontroller.hpp"
-#include "control/kamikazecontroller.hpp"
 #include "control/input.hpp"
 #include "graphic/effects/lightsystem.hpp"
 #include "control/controller.hpp"
@@ -20,6 +19,7 @@
 #include "gameplay/elements/shipsystems/projectile.hpp"
 #include "gameplay/events/event.hpp"
 #include "gameplay/events/conditions.hpp"
+#include "gameplay/events/01_intro/act01.hpp"
 
 namespace GameStates {
 
@@ -41,18 +41,17 @@ namespace GameStates {
 		Ship* ship = new Ship("TestShip", Vec3(0.f));
 		m_sceneGraph.Add(*ship);
 		m_playerController = new Control::PlayerController(*ship, m_hud, m_gameTimeControl);
-		m_controllers.emplace_back(m_playerController);
+		m_sceneGraph.RegisterComponent(*m_playerController);
 		Control::g_camera.Attach(*ship);
+
+		Acts::Act01 act1(*ship);
 
 		// test actors
 		ship = new Ship("TestShip", Vec3(50.f,0.f,100.f));
 		m_sceneGraph.Add(*ship);
-		m_controllers.emplace_back(new Control::KamikazeController(*ship, m_playerController->GetShip().GetHandle(), m_hud));
+		m_sceneGraph.RegisterComponent(*new Control::WaspController(*ship, m_playerController->GetShip().GetHandle(), m_hud));
 		ship2 = ship;
 
-		// test events
-	//	auto eventWin = new Event<Conditions::OnDestroy>([&]() { m_isFinished = true; }, std::vector<Actor::Handle>({ ship2->GetHandle() }), 1);
-	//	m_sceneGraph.Add(*eventWin);
 	}
 
 	MainState::~MainState()
@@ -69,10 +68,7 @@ namespace GameStates {
 	//	ship2->SetRotation(m_playerController->GetShip().GetRotation());
 
 		m_sceneGraph.Process(m_gameTimeControl.m_timeScale * _deltaTime, _deltaTime);
-		for (auto& ptr : m_controllers)
-		{
-			ptr->Process(_deltaTime);
-		}
+
 		Control::g_camera.Process(_deltaTime);
 	}
 

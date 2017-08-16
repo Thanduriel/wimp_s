@@ -35,7 +35,7 @@ namespace Control
 			GameTimeControl& _params);
 
 		// The basic processing method called once per frame
-		void Process(float _deltaTime) override;
+		void ProcessComponent(float _deltaTime, const Game::SceneGraph& _sceneGraph) override;
 
 		void MouseMove(float _dx, float _dy);
 		void KeyClick(int _key);

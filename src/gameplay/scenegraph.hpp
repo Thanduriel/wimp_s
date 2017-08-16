@@ -41,6 +41,12 @@ namespace Game {
 			RegisterComponent(component_cast<T1>(_component));
 			RegisterComponent(component_cast<T2>(_component));
 		}
+		template<typename T> 
+		void RegisterComponent(DynamicComponent<T>& _component)
+		{
+			m_dynamicComponents.emplace_back(static_cast<DynamicComponentImpl*>(&_component));
+			RegisterComponent(component_cast<T>(_component));
+		}
 
 		void Process(float _deltaTime, float _realdTime);
 		void Draw();
@@ -68,6 +74,7 @@ namespace Game {
 		void ResolveCollisions();
 
 		std::vector < std::unique_ptr<Actor>> m_actors; // all active actors
+		std::vector< std::unique_ptr<DynamicComponentImpl>> m_dynamicComponents;
 
 		std::vector <ActorComponent*> m_actorComponents;
 		std::vector<ConstActorComponent*> m_constActorComponents;
