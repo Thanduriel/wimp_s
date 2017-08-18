@@ -26,6 +26,15 @@ namespace Conditions {
 			m_actor.Destroy();
 	}
 
+	std::string OnDestroy::GetProgression() const
+	{
+		int n = 0;
+		for (auto& hndl : m_targets)
+			if (!*hndl) ++n;
+
+		return std::to_string(n) + "/" + std::to_string(m_numKillsRequired);
+	}
+
 	// ********************************************************************* //
 	Timer::Timer(Actor& _actor, float _waitTime)
 		: ActorComponent(_actor),
@@ -37,6 +46,11 @@ namespace Conditions {
 	{
 		m_timeLeft -= _deltaTime;
 		if (m_timeLeft <= 0.f) m_actor.Destroy();
+	}
+
+	std::string Timer::GetProgression() const
+	{
+		return std::to_string(m_timeLeft);
 	}
 
 	// ********************************************************************* //
@@ -54,6 +68,11 @@ namespace Conditions {
 			m_actor.Destroy();
 	}
 
+	std::string IsClose::GetProgression() const
+	{
+		return std::to_string(int(ei::len(m_target.GetPosition() - m_position)));
+	}
+
 	// ********************************************************************* //
 	Composite::Composite(Actor& _actor, const EventCounter& _counter, int _targetNum)
 		: ActorComponent(_actor),
@@ -65,6 +84,11 @@ namespace Conditions {
 	{
 		if (m_counter.num >= m_targetNum)
 			m_actor.Destroy();
+	}
+
+	std::string Composite::GetProgression() const
+	{
+		return std::to_string(m_counter.num) + "/" + std::to_string(m_targetNum);
 	}
 
 }

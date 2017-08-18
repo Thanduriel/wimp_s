@@ -45,7 +45,7 @@ namespace GameStates {
 
 		std::vector<std::unique_ptr<Graphic::Indicator>> m_indicators;
 
-		std::vector<Game::Actor::Handle> m_currentEvents;
+		std::vector<Game::Actor::ConstHandle> m_currentEvents;
 		Graphic::TextRender* m_objectivesLabel;
 	};
 }

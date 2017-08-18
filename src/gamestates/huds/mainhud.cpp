@@ -99,7 +99,7 @@ namespace GameStates {
 	void MainHud::UpdateObjectives()
 	{
 		// clear completed events
-		auto it = std::remove_if(m_currentEvents.begin(), m_currentEvents.end(), [](const Game::Actor::Handle& _hndl)
+		auto it = std::remove_if(m_currentEvents.begin(), m_currentEvents.end(), [](const Game::Actor::ConstHandle& _hndl)
 		{ return !*_hndl; });
 
 		m_currentEvents.erase(it, m_currentEvents.end());

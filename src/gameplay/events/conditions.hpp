@@ -1,5 +1,6 @@
 #pragma once
 
+#include <string>
 #include "gameplay/core/component.hpp"
 #include "gameplay/core/actor.hpp"
 
@@ -15,7 +16,8 @@ namespace Conditions {
 		OnDestroy(Actor& _actor, std::vector<Actor::Handle>&& _targets, int _numKillsRequired);
 
 		void ProcessComponent(float _deltaTime) override;
-
+		
+		std::string GetProgression() const;
 	private:
 		const std::vector<Actor::Handle> m_targets;
 		const int m_numKillsRequired;
@@ -30,6 +32,7 @@ namespace Conditions {
 
 		void ProcessComponent(float _deltaTime) override;
 
+		std::string GetProgression() const;
 	private:
 		float m_timeLeft;
 	};
@@ -45,6 +48,7 @@ namespace Conditions {
 
 		void ProcessComponent(float _deltaTime) override;
 
+		std::string GetProgression() const;
 	private:
 		const Actor& m_target;
 		ei::Vec3 m_position;
@@ -63,6 +67,7 @@ namespace Conditions {
 
 		void ProcessComponent(float _deltaTime) override;
 
+		std::string GetProgression() const;
 	private:
 		const EventCounter& m_counter;
 		int m_targetNum;

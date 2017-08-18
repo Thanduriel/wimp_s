@@ -22,7 +22,7 @@ namespace Control
 		m_hud.AddIndicator(this->GetShip());
 	}
 
-	void TurtleController::Process(float _deltaTime)
+	void TurtleController::ProcessComponent(float _deltaTime, const Game::SceneGraph& _sceneGraph)
 	{
 		//Do the AI stuff in here
 		if (*m_target)

@@ -23,7 +23,7 @@ namespace Control
 		GetShip().SetHealth(1.0f);
 	}
 
-	void KamikazeController::Process(float _deltaTime)
+	void KamikazeController::ProcessComponent(float _deltaTime, const Game::SceneGraph& _sceneGraph)
 	{
 		//Do the AI stuff in here
 		if (*m_target)

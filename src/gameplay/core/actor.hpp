@@ -91,25 +91,22 @@ namespace Game {
 		{
 			HandleImpl(Actor& _actor) : actor(&_actor) {}
 
-			Actor& operator*()
-			{
-				return *actor;
-			}
+			Actor& operator*() { return *actor; }
+			const Actor& operator*() const { return *actor; }
 
-			Actor* operator->()
-			{
-				return actor;
-			}
+			Actor* operator->()	{ return actor; }
+			const Actor* operator->() const { return actor; }
 
-			operator bool() { return actor != nullptr; }
+			operator bool() const { return actor != nullptr; }
 		private:
 			friend class Actor;
 			Actor* actor;
 		};
 		typedef std::shared_ptr<HandleImpl> Handle;
+		typedef std::shared_ptr<const HandleImpl> ConstHandle;
 
 		Handle GetHandle() { return m_handle; }
-		const Handle GetHandle() const { return m_handle; }
+		ConstHandle GetHandle() const { return m_handle; }
 	protected:
 		void UpdateMatrices();
 

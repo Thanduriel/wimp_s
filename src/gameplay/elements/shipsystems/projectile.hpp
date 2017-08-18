@@ -77,7 +77,7 @@ namespace Game {
 		PointLightComponent m_engineLight;
 		ParticleSystemComponent<Graphic::ParticleSystems::BASIC_SYSTEM> m_thrustParticles;
 
-		Actor::Handle m_target;
+		Actor::ConstHandle m_target;
 
 		friend class WeaponTrait;
 	};

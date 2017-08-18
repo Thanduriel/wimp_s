@@ -46,7 +46,7 @@ namespace Game {
 
 		std::string GetObjective() const override
 		{
-			return BaseEvent::GetObjective()/* + T::GetProgression()*/;
+			return BaseEvent::GetObjective() + " [" + T::GetProgression() + "]";
 		}
 	private:
 		std::function<void()> m_actions;

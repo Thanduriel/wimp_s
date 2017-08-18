@@ -13,7 +13,7 @@ namespace Control
 	public:
 		TurtleController(Game::Ship& _ship, Game::Actor::Handle _target, GameStates::MainHud& _hud);
 
-		void Process(float _deltaTime) override;
+		void ProcessComponent(float _deltaTime, const Game::SceneGraph& _sceneGraph) override;
 
 		void ManageDistanceToTarget();
 
