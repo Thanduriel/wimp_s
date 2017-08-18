@@ -12,9 +12,9 @@ namespace Generators {
 		ExtC,
 		HighPower,
 		Gatling,
-	//	Discharge,
 		Iterative,
 		LowPower,
+	//	Infinite,
 		WTTCOUNT // since this is not in its own name space
 	};
 
@@ -29,7 +29,7 @@ namespace Generators {
 		{"Gatling", "fire rate increases with continues fire", false},
 		{ "Iterative", "every 3rth shot deals 2xdamage", true },
 		{ "of Low Power", "95% reduced consumption, 80% less damage", false }
-//		{"Discharging", "can fire even without sufficient energy", true}
+	//	{"Infinite", "can fire even without sufficient energy", true}
 	} };
 
 	enum struct WeaponType {
@@ -109,7 +109,7 @@ namespace Generators {
 		float cooldown = m_randomSampler.Uniform(cdRange);
 
 		float speed = type == WeaponType::Simple ? Projectile::DEFAULT_SPEED : Rocket::DEFAULT_SPEED;
-		float lifeTime = m_randomSampler.Uniform(5.f, 10.f);
+		float lifeTime = m_randomSampler.Uniform(2.f, 10.f);
 
 		float eCost = damage / (cooldown * _power);
 

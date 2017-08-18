@@ -26,6 +26,7 @@ namespace Game
 
 		void Process(float _deltaTime) override;
 		void OnDestroy() override;
+		float OnDamageTaken(float _amount, Actor& _source, DamageType _type) override;
 
 		// Update speed
 		void UpdateSpeed(float currentSpeed, float _deltaTime);
@@ -73,7 +74,11 @@ namespace Game
 		float GetEnergy() const { return m_energy; }
 		float GetMaxEnergy() const { return m_maxEnergy; }
 
+		float GetShield() const { return m_shield; }
+		float GetMaxShield() const { return m_maxShield; }
+
 		void RegisterComponents(class SceneGraph& _sceneGraph);
+
 		// Fire all weapons straight forward.
 		void Fire();
 
@@ -116,6 +121,13 @@ namespace Game
 		float m_maxEnergy;
 		float m_energyRecharge;
 		float m_energy;
+
+		float m_maxShield;
+		float m_shieldRecharge;
+		float m_shieldWait; //< time since the last interrupt
+		float m_shieldDelay; //< time after being hit until the shield starts
+		float m_shield;
+		bool m_isRecharging;
 
 		float m_particleSpawnCount;
 		FixedArray<ei::Vec3> m_drivePositions;

@@ -30,6 +30,7 @@ namespace GameStates {
 		void ShowSpecialMoveMarker(bool _show) { m_specialMoveIndicator->SetVisible(_show); }
 		Graphic::FillBar& GetEnergyBar() { return *m_energyBar; }
 		Graphic::FillBar& GetHealthBar() { return *m_healthBar; }
+		Graphic::FillBar& GetShieldBar() { return *m_shieldBar; }
 	private:
 		Graphic::ScreenTexture* m_outerSpeedBar;
 		Graphic::ScreenTexture* m_innerSpeedBar;
@@ -42,6 +43,7 @@ namespace GameStates {
 		Graphic::ScreenTexture* m_specialMoveIndicator;
 		Graphic::FillBar* m_energyBar;
 		Graphic::FillBar* m_healthBar;
+		Graphic::FillBar* m_shieldBar;
 
 		std::vector<std::unique_ptr<Graphic::Indicator>> m_indicators;
 

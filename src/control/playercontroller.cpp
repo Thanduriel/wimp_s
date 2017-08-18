@@ -230,6 +230,7 @@ namespace Control
 		m_hud.UpdateTargetSpeedSlider(m_targetSpeed, GetShip().GetMaxSpeed());
 		m_hud.GetEnergyBar().SetFillLevel(GetShip().GetEnergy() / GetShip().GetMaxEnergy());
 		m_hud.GetHealthBar().SetFillLevel(GetShip().GetHealth() / GetShip().GetMaxHealth());
+		m_hud.GetShieldBar().SetFillLevel(GetShip().GetShield() / GetShip().GetMaxShield());
 		m_hud.UpdateObjectives();
 	//	m_hud.UpdateCrossHair(m_ship->GetSprayRadius());
 	}

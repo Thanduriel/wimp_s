@@ -34,6 +34,12 @@ namespace Game
 		m_maxEnergy(10.f),
 		m_energy(m_maxEnergy),
 		m_energyRecharge(1.5f),
+		m_maxShield(32.f),
+		m_shield(m_maxShield),
+		m_shieldDelay(2.f),
+		m_shieldRecharge(10.f),
+		m_shieldWait(0.f),
+		m_isRecharging(true),
 		m_drivePositions(_node["DriveSockets"s].Size()),
 		m_weaponSockets(_node["WeaponSockets"s].Size()),
 		m_thrustParticles(m_drivePositions.capacity()),
@@ -52,7 +58,7 @@ namespace Game
 			m_thrustParticles.emplace(THISACTOR, m_drivePositions[i]);
 			m_thrustLights.emplace(THISACTOR, m_drivePositions[i], 2.f, Utils::Color8U(0.f, 1.f, 0.f));
 		}
-		m_health = 10;//_node["BaseHealth"s].Get(42.f);
+		m_health = _node["BaseHealth"s].Get(42.f);
 		m_maxHealth = m_health;
 
 		// todo: make depended on acceleration
@@ -82,6 +88,19 @@ namespace Game
 		// leave items behind
 		FactoryActor::GetThreadLocalInstance().Make<Crate>(m_position, m_inventory);
 		Model::OnDestroy();
+	}
+
+	float Ship::OnDamageTaken(float _amount, Actor& _source, DamageType _type)
+	{
+		// shield absorbs damage first
+		float shieldDam = std::min(_amount, m_shield);
+		m_shield -= shieldDam;
+
+		// recharge is interrupted
+		m_shieldWait = 0;
+		m_isRecharging = false;
+
+		return _amount - shieldDam;
 	}
 
 	// ****************************************************************** //
@@ -136,7 +155,14 @@ namespace Game
 	void Ship::Process(float _deltaTime)
 	{
 		m_energy = ei::min(m_energy + _deltaTime * m_energyRecharge, m_maxEnergy);
-		// toto: remove this from here and let SpecialMove be an Actor/Component
+		// shield logic
+		m_shieldWait += _deltaTime;
+		if (m_isRecharging)
+			m_shield = ei::min(m_shield + _deltaTime * m_shieldRecharge, m_maxShield);
+		else if (m_shieldWait >= m_shieldDelay)
+			m_isRecharging = true;
+
+		// todo: remove this from here and let SpecialMove be an Actor/Component
 		if (m_specialMove) m_specialMove->Process(_deltaTime);
 
 		// Get current speed here for performance reasons
