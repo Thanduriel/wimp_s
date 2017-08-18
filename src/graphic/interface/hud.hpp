@@ -38,15 +38,9 @@ namespace Graphic {
 		void DeleteScreenElement(_T& _element)
 		{
 			_element.Unregister(*this);
-			for (int i = 0; i < m_screenElements.size(); i++)
-			{
-				if (m_screenElements[i]->m_position == _element.m_position
-					&& m_screenElements[i]->m_positionDef == _element.m_positionDef)
-				{
-					m_screenElements.erase(m_screenElements.begin() + i);
-					break;
-				}
-			}
+			m_screenElements.erase(std::find_if(m_screenElements.begin(), m_screenElements.end(), [&](auto& ptr) {
+				return ptr.get() == static_cast<ScreenPosition*>(&_element);
+			}));
 		}
 		/// \brief Creates an container in the current Hud and returns it as Hud* to fill it with elements 
 		Hud* CreateContainer(ei::Vec2 _pos=ei::Vec2(-1.f,-1.f) , ei::Vec2 _size=ei::Vec2(2.f,2.f));
