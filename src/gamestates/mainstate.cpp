@@ -46,7 +46,7 @@ namespace GameStates {
 		m_sceneGraph.RegisterComponent(*m_playerController);
 		Control::g_camera.Attach(*ship);
 
-		Acts::Act01 act1(*ship);
+		Acts::Act01 act1(*ship, m_hud);
 
 		// test actors
 		ship = new Ship("TestShip", Vec3(50.f,0.f,100.f));

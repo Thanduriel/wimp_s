@@ -96,6 +96,11 @@ namespace Game {
 				return *actor;
 			}
 
+			Actor* operator->()
+			{
+				return actor;
+			}
+
 			operator bool() { return actor != nullptr; }
 		private:
 			friend class Actor;

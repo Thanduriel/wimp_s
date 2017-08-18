@@ -2,6 +2,7 @@
 #include "graphic/interface/pixelcoords.hpp"
 #include "control/camera.hpp"
 #include "ei/3dintersection.hpp"
+#include "gameplay/events/event.hpp"
 #include <string.h>
 
 namespace GameStates {
@@ -30,6 +31,10 @@ namespace GameStates {
 		m_healthBar = &CreateScreenElement<FillBar>(PixelOffset(-36, 20), PixelOffset(220, 28), DefP::BotRight, Anchor(DefP::BotRight, this));
 		m_healthBar->SetColor(Utils::Color8U(173_uc, 226_uc, 70_uc));
 		m_energyBar = &CreateScreenElement<FillBar>(PixelOffset(0, 10), PixelOffset(220, 28), DefP::BotRight, Anchor(DefP::TopRight, m_healthBar));
+
+		m_objectivesLabel = &CreateScreenElement<TextRender>(Vec2(0.f), ScreenPosition::Anchor(DefP::TopMid, this));
+		m_objectivesLabel->SetDefaultSize(0.6f);
+
 	}
 
 	void MainHud::UpdateSpeedLabel(float _speed)
@@ -85,14 +90,36 @@ namespace GameStates {
 		}
 		if (destroy > 0)
 		{
-			for (int i = m_indicators.size() - destroy; i < destroy; i++)
+			for (int i = int(m_indicators.size()) - destroy; i < destroy; i++)
 				DeleteScreenElement(*(m_indicators[i]));
 			m_indicators.resize(m_indicators.size() - destroy);
 		}
 	}
 
+	void MainHud::UpdateObjectives()
+	{
+		// clear completed events
+		auto it = std::remove_if(m_currentEvents.begin(), m_currentEvents.end(), [](const Game::Actor::Handle& _hndl)
+		{ return !*_hndl; });
+
+		m_currentEvents.erase(it, m_currentEvents.end());
+
+		std::string s;
+		// collect objectives
+		for (auto& ev : m_currentEvents)
+			s += static_cast<const Game::BaseEvent&>(**ev).GetObjective() + "\n";
+
+		m_objectivesLabel->SetText(s);
+	}
+
+	// ******************************************************************** //
 	void MainHud::AddIndicator(Game::Ship& _ship)
 	{
 		m_indicators.push_back(std::make_unique<Indicator>(CreateScreenElement<Indicator>(PixelCoord(0.0f, 0.0f), _ship, *this)));
+	}
+
+	void MainHud::AddObjective(const Game::BaseEvent& _event)
+	{
+		m_currentEvents.push_back(_event.GetHandle());
 	}
 }

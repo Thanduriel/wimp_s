@@ -3,6 +3,10 @@
 #include "graphic/interface/hud.hpp"
 #include "gameplay/elements/ship.hpp"
 
+namespace Game {
+	class BaseEvent;
+}
+
 namespace GameStates {
 
 	using namespace ei;
@@ -17,8 +21,11 @@ namespace GameStates {
 		void UpdateTargetSpeedSlider(float _targetSpeed, float _maxSpeed);
 		void UpdateCrossHair(float _sprayRadius);
 		void UpdateIndicators(Vec3 _playerPos);
+		// refreshes currently shown objectives based on all Events known by this.
+		void UpdateObjectives();
 
 		void AddIndicator(Game::Ship& _ship);
+		void AddObjective(const Game::BaseEvent& _event);
 		
 		void ShowSpecialMoveMarker(bool _show) { m_specialMoveIndicator->SetVisible(_show); }
 		Graphic::FillBar& GetEnergyBar() { return *m_energyBar; }
@@ -37,5 +44,8 @@ namespace GameStates {
 		Graphic::FillBar* m_healthBar;
 
 		std::vector<std::unique_ptr<Graphic::Indicator>> m_indicators;
+
+		std::vector<Game::Actor::Handle> m_currentEvents;
+		Graphic::TextRender* m_objectivesLabel;
 	};
 }
