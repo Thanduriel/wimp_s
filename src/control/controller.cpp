@@ -9,6 +9,7 @@ namespace Control
 		m_ship(_ship),
 		m_hud(_hud)
 	{
+		m_canTick = true;
 	}
 
 	void Controller::RotateTowards(ei::Vec3 _pos)

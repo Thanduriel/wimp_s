@@ -9,6 +9,7 @@
 #include "graphic/interface/pixelcoords.hpp"
 #include "graphic/interface/hudelements.hpp"
 #include "gameplay/elements/shipsystems/weapon.hpp"
+#include "math/extensions.hpp"
 
 namespace GameStates
 {
@@ -19,10 +20,23 @@ namespace GameStates
 	const ei::Vec2 SHIP_VIEW_SIZE = ei::Vec2(0.9f, 0.5f);
 
 	InventoryState::InventoryState(Game::Ship& _ship)
-		: m_ship(_ship)
+		: m_ship(_ship),
+		m_oldCamPosition(Control::g_camera.GetPosition()),
+		m_oldCamRotation(Control::g_camera.GetRotation())
 	{
 		using namespace Game;
+		using namespace ei;
 
+		// put camera above the ship
+		const float radius = _ship.GetGeometryComponent().GetMesh().GetMeshBounds().boundingRadius * 1.1f;
+		float height = radius / tan(g_camera.GetFov() * 0.5f);
+		g_camera.SetPosition(m_ship.GetPosition() + m_ship.GetRotationMatrix() * Vec3(0.f, height, 0.f));
+		// look down so that the center of the ship is in the center of the camera
+		g_camera.SetRotation(Quaternion(m_ship.GetRotationMatrix() * Vec3(0.f,0.f,1.f), 
+			normalize(m_ship.GetPosition() - g_camera.GetPosition())) * m_ship.GetRotation());
+		g_camera.FixRotation(g_camera.GetRotation(), g_camera.GetPosition());
+		g_camera.Process(0.f);
+	
 		// remember item -> texture relation to find them when handling equipped weapons
 		std::unordered_map<const Item*, DraggableTexture*> itemIcons;
 		for (const Item* item : _ship.GetInventory())
@@ -36,15 +50,18 @@ namespace GameStates
 		}
 
 		int i = 0;
+		ei::Mat4x4 transform = g_camera.GetViewProjection() * m_ship.GetTransformation();
 		for (auto& socket : _ship.GetWeaponSockets())
 		{
 			// project socket coordinates to screen rectangle
-			const float r = 1.f / _ship.GetGeometryComponent().GetMesh().GetMeshBounds().boundingRadius;
-			ei::Vec3 pos = socket.GetPosition() * r;
-			auto& socketField = m_hud.CreateScreenElement<DropField>("box_uncut", Vec2(pos.x, pos.z) * SHIP_VIEW_SIZE + SHIP_VIEW_SHIFT, PixelOffset(84, 84), DefP::MidMid, ScreenPosition::Anchor(),
+			const float r = 1.f / radius;
+			// model space -> ndc
+			ei::Vec4 pos = transform * Vec4(socket.GetPosition(), 1.f);//socket.GetPosition() * r;
+			pos /= pos.w;
+			auto& socketField = m_hud.CreateScreenElement<DropField>("box_uncut", Vec2(pos.x, pos.y), PixelOffset(84, 84), DefP::MidMid, ScreenPosition::Anchor(),
 				[&,i](DropField& _this, DraggableTexture& _tex) 
 			{
-				// if the field alraidy contains an element put that one back to the main inventory
+				// if the field already contains an element put that one back to the main inventory
 				if (_this.GetElements().size())
 				{
 					DraggableTexture& tex = *_this.GetElements().back();
@@ -82,6 +99,11 @@ namespace GameStates
 			}
 			else m_ship.SetWeapon(int(i - 1), nullptr);
 		}
+
+		// restore camera state
+		g_camera.SetPosition(m_oldCamPosition);
+		g_camera.SetRotation(m_oldCamRotation);
+		g_camera.Attach(m_ship);
 	}
 
 	void InventoryState::Process(float _deltaTime)
@@ -95,6 +117,9 @@ namespace GameStates
 
 	void InventoryState::Draw(float _deltaTime)
 	{
+		Graphic::Device::SetEffect(Graphic::Resources::GetEffect(Graphic::Effects::MESH));
+		m_ship.GetGeometryComponent().Draw();
+
 		Texture& tex = *Device::GetCurrentFramebufferBinding()->GetColorAttachments().begin()->pTexture;
 		Device::BindFramebuffer(nullptr);
 		Device::SetEffect(Resources::GetEffect(Effects::SCREEN_OUTPUT));

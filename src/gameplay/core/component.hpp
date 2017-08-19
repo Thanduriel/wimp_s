@@ -16,7 +16,7 @@ namespace Game {
 		class BaseComponent
 		{
 		public:
-			BaseComponent(T _owner) : m_actor(_owner), m_canTick(true) {}
+			BaseComponent(T _owner) : m_actor(_owner), m_canTick(true), m_isActive(true) {}
 
 			// standard constructors do not work since they need to provide an owner
 			BaseComponent() = delete;

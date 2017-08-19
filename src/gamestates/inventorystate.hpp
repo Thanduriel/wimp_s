@@ -28,6 +28,9 @@ namespace GameStates
 
 	private:
 		Game::Ship& m_ship;
+
+		ei::Vec3 m_oldCamPosition;
+		ei::Quaternion m_oldCamRotation;
 	};
 }
 
