@@ -105,9 +105,11 @@ namespace Graphic
 		//Set backup position to a position inside of the field
 		Vec2 newPos = GetScreenSpacePosition() + 0.5f * Vec2(_element.GetSize().x, -_element.GetSize().y);
 		//Assumption: All draggable texture have the same width and height
-		int multiple = (int)((_element.GetSize().x * (m_elements.size() + 1)) / GetSize().x);
-		newPos.x += (_element.GetSize().x * m_elements.size()) - (multiple * GetSize().x);
-		newPos.y -= multiple * _element.GetSize().y;
+		int maxPerRow = (int)(GetSize().x / _element.GetSize().x);
+		int row = (int)(m_elements.size() / maxPerRow);
+		int column = m_elements.size() - row * maxPerRow;
+		newPos.x += column * _element.GetSize().x;
+		newPos.y -= row * _element.GetSize().y;
 		_element.SetBackupPosition(newPos);
 		_element.SetParentField(this);
 		_element.SetPosition(newPos);
@@ -123,9 +125,11 @@ namespace Graphic
 			//Set backup position to a position inside of the field
 			Vec2 newPos = GetScreenSpacePosition() + 0.5f * Vec2(_element.GetSize().x, -_element.GetSize().y);
 			//Assumption: All draggable texture have the same width and height
-			int multiple = (int)((_element.GetSize().x * (i + 1)) / GetSize().x);
-			newPos.x += (_element.GetSize().x * i) - (multiple * GetSize().x);
-			newPos.y -= multiple * _element.GetSize().y;
+			int maxPerRow = (int)(GetSize().x / _element.GetSize().x);
+			int row = (int)(i / maxPerRow);
+			int column = i - row * maxPerRow;
+			newPos.x += column * _element.GetSize().x;
+			newPos.y -= row * _element.GetSize().y;
 			m_elements[i]->SetBackupPosition(newPos);
 			m_elements[i]->SetPosition(m_elements[i]->GetBackupPosition());
 		}
