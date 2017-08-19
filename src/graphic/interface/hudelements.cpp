@@ -37,6 +37,11 @@ namespace Graphic
 		_hud.RegisterElement(*this);
 	}
 
+	void ScreenTexture::Unregister(Hud& _hud)
+	{
+		_hud.UnregisterElement(*this);
+	}
+
 	void ScreenTexture::SetPosition(Vec2 _pos)
 	{
 		ScreenOverlay::SetPosition(_pos);
@@ -421,6 +426,13 @@ namespace Graphic
 			SetDirection(dir);
 			SetPosition(pos);
 		}
+	}
+
+	void Indicator::Unregister(Hud& _hud)
+	{
+		for (int i = 0; i < 5; i++)
+			_hud.DeleteScreenElement(*m_textures[i]);
+		ScreenTexture::Unregister(_hud);
 	}
 
 	// ************************************************************** //

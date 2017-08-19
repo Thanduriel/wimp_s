@@ -29,6 +29,7 @@ namespace Graphic {
 			std::function<void()> _OnMouseUp = [] () {return;});
 
 		void Register(Hud& _hud) override;
+		void Unregister(Hud& _hud) override;
 		//override to apply vertex changes 
 		virtual void SetPosition(ei::Vec2 _pos) override;
 		virtual void SetSize(ei::Vec2 _size) override;
@@ -196,6 +197,8 @@ namespace Graphic {
 
 		void SetDirection(Direction _direction);
 		Game::Actor& GetTarget() { return m_target; };
+
+		void Unregister(Hud& _hud) override;
 
 		void Update();
 	private:

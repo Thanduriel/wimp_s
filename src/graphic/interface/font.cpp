@@ -145,6 +145,11 @@ namespace Graphic
 		_hud.RegisterElement(*this);
 	}
 
+	void TextRender::Unregister(Hud& _hud)
+	{
+		_hud.RegisterElement(*this);
+	}
+
 	// ***************************************************** //
 	bool TextRender::CntrlChr(strIterator& _it)
 	{

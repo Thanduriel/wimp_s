@@ -51,6 +51,7 @@ namespace Graphic {
 			Font* _font = nullptr, const std::string& _text = "", float _scale = 1.f);
 
 		void Register(class Hud& _hud) override;
+		void Unregister(class Hud& _hud) override;
 
 		/// \brief Draw all buffered texts.
 		void Draw() const;

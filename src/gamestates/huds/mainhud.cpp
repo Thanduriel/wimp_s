@@ -91,7 +91,7 @@ namespace GameStates {
 		}
 		if (destroy > 0)
 		{
-			for (int i = int(m_indicators.size()) - destroy; i < destroy; i++)
+			for (int i = int(m_indicators.size()) - destroy; i < m_indicators.size(); i++)
 				DeleteScreenElement(*(m_indicators[i]));
 			m_indicators.resize(m_indicators.size() - destroy);
 		}
@@ -116,7 +116,7 @@ namespace GameStates {
 	// ******************************************************************** //
 	void MainHud::AddIndicator(Game::Ship& _ship)
 	{
-		m_indicators.push_back(std::make_unique<Indicator>(CreateScreenElement<Indicator>(PixelCoord(0.0f, 0.0f), _ship, *this)));
+		m_indicators.push_back(&CreateScreenElement<Indicator>(PixelCoord(0.0f, 0.0f), _ship, *this));
 	}
 
 	void MainHud::AddObjective(const Game::BaseEvent& _event)
