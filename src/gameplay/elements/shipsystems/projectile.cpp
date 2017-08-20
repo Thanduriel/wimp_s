@@ -81,7 +81,7 @@ namespace Game {
 
 	void Bolt::OnDestroy()
 	{
-		FactoryActor::GetThreadLocalInstance().MakeP<Explosion>(m_position, 3.f, 0.f, m_color);
+		FactoryActor::GetThreadLocalInstance().MakeP<Explosion>(m_position, m_damage / 4.f, 0.f, m_color);
 	}
 
 	// ********************************************************************** //

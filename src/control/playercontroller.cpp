@@ -43,6 +43,8 @@ namespace Control
 
 	void PlayerController::ProcessComponent(float _deltaTime, const Game::SceneGraph& _sceneGraph)
 	{
+		// restore actual time passed for correct camera movement speed
+		_deltaTime /= m_controlParams.m_timeScale;
 		// Apply the input to the model
 		HandleInput(_deltaTime);
 

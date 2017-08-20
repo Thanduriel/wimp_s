@@ -14,9 +14,9 @@ namespace Graphic {
 
 	enum struct Effects {
 		MESH,
+		SHIELD,
 		DEFFERED_LIGHT,
 		BACKGROUNDSTAR,
-//		PARTICLES,
 		TEXTURE_2DQUAD,
 		TEXT,
 		LINES,
@@ -36,6 +36,7 @@ namespace Graphic {
 		SIMPLE_OBJECT,
 		OBJECT_LINES,
 		OBJECT_GEOMETRY,
+		OBJECT_SHIELD,
 		COUNT
 	};
 

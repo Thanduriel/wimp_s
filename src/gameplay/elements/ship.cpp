@@ -40,6 +40,7 @@ namespace Game
 		m_shieldRecharge(10.f),
 		m_shieldWait(0.f),
 		m_isRecharging(true),
+		m_shieldComponent(THISACTOR, GetGeometryComponent().GetMesh()),
 		m_drivePositions(_node["DriveSockets"s].Size()),
 		m_weaponSockets(_node["WeaponSockets"s].Size()),
 		m_thrustParticles(m_drivePositions.capacity()),
@@ -162,6 +163,8 @@ namespace Game
 		else if (m_shieldWait >= m_shieldDelay)
 			m_isRecharging = true;
 
+		m_shieldComponent.SetActive(m_shield > 0.f);
+
 		// todo: remove this from here and let SpecialMove be an Actor/Component
 		if (m_specialMove) m_specialMove->Process(_deltaTime);
 
@@ -182,6 +185,9 @@ namespace Game
 	void Ship::RegisterComponents(SceneGraph& _sceneGraph)
 	{
 		Model::RegisterComponents(_sceneGraph);
+
+		_sceneGraph.RegisterComponent(m_shieldComponent);
+
 		for(auto& socket : m_weaponSockets)
 			_sceneGraph.RegisterComponent(socket);
 

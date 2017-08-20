@@ -30,6 +30,7 @@ namespace Game {
 		void RegisterComponent(SceneComponent& _component);
 		void RegisterComponent(class BaseParticleSystemComponent& _component);
 		void RegisterComponent(GeometryComponent& _component);
+		void RegisterComponent(class ShieldComponent& _component);
 		void RegisterComponent(class PointLightComponent& _component);
 		void RegisterComponent(class PostProcessComponent& _component);
 		void RegisterComponent(class MarkerComponent& _component);
@@ -84,6 +85,7 @@ namespace Game {
 		std::vector<PostProcessComponent*> m_postProcessComponents;
 		std::vector<PointLightComponent*> m_lightComponents;
 		std::vector<GeometryComponent*> m_geometryComponents;
+		std::vector<ShieldComponent*> m_shieldComponents;
 		std::vector<MarkerComponent*> m_markerComponents;
 		std::vector<FactoryComponent*> m_factoryComponents;
 		std::vector<CollisionComponent*> m_collisionComponents;

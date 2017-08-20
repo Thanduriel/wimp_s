@@ -10,6 +10,7 @@
 #include "jofilelib.hpp"
 #include "particlesystemcomponent.hpp"
 #include "shipsystems/inventory.hpp"
+#include "shieldcomponent.hpp"
 
 namespace Game
 {
@@ -128,6 +129,7 @@ namespace Game
 		float m_shieldDelay; //< time after being hit until the shield starts
 		float m_shield;
 		bool m_isRecharging;
+		ShieldComponent m_shieldComponent;
 
 		float m_particleSpawnCount;
 		FixedArray<ei::Vec3> m_drivePositions;

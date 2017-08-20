@@ -32,9 +32,15 @@ namespace Graphic {
 			effects[ind] = new Effect("shader/mesh.vs", "shader/mesh.ps");
 			effects[ind]->SetBlendState(BlendState(BlendState::BLEND_OPERATION::DISABLE, BlendState::BLEND::SRC_ALPHA, BlendState::BLEND::ONE));
 			effects[ind]->SetDepthStencilState(DepthStencilState(Graphic::DepthStencilState::COMPARISON_FUNC::LESS, true));
-			// the example cube has all faces inverted
-			effects[ind]->SetRasterizerState(RasterizerState(RasterizerState::CULL_MODE::NONE, RasterizerState::FILL_MODE::SOLID));
+			effects[ind]->SetRasterizerState(RasterizerState(RasterizerState::CULL_MODE::FRONT, RasterizerState::FILL_MODE::SOLID));
 			effects[ind]->BindUniformBuffer(GetUBO(UniformBuffers::OBJECT_GEOMETRY));
+			break;
+		case Effects::SHIELD:
+			effects[ind] = new Effect("shader/shield.vs", "shader/shield.ps");
+			effects[ind]->SetBlendState(BlendState(BlendState::BLEND_OPERATION::ADD, BlendState::BLEND::SRC_ALPHA, BlendState::BLEND::ONE));
+			effects[ind]->SetDepthStencilState(DepthStencilState(Graphic::DepthStencilState::COMPARISON_FUNC::EQUAL, false));
+			effects[ind]->SetRasterizerState(RasterizerState(RasterizerState::CULL_MODE::FRONT, RasterizerState::FILL_MODE::SOLID));
+			effects[ind]->BindUniformBuffer(GetUBO(UniformBuffers::OBJECT_SHIELD));
 			break;
 		case Effects::DEFFERED_LIGHT:
 			effects[ind] = new Effect("shader/light.vs", "shader/light.ps", "shader/light.gs");
@@ -170,6 +176,12 @@ namespace Graphic {
 			uniformBuffers[ind] = new UniformBuffer("Object");
 			uniformBuffers[ind]->AddAttribute("c_WorldViewProjection", UniformBuffer::ATTRIBUTE_TYPE::MATRIX);
 			uniformBuffers[ind]->AddAttribute("c_NormalWorldView", UniformBuffer::ATTRIBUTE_TYPE::MATRIX);
+			break;
+		case UniformBuffers::OBJECT_SHIELD:
+			uniformBuffers[ind] = new UniformBuffer("Object");
+			uniformBuffers[ind]->AddAttribute("c_WorldViewProjection", UniformBuffer::ATTRIBUTE_TYPE::MATRIX);
+			uniformBuffers[ind]->AddAttribute("c_PointOfOrigin", UniformBuffer::ATTRIBUTE_TYPE::VEC3);
+			uniformBuffers[ind]->AddAttribute("c_LocalTime", UniformBuffer::ATTRIBUTE_TYPE::FLOAT);
 			break;
 		default:
 			Assert(false, "This uniform buffer is not implemented.");

@@ -10,6 +10,9 @@
 #include "gameplay/elements/particlesystemcomponent.hpp"
 #include "elements/factorycomponent.hpp"
 #include "elements/collisioncomponent.hpp"
+#include "elements/shieldcomponent.hpp"
+
+#define REGISTER_COMPONENT_IMPL(x,y) 
 
 using namespace Graphic;
 
@@ -69,6 +72,11 @@ namespace Game {
 		// particles can be illuminated too
 		Graphic::ParticleSystems::Manager::Draw(Control::g_camera);
 
+		// shields
+		Device::SetEffect(Resources::GetEffect(Effects::SHIELD));
+		for (auto component : m_shieldComponents)
+			if (component->IsActive()) component->Draw();
+
 		// apply lights to the frame-buffer
 		for (auto component : m_lightComponents)
 			component->Draw();
@@ -106,6 +114,7 @@ namespace Game {
 	void SceneGraph::RegisterComponent(SceneComponent& _sceneComponent)
 	{
 		m_sceneComponents.push_back(&_sceneComponent);
+		RegisterBaseComponent(_sceneComponent);
 	}
 
 	void SceneGraph::RegisterComponent(BaseParticleSystemComponent& _component)
@@ -119,6 +128,13 @@ namespace Game {
 		m_geometryComponents.push_back(&_component);
 		RegisterBaseComponent(_component);
 	}
+
+	void SceneGraph::RegisterComponent(ShieldComponent& _component)
+	{
+		m_shieldComponents.push_back(&_component);
+		RegisterBaseComponent(_component);
+	}
+	
 
 	void SceneGraph::RegisterComponent(PointLightComponent& _component)
 	{
@@ -187,6 +203,7 @@ namespace Game {
 		
 		// unregister components
 		RemoveDestroyed(m_geometryComponents);
+		RemoveDestroyed(m_shieldComponents);
 		RemoveDestroyed(m_lightComponents);
 		RemoveDestroyed(m_postProcessComponents);
 		RemoveDestroyed(m_markerComponents);
