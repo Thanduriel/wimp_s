@@ -12,7 +12,13 @@ namespace GameStates
 	using namespace Control;
 
 	MainMenuState::MainMenuState()
+		: m_grid(ei::Vec3(0.f,0.f, 30.f), Utils::Color32F(0.f,1.f,0.f, 0.5f), 3.5f, 3.5f, 80.f),
+		m_blackHole(ei::Vec3(1.f), 5.f)
 	{
+		m_grid.Rotate(ei::Quaternion(ei::normalize(ei::Vec3(1.f, 0.f, 0.f)), ei::PI * 0.5f));
+		m_grid.Process(0.f);
+		m_blackHole.Process(0.f);
+
 		using namespace Graphic;
 		m_hud.m_startButton->SetOnMouseUp([&]() { m_newState = new MainState(); });
 		m_hud.m_exitButton->SetOnMouseUp([&]() { m_isFinished = true; });
@@ -24,21 +30,27 @@ namespace GameStates
 
 	void MainMenuState::Process(float _deltaTime)
 	{
-		//if (InputManager::IsVirtualKeyPressed(Control::VirtualKey::INVENTORY))
-		//{
-		//	// Change back to main state
-		//	m_newState = new GameStates::MainState();
-		//}
+		Control::g_camera.SetPosition(ei::Vec3(0.f, 0.f, -25.f));
+		Control::g_camera.SetRotation(ei::qidentity());
+		Control::g_camera.Process(_deltaTime);
+
+		static float sum = 0.f;
+		sum += _deltaTime;
+		m_blackHole.SetPosition(7.6f * Vec3(cos(sum), sin(sum), 0.f));
 	}
 
 	void MainMenuState::Draw(float _deltaTime)
 	{
+		m_grid.Draw();
+		m_hud.Draw(_deltaTime);
+
 		Texture& tex = *Device::GetCurrentFramebufferBinding()->GetColorAttachments().begin()->pTexture;
 		Device::BindFramebuffer(nullptr);
 		Device::SetEffect(Resources::GetEffect(Effects::SCREEN_OUTPUT));
 		Device::SetTexture(tex, 0);
 		Device::DrawFullscreen();
-		m_hud.Draw(_deltaTime);
+
+		m_blackHole.Draw();
 	}
 
 	void MainMenuState::Dispose()

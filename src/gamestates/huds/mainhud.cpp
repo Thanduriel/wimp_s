@@ -31,7 +31,10 @@ namespace GameStates {
 		m_healthBar = &CreateScreenElement<FillBar>(PixelOffset(-36, 20), PixelOffset(220, 28), DefP::BotRight, Anchor(DefP::BotRight, this));
 		m_healthBar->SetColor(Utils::Color8U(173_uc, 226_uc, 70_uc));
 		m_shieldBar = &CreateScreenElement<FillBar>(PixelOffset(0, 10), PixelOffset(220, 28), DefP::BotRight, Anchor(DefP::TopRight, m_healthBar));
+		m_shieldBar->SetColor(Utils::Color8U(95_uc, 121_uc, 211_uc));
+		
 		m_energyBar = &CreateScreenElement<FillBar>(PixelOffset(-36, 0), PixelOffset(220, 28), DefP::MidRight, Anchor(DefP::MidRight, this));
+		m_energyBar->SetColor(Utils::Color8U(35_uc, 71_uc, 141_uc));
 
 		m_objectivesLabel = &CreateScreenElement<TextRender>(Vec2(0.f), ScreenPosition::Anchor(DefP::TopMid, this));
 		m_objectivesLabel->SetDefaultSize(0.6f);

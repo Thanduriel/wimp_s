@@ -2,6 +2,9 @@
 #include "gamestate.hpp"
 #include "huds/mainmenuhud.hpp"
 
+#include "gameplay/elements/grid.hpp"
+#include "gameplay/elements/blackhole.hpp"
+
 namespace GameStates
 {
 	class MainMenuState : public GameStateHT<MainMenuHud>
@@ -20,5 +23,9 @@ namespace GameStates
 		void KeyRelease(int _key) override;
 		void KeyClick(int _key) override;
 		void KeyDoubleClick(int _key) override;
+
+	private:
+		Game::Grid m_grid;
+		Game::BlackHoleVis m_blackHole;
 	};
 }

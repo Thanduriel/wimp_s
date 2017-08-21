@@ -18,6 +18,7 @@ namespace Graphic
 		m_vertex.texCoord = Vec2((float)posMap.RootNode[_name][std::string("positionX")], (float)posMap.RootNode[_name][std::string("positionY")]);
 		m_vertex.size = Vec2((float)posMap.RootNode[_name][std::string("sizeX")], (float)posMap.RootNode[_name][std::string("sizeY")]);
 		m_textureSize = m_vertex.size;
+		m_texturePosition = m_vertex.texCoord;
 		if (Vec2(0.f) == _size)
 		{
 			Vec2 screenSize(posMap.RootNode[std::string("width")].Get(132), posMap.RootNode[std::string("height")].Get(132));
@@ -66,9 +67,10 @@ namespace Graphic
 	}
 
 	// ************************************************************************ //
-	void ScreenTexture::SetTextureRect(ei::Vec2 _scale)
+	void ScreenTexture::SetTextureRect(ei::Vec2 _scale, Vec2 _pos)
 	{
 		m_vertex.size = m_textureSize * _scale;
+		m_vertex.texCoord = m_texturePosition + m_textureSize * _pos;
 	}
 
 	// ************************************************************************ //
@@ -334,8 +336,6 @@ namespace Graphic
 	}
 	bool Button::KeyDown(int _key, int _modifiers, Vec2 _pos)
 	{
-		if (OnMouseUp) OnMouseUp();
-
 		m_btnDefault.SetVisible(false);
 		m_btnOver.SetVisible(false);
 		m_btnDown.SetVisible(true);
@@ -347,6 +347,8 @@ namespace Graphic
 
 	bool Button::KeyUp(int _key, int _modifiers, Vec2 _pos)
 	{
+		if (OnMouseUp) OnMouseUp();
+
 		ScreenOverlay::KeyUp(_key, _modifiers, _pos);
 		m_btnDefault.SetVisible(true);
 		m_btnOver.SetVisible(false);
@@ -582,10 +584,18 @@ namespace Graphic
 
 	// ************************************************************************ //
 	FillBar::FillBar(ei::Vec2 _position, ei::Vec2 _size, DefinitionPoint _def,
-		Anchor _anchor) :
-		ScreenTexture("simpleWindow", _position, _size, _def, _anchor)
+		Anchor _anchor, bool _growsRight) :
+		ScreenOverlay(_position, _size, _def, _anchor),
+		m_growsRight(_growsRight),
+		m_texture("fillbar", Vec2(0.f), _size, m_growsRight ? DefP::BotLeft : DefP::BotRight, 
+			Anchor(m_growsRight ? DefP::BotLeft : DefP::BotRight, this))
 	{
 
+	}
+
+	void FillBar::Register(Hud& _hud)
+	{
+		_hud.RegisterElement(m_texture);
 	}
 
 	// ************************************************************************ //
@@ -593,10 +603,10 @@ namespace Graphic
 	void FillBar::SetFillLevel(float _level)
 	{
 		Vec2 vec(_level, 1.f);
-		SetScale(vec);
-		SetTextureRect(vec);
+		m_texture.SetScale(vec);
+		m_texture.SetTextureRect(vec, m_growsRight ? Vec2(0.f) : Vec2(1.f - _level, 0.f));
 		//to update texture vertex
 		//todo: remove this
-		Scale(Vec2(1.f));
+		m_texture.Scale(Vec2(1.f));
 	}
 };

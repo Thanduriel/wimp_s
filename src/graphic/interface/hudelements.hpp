@@ -40,9 +40,10 @@ namespace Graphic {
 
 		/// \brief scales the rectangle of the source texture that is used
 		/// \param _scale the new size relative to the initial size
-		void SetTextureRect(ei::Vec2 _scale);
+		void SetTextureRect(ei::Vec2 _scale, ei::Vec2 _pos = ei::Vec2(0.f));
 	protected:
 		ei::Vec2 m_textureSize; ///< base size of the texture rectangle
+		ei::Vec2 m_texturePosition; ///< base position of the texture rectangle
 	private:
 		TextureVertex m_vertex;
 		friend class Hud;
@@ -251,15 +252,20 @@ namespace Graphic {
 	};
 
 	// ************************************************************* //
-	class FillBar : public ScreenTexture
+	class FillBar : public ScreenOverlay
 	{
 	public:
 		FillBar(ei::Vec2 _position, ei::Vec2 _size, DefinitionPoint _def = DefinitionPoint::TopLeft,
-			Anchor _anchor = Anchor());
-	//	void Register(Hud& _hud) override;
+			Anchor _anchor = Anchor(), bool _growsRight = false);
+		void Register(Hud& _hud) override;
 
 		/// \brief Sets the inner bar to _level * size
 		void SetFillLevel(float _level);
+
+		void SetColor(const Utils::Color8U& _color) { m_texture.SetColor(_color); }
+	private:
+		const bool m_growsRight;
+		ScreenTexture m_texture;
 	};
 
 };

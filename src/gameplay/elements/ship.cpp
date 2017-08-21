@@ -65,10 +65,10 @@ namespace Game
 		// todo: make depended on acceleration
 		static thread_local Generators::RandomGenerator rng(0x614AA);
 		for(int i = 0; i < m_drivePositions.size(); ++i)
-			m_thrustParticles[i].SetEmitter(200.f, [=]() {return rng.Direction() * 0.1f; },
-				[]() {return Vec3(0.f, 0.f, -1.f); },
-				[=]() {return rng.Uniform(1.f, 3.f); },
-				[]() {return Utils::Color8U(0.5f, 0.2f, 0.7f, 1.f).RGBA(); },
+			m_thrustParticles[i].SetEmitter(200.f, [=]() {return rng.Direction() * 0.15f; },
+				[=]() {return Vec3(0.f, 0.f, rng.Uniform(-16.f, -1.f)); },
+				[=]() {return rng.Uniform(2.f, 3.f); },
+				[]() {return Utils::Color8U(0.65f, 0.25f, 0.75f, 1.f).RGBA(); },
 				[]() {return 0.1f; });
 
 		m_canTakeDamage = true;
@@ -118,12 +118,13 @@ namespace Game
 	void Ship::UpdateSpeed(float currentSpeed, float _deltaTime)
 	{
 		Vec3 forward = ei::rotation(GetRotation()) * Vec3(0.0f, 0.0f, 1.0f);
+		float deltaSpeed = 0.f;
 		if (currentSpeed < m_speed)
 		{
 			// since we have newtons second axiom: F = m * a => a = F / m
 			float acceleration = m_thrust / m_mass;
 			// and since delta_v = a * delta_t
-			float deltaSpeed = acceleration * _deltaTime;
+			deltaSpeed = acceleration * _deltaTime;
 			// Apply the velocity to the player ship in the current direction
 			// min() to prevent ship from freaking out at low framerates
 			Vec3 newVel = ei::min(sign(m_speed) * len(GetVelocity()) + deltaSpeed, m_speed) * forward;
@@ -133,7 +134,7 @@ namespace Game
 		{
 			// same as above, but decelerate
 			float deceleration = -m_thrust / m_mass;
-			float deltaSpeed = deceleration * _deltaTime;
+			deltaSpeed = deceleration * _deltaTime;
 			// max() to prevent ship from freaking out at low framerates
 			Vec3 newVel = ei::max(sign(m_speed) * len(GetVelocity()) + deltaSpeed, m_speed) * forward;
 			SetVelocity(newVel);
@@ -172,6 +173,11 @@ namespace Game
 		float currentSpeed = GetCurrentSpeed();
 
 		// Update the speed
+		float n = abs(currentSpeed) * 4.f;
+	//	if (abs(m_speed - currentSpeed) > 2.0f)
+	//		n += 2048.f;
+		for (auto& thruster : m_thrustParticles)
+			thruster.SetOutput(n);
 		UpdateSpeed(currentSpeed, _deltaTime);
 
 		// Update angular velocity

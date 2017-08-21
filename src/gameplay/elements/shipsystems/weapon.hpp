@@ -31,7 +31,7 @@ namespace Game {
 		// @param _energyAvailable The energy that can be used to fire this weapon.
 		// @return The energy consumed.
 		float Fire(float _speed, float _energyAvailable);
-		void SetTarget(const Actor& _actor) { m_target = &_actor; }
+		void SetTarget(const Actor& _actor) { m_target = _actor.GetHandle(); }
 
 		float GetEnergyCost() const { return m_energyCost; }
 		float GetRange() const { return m_range; }
@@ -47,8 +47,7 @@ namespace Game {
 		FireFunction m_fireImpl;
 		ReloadFunction m_reloadImpl;
 
-		// only access this actor immediately after calling SetTarget
-		const Actor* m_target;
+		Actor::ConstHandle m_target;
 
 		friend class WeaponTrait;
 	};
@@ -87,7 +86,7 @@ namespace Game {
 			return [=](Weapon& _weapon) -> Projectile&
 			{
 				Game::Rocket& proj = _weapon.m_factoryComponent.CopyP<Rocket>(_prototype);
-				if(_weapon.m_target) proj.m_target = _weapon.m_target->GetHandle();
+				if(_weapon.m_target && *_weapon.m_target) proj.m_target = _weapon.m_target;
 				return proj;
 			};
 		}

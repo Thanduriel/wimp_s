@@ -94,7 +94,16 @@ namespace Game {
 				AddParticleV(_args()...);
 			};
 		}
-		
+
+		// Overwrite the number of particles that spawn every second.
+		// Only useful when the Component CanEmit
+		void SetOutput(float _numP)
+		{
+			Assert(CanEmit, "CanEmit has to be true to setup an Emitter.");
+			m_output = _numP;
+		}
+		float GetOutput() const { return m_output; }
+
 		void ProcessComponent(float _deltaTime) override
 		{
 //			Assert(m_generatorFunc, "A generator has to be setup with SetEmitter.");
