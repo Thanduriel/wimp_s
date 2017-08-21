@@ -117,9 +117,9 @@ namespace GameStates {
 	}
 
 	// ******************************************************************** //
-	void MainHud::AddIndicator(Game::Ship& _ship)
+	void MainHud::AddIndicator(Game::Actor& _target, const std::string& _tag)
 	{
-		m_indicators.push_back(&CreateScreenElement<Indicator>(PixelCoord(0.0f, 0.0f), _ship, *this));
+		m_indicators.push_back(&CreateScreenElement<Indicator>(PixelCoord(0.0f, 0.0f), _target, *this, _tag));
 	}
 
 	void MainHud::AddObjective(const Game::BaseEvent& _event)

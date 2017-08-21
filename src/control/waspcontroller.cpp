@@ -19,7 +19,8 @@ namespace Control
 	{
 		GetShip().SetSpeed(50.0f);
 		GetShip().SetAngularAcceleration(2.0f);
-		m_hud.AddIndicator(this->GetShip());
+		std::string tag = "Wasp Ship";
+		m_hud.AddIndicator(this->GetShip(), tag);
 	}
 
 	void WaspController::ProcessComponent(float _deltaTime, const Game::SceneGraph& _sceneGraph)

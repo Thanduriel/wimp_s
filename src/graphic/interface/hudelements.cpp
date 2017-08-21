@@ -360,9 +360,10 @@ namespace Graphic
 
 	// ************************************************************** //
 
-	Indicator::Indicator(Vec2 _position, Game::Actor& _target, Hud& _hud)
+	Indicator::Indicator(Vec2 _position, Game::Actor& _target, Hud& _hud, const std::string& _tag)
 		: ScreenTexture("", _position, PixelOffset(32, 32), DefinitionPoint::MidMid, Anchor(DefinitionPoint::MidMid, &_hud)),
-		m_target(_target)
+		m_target(_target),
+		m_tag(_tag)
 	{
 		SetVisible(false);
 		m_textures[0] = &_hud.CreateScreenElement<ScreenTexture>("indicator_up", _position, PixelOffset(32, 32), DefinitionPoint::MidMid, Anchor(DefinitionPoint::MidMid, &_hud));
@@ -416,12 +417,12 @@ namespace Graphic
 		float dist = len(Control::g_camera.GetPosition() - m_target.GetPosition());
 		std::string distString = std::to_string(dist);
 		size_t pos = distString.find('.', 0);
-		// dist > 999: 0 digits behind point, dist
+		// dist > 999: 0 digits behind point
 		if (int(dist) <= 99)
 			distString = distString.substr(0, pos + (3 - pos) + 1);
 		else
 			distString = distString.substr(0, pos);
-		m_distanceLabel->SetText(distString + " m");
+		m_distanceLabel->SetText(distString + " m\n[" + m_tag + "]");
 	}
 
 	void Indicator::Update()

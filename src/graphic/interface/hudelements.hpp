@@ -191,7 +191,7 @@ namespace Graphic {
 	class Indicator : public ScreenTexture
 	{
 	public:
-		Indicator(ei::Vec2 _position, Game::Actor& _target, Hud& _hud);
+		Indicator(ei::Vec2 _position, Game::Actor& _target, Hud& _hud, const std::string& _tag);
 		
 		void SetPosition(ei::Vec2 _pos) override;
 		Direction GetDirection() const { return m_direction; };
@@ -210,6 +210,7 @@ namespace Graphic {
 		Game::Actor& m_target;
 		ScreenTexture* m_textures[5];
 		TextRender* m_distanceLabel;
+		std::string m_tag;
 	};
 
 	// ************************************************************* //

@@ -19,7 +19,7 @@ namespace Control
 	{
 		GetShip().SetSpeed(0.0f);
 		GetShip().SetAngularAcceleration(0.5f);
-		m_hud.AddIndicator(this->GetShip());
+		m_hud.AddIndicator(this->GetShip(), "Turtle Ship");
 	}
 
 	void TurtleController::ProcessComponent(float _deltaTime, const Game::SceneGraph& _sceneGraph)
