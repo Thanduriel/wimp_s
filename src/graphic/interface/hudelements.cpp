@@ -371,6 +371,7 @@ namespace Graphic
 		for (int i = 0; i < 5; i++)
 			m_textures[i]->SetVisible(false);
 		m_direction = Direction::None;
+		m_distanceLabel = &_hud.CreateScreenElement<TextRender>(PixelOffset(0, 0), Anchor(DefinitionPoint::MidMid, this), nullptr, "", 0.5f);
 	}
 
 	void Indicator::SetDirection(Direction _direction)
@@ -378,6 +379,7 @@ namespace Graphic
 		m_textures[m_direction]->SetVisible(false);
 		m_textures[_direction]->SetVisible(true);
 		m_direction = _direction;
+		UpdateLabel();
 	}
 
 	void Indicator::SetPosition(Vec2 _pos)
@@ -385,6 +387,39 @@ namespace Graphic
 		ScreenTexture::SetPosition(_pos);
 		for (int i = 0; i < 5; i++)
 			m_textures[i]->SetPosition(_pos);
+		UpdateLabel();
+	}
+
+	void Indicator::UpdateLabel()
+	{
+		switch (m_direction)
+		{
+		case Direction::Up:
+			m_distanceLabel->SetPosition(Vec2(-GetSize().x * 0.5f, -GetSize().y * 0.5f));
+			break;
+		case Direction::Down:
+			m_distanceLabel->SetPosition(Vec2(-GetSize().x * 0.5f, GetSize().y * 1.5f));
+			break;
+		case Direction::Left:
+			m_distanceLabel->SetPosition(Vec2(0, -GetSize().y * 0.5f));
+			break;
+		case Direction::Right:
+			m_distanceLabel->SetPosition(Vec2(-GetSize().x * 1.5f, -GetSize().y * 0.5f));
+			break;
+		case Direction::None:
+			m_distanceLabel->SetPosition(Vec2(0, 0));
+			break;
+		}
+
+		float dist = len(Control::g_camera.GetPosition() - m_target.GetPosition());
+		std::string distString = std::to_string(dist);
+		size_t pos = distString.find('.', 0);
+		// dist > 999: 0 digits behind point, dist
+		if (int(dist) <= 99)
+			distString = distString.substr(0, pos + (3 - pos) + 1);
+		else
+			distString = distString.substr(0, pos);
+		m_distanceLabel->SetText(distString + " m");
 	}
 
 	void Indicator::Update()
@@ -432,6 +467,7 @@ namespace Graphic
 	{
 		for (int i = 0; i < 5; i++)
 			_hud.DeleteScreenElement(*m_textures[i]);
+		_hud.DeleteScreenElement(*m_distanceLabel);
 		ScreenTexture::Unregister(_hud);
 	}
 

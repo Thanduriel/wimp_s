@@ -202,9 +202,13 @@ namespace Graphic {
 
 		void Update();
 	private:
+
+		void UpdateLabel();
+
 		Direction m_direction;
 		Game::Actor& m_target;
 		ScreenTexture* m_textures[5];
+		TextRender* m_distanceLabel;
 	};
 
 	// ************************************************************* //
