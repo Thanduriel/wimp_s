@@ -51,7 +51,7 @@ namespace GameStates {
 		// test actors
 		ship = new Ship("TestShip", Vec3(50.f,0.f,100.f));
 		m_sceneGraph.Add(*ship);
-		m_sceneGraph.RegisterComponent(*new Control::TurtleController(*ship, m_playerController->GetShip().GetHandle(), m_hud));
+		m_sceneGraph.RegisterComponent(*new Control::WaspController(*ship, m_playerController->GetShip().GetHandle(), m_hud));
 		ship2 = ship;
 
 	}
