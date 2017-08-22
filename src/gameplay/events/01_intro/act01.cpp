@@ -21,8 +21,8 @@ namespace Acts {
 		w = weaponGen.Generate(10.f, 0.f);
 		inventory.Add(*w);
 		factory.Add(*w);
-		Crate& crate = factory.Make<Crate>(ei::Vec3(0.f, 0.f, 120.f), inventory, 10.f);
-		Actor::Handle hndl = crate.GetHandle();
+		Crate* crate = &factory.Make<Crate>(ei::Vec3(0.f, 0.f, 120.f), inventory, 10.f);
+		Actor::Handle hndl = crate->GetHandle();
 		// some cheap personnel
 
 		// --- events --------------------------------------- //
@@ -42,11 +42,13 @@ namespace Acts {
 			auto& ev = CREATE_OBJECTIVE(Conditions::OnDestroy)(beginDestroyShips, 
 				"pick up and equip the weapons", std::vector<Actor::Handle>({ hndl }), 1);
 			_hud.AddObjective(ev);
+			_hud.AddIndicator(*crate, "crate");
 		);
 
 		// 01
-		auto& ev = factory.Make<Event<Conditions::IsClose>>(beginPickUpWeapon, "get closer to the facility", _player, crate.GetPosition(), 60.f);
+		auto& ev = factory.Make<Event<Conditions::IsClose>>(beginPickUpWeapon, "get closer to the facility", _player, crate->GetPosition(), 60.f);
 		_hud.AddObjective(ev);
+	//	_hud.AddIndicator(crate, "facility");
 
 	}
 }

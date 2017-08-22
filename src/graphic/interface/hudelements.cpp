@@ -360,27 +360,30 @@ namespace Graphic
 
 	// ************************************************************** //
 
-	Indicator::Indicator(Vec2 _position, Game::Actor& _target, Hud& _hud, const std::string& _tag)
+	Indicator::Indicator(Vec2 _position, const Game::Actor& _target, Hud& _hud, const std::string& _tag)
 		: ScreenTexture("", _position, PixelOffset(32, 32), DefinitionPoint::MidMid, Anchor(DefinitionPoint::MidMid, &_hud)),
 		m_target(_target),
-		m_tag(_tag)
+		m_tag(_tag),
+		m_textures{ { "indicator_up", _position, PixelOffset(32, 32), DefinitionPoint::MidMid, Anchor(DefinitionPoint::MidMid, &_hud) },
+			{ "indicator_down", _position, PixelOffset(32, 32), DefinitionPoint::MidMid, Anchor(DefinitionPoint::MidMid, &_hud) },
+			{"indicator_left", _position, PixelOffset(32, 32), DefinitionPoint::MidMid, Anchor(DefinitionPoint::MidMid, &_hud) },
+			{ "indicator_right", _position, PixelOffset(32, 32), DefinitionPoint::MidMid, Anchor(DefinitionPoint::MidMid, &_hud) },
+			{ "focus_indicator", _position, PixelOffset(64, 64), DefinitionPoint::MidMid, Anchor(DefinitionPoint::MidMid, &_hud) } },
+		m_distanceLabel(Vec2(0.f), Anchor(DefinitionPoint::MidMid, this), nullptr, "", 0.5f)
 	{
 		SetVisible(false);
-		m_textures[0] = &_hud.CreateScreenElement<ScreenTexture>("indicator_up", _position, PixelOffset(32, 32), DefinitionPoint::MidMid, Anchor(DefinitionPoint::MidMid, &_hud));
-		m_textures[1] = &_hud.CreateScreenElement<ScreenTexture>("indicator_down", _position, PixelOffset(32, 32), DefinitionPoint::MidMid, Anchor(DefinitionPoint::MidMid, &_hud));
-		m_textures[2] = &_hud.CreateScreenElement<ScreenTexture>("indicator_left", _position, PixelOffset(32, 32), DefinitionPoint::MidMid, Anchor(DefinitionPoint::MidMid, &_hud));
-		m_textures[3] = &_hud.CreateScreenElement<ScreenTexture>("indicator_right", _position, PixelOffset(32, 32), DefinitionPoint::MidMid, Anchor(DefinitionPoint::MidMid, &_hud));
-		m_textures[4] = &_hud.CreateScreenElement<ScreenTexture>("focus_indicator", _position, PixelOffset(64, 64), DefinitionPoint::MidMid, Anchor(DefinitionPoint::MidMid, &_hud));
 		for (int i = 0; i < 5; i++)
-			m_textures[i]->SetVisible(false);
+		{
+			m_textures[i].SetVisible(false);
+			m_textures[i].SetActive(false);
+		}
 		m_direction = Direction::None;
-		m_distanceLabel = &_hud.CreateScreenElement<TextRender>(PixelOffset(0, 0), Anchor(DefinitionPoint::MidMid, this), nullptr, "", 0.5f);
 	}
 
 	void Indicator::SetDirection(Direction _direction)
 	{
-		m_textures[m_direction]->SetVisible(false);
-		m_textures[_direction]->SetVisible(true);
+		m_textures[m_direction].SetVisible(false);
+		m_textures[_direction].SetVisible(true);
 		m_direction = _direction;
 		UpdateLabel();
 	}
@@ -389,7 +392,7 @@ namespace Graphic
 	{
 		ScreenTexture::SetPosition(_pos);
 		for (int i = 0; i < 5; i++)
-			m_textures[i]->SetPosition(_pos);
+			m_textures[i].SetPosition(_pos);
 		UpdateLabel();
 	}
 
@@ -398,19 +401,19 @@ namespace Graphic
 		switch (m_direction)
 		{
 		case Direction::Up:
-			m_distanceLabel->SetPosition(Vec2(-GetSize().x * 0.5f, -GetSize().y * 0.5f));
+			m_distanceLabel.SetPosition(Vec2(-GetSize().x * 0.5f, -GetSize().y * 0.5f));
 			break;
 		case Direction::Down:
-			m_distanceLabel->SetPosition(Vec2(-GetSize().x * 0.5f, GetSize().y * 1.5f));
+			m_distanceLabel.SetPosition(Vec2(-GetSize().x * 0.5f, GetSize().y * 1.5f));
 			break;
 		case Direction::Left:
-			m_distanceLabel->SetPosition(Vec2(0, -GetSize().y * 0.5f));
+			m_distanceLabel.SetPosition(Vec2(0, -GetSize().y * 0.5f));
 			break;
 		case Direction::Right:
-			m_distanceLabel->SetPosition(Vec2(-GetSize().x * 1.5f, -GetSize().y * 0.5f));
+			m_distanceLabel.SetPosition(Vec2(-GetSize().x * 1.5f, -GetSize().y * 0.5f));
 			break;
 		case Direction::None:
-			m_distanceLabel->SetPosition(Vec2(0, 0));
+			m_distanceLabel.SetPosition(Vec2(0, 0));
 			break;
 		}
 
@@ -422,7 +425,7 @@ namespace Graphic
 			distString = distString.substr(0, pos + (3 - pos) + 1);
 		else
 			distString = distString.substr(0, pos);
-		m_distanceLabel->SetText(distString + " m\n[" + m_tag + "]");
+		m_distanceLabel.SetText(distString + " m\n[" + m_tag + "]");
 	}
 
 	void Indicator::Update()
@@ -466,11 +469,20 @@ namespace Graphic
 		}
 	}
 
+	void Indicator::Register(Hud& _hud)
+	{
+		_hud.RegisterElement(m_distanceLabel);
+		for (int i = 0; i < 5; ++i)
+			m_textures[i].Register(_hud);
+
+		ScreenTexture::Register(_hud);
+	}
+
 	void Indicator::Unregister(Hud& _hud)
 	{
 		for (int i = 0; i < 5; i++)
-			_hud.DeleteScreenElement(*m_textures[i]);
-		_hud.DeleteScreenElement(*m_distanceLabel);
+			_hud.UnregisterElement(m_textures[i]);
+		_hud.UnregisterElement(m_distanceLabel);
 		ScreenTexture::Unregister(_hud);
 	}
 

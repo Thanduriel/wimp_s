@@ -81,23 +81,21 @@ namespace GameStates {
 
 	void MainHud::UpdateIndicators(Vec3 _playerPos)
 	{
-		int destroy = 0;
-		for (auto& i : m_indicators)
+		auto removeBeg = std::remove_if(m_indicators.begin(), m_indicators.end(), [&](Indicator* _indicator) 
 		{
-			if (i->GetTarget().GetHealth() > 0)
-				i->Update();
-			else
+			if (_indicator->GetTarget().IsDestroyed())
 			{
-				std::swap(i, m_indicators.back());
-				destroy++;
+				// the pointer is lost after this, so remove it right now
+				DeleteScreenElement(*_indicator);
+				return true;
 			}
-		}
-		if (destroy > 0)
-		{
-			for (int i = int(m_indicators.size()) - destroy; i < m_indicators.size(); i++)
-				DeleteScreenElement(*(m_indicators[i]));
-			m_indicators.resize(m_indicators.size() - destroy);
-		}
+			else return false;
+		});
+
+		m_indicators.erase(removeBeg, m_indicators.end());
+
+		for (auto indicator : m_indicators)
+			indicator->Update();
 	}
 
 	void MainHud::UpdateObjectives()
@@ -117,9 +115,9 @@ namespace GameStates {
 	}
 
 	// ******************************************************************** //
-	void MainHud::AddIndicator(Game::Actor& _target, const std::string& _tag)
+	void MainHud::AddIndicator(const Game::Actor& _target, const std::string& _tag)
 	{
-		m_indicators.push_back(&CreateScreenElement<Indicator>(PixelCoord(0.0f, 0.0f), _target, *this, _tag));
+		m_indicators.push_back(&CreateScreenElement<Indicator>(Vec2(0.0f, 0.0f), _target, *this, _tag));
 	}
 
 	void MainHud::AddObjective(const Game::BaseEvent& _event)

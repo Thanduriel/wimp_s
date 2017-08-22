@@ -5,7 +5,7 @@
 #include "gameplay/core/actor.hpp"
 #include "gameplay/core/component.hpp"
 
-#define CREATE_ACTION(x) [=, &_hud](){x}
+#define CREATE_ACTION(x) [=,&_hud](){x}
 #define CREATE_OBJECTIVE(x) FactoryActor::GetThreadLocalInstance().Make<Event< x >>
 
 namespace Game {
