@@ -12,10 +12,11 @@ namespace Game {
 	const float PARTICLESPAWN = 300.f; // in particles per second
 
 	// ********************************************************************** //
-	Projectile::Projectile(const ei::Vec3& _position, const ei::Vec3& _velocity, float _damage, float _lifeTime)
+	Projectile::Projectile(const ei::Vec3& _position, const ei::Vec3& _velocity, float _damage, float _lifeTime, DamageType _damageType)
 		: DynamicActor(_position, Quaternion(Vec3(0.f,0.f,1.f), _velocity)),
 		m_lifeTimeComponent(THISACTOR, _lifeTime),
-		m_damage(_damage)
+		m_damage(_damage),
+		m_damageType(_damageType)
 	{
 		m_health = 0.0001f;
 		m_canTakeDamage = true;
@@ -25,14 +26,15 @@ namespace Game {
 	Projectile::Projectile(const Projectile& _proj)
 		: DynamicActor(_proj),
 		m_lifeTimeComponent(THISACTOR, _proj.m_lifeTimeComponent),
-		m_damage(_proj.m_damage)
+		m_damage(_proj.m_damage),
+		m_damageType(_proj.m_damageType)
 	{
 
 	}
 
 	void Projectile::OnCollision(Actor& _other)
 	{
-		_other.Damage(m_damage, *this);
+		_other.Damage(m_damage, *this, m_damageType);
 	//	Destroy();
 	}
 
@@ -45,8 +47,8 @@ namespace Game {
 
 	// ********************************************************************** //
 	const float BOLT_SIZE = 0.2f;
-	Bolt::Bolt(const ei::Vec3& _position, const ei::Vec3& _velocity, float _damage, float _lifeTime, const Utils::Color8U& _color)
-		: Projectile(_position, _velocity, _damage, _lifeTime),
+	Bolt::Bolt(const ei::Vec3& _position, const ei::Vec3& _velocity, float _damage, float _lifeTime, DamageType _damageType, const Utils::Color8U& _color)
+		: Projectile(_position, _velocity, _damage, _lifeTime, _damageType),
 		m_particles(THISACTOR, Vec3(0.f), Graphic::Resources::GetTexture("bolt")),
 		m_color(_color),
 		m_collisionComponent(THISACTOR, BOLT_SIZE, CollisionComponent::Type::Any | CollisionComponent::Type::Dynamic /*, ei::Box(Vec3(sqrt(-BOLT_SIZE/2.f)), Vec3(sqrt(BOLT_SIZE/2.f)))*/)
@@ -65,7 +67,7 @@ namespace Game {
 	void Bolt::Process(float _deltaTime)
 	{
 		Projectile::Process(_deltaTime);
-
+		
 		m_particles.AddParticle(Vec3(0.f), //position
 			m_color.RGBA(),
 			m_damage / 8.f);// size
@@ -81,7 +83,8 @@ namespace Game {
 
 	void Bolt::OnDestroy()
 	{
-		FactoryActor::GetThreadLocalInstance().MakeP<Explosion>(m_position, m_damage / 4.f, 0.f, m_color);
+		FactoryActor::GetThreadLocalInstance().MakeP<Explosion>(m_position, m_damage / 4.f, 0.f, m_color, 
+			m_damageType == DamageType::Ion ? "shock" : "mist");
 	}
 
 	// ********************************************************************** //

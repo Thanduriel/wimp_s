@@ -14,6 +14,8 @@ namespace Generators {
 		Gatling,
 		Iterative,
 		LowPower,
+		Ionized,
+		Corroding,
 	//	Infinite,
 		WTTCOUNT // since this is not in its own name space
 	};
@@ -28,7 +30,9 @@ namespace Generators {
 		{"of High Power", "2x damage, 2x power consumption", false},
 		{"Gatling", "fire rate increases with continues fire", false},
 		{ "Iterative", "every 3rth shot deals 2xdamage", true },
-		{ "of Low Power", "95% reduced consumption, 80% less damage", false }
+		{ "of Low Power", "95% reduced consumption, 80% less damage", false },
+		{"Ionizing", "deals bonus damage against shields", true},
+		{"Corroding", "deals bonus damage against hulls", true}
 	//	{"Infinite", "can fire even without sufficient energy", true}
 	} };
 
@@ -86,6 +90,8 @@ namespace Generators {
 				+ "\n" + "cooldown: 0.0";
 			return new Weapon(0.f);
 		}*/
+		std::vector< int > hasTrait(WeaponTraitType::WTTCOUNT);
+		memset(&hasTrait.begin(), 0, sizeof(int) * hasTrait.size());
 
 		// decide on quality
 		auto qVec = QUALITY_RARITY * _qualityFactor;
@@ -97,7 +103,9 @@ namespace Generators {
 		// roll basic type; -2 since lasers are not implemented
 		WeaponType type = (WeaponType)m_randomSampler.Uniform(0, (int32_t)NAMES.size()-((int)rarity> 0 ? 2 : 3));
 		m_name = NAMES[(int)type];
-		if (type == WeaponType::Rocket) numTraits -= 1;
+		// rocket properties count as trait
+		if (type == WeaponType::Rocket)
+			numTraits -= 1;
 		m_description.clear();
 		m_baseStats.clear();
 
@@ -115,11 +123,10 @@ namespace Generators {
 
 		Weapon::FireFunction fireFn;
 		Weapon::ReloadFunction reloadFn;
+		DamageType damageType = DamageType::Normal;
 
 		// traits that have to be added after projectile generation has finished
 		std::vector< WeaponTraitType > lateTraits;
-		std::vector< int > hasTrait(WeaponTraitType::WTTCOUNT);
-		memset(&hasTrait.begin(), 0, sizeof(int) * hasTrait.size());
 
 		while(numTraits)
 		{
@@ -159,6 +166,14 @@ namespace Generators {
 			case WeaponTraitType::Iterative: lateTraits.push_back(Iterative);
 				hasTrait[Twin] = 1;
 				break;
+			case WeaponTraitType::Ionized:
+				hasTrait[Corroding] = 1;
+				damageType = DamageType::Ion;
+				break;
+			case WeaponTraitType::Corroding:
+				hasTrait[Ionized] = 1;
+				damageType = DamageType::Physical;
+				break;
 			default:
 				Assert(false, "Trait not implemented.");
 			}
@@ -169,7 +184,7 @@ namespace Generators {
 		switch (type)
 		{
 		case WeaponType::Simple:
-			projGenerator = WeaponTrait::CreateProjectileFn(Bolt(ei::Vec3(0.f), ei::Vec3(0.f, 0.f, speed), damage, lifeTime,
+			projGenerator = WeaponTrait::CreateProjectileFn(Bolt(ei::Vec3(0.f), ei::Vec3(0.f, 0.f, speed), damage, lifeTime, damageType,
 				Utils::Color8U(m_randomSampler.Uniform(), m_randomSampler.Uniform(), m_randomSampler.Uniform())));
 			break;
 		case WeaponType::Rocket:
@@ -205,8 +220,8 @@ namespace Generators {
 
 		m_description = m_baseStats + "-----" + m_description;
 		// accumulated stats
-		m_description += "\n-----\ndps: " + std::to_string(1.f / cooldown * damage)
-			+ "\nrange: " + std::to_string(speed * lifeTime);
+		m_description += "\n-----\ndps: " + MakeNum(1.f / cooldown * damage)
+			+ "\nrange: " + MakeNum(speed * lifeTime);
 
 		m_name = Item::QUALITY_COLOR_STR[(int)rarity] + m_name + "</c>";
 

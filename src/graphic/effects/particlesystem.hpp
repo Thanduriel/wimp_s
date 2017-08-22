@@ -396,7 +396,7 @@ namespace Graphic {
 			| Component::VELOCITY | Component::LIFETIME
 			| Component::COLOR | Component::SIZE;
 
-		typedef std::pair< ei::uint, RenderType> PSKey;
+		typedef std::tuple< ei::uint, RenderType, const Texture*> PSKey;
 
 		class Manager
 		{
@@ -414,7 +414,8 @@ namespace Graphic {
 			{
 				Assert(_type != RenderType::TEXQUAD || _texture, "A TEXQUAD system requires a texture.");
 
-				PSKey key = std::make_pair(PFlags, _type);
+				PSKey key = std::make_tuple(PFlags, _type, _texture);
+	
 				auto it = std::find_if(m_particleSystems.begin(), m_particleSystems.end(), [=](const SystemPair& _sys)
 				{
 					return _sys.first == key;

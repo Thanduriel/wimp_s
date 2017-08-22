@@ -36,7 +36,8 @@ namespace Game {
 				if (_weapon.m_cooldown <= 0.f)
 				{
 					// cool down to zero
-					x = ei::max(0.f, x - _deltaTime / _weapon.m_cooldownMax);
+					// factor 2 so that this goes faster
+					x = ei::max(0.f, x - _deltaTime * 2.5f / _weapon.m_cooldownMax);
 				}
 				else // heat up
 					x = ei::min(x+f/_weapon.m_cooldownMax, (float)numShots);

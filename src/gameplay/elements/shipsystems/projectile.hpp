@@ -18,7 +18,7 @@ namespace Game {
 		static constexpr float DEFAULT_SPEED = 256.f;
 
 		Projectile(const ei::Vec3& _position, const ei::Vec3& _velocity,
-			float _damage, float _lifeTime);
+			float _damage, float _lifeTime, DamageType _damageType = DamageType::Normal);
 
 		// does a correct copy of the given projectile including components
 		Projectile(const Projectile& _proj);
@@ -27,6 +27,7 @@ namespace Game {
 		void RegisterComponents(class SceneGraph& _sceneGraph) override;
 	protected:
 		float m_damage;
+		DamageType m_damageType;
 
 		LifeTimeComponent m_lifeTimeComponent;
 		friend class WeaponTrait;
@@ -36,6 +37,7 @@ namespace Game {
 	{
 	public:
 		Bolt(const ei::Vec3& _position, const ei::Vec3& _velocity, float _damage, float _lifeTime, 
+			DamageType _damageType = DamageType::Normal,
 			const Utils::Color8U& _color = Utils::Color8U(0.7f, 0.5f, 0.3f) );
 		Bolt(const Bolt& _orig);
 

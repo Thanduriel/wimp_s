@@ -94,14 +94,18 @@ namespace Game
 	float Ship::OnDamageTaken(float _amount, Actor& _source, DamageType _type)
 	{
 		// shield absorbs damage first
-		float shieldDam = std::min(_amount, m_shield);
+		float shieldDam = _amount;
+		if (_type == DamageType::Ion)
+			std::min(shieldDam * 1.5f, m_shield * 1.f / 1.5f);
+		else shieldDam = std::min(shieldDam, m_shield);
+
 		m_shield -= shieldDam;
 
 		// recharge is interrupted
 		m_shieldWait = 0;
 		m_isRecharging = false;
 
-		return _amount - shieldDam;
+		return (_amount - shieldDam) * (_type == DamageType::Physical ? 1.5f : 1.f);
 	}
 
 	// ****************************************************************** //

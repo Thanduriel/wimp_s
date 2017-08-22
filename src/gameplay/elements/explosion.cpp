@@ -11,13 +11,15 @@ namespace Game {
 	const float EXPANSIONTIME = 1.f;
 
 	// ********************************************************************** //
-	Explosion::Explosion(const ei::Vec3& _position, float _radius, float _damage, Utils::Color8U _color)
+	Explosion::Explosion(const ei::Vec3& _position, float _radius, float _damage, Utils::Color8U _color, const std::string& _effectTex)
 		: Actor(_position),
 		m_lifeTimeComponent(THISACTOR, 0.9f),
 		m_light(THISACTOR, Vec3(0.f), _radius, Utils::Color8U(0.0f, 0.0f, 1.0f)),
-		m_particles(THISACTOR, Vec3(0.f), Graphic::Resources::GetTexture("mist")),
+		m_particles(THISACTOR, Vec3(0.f), Graphic::Resources::GetTexture(_effectTex)),
 		m_radius(_radius)
 	{
+		if (_effectTex == "shock")
+			int uiae = 123;
 		for (int i = 0; i < _radius * 18.f; ++i)
 		{
 			static thread_local Generators::RandomGenerator rng(0x614AA);

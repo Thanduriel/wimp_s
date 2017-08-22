@@ -10,7 +10,7 @@ namespace Game {
 	class Explosion : public Actor
 	{
 	public:
-		Explosion(const ei::Vec3& _position, float _radius, float _damage, Utils::Color8U _color = Utils::Color8U(0.7f, 0.8f, 0.4f, 1.f));
+		Explosion(const ei::Vec3& _position, float _radius, float _damage, Utils::Color8U _color = Utils::Color8U(0.7f, 0.8f, 0.4f, 1.f), const std::string& _effectTex = "mist");
 
 		void Process(float _deltaTime) override;
 

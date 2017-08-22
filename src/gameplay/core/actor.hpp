@@ -9,7 +9,9 @@ namespace Game {
 	enum struct DamageType
 	{
 		Normal,
-		Pure
+		Pure,
+		Physical,
+		Ion
 	};
 
 	/* Actor *************************************
