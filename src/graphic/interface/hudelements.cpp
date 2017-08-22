@@ -360,7 +360,7 @@ namespace Graphic
 
 	// ************************************************************** //
 
-	Indicator::Indicator(Vec2 _position, const Game::Actor& _target, Hud& _hud, const std::string& _tag)
+	Indicator::Indicator(Vec2 _position, const Game::Actor& _target, Hud& _hud, const std::string& _tag, Utils::Color8U _color)
 		: ScreenTexture("", _position, PixelOffset(32, 32), DefinitionPoint::MidMid, Anchor(DefinitionPoint::MidMid, &_hud)),
 		m_target(_target),
 		m_tag(_tag),
@@ -376,8 +376,10 @@ namespace Graphic
 		{
 			m_textures[i].SetVisible(false);
 			m_textures[i].SetActive(false);
+			m_textures[i].SetColor(_color);
 		}
 		m_direction = Direction::None;
+		m_distanceLabel.SetDefaultColor(_color);
 	}
 
 	void Indicator::SetDirection(Direction _direction)

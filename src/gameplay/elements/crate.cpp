@@ -7,7 +7,7 @@ namespace Game {
 	Crate::Crate(const ei::Vec3& _position, Inventory& _inventory, float _pickupRadius)
 		: Actor(_position),
 		m_pickUp(THISACTOR, _pickupRadius),
-		m_visual(THISACTOR,"testrocket" )
+		m_visual(THISACTOR,"crate" )
 	{
 		m_canTakeDamage = false;
 		m_inventory.Transfer(_inventory);

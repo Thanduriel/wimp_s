@@ -24,7 +24,7 @@ namespace GameStates {
 		// refreshes currently shown objectives based on all Events known by this.
 		void UpdateObjectives();
 
-		void AddIndicator(const Game::Actor& _actor, const std::string& _tag);
+		void AddIndicator(const Game::Actor& _actor, const std::string& _tag, Utils::Color8U _color = Utils::Color8U(1.f,1.f,1.f));
 		void AddObjective(const Game::BaseEvent& _event);
 		
 		void ShowSpecialMoveMarker(bool _show) { m_specialMoveIndicator->SetVisible(_show); }

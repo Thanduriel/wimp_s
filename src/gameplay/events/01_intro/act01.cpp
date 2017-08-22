@@ -9,6 +9,8 @@
 namespace Game {
 namespace Acts {
 
+	using namespace Utils;
+
 	Act01::Act01(const Ship& _player, GameStates::MainHud& _hud)
 	{
 		FactoryActor& factory = FactoryActor::GetThreadLocalInstance();
@@ -33,16 +35,14 @@ namespace Acts {
 
 		// 03
 		auto beginDestroyShips = CREATE_ACTION(
-			auto& ev = CREATE_OBJECTIVE(Conditions::Timer)(nextAct, "destroy the ships near by", 8.f);
-			_hud.AddObjective(ev);
+			CREATE_OBJECTIVE3(Conditions::Timer, nextAct, "destroy the ships near by", 8.f);
 		);
 
 		// 02
 		auto beginPickUpWeapon = CREATE_ACTION( 
-			auto& ev = CREATE_OBJECTIVE(Conditions::OnDestroy)(beginDestroyShips, 
+			CREATE_OBJECTIVE4(Conditions::OnDestroy, beginDestroyShips, 
 				"pick up and equip the weapons", std::vector<Actor::Handle>({ hndl }), 1);
-			_hud.AddObjective(ev);
-			_hud.AddIndicator(*crate, "crate");
+			_hud.AddIndicator(*crate, "crate", Color8U(1.f,1.f,0.f));
 		);
 
 		// 01

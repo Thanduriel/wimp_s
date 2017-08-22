@@ -115,9 +115,9 @@ namespace GameStates {
 	}
 
 	// ******************************************************************** //
-	void MainHud::AddIndicator(const Game::Actor& _target, const std::string& _tag)
+	void MainHud::AddIndicator(const Game::Actor& _target, const std::string& _tag, Utils::Color8U _color)
 	{
-		m_indicators.push_back(&CreateScreenElement<Indicator>(Vec2(0.0f, 0.0f), _target, *this, _tag));
+		m_indicators.push_back(&CreateScreenElement<Indicator>(Vec2(0.0f, 0.0f), _target, *this, _tag, _color));
 	}
 
 	void MainHud::AddObjective(const Game::BaseEvent& _event)

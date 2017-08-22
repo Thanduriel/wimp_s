@@ -191,7 +191,7 @@ namespace Graphic {
 	class Indicator : public ScreenTexture
 	{
 	public:
-		Indicator(ei::Vec2 _position, const Game::Actor& _target, Hud& _hud, const std::string& _tag);
+		Indicator(ei::Vec2 _position, const Game::Actor& _target, Hud& _hud, const std::string& _tag, Utils::Color8U _color = Utils::Color8U(1.f,1.f,1.f));
 		
 		void SetPosition(ei::Vec2 _pos) override;
 		Direction GetDirection() const { return m_direction; };
