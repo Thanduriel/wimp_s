@@ -19,6 +19,8 @@ namespace GameStates
 		std::vector<Graphic::DropField*> m_weaponFields;
 		Graphic::TextRender* m_descriptionLabel;
 
+		Graphic::TextRender* m_shipInfoLabel;
+
 		friend class InventoryState; // state and hud are heavily depended
 	};
 }

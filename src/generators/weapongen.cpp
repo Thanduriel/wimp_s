@@ -1,6 +1,7 @@
 #include <ctime>
 #include "weapongen.hpp"
 #include "gameplay/elements/shipsystems/projectile.hpp"
+#include "utils/stringutils.hpp"
 
 namespace Generators {
 
@@ -70,14 +71,8 @@ namespace Generators {
 	{
 	}
 
-	static std::string MakeNum(float _num)
-	{
-		std::string s = std::to_string(_num);
-		s.erase(s.find_first_of('.') + 2, std::string::npos);
-		return /*"<s 012>" +*/ s /*+ "</s>"*/;
-	}
-
 	using namespace Game;
+	using namespace Utils;
 
 	Game::Weapon* WeaponGenerator::Generate(float _power, float _qualityFactor)
 	{
@@ -213,15 +208,15 @@ namespace Generators {
 		}
 		if (!fireFn) fireFn = WeaponTrait::FireDefault(std::move(projGenerator));
 
-		m_baseStats += "damage:    " + MakeNum(damage) + "\n";
-		m_baseStats += "cooldown:  " + MakeNum(cooldown) + "[s]\n";
-		m_baseStats += "power use: " + MakeNum(eCost) + "[J]\n";
-		//	m_description += "speed:     " + MakeNum(speed) + "[m/s]\n";
+		m_baseStats += "damage:    " + ToFixPoint(damage,1) + "\n";
+		m_baseStats += "cooldown:  " + ToFixPoint(cooldown,1) + "[s]\n";
+		m_baseStats += "power use: " + ToFixPoint(eCost,1) + "[J]\n";
+		//	m_description += "speed:     " + ToFixPoint(speed) + "[m/s]\n";
 
 		m_description = m_baseStats + "-----" + m_description;
 		// accumulated stats
-		m_description += "\n-----\ndps: " + MakeNum(1.f / cooldown * damage)
-			+ "\nrange: " + MakeNum(speed * lifeTime);
+		m_description += "\n-----\ndps: " + ToFixPoint(1.f / cooldown * damage,1)
+			+ "\nrange: " + ToFixPoint(speed * lifeTime,1);
 
 		m_name = Item::QUALITY_COLOR_STR[(int)rarity] + m_name + "</c>";
 

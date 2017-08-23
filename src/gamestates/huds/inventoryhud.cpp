@@ -27,6 +27,9 @@ namespace GameStates
 		m_weaponFields.push_back(m_inventoryField);
 		m_descriptionLabel = &CreateScreenElement<TextRender>(Vec2(0.05f,0.05f), ScreenPosition::Anchor(DefP::MidLeft, this));
 		m_descriptionLabel->SetDefaultSize(0.5f);
+
+		m_shipInfoLabel = &CreateScreenElement<TextRender>(Vec2(0.05f, -0.05f), ScreenPosition::Anchor(DefP::TopLeft, this));
+		m_shipInfoLabel->SetDefaultSize(0.5f);
 	}
 
 	void InventoryHud::MouseMove(float _dx, float _dy)

@@ -10,6 +10,7 @@
 #include "graphic/interface/hudelements.hpp"
 #include "gameplay/elements/shipsystems/weapon.hpp"
 #include "math/extensions.hpp"
+#include "utils/stringutils.hpp"
 
 namespace GameStates
 {
@@ -26,6 +27,16 @@ namespace GameStates
 	{
 		using namespace Game;
 		using namespace ei;
+		using namespace Utils;
+
+		// show basic stats
+		m_hud.m_shipInfoLabel->SetText("ship properties\n"s + '\n'
+			+ "energy:   " + ToConstDigit(m_ship.GetEnergy(), 5, 5) + " / " + ToConstDigit(m_ship.GetMaxEnergy(), 5, 5) + '\n'
+			+ "recharge: " + ToConstDigit(m_ship.GetEnergyRecharge(), 13, 5) + "\n\n"
+			+ "shield:   " + ToConstDigit(m_ship.GetShield(), 5, 5) + " / " + ToConstDigit(m_ship.GetMaxShield(), 5, 5) + '\n'
+			+ "recharge: " + ToConstDigit(m_ship.GetShieldRecharge(), 13, 5) + "\n"
+			+ "delay:    " + ToConstDigit(m_ship.GetShieldDelay(), 13, 5) + "\n\n"
+			+ "hull:     " + ToConstDigit(m_ship.GetHealth(), 5, 5) + " / " + ToConstDigit(m_ship.GetMaxHealth(), 5, 5));
 
 		// put camera above the ship
 		const float radius = _ship.GetGeometryComponent().GetMesh().GetMeshBounds().boundingRadius * 1.1f;
