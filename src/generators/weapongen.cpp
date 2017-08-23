@@ -112,7 +112,7 @@ namespace Generators {
 		float cooldown = m_randomSampler.Uniform(cdRange);
 
 		float speed = type == WeaponType::Simple ? Projectile::DEFAULT_SPEED : Rocket::DEFAULT_SPEED;
-		float lifeTime = m_randomSampler.Uniform(2.f, 10.f);
+		float lifeTime = m_randomSampler.Uniform(2.f + (type == WeaponType::Rocket ? 8.f : 0.f), 10.f);
 
 		float eCost = damage / (cooldown * _power);
 
