@@ -1,9 +1,25 @@
 {
   "TestShip": {
-    "Mesh": "spaceship",
-	"BoundingMesh": "spaceshipbm",
+    "Mesh": "default_ship",
+	"BoundingMesh": "default_shipbm",
     "WeaponSockets": ["LeftTurret", "RightTurret", "CenterTurret"],
 	"DriveSockets" : ["LeftDrive", "RightDrive"],
+    "BaseHealth" : 132.0,
+	"Mass" : 1000.0
+  },
+  "KamikazeShip": {
+    "Mesh": "small_fighter",
+	"BoundingMesh": "small_fighterbm",
+    "WeaponSockets": ["LeftTurret", "RightTurret"],
+	"DriveSockets" : ["CenterDrive"],
+    "BaseHealth" : 132.0,
+	"Mass" : 1000.0
+  },
+  "WaspShip": {
+    "Mesh": "dark_fighter",
+	"BoundingMesh": "dark_fighterbm",
+    "WeaponSockets": ["LeftTurret", "RightTurret"],
+	"DriveSockets" : ["CenterDrive"],
     "BaseHealth" : 132.0,
 	"Mass" : 1000.0
   }

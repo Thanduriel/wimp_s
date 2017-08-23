@@ -49,9 +49,9 @@ namespace GameStates {
 		Acts::Act01 act1(*ship, m_hud);
 
 		// test actors
-		ship = new Ship("TestShip", Vec3(50.f,0.f,100.f));
+		ship = new Ship("KamikazeShip", Vec3(50.f,0.f,100.f));
 		m_sceneGraph.Add(*ship);
-		m_sceneGraph.RegisterComponent(*new Control::WaspController(*ship, m_playerController->GetShip().GetHandle(), m_hud));
+		m_sceneGraph.RegisterComponent(*new Control::KamikazeController(*ship, m_playerController->GetShip().GetHandle(), m_hud));
 		ship2 = ship;
 
 	}
