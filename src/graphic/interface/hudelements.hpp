@@ -79,6 +79,8 @@ namespace Graphic {
 			MouseOver
 		};
 	private:
+		void UpdatePosition(DraggableTexture& _element, int _index);
+
 		State m_state;
 		std::vector<DraggableTexture*> m_elements;
 		DropEventFn m_onDrop;

@@ -109,17 +109,8 @@ namespace Graphic
 
 	void DropField::AppendElement(DraggableTexture& _element)
 	{
-		//Set backup position to a position inside of the field
-		Vec2 newPos = GetScreenSpacePosition() + 0.5f * Vec2(_element.GetSize().x, -_element.GetSize().y);
-		//Assumption: All draggable texture have the same width and height
-		int maxPerRow = (int)(GetSize().x / _element.GetSize().x);
-		int row = (int)(m_elements.size() / maxPerRow);
-		int column = m_elements.size() - row * maxPerRow;
-		newPos.x += column * _element.GetSize().x;
-		newPos.y -= row * _element.GetSize().y;
-		_element.SetBackupPosition(newPos);
+		UpdatePosition(_element, (int)m_elements.size());
 		_element.SetParentField(this);
-		_element.SetPosition(newPos);
 		m_elements.push_back(&_element);
 	}
 
@@ -127,19 +118,28 @@ namespace Graphic
 	{
 		m_elements.erase(std::remove(m_elements.begin(), m_elements.end(), &_element), m_elements.end());
 		//Update item positions
-		for (int i = 0; i < m_elements.size(); i++)
-		{
-			//Set backup position to a position inside of the field
-			Vec2 newPos = GetScreenSpacePosition() + 0.5f * Vec2(_element.GetSize().x, -_element.GetSize().y);
-			//Assumption: All draggable texture have the same width and height
-			int maxPerRow = (int)(GetSize().x / _element.GetSize().x);
-			int row = (int)(i / maxPerRow);
-			int column = i - row * maxPerRow;
-			newPos.x += column * _element.GetSize().x;
-			newPos.y -= row * _element.GetSize().y;
-			m_elements[i]->SetBackupPosition(newPos);
-			m_elements[i]->SetPosition(m_elements[i]->GetBackupPosition());
-		}
+		for (int i = 0; i < (int)m_elements.size(); i++)
+			UpdatePosition(*m_elements[i], i);
+	}
+
+	const float INNER_SIZE = 0.92f;
+
+	void DropField::UpdatePosition(DraggableTexture& _element, int _index)
+	{
+		Vec2 size = GetSize() * INNER_SIZE;
+		//Set backup position to a position inside of the field
+		Vec2 newPos = GetScreenSpacePosition() + 0.5f * Vec2(_element.GetSize().x, -_element.GetSize().y);
+		//Assumption: All draggable texture have the same width and height
+		int maxPerRow = (int)(size.x / _element.GetSize().x);
+		int row = (int)(_index / maxPerRow);
+		int column = _index - row * maxPerRow;
+		Vec2 effSize = size / maxPerRow;
+		Vec2 offset = (effSize - _element.GetSize()) * 0.5f + (GetSize() - size) * 0.5f;
+		newPos.x += column * effSize.x + offset.x;
+		newPos.y -= row * effSize.y + offset.y;
+
+		_element.SetBackupPosition(newPos);
+		_element.SetPosition(_element.GetBackupPosition());
 	}
 
 	// ************************************************************************ //
