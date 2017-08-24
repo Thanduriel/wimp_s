@@ -271,10 +271,10 @@ namespace Graphic
 	void Button::SetPosition(Vec2 _pos)
 	{
 		ScreenTexture::SetPosition(_pos);
-		/*		m_btnDefault.SetPosition(_pos);
-				m_btnOver.SetPosition(_pos);
-				m_btnDown.SetPosition(_pos);
-				m_caption.SetPosition(_pos);*/
+		m_btnDefault.SetPosition(_pos);
+		m_btnOver.SetPosition(_pos);
+		m_btnDown.SetPosition(_pos);
+		m_caption.SetPosition(_pos);
 		SetCaption(m_caption.GetText());
 	}
 
@@ -602,7 +602,7 @@ namespace Graphic
 		Anchor _anchor, bool _growsRight) :
 		ScreenOverlay(_position, _size, _def, _anchor),
 		m_growsRight(_growsRight),
-		m_texture("fillbar", Vec2(0.f), _size, m_growsRight ? DefP::BotLeft : DefP::BotRight, 
+		m_texture("fillbar", Vec2(0.f), _size, m_growsRight ? DefP::BotLeft : DefP::BotRight,
 			Anchor(m_growsRight ? DefP::BotLeft : DefP::BotRight, this))
 	{
 

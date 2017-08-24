@@ -38,6 +38,9 @@ namespace GameStates
 			+ "delay:    " + ToConstDigit(m_ship.GetShieldDelay(), 13, 5) + "\n\n"
 			+ "hull:     " + ToConstDigit(m_ship.GetHealth(), 5, 5) + " / " + ToConstDigit(m_ship.GetMaxHealth(), 5, 5));
 
+		// position the upgrade buttons
+		m_hud.UpdateUpgradeLabels();
+
 		// put camera above the ship
 		const float radius = _ship.GetGeometryComponent().GetMesh().GetMeshBounds().boundingRadius * 1.1f;
 		float height = radius / tan(g_camera.GetFov() * 0.5f);
