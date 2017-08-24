@@ -211,13 +211,15 @@ namespace Game
 	// ***************************************************************************** //
 	void Ship::Fire()
 	{
-		float speed = ei::len(m_velocity);
-		for (auto& sockets : m_weaponSockets)
+		for (auto& socket : m_weaponSockets)
 		{
-			Weapon* weapon = static_cast<Weapon*>(sockets.GetAttached());
-			if (!weapon) continue;
+			Weapon* weapon = static_cast<Weapon*>(socket.GetAttached());
+			float d; // do not fire if the ship is in the line of fire
+			if (!weapon || GetCollisionComponent().RayCast(Ray(weapon->GetPosition(), weapon->GetRotationMatrix() * Vec3(0.f,0.f,1.f)), d)) 
+				continue;
 
-			m_energy -= weapon->Fire(speed, m_energy);
+
+			m_energy -= weapon->Fire(m_velocity, m_energy);
 		}
 	}
 

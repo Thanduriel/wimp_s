@@ -83,7 +83,8 @@ namespace Game
 
 		void RegisterComponents(class SceneGraph& _sceneGraph);
 
-		// Fire all weapons straight forward.
+		// Fire weapons in their current orientation.
+		// Checks whether they would hit this ship.
 		void Fire();
 
 		// Rotates the weapons to so that when fired the projectile 

@@ -84,7 +84,6 @@ namespace Game {
 		{
 			Projectile& proj = _generator(_weapon);
 			ei::Vec3 vel = proj.GetVelocity();
-			vel.z += _weapon.m_beginSpeed;
 			SetUpProjectile(proj, _weapon, vel);
 		};
 	}
@@ -95,7 +94,6 @@ namespace Game {
 		{
 			Projectile& proj1 = _generator(_weapon);
 			ei::Vec3 vel = proj1.GetVelocity();
-			vel.z += _weapon.m_beginSpeed;
 			SetUpProjectile(proj1, _weapon, vel);
 			proj1.Translate(_weapon.GetRotationMatrix() * ei::Vec3(-0.4f, 0.f, 0.f));
 
@@ -112,7 +110,6 @@ namespace Game {
 		{
 			Projectile& proj = _generator(_weapon);
 			ei::Vec3 vel = proj.GetVelocity();
-			vel.z += _weapon.m_beginSpeed;
 			SetUpProjectile(proj, _weapon, vel);
 
 			++count;
@@ -123,7 +120,7 @@ namespace Game {
 
 	void WeaponTrait::SetUpProjectile(Projectile& _proj, const Weapon& _weapon, const ei::Vec3& _vel)
 	{
-		_proj.SetVelocity(_weapon.GetRotationMatrix() * _vel);
+		_proj.SetVelocity(_weapon.GetRotationMatrix() * _vel + _weapon.m_beginVelocity);
 		_proj.SetRotation(ei::Quaternion(ei::Vec3(0.f, 0.f, 1.f), _proj.GetVelocity()));
 	}
 
@@ -137,9 +134,9 @@ namespace Game {
 		m_cooldownMax(_cooldown),
 		m_range(_range),
 		m_energyCost(_energyCost),
-		m_beginSpeed(0.f),
+		m_beginVelocity(0.f),
 		m_reloadImpl(_reloadFn ? std::move(_reloadFn) : WeaponTrait::ReloadDefault()),
-		m_fireImpl(_fireFn ? std::move(_fireFn) : WeaponTrait::FireDefault(WeaponTrait::CreateProjectileFn(Bolt(ei::Vec3(0.f), ei::Vec3(0.f,0.f,82.f),5.f, 10.f)))),
+		m_fireImpl(_fireFn ? std::move(_fireFn) : WeaponTrait::FireDefault(WeaponTrait::CreateProjectileFn(Bolt(ei::Vec3(0.f), ei::Vec3(0.f,0.f,Projectile::DEFAULT_SPEED),5.f, 10.f)))),
 		m_target(nullptr)
 	{
 
@@ -157,11 +154,11 @@ namespace Game {
 		m_reloadImpl(*this, _deltaTime);
 	}
 
-	float Weapon::Fire(float _speed, float _energyAvailable)
+	float Weapon::Fire(const ei::Vec3& _velocity, float _energyAvailable)
 	{
 		if (m_cooldown <= 0.f && m_energyCost < _energyAvailable)
 		{
-			m_beginSpeed = _speed;
+			m_beginVelocity = _velocity;
 			m_cooldown = m_cooldownMax;
 			m_fireImpl(*this);
 

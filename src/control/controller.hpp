@@ -23,6 +23,7 @@ namespace Control
 
 		void RotateTowards(ei::Vec3 _pos);
 
+		void Fire();
 	protected:
 		Game::Ship& m_ship;
 		static Game::SceneGraph* s_sceneGraph;

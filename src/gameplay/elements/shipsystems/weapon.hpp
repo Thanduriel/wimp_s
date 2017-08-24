@@ -30,7 +30,7 @@ namespace Game {
 		//		  to emulate the weapon itself moving
 		// @param _energyAvailable The energy that can be used to fire this weapon.
 		// @return The energy consumed.
-		float Fire(float _speed, float _energyAvailable);
+		float Fire(const ei::Vec3& _velocity, float _energyAvailable);
 		void SetTarget(const Actor& _actor) { m_target = _actor.GetHandle(); }
 
 		float GetEnergyCost() const { return m_energyCost; }
@@ -40,7 +40,7 @@ namespace Game {
 		float m_cooldownMax;
 		float m_energyCost;
 		float m_range;
-		float m_beginSpeed;
+		ei::Vec3 m_beginVelocity;
 	private:
 		FactoryComponent m_factoryComponent;
 		

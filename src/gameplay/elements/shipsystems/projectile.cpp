@@ -46,7 +46,7 @@ namespace Game {
 	}
 
 	// ********************************************************************** //
-	const float BOLT_SIZE = 0.2f;
+	const float BOLT_SIZE = 0.02f;
 	Bolt::Bolt(const ei::Vec3& _position, const ei::Vec3& _velocity, float _damage, float _lifeTime, DamageType _damageType, const Utils::Color8U& _color)
 		: Projectile(_position, _velocity, _damage, _lifeTime, _damageType),
 		m_particles(THISACTOR, Vec3(0.f), Graphic::Resources::GetTexture("bolt")),
@@ -109,7 +109,7 @@ namespace Game {
 	{}
 
 	// ********************************************************************** //
-	const float TARGETING_STRENGTH = 0.2f;
+	const float TARGETING_STRENGTH = 0.9f;
 	const float SETUP_TIME = 0.8f;
 	void Rocket::Process(float _deltaTime)
 	{
