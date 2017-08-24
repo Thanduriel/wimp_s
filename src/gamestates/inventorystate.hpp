@@ -31,6 +31,17 @@ namespace GameStates
 
 		ei::Vec3 m_oldCamPosition;
 		ei::Quaternion m_oldCamRotation;
+
+		int m_money;
+
+		int m_upgradeLvls[Upgrades::COUNT];
+
+		//The rows in which the upgradable values of the ship info label are displayed
+		int* m_rows = new int[Upgrades::COUNT]{ 2, 3, 5, 6, 7, 9 };
+
+		int GetUpgradeCost(Upgrades _upgrade);
+		float NextUpgradeValue(Upgrades _upgrade);
+
+		void UpdateUpgradeLabels();
 	};
 }
-

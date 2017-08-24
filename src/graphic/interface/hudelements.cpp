@@ -315,6 +315,26 @@ namespace Graphic
 
 	}
 
+	void Button::SetVisible(bool _visibility)
+	{
+		if (_visibility)
+		{
+			if (m_btnState == State::Base)
+				m_btnDefault.SetVisible(true);
+			else if (m_btnState == State::MouseOver)
+				m_btnOver.SetVisible(true);
+			else
+				m_btnDown.SetVisible(true);
+		}
+		else
+		{
+			m_btnDefault.SetVisible(false);
+			m_btnOver.SetVisible(false);
+			m_btnDown.SetVisible(false);
+		}
+		ScreenOverlay::SetVisible(_visibility);
+	}
+
 	void Button::MouseEnter()
 	{
 		ScreenOverlay::MouseEnter();

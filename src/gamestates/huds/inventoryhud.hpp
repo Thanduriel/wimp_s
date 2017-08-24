@@ -4,14 +4,23 @@
 
 namespace GameStates
 {
+	enum Upgrades
+	{
+		ENERGY,
+		ENERGY_REG,
+		SHIELD,
+		SHIELD_REG,
+		SHIELD_REG_DELAY,
+		HULL,
+		COUNT
+	};
+
 	class InventoryHud : public Graphic::Hud
 	{
 	public:
 		InventoryHud();
 
 		void MouseMove(float _dx, float _dy) override;
-
-		void UpdateUpgradeLabels();
 	private:
 		//Graphic::ScreenTexture* m_inventoryBackground;
 		std::vector<Graphic::DraggableTexture*> m_vicinityItems;
@@ -23,19 +32,9 @@ namespace GameStates
 
 		Graphic::TextRender* m_shipInfoLabel;
 
-		Graphic::Button* m_lifeUpgrade;
-		Graphic::Button* m_shieldUpgrade;
-		Graphic::Button* m_shieldRegUpgrade;
-		Graphic::Button* m_shieldRegDelayUpgrade;
-		Graphic::Button* m_energyUpgrade;
-		Graphic::Button* m_energyRegUpgrade;
+		Graphic::Button* m_upgradeBtns[Upgrades::COUNT];
 
-		Graphic::TextRender* m_lifeUpgradeLabel;
-		Graphic::TextRender* m_shieldUpgradeLabel;
-		Graphic::TextRender* m_shieldRegUpgradeLabel;
-		Graphic::TextRender* m_shieldRegDelayUpgradeLabel;
-		Graphic::TextRender* m_energyUpgradeLabel;
-		Graphic::TextRender* m_energyRegUpgradeLabel;
+		Graphic::TextRender* m_upgradeLabels[Upgrades::COUNT];
 
 		Graphic::TextRender* m_moneyLabel;
 

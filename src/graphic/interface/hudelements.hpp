@@ -147,6 +147,8 @@ namespace Graphic {
 		virtual void SetSize(ei::Vec2 _size) override;
 		virtual void Scale(ei::Vec2 _scale) override;
 
+		void SetVisible(bool _visibility);
+
 	//	void SetMouseOverColor(Utils::Color8U _color)
 
 		void SetAutoCenterX(bool _autoCenter) {m_autoCenter[0] = _autoCenter;};
