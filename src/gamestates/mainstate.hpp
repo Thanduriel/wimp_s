@@ -18,7 +18,7 @@ namespace Control {
 namespace GameStates{
 
 	/* MainState *******************************
-	 * The state in wich the actual game runs.
+	 * The state in which the actual game runs.
 	 */
 
 	class MainState : public GameStateHT<MainHud>

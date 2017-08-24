@@ -4,12 +4,14 @@
 #include "gameplay/elements/factorycomponent.hpp"
 #include "gameplay/elements/crate.hpp"
 #include "generators/weapongen.hpp"
+#include "generators/asteroidfield.hpp"
 #include "gamestates/mainstate.hpp"
 
 namespace Game {
 namespace Acts {
 
 	using namespace Utils;
+	using namespace ei;
 
 	Act01::Act01(const Ship& _player, GameStates::MainHud& _hud)
 	{
@@ -25,6 +27,10 @@ namespace Acts {
 		factory.Add(*w);
 		Crate* crate = &factory.Make<Crate>(ei::Vec3(0.f, 0.f, 120.f), inventory, 10.f);
 		Actor::Handle hndl = crate->GetHandle();
+
+		// background
+		Generators::AsteroidField asteroids(Vec3(0.f), 200.f, 120);
+
 		// some cheap personnel
 
 		// --- events --------------------------------------- //

@@ -30,10 +30,6 @@ namespace GameStates
 
 	void MainMenuState::Process(float _deltaTime)
 	{
-		Control::g_camera.SetPosition(ei::Vec3(0.f, 0.f, -25.f));
-		Control::g_camera.SetRotation(ei::qidentity());
-		Control::g_camera.Process(_deltaTime);
-
 		static float sum = 0.f;
 		sum += _deltaTime;
 		m_blackHole.SetPosition(7.6f * Vec3(cos(sum), sin(sum), 0.f));
@@ -51,6 +47,15 @@ namespace GameStates
 		Device::DrawFullscreen();
 
 		m_blackHole.Draw();
+	}
+
+	void MainMenuState::OnActivate()
+	{
+		using namespace Control;
+		g_camera.SetPosition(ei::Vec3(0.f, 0.f, -25.f));
+		g_camera.SetRotation(ei::qidentity());
+		g_camera.FixRotation(g_camera.GetRotation(), g_camera.GetPosition());
+		g_camera.Process(0.f);
 	}
 
 	void MainMenuState::Dispose()

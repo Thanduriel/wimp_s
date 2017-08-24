@@ -8,6 +8,7 @@ Mesh::Format meshFormat = Mesh::Format::Flat;
 Mesh::Format boundingMeshFormat = Mesh::Format::IndexedNormal;
 float epsilon = 0.05f;
 bool saveBoundingMesh = true;
+std::string textureName = "";
 
 using namespace std;
 
@@ -33,7 +34,7 @@ void ProcessArg(const std::string& _str)
 	if (c == "-format" || c == "-formatb")
 	{
 		dst = c == "-format" ? &meshFormat : &boundingMeshFormat;
-	
+
 		auto it = Mesh::FORMAT_NAMES.find(f);
 		if (it == Mesh::FORMAT_NAMES.end())
 		{
@@ -46,6 +47,8 @@ void ProcessArg(const std::string& _str)
 	{
 		epsilon = stof(f);
 	}
+	else if (c == "-texture")
+		textureName = f;
 	else std::clog << "Ignoring unknown parameter: " + _str << endl;
 }
 
@@ -75,7 +78,7 @@ int main(int argc, char** args)
 			std::string name = PathUtils::GetName(PathUtils::CanonicalizePath(fname));
 
 			Mesh mesh(fname);
-			mesh.Save(name, meshFormat);
+			mesh.Save(name, meshFormat, false, textureName);
 
 			if (saveBoundingMesh)
 			{

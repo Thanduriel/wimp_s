@@ -15,6 +15,7 @@ namespace GameStates
 
 		void Process(float _deltaTime) override;
 		void Draw(float _deltaTime) override;
+		void OnActivate() override;
 		void Dispose() override;
 
 		void MouseMove(float _dx, float _dy) override;

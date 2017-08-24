@@ -65,6 +65,8 @@ namespace GameStates {
 		m_sceneGraph.Process(m_gameTimeControl.m_timeScale * _deltaTime, _deltaTime);
 
 		Control::g_camera.Process(_deltaTime);
+
+		if (m_playerController->GetShip().IsDestroyed()) m_isFinished = true;
 	}
 
 	void MainState::Draw(float _deltaTime)

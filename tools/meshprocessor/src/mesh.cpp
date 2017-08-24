@@ -37,7 +37,7 @@ const std::unordered_map<std::string, Mesh::Format> Mesh::FORMAT_NAMES =
 		_stream << '\0';
 	}
 
-	void Mesh::Save(const std::string& _name, Format _format, bool _flatNormals)
+	void Mesh::Save(const std::string& _name, Format _format, bool _flatNormals, const std::string& _textureName)
 	{
 		Mesh::ComputeBoundingValues();
 
@@ -49,7 +49,8 @@ const std::unordered_map<std::string, Mesh::Format> Mesh::FORMAT_NAMES =
 		uint16_t format = static_cast<uint16_t>(_format);
 		write(file, format);
 		// texture name
-		write(file, m_texture);
+		if (_textureName != "") write(file, _textureName);
+		else write(file, m_texture);
 
 		// computed parameters
 		write(file, m_boundingRadius);

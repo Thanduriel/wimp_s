@@ -57,6 +57,7 @@ Wimp_s::Wimp_s()
 	LightSystem::Initialize();
 
 	m_gameStates.emplace_back(new GameStates::MainMenuState());
+	m_gameStates.back()->OnActivate();
 }
 
 Wimp_s::~Wimp_s()
@@ -107,10 +108,16 @@ void Wimp_s::Run()
 		current.Dispose();
 
 		// state managment with a stack
+		bool changedState = false;
 		GameState* newState = current.FetchNewState();
 		// check older states to prevent another frame of them being rendered
-		while (m_gameStates.size() && m_gameStates.back()->IsFinished()) m_gameStates.pop_back();
-		if (newState) m_gameStates.emplace_back(newState);
+		while (m_gameStates.size() && m_gameStates.back()->IsFinished()) { 
+			m_gameStates.pop_back(); changedState = true; 
+		}
+		if (newState) {
+			m_gameStates.emplace_back(newState); changedState = true;
+		}
+		if (changedState && m_gameStates.size()) m_gameStates.back()->OnActivate();
 
 		// todo: move this when general input handling is implemented
 		if (m_gameStates.size() && glfwGetKey(Graphic::Device::GetWindow(), GLFW_KEY_ESCAPE)) 

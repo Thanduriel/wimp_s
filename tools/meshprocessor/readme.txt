@@ -27,6 +27,9 @@ This is a maximum distance a point can have from a plane to still be considered
 inside of the mesh. A value close to zero generates a very detailed mesh close to the original,
 a larger epsilon reduces the amount of vertices required. The default is 0.05.
 
+-texture=<texturefile>
+Overwrites the used texture.
+
 FORMATS
 
 Flat
