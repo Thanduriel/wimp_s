@@ -11,6 +11,7 @@
 #include "graphic/effects/lightsystem.hpp"
 #include "graphic/effects/particlesystem.hpp"
 #include "gameplay/content.hpp"
+#include "graphic/core/uniformbuffer.hpp"
 
 #include "utils/loggerinit.hpp"
 
@@ -99,6 +100,8 @@ void Wimp_s::Run()
 		// rendering
 		Graphic::Device::BindFramebuffer( m_sceneFramebuffer );
 		Graphic::Device::Clear(0.f, 0.f, 0.f);
+		UniformBuffer& ubo = Resources::GetUBO(UniformBuffers::GLOBAL);
+		ubo["Time"] = m_gameTime;
 		current.Draw(d.count());
 
 		// Present if not closed

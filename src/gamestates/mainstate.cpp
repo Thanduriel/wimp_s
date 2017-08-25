@@ -32,7 +32,7 @@ namespace GameStates {
 	using namespace Game;
 
 	Game::Ship* ship2;
-	Game::Model* boundingMeshTest;
+	Game::Model* boundingMeshTest = nullptr;
 
 	MainState::MainState()
 		: m_starbackground(2000, 20000.f, 14000),
@@ -62,6 +62,7 @@ namespace GameStates {
 
 	MainState::~MainState()
 	{
+		if (boundingMeshTest) delete boundingMeshTest;
 	}
 
 	void MainState::Process(float _deltaTime)
@@ -80,7 +81,6 @@ namespace GameStates {
 		m_starbackground.Draw();
 
 		m_sceneGraph.Draw();
-
 		// the hud should be drawn last
 		m_hud.GetDebugLabel().SetText("ft: <c 0 255 100>" + std::to_string(_deltaTime) + "</c>"
 							+ "\nnumP" + std::to_string(ParticleSystems::Manager::GetNumParticlesTotal()));

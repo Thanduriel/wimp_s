@@ -3,6 +3,7 @@
 #include "gameplay/events/conditions.hpp"
 #include "gameplay/elements/factorycomponent.hpp"
 #include "gameplay/elements/crate.hpp"
+#include "gameplay/elements/sun.hpp"
 #include "generators/weapongen.hpp"
 #include "generators/asteroidfield.hpp"
 #include "gamestates/mainstate.hpp"
@@ -30,6 +31,7 @@ namespace Acts {
 
 		// background
 		Generators::AsteroidField asteroids(Vec3(0.f), 200.f, 120);
+		factory.Make<Sun>(Vec3(777.f, 1500.f, 10000.f), 2000.f);
 
 		// some cheap personnel
 
