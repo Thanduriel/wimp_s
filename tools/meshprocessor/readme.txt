@@ -15,6 +15,9 @@ OPT ARGUMENTS
 -nobm
 No bounding mesh will be generated.
 
+-nccw
+The bounding meshes triangles will not be in counter clockwise orientation.
+
 -format=<format>
 Overwrites the format the mesh is saved in, default is [Flat].
 

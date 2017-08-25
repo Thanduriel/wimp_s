@@ -8,6 +8,9 @@ Mesh::Format meshFormat = Mesh::Format::Flat;
 Mesh::Format boundingMeshFormat = Mesh::Format::IndexedNormal;
 float epsilon = 0.05f;
 bool saveBoundingMesh = true;
+bool flipBoundingNormals = false;
+bool flipNormals = false;
+bool ccw = true;
 std::string textureName = "";
 
 using namespace std;
@@ -17,6 +20,21 @@ void ProcessArg(const std::string& _str)
 	if (_str == "-nobm")
 	{
 		saveBoundingMesh = false;
+		return;
+	}
+	else if (_str == "-flipnormals")
+	{
+		flipNormals = true;
+		return;
+	}
+	else if (_str == "-flipbnormals")
+	{
+		flipBoundingNormals = true;
+		return;
+	}
+	else if (_str == "-nccw")
+	{
+		ccw = false;
 		return;
 	}
 	
@@ -78,11 +96,13 @@ int main(int argc, char** args)
 			std::string name = PathUtils::GetName(PathUtils::CanonicalizePath(fname));
 
 			Mesh mesh(fname);
+			if (flipNormals) mesh.FlipNormals();
 			mesh.Save(name, meshFormat, false, textureName);
 
 			if (saveBoundingMesh)
 			{
-				Mesh boundingBox = generator.Generate(mesh, epsilon);
+				Mesh boundingBox = generator.Generate(mesh, epsilon, ccw);
+				if (flipBoundingNormals) boundingBox.FlipNormals();
 				boundingBox.Save(name+"bm", boundingMeshFormat, true);
 			}
 		}

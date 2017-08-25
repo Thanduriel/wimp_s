@@ -4,7 +4,7 @@
 class ConvexHullGen
 {
 public:
-	Mesh Generate(Mesh& _mesh, float _epsilon);
+	Mesh Generate(Mesh& _mesh, float _epsilon, bool _ccw);
 private:
 	void Set(Mesh& _mesh);
 

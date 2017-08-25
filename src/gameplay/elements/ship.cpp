@@ -62,7 +62,6 @@ namespace Game
 		m_health = _node["BaseHealth"s].Get(42.f);
 		m_maxHealth = m_health;
 
-		// todo: make depended on acceleration
 		static thread_local Generators::RandomGenerator rng(0x614AA);
 		for(int i = 0; i < m_drivePositions.size(); ++i)
 			m_thrustParticles[i].SetEmitter(200.f, [=]() {return rng.Direction() * 0.15f; },
@@ -81,7 +80,7 @@ namespace Game
 		m_inventory.Add(weapon1);
 		m_inventory.Add(weapon2);
 		m_weaponSockets[0].Attach(weapon1);
-		m_weaponSockets[2].Attach(weapon2);
+		m_weaponSockets[1].Attach(weapon2);
 	}
 
 	void Ship::OnDestroy()

@@ -196,6 +196,12 @@ const std::unordered_map<std::string, Mesh::Format> Mesh::FORMAT_NAMES =
 		}
 	}
 
+	void Mesh::FlipNormals()
+	{
+		for (auto& n : m_normals) n = n * -1.f;
+	}
+
+	// ****************************************************************** //
 	void Mesh::ComputeBoundingValues()
 	{
 		float maxDist = 0.f;

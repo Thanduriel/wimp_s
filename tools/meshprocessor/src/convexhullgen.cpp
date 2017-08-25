@@ -12,13 +12,13 @@ void ConvexHullGen::Set(Mesh& _mesh)
 		m_points.push_back(v.position);
 }
 
-Mesh ConvexHullGen::Generate(Mesh& _mesh, float _epsilon)
+Mesh ConvexHullGen::Generate(Mesh& _mesh, float _epsilon, bool _ccw)
 {
 	Set(_mesh);
 	using namespace quickhull;
 	QuickHull<float> qh;
 
-	auto hull = qh.getConvexHull(reinterpret_cast<float*>(&m_points.front()), m_points.size(), true, false, _epsilon);
+	auto hull = qh.getConvexHull(reinterpret_cast<float*>(&m_points.front()), m_points.size(), _ccw, false, _epsilon);
 	auto& vertices = hull.getVertexBuffer();
 	auto& indices = hull.getIndexBuffer();
 

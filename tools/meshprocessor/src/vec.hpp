@@ -46,6 +46,14 @@ struct Vec
 
 		return *this;
 	}
+
+	Vec<T, N>& operator *(T _scalar)
+	{
+		for (unsigned i = 0; i < N; ++i)
+			data[i] *= _scalar;
+
+		return *this;
+	}
 private:
 	T data[N];
 };

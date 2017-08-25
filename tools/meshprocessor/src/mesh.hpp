@@ -22,7 +22,7 @@ public:
 	Mesh() = default;
 	Mesh(const std::string& _pFile);
 	void Save(const std::string& _name, Format _format = Format::Flat, bool _flatNormals = false, const std::string& _textureName = "");
-
+	void FlipNormals();
 private:
 //	#pragma pack(1)
 	struct Vertex

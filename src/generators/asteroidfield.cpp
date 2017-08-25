@@ -4,17 +4,46 @@
 #include "gameplay/core/model.hpp"
 #include "gameplay/elements/factorycomponent.hpp"
 #include "graphic/resources.hpp"
+#include "gameplay/content.hpp"
 
 namespace Generators {
 
 	using namespace ei;
 	using namespace Game;
 
-	const std::array< std::pair<std::string, std::string>, 2> ASTEROIDS = 
+	enum AsteroidType
+	{
+		Asteroid01,
+		Asteroid02,
+		COUNT
+	};
+
+	struct AsteroidInfo
+	{
+		std::string meshName;
+		std::string boundingMeshName;
+		float health;
+		float mass;
+	};
+
+	const std::array< AsteroidInfo, AsteroidType::COUNT> ASTEROIDS =
 	{ {
-		{"asteroid", "asteroidbm"},
-		{"asteroid02", "asteroid02bm"}
+		// mesh, bounding mesh, health, mass
+		{"asteroid", "asteroidbm", 250.f, 1100.f},
+		{"asteroid02", "asteroid02bm", 320.f, 2100.f}
 	} };
+
+	class Asteroid : public Model
+	{
+	public:
+		Asteroid(const Vec3& _position, const Quaternion& _rotation, AsteroidType _type)
+			: Model(ASTEROIDS[_type].meshName, ASTEROIDS[_type].boundingMeshName, _position, _rotation, ASTEROIDS[_type].mass)
+		{
+			m_canTakeDamage = true;
+			m_maxHealth = ASTEROIDS[_type].health;
+			m_health = m_maxHealth;
+		}
+	};
 
 	AsteroidField::AsteroidField(const Vec3& _position, float _radius, int _numAsteroids, unsigned _seed)
 		: m_position(_position),
@@ -27,18 +56,18 @@ namespace Generators {
 		std::vector<float> sizes;
 		for (auto& mesh : ASTEROIDS)
 		{
-			float r = Graphic::Resources::GetMesh(mesh.first).GetMeshBounds().boundingRadius;
+			float r = Game::Content::GetBoundingMesh(mesh.boundingMeshName).boundingRadius;
 			sizes.push_back(r * r);
 			
 		}
 
 		for (int i = 0; i < _numAsteroids; ++i)
 		{
-			int c = m_randomGen.Uniform(0, (int)ASTEROIDS.size()-1);
-			Vec3 position = FindPosition(sizes[c]);
-			Model* model = new Model(ASTEROIDS[c].first, ASTEROIDS[c].second, position, m_randomGen.Rotation(), m_randomGen.Uniform(900.f, 3500.f));
+			AsteroidType type = (AsteroidType)m_randomGen.Uniform(0, (int)ASTEROIDS.size()-1);
+			Vec3 position = FindPosition(sizes[type]);
+			Model* model = new Asteroid(position, m_randomGen.Rotation(), type);
 			factory.Add(*model);
-			m_restrictedVolumes.emplace_back(position, sizes[c]);
+			m_restrictedVolumes.emplace_back(position, sizes[type]);
 		}
 	}
 
