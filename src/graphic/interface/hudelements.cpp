@@ -243,12 +243,14 @@ namespace Graphic
 		m_caption(Vec2(0.f), Anchor(DefinitionPoint::TopLeft, this), _font),
 		m_autoCenter(true)
 	{
-		SetVisible(false);
+		SetVisible(true);
 		SetActive(true);
 
 		m_btnDefault.SetVisible(true);
 		m_btnOver.SetVisible(false);
 		m_btnDown.SetVisible(false);
+
+		m_btnState = State::Base;
 
 		m_caption.SetDefaultSize(2.f);
 		SetCaption(_caption);
@@ -339,7 +341,7 @@ namespace Graphic
 	{
 		ScreenOverlay::MouseEnter();
 		m_btnDefault.SetVisible(false);
-		m_btnOver.SetVisible(true);
+		m_btnOver.SetVisible(IsVisible());
 
 		m_btnState = State::MouseOver;
 		m_caption.SetDefaultColor(Utils::Color8U((uint8_t)210, 210, 210));
@@ -347,7 +349,7 @@ namespace Graphic
 	void Button::MouseLeave()
 	{
 		ScreenOverlay::MouseLeave();
-		m_btnDefault.SetVisible(true);
+		m_btnDefault.SetVisible(IsVisible());
 		m_btnOver.SetVisible(false);
 		m_btnDown.SetVisible(false);
 
@@ -358,7 +360,7 @@ namespace Graphic
 	{
 		m_btnDefault.SetVisible(false);
 		m_btnOver.SetVisible(false);
-		m_btnDown.SetVisible(true);
+		m_btnDown.SetVisible(IsVisible());
 
 		m_btnState = State::Pressed;
 		//since an object(this) is hit, the return value is always true
@@ -368,9 +370,9 @@ namespace Graphic
 	bool Button::KeyUp(int _key, int _modifiers, Vec2 _pos)
 	{
 		if (OnMouseUp) OnMouseUp();
-
+		
 		ScreenOverlay::KeyUp(_key, _modifiers, _pos);
-		m_btnDefault.SetVisible(true);
+		m_btnDefault.SetVisible(IsVisible());
 		m_btnOver.SetVisible(false);
 		m_btnDown.SetVisible(false);
 		m_btnState = State::MouseOver;

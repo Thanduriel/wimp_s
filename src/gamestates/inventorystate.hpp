@@ -26,6 +26,8 @@ namespace GameStates
 		void KeyClick(int _key) override;
 		void KeyDoubleClick(int _key) override;
 
+		void UpgradeValue(Upgrades _upgrade);
+
 	private:
 		Game::Ship& m_ship;
 

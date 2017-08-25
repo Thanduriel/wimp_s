@@ -63,6 +63,7 @@ namespace Game {
 		float GetHealth() const { return m_health; }
 		void SetHealth(float _health) { m_health = _health; }
 		float GetMaxHealth() const { return m_maxHealth; }
+		void SetMaxHealth(float _health) { m_maxHealth = _health; }
 
 		// Destroys the object
 		void Destroy(bool _callOnDestroy = true);

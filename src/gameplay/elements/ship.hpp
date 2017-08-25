@@ -76,10 +76,17 @@ namespace Game
 		float GetMaxEnergy() const { return m_maxEnergy; }
 		float GetEnergyRecharge() const { return m_energyRecharge; }
 
+		void SetMaxEnergy(float _energy) { m_maxEnergy = _energy; }
+		void SetEnergyRecharge(float _recharge) { m_energyRecharge = _recharge; }
+
 		float GetShield() const { return m_shield; }
 		float GetMaxShield() const { return m_maxShield; }
 		float GetShieldRecharge() const { return m_shieldRecharge; }
 		float GetShieldDelay() const { return m_shieldDelay; }
+
+		void SetMaxShield(float _shield) { m_maxShield = _shield; }
+		void SetShieldRecharge(float _recharge) { m_shieldRecharge = _recharge; }
+		void SetShieldDelay(float _delay) { m_shieldDelay = _delay; }
 
 		void RegisterComponents(class SceneGraph& _sceneGraph);
 

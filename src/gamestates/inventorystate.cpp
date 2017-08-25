@@ -2,7 +2,6 @@
 #include "inventorystate.hpp"
 #include "mainstate.hpp"
 #include "gamestate.hpp"
-#include "huds/inventoryhud.hpp"
 #include "graphic/interface/hud.hpp"
 #include "control/input.hpp"
 #include "gameplay/elements/ship.hpp"
@@ -20,27 +19,21 @@ namespace GameStates
 	const ei::Vec2 SHIP_VIEW_SHIFT = ei::Vec2(0.f, 0.f);
 	const ei::Vec2 SHIP_VIEW_SIZE = ei::Vec2(0.9f, 0.5f);
 
-	const float UPGRADES_BASE_VALUE[Upgrades::COUNT] = { 0, 0, 0, 0, 0, 0 };
+	const float UPGRADES_BASE_VALUE[Upgrades::COUNT] = { 10.0f, 1.5f, 32.0f, 10.0f, 2.0f, 132.0f };
 
 	InventoryState::InventoryState(Game::Ship& _ship)
 		: m_ship(_ship),
 		m_oldCamPosition(Control::g_camera.GetPosition()),
 		m_oldCamRotation(Control::g_camera.GetRotation()),
-		m_money(2),
+		m_money(1050),
 		m_upgradeLvls()
 	{
 		using namespace Game;
 		using namespace ei;
 		using namespace Utils;
 
-		// show basic stats
-		m_hud.m_shipInfoLabel->SetText("ship properties\n"s + '\n'
-			+ "energy:   " + ToConstDigit(m_ship.GetEnergy(), 5, 5) + " / " + ToConstDigit(m_ship.GetMaxEnergy(), 5, 5) + '\n'
-			+ "recharge: " + ToConstDigit(m_ship.GetEnergyRecharge(), 13, 5) + "\n\n"
-			+ "shield:   " + ToConstDigit(m_ship.GetShield(), 5, 5) + " / " + ToConstDigit(m_ship.GetMaxShield(), 5, 5) + '\n'
-			+ "recharge: " + ToConstDigit(m_ship.GetShieldRecharge(), 13, 5) + "\n"
-			+ "delay:    " + ToConstDigit(m_ship.GetShieldDelay(), 13, 5) + "\n\n"
-			+ "hull:     " + ToConstDigit(m_ship.GetHealth(), 5, 5) + " / " + ToConstDigit(m_ship.GetMaxHealth(), 5, 5) + "\n\n");
+		for (int i = 0; i < Upgrades::COUNT; i++)
+			m_hud.m_upgradeBtns[i]->SetOnMouseUp([=]() { UpgradeValue((Upgrades)i); });
 
 		// position the upgrade buttons
 		UpdateUpgradeLabels();
@@ -127,15 +120,25 @@ namespace GameStates
 	void InventoryState::UpdateUpgradeLabels()
 	{
 		using namespace Utils;
+		using namespace Game;
+
+		// show basic stats
+		m_hud.m_shipInfoLabel->SetText("ship properties\n"s + '\n'
+			+ "energy:   " + ToConstDigit(m_ship.GetEnergy(), 5, 5) + " / " + ToConstDigit(m_ship.GetMaxEnergy(), 5, 5) + '\n'
+			+ "recharge: " + ToConstDigit(m_ship.GetEnergyRecharge(), 13, 5) + "\n\n"
+			+ "shield:   " + ToConstDigit(m_ship.GetShield(), 5, 5) + " / " + ToConstDigit(m_ship.GetMaxShield(), 5, 5) + '\n'
+			+ "recharge: " + ToConstDigit(m_ship.GetShieldRecharge(), 13, 5) + "\n"
+			+ "delay:    " + ToConstDigit(m_ship.GetShieldDelay(), 13, 5) + "\n\n"
+			+ "hull:     " + ToConstDigit(m_ship.GetHealth(), 5, 5) + " / " + ToConstDigit(m_ship.GetMaxHealth(), 5, 5) + "\n\n");
 
 		Vec2 margin = PixelOffset(10.0f, 0.0f);
 		float* values = new float[Upgrades::COUNT]{
-			m_ship.GetEnergy(),
+			m_ship.GetMaxEnergy(),
 			m_ship.GetEnergyRecharge(),
-			m_ship.GetShield(),
+			m_ship.GetMaxShield(),
 			m_ship.GetShieldRecharge(),
 			m_ship.GetShieldDelay(),
-			m_ship.GetHealth()
+			m_ship.GetMaxHealth()
 		};
 		for (int i = 0; i < Upgrades::COUNT; i++)
 		{
@@ -144,7 +147,7 @@ namespace GameStates
 				if (i != Upgrades::SHIELD_REG_DELAY)
 					m_hud.m_upgradeLabels[i]->SetText("(+" + ToConstDigit(NextUpgradeValue((Upgrades)i) - values[i], 5, 5) + ")");
 				else
-					m_hud.m_upgradeLabels[i]->SetText("(" + ToConstDigit(NextUpgradeValue((Upgrades)i) - values[i], 5, 5) + ")");
+					m_hud.m_upgradeLabels[i]->SetText("(" + ToConstDigit(NextUpgradeValue((Upgrades)i) - values[i], 6, 6) + ")");
 				m_hud.m_upgradeBtns[i]->SetVisible(true);
 			}
 			else
@@ -157,15 +160,15 @@ namespace GameStates
 		}
 
 		m_hud.m_moneyLabel->SetPosition(m_hud.m_shipInfoLabel->GetPosition() + Vec2(0.0f, -m_hud.m_shipInfoLabel->GetRectangle().y));
-		m_hud.m_moneyLabel->SetText("money:    " + ToConstDigit(m_money, 5, 5) + " $");
 	}
 
 	int InventoryState::GetUpgradeCost(Upgrades _upgrade)
 	{
-		switch (_upgrade)
+		return 100 + m_upgradeLvls[_upgrade] * 50;
+		/*switch (_upgrade)
 		{
 		case Upgrades::ENERGY:
-			return 1;
+			return m_upgradeLvls[_upgrade];
 			break;
 		case Upgrades::ENERGY_REG:
 			return 2;
@@ -182,7 +185,7 @@ namespace GameStates
 		case Upgrades::HULL:
 			return 6;
 			break;
-		}
+		}*/
 	}
 
 	float InventoryState::NextUpgradeValue(Upgrades _upgrade)
@@ -193,8 +196,49 @@ namespace GameStates
 			return UPGRADES_BASE_VALUE[_upgrade] - (m_upgradeLvls[_upgrade] + 1) * 0.1f * UPGRADES_BASE_VALUE[_upgrade];
 	}
 
+	void InventoryState::UpgradeValue(Upgrades _upgrade)
+	{
+		if (m_money >= GetUpgradeCost(_upgrade))
+		{
+			m_money -= GetUpgradeCost(_upgrade);
+			float newVal = NextUpgradeValue(_upgrade);
+			m_upgradeLvls[_upgrade]++;
+			switch (_upgrade)
+			{
+			case Upgrades::ENERGY:
+				m_ship.SetMaxEnergy(newVal);
+				break;
+			case Upgrades::ENERGY_REG:
+				m_ship.SetEnergyRecharge(newVal);
+				break;
+			case Upgrades::SHIELD:
+				m_ship.SetMaxShield(newVal);
+				break;
+			case Upgrades::SHIELD_REG:
+				m_ship.SetShieldRecharge(newVal);
+				break;
+			case Upgrades::SHIELD_REG_DELAY:
+				m_ship.SetShieldDelay(newVal);
+				break;
+			case Upgrades::HULL:
+				m_ship.SetMaxHealth(newVal);
+				break;
+			}
+			UpdateUpgradeLabels();
+		}
+	}
+
 	void InventoryState::Process(float _deltaTime)
 	{
+		using namespace Utils;
+
+		std::string text = "money:    " + ToConstDigit(m_money, 5, 5) + " $";
+		for (int i = 0; i < Upgrades::COUNT; i++)
+		{
+			if (m_hud.m_upgradeBtns[i]->GetButtonState() == Graphic::Button::State::MouseOver && m_hud.m_upgradeBtns[i]->IsVisible())
+				text += " (-" + ToConstDigit(GetUpgradeCost((Upgrades)i), 5, 5) + "$)";
+		}
+		m_hud.m_moneyLabel->SetText(text);
 		//if (InputManager::IsVirtualKeyPressed(Control::VirtualKey::INVENTORY))
 		//{
 		//	// Change back to main state
