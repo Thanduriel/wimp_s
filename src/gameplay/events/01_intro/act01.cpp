@@ -30,7 +30,8 @@ namespace Acts {
 		Actor::Handle hndl = crate->GetHandle();
 
 		// background
-		Generators::AsteroidField asteroids(Vec3(0.f), 200.f, 120);
+		using namespace Generators;
+		Generators::AsteroidField asteroids(Vec3(0.f), 200.f, 120, { SpaceConstraint(crate->GetPosition(), 5.f), SpaceConstraint(_player) });
 		factory.Make<Sun>(Vec3(777.f, 1500.f, 10000.f), 2000.f);
 
 		// some cheap personnel

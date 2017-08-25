@@ -11,6 +11,21 @@ namespace Generators {
 	using namespace ei;
 	using namespace Game;
 
+	SpaceConstraint::SpaceConstraint(const Vec3& _position, float _radSq)
+		: pair(_position, _radSq)
+	{
+	}
+
+	SpaceConstraint::SpaceConstraint(const CollisionComponent& _source)
+		: pair(_source.GetActor().GetPosition(), _source.GetBoundingRadiusSq())
+	{
+	}
+
+	SpaceConstraint::SpaceConstraint(const Model& _source)
+		: SpaceConstraint(_source.GetCollisionComponent())
+	{
+	}
+
 	enum AsteroidType
 	{
 		Asteroid01,
@@ -45,10 +60,12 @@ namespace Generators {
 		}
 	};
 
-	AsteroidField::AsteroidField(const Vec3& _position, float _radius, int _numAsteroids, unsigned _seed)
+	AsteroidField::AsteroidField(const Vec3& _position, float _radius, int _numAsteroids,
+			std::vector<SpaceConstraint>&& _constraints, unsigned _seed)
 		: m_position(_position),
 		m_radius(_radius),
-		m_randomGen(_seed)
+		m_randomGen(_seed),
+		m_restrictedVolumes(std::move(_constraints))
 	{
 		FactoryActor& factory = FactoryActor::GetThreadLocalInstance();
 
