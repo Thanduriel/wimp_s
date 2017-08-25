@@ -47,18 +47,17 @@ namespace GameStates {
 		m_sceneGraph.RegisterComponent(*m_playerController);
 		Control::g_camera.Attach(*ship);
 
-		boundingMeshTest = new Model("default_shipbm", Vec3(), qidentity());
-		boundingMeshTest->GetCollisionComponent().SetType(0x0); // no collision
+		//boundingMeshTest = new Model("default_shipbm", Vec3(), qidentity());
+		//boundingMeshTest->GetCollisionComponent().SetType(0x0); // no collision
 	//	m_sceneGraph.Add(*boundingMeshTest);
 
 		Acts::Act01 act1(*ship, m_hud);
 
 		// test actors
-		ship = new Ship("TestShip", Vec3(50.f,0.f,100.f));
+		ship = new Ship("WaspShip", Vec3(50.f,0.f,500.f));
 		m_sceneGraph.Add(*ship);
-		m_sceneGraph.RegisterComponent(*new Control::KamikazeController(*ship, m_playerController->GetShip().GetHandle(), m_hud));
+		m_sceneGraph.RegisterComponent(*new Control::WaspController(*ship, m_playerController->GetShip().GetHandle(), m_hud));
 		ship2 = ship;
-
 	}
 
 	MainState::~MainState()
@@ -68,8 +67,8 @@ namespace GameStates {
 	void MainState::Process(float _deltaTime)
 	{
 		m_sceneGraph.Process(m_gameTimeControl.m_timeScale * _deltaTime, _deltaTime);
-		boundingMeshTest->SetPosition(m_playerController->GetShip().GetPosition());
-		boundingMeshTest->SetRotation(m_playerController->GetShip().GetRotation());
+		//boundingMeshTest->SetPosition(m_playerController->GetShip().GetPosition());
+		//boundingMeshTest->SetRotation(m_playerController->GetShip().GetRotation());
 
 		Control::g_camera.Process(_deltaTime);
 

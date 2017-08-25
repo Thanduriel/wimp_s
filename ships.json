@@ -19,7 +19,7 @@
     "Mesh": "dark_fighter",
 	"BoundingMesh": "dark_fighterbm",
     "WeaponSockets": ["LeftTurret", "RightTurret"],
-	"DriveSockets" : ["CenterDrive"],
+	"DriveSockets" : ["LeftDrive", "RightDrive"],
     "BaseHealth" : 132.0,
 	"Mass" : 1000.0
   }
