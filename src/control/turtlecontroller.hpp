@@ -19,6 +19,8 @@ namespace Control
 
 		void ManageShooting();
 
+		void EvadeObstacles();
+
 		float GetMaxDistance() const { return m_maxDistance; }
 		void SetMaxDistance(const float _distance) { m_maxDistance = _distance; };
 

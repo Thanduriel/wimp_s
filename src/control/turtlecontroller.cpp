@@ -73,4 +73,12 @@ namespace Control
 			}
 		}
 	}
+
+	void TurtleController::EvadeObstacles()
+	{
+		Ray& ray = Ray(GetShip().GetPosition(), GetShip().GetRotationMatrix() * Vec3(0.0f, 0.0f, 1.0f));
+		Game::Actor* hitObj = s_sceneGraph->RayCast(ray, m_minDistance);
+		if (hitObj)
+			GetShip().SetTargetAngularVelocity(GetShip().GetRotationMatrix() * Vec3(1.0f, 0.0f, 0.0f));
+	}
 }

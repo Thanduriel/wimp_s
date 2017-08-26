@@ -15,6 +15,8 @@ namespace Control
 
 		void EvadeShipBehind(float _deltaTime);
 
+		void EvadeObstacles();
+
 		void ManageShooting();
 
 		float GetMaxDistance() const { return m_maxDistance; }
