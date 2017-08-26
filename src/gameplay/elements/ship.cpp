@@ -22,22 +22,22 @@ namespace Game
 
 	Ship::Ship(const Jo::Files::MetaFileWrapper::Node& _node, const Vec3& _position)
 		: Model(_node["Mesh"s], _node["BoundingMesh"s], _position, qidentity(), _node["Mass"s].Get(1000.f)),
-		m_thrust(50000.0f),
+		m_thrust(_node["Thrust"s].Get(50000.f)),
 		m_speed(0.0f),
-		m_minSpeed(-10.0f),
-		m_maxSpeed(100.0f),
+		m_minSpeed(_node["MinSpeed"s].Get(-10.f)),
+		m_maxSpeed(_node["MaxSpeed"s].Get(100.f)),
 		m_minSprayRadius(0.0f),
 		m_maxSprayRadius(1.0f),
 		m_sprayRadius(0.0f),
-		m_angularAcceleration(1.0f),
+		m_angularAcceleration(_node["AngularSpeed"s].Get(1.f)),
 		m_targetAngularVelocity(0.f),
-		m_maxEnergy(10.f),
+		m_maxEnergy(_node["Energy"s].Get(8.f)),
 		m_energy(m_maxEnergy),
-		m_energyRecharge(1.5f),
-		m_maxShield(32.f),
+		m_energyRecharge(_node["EnergyRecharge"s].Get(2.f)),
+		m_maxShield(_node["Shield"s].Get(32.f)),
 		m_shield(m_maxShield),
-		m_shieldDelay(2.f),
-		m_shieldRecharge(10.f),
+		m_shieldDelay(_node["ShieldDelay"s].Get(3.5f)),
+		m_shieldRecharge(_node["ShieldRecharge"s].Get(3.5f)),
 		m_shieldWait(0.f),
 		m_isRecharging(true),
 		m_shieldComponent(THISACTOR, GetGeometryComponent().GetMesh()),
@@ -73,14 +73,6 @@ namespace Game
 		m_canTakeDamage = true;
 		GetCollisionComponent().SetType(CollisionComponent::Type::Any | CollisionComponent::Type::Solid 
 			| CollisionComponent::Type::Ship | CollisionComponent::Type::Dynamic);
-
-		// temporary weapon setup
-		Weapon& weapon1 = FactoryActor::GetThreadLocalInstance().Make<Weapon>();
-		Weapon& weapon2 = FactoryActor::GetThreadLocalInstance().Make<Weapon>();
-		m_inventory.Add(weapon1);
-		m_inventory.Add(weapon2);
-		m_weaponSockets[0].Attach(weapon1);
-		m_weaponSockets[1].Attach(weapon2);
 	}
 
 	void Ship::OnDestroy()

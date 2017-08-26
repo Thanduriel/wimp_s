@@ -132,7 +132,7 @@ namespace GameStates
 			+ "hull:     " + ToConstDigit(m_ship.GetHealth(), 5, 5) + " / " + ToConstDigit(m_ship.GetMaxHealth(), 5, 5) + "\n\n");
 
 		Vec2 margin = PixelOffset(10.0f, 0.0f);
-		float* values = new float[Upgrades::COUNT]{
+		float values[Upgrades::COUNT]{
 			m_ship.GetMaxEnergy(),
 			m_ship.GetEnergyRecharge(),
 			m_ship.GetMaxShield(),

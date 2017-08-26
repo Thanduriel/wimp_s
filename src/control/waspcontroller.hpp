@@ -7,7 +7,7 @@ namespace Control
 	class WaspController : public Controller
 	{
 	public:
-		WaspController(Game::Ship& _ship, Game::Actor::Handle _target, GameStates::MainHud& _hud);
+		WaspController(Game::Ship& _ship, Game::Actor::ConstHandle _target, GameStates::MainHud& _hud);
 
 		void ProcessComponent(float _deltaTime, const Game::SceneGraph& _sceneGraph) override;
 
@@ -25,7 +25,7 @@ namespace Control
 		float GetMinDistance() const { return m_minDistance; }
 		void SetMinDistance(const float _distance) { m_minDistance = _distance; };
 	private:
-		Game::Actor::Handle m_target;
+		Game::Actor::ConstHandle m_target;
 		float m_maxDistance;
 		float m_minDistance;
 		bool m_lookForTarget;
