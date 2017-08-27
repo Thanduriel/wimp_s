@@ -22,11 +22,12 @@ namespace Generators {
 	class AsteroidField
 	{
 	public:
-		AsteroidField(const ei::Vec3& _position, float _radius, int _numAsteroids, 
-			std::vector<SpaceConstraint>&& _constraints, unsigned _seed = 0x832af);
+		AsteroidField(const ei::Vec3& _position, float _radius, unsigned _seed = 0x832af);
+		void Generate(int _numAsteroids, std::vector<SpaceConstraint>&& _constraints);
 
-		// Finds a suitable position that is not occupied with atleast space for a sphere with _minRadius.
+		// Finds a suitable position that is not occupied with at least space for a sphere with _minRadius.
 		ei::Vec3 FindPosition(float _minRadiusSq);
+		void AddConstraint(const SpaceConstraint& _constraint);
 	private:
 		RandomGenerator m_randomGen;
 		float m_radius;

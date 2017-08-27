@@ -33,6 +33,7 @@ namespace GameStates {
 
 	Game::Ship* ship2;
 	Game::Model* boundingMeshTest = nullptr;
+	Acts::Act01* map;
 
 	MainState::MainState()
 		: m_starbackground(2000, 20000.f, 14000),
@@ -51,7 +52,7 @@ namespace GameStates {
 		//boundingMeshTest->GetCollisionComponent().SetType(0x0); // no collision
 	//	m_sceneGraph.Add(*boundingMeshTest);
 
-		Acts::Act01 act1(*ship, m_hud);
+		map = new Acts::Act01(m_sceneGraph, *ship, m_hud);
 
 		// test actors
 		ship = new Ship("WaspShip", Vec3(50.f,0.f,500.f));
@@ -63,6 +64,7 @@ namespace GameStates {
 	MainState::~MainState()
 	{
 		if (boundingMeshTest) delete boundingMeshTest;
+		delete map;
 	}
 
 	void MainState::Process(float _deltaTime)

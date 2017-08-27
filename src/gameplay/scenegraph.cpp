@@ -392,7 +392,7 @@ namespace Game {
 							slfDyn->AddAngularVelocity(rotInertialSlf * 1.f * impulse);
 							othDyn->AddAngularVelocity(rotInertiaOth *-1.f * impulse);
 
-							float damage = impulse * epsilon * 0.33f;
+							float damage = impulse * epsilon * 0.11f;
 							slfDyn->Damage(damage, *othDyn);
 							othDyn->Damage(damage, *slfDyn);
 						}

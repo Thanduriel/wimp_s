@@ -60,13 +60,16 @@ namespace Generators {
 		}
 	};
 
-	AsteroidField::AsteroidField(const Vec3& _position, float _radius, int _numAsteroids,
-			std::vector<SpaceConstraint>&& _constraints, unsigned _seed)
+	AsteroidField::AsteroidField(const Vec3& _position, float _radius, unsigned _seed)
 		: m_position(_position),
 		m_radius(_radius),
-		m_randomGen(_seed),
-		m_restrictedVolumes(std::move(_constraints))
+		m_randomGen(_seed)
+	{}
+
+	void AsteroidField::Generate(int _numAsteroids, std::vector<SpaceConstraint>&& _constraints)
 	{
+		m_restrictedVolumes = std::move(_constraints);
+
 		FactoryActor& factory = FactoryActor::GetThreadLocalInstance();
 
 		// collect mesh data
@@ -107,5 +110,10 @@ namespace Generators {
 		} while (!found);
 
 		return position;
+	}
+
+	void AsteroidField::AddConstraint(const SpaceConstraint& _constraint)
+	{
+		m_restrictedVolumes.push_back(_constraint);
 	}
 }

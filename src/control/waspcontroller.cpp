@@ -6,7 +6,7 @@ namespace Control
 {
 	using namespace ei;
 
-	WaspController::WaspController(Game::Ship& _ship, Game::Actor::Handle _target, GameStates::MainHud& _hud)
+	WaspController::WaspController(Game::Ship& _ship, Game::Actor::ConstHandle _target, GameStates::MainHud& _hud)
 		: Controller(_ship, _hud)
 	{
 		m_target = _target;
@@ -37,7 +37,7 @@ namespace Control
 
 	void WaspController::ManageDistanceToTarget()
 	{
-		Game::Ship* target = static_cast<Game::Ship*>(&**m_target);
+		const Game::Ship* target = static_cast<const Game::Ship*>(&**m_target);
 
 		GetShip().SetTargetAngularVelocity(Vec3(0.0f, 0.0f, 0.0f));
 		Vec3 delta = target->GetPosition() - GetShip().GetPosition();
@@ -72,7 +72,7 @@ namespace Control
 
 	void WaspController::EvadeShipBehind(float _deltaTime)
 	{
-		Game::Ship* target = static_cast<Game::Ship*>(&**m_target);
+		const Game::Ship* target = static_cast<const Game::Ship*>(&**m_target);
 
 		Vec3 delta = target->GetPosition() - m_ship.GetPosition();
 		Vec3 forward = normalize(m_ship.GetRotationMatrix() * Vec3(0.0f, 0.0f, 1.0f));
@@ -110,7 +110,7 @@ namespace Control
 
 	void WaspController::ManageShooting()
 	{
-		Game::Ship* target = static_cast<Game::Ship*>(&**m_target);
+		const Game::Ship* target = static_cast<const Game::Ship*>(&**m_target);
 
 		Vec3 delta = target->GetPosition() - GetShip().GetPosition();
 		Vec3 forward = GetShip().GetRotationMatrix() * Vec3(0.0f, 0.0f, 1.0f);

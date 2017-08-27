@@ -38,8 +38,8 @@ namespace GameStates
 
 		int m_upgradeLvls[Upgrades::COUNT];
 
-		//The rows in which the upgradable values of the ship info label are displayed
-		int* m_rows = new int[Upgrades::COUNT]{ 2, 3, 5, 6, 7, 9 };
+		//The rows in which the upgradeable values of the ship info label are displayed
+		std::array<int, Upgrades::COUNT> m_rows = { 2, 3, 5, 6, 7, 9 };
 
 		int GetUpgradeCost(Upgrades _upgrade);
 		float NextUpgradeValue(Upgrades _upgrade);

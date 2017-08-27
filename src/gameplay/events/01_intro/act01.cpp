@@ -4,9 +4,11 @@
 #include "gameplay/elements/factorycomponent.hpp"
 #include "gameplay/elements/crate.hpp"
 #include "gameplay/elements/sun.hpp"
+#include "gameplay/elements/blackhole.hpp"
 #include "generators/weapongen.hpp"
 #include "generators/asteroidfield.hpp"
 #include "gamestates/mainstate.hpp"
+#include "control/waspcontroller.hpp"
 
 namespace Game {
 namespace Acts {
@@ -14,50 +16,83 @@ namespace Acts {
 	using namespace Utils;
 	using namespace ei;
 
-	Act01::Act01(const Ship& _player, GameStates::MainHud& _hud)
+	const Vec3 BASE_POSITON = Vec3(-240.f, 50.f, 820.f);
+
+	Act01::Act01(SceneGraph& _sceneGraph, const Ship& _player, GameStates::MainHud& _hud)
+		: Map(_sceneGraph),
+		m_asteroids(BASE_POSITON - Vec3(12.f, -6.f, 110.f), 200.f)
 	{
-		FactoryActor& factory = FactoryActor::GetThreadLocalInstance();
+		Actor::ConstHandle playerHndl = _player.GetHandle();
+
+		// the research base
+		Ship& researchBase = *new Ship("ResearchBase", BASE_POSITON);
+		researchBase.SetTargetAngularVelocity(Vec3(0.f, 0.2f, 0.f));
+		m_sceneGraph.Add(researchBase);
+
 		// some simple weapons
 		Inventory inventory;
 		Generators::WeaponGenerator weaponGen(0x42);
 		Weapon* w = weaponGen.Generate(10.f, 0.f);
 		inventory.Add(*w);
-		factory.Add(*w);
+		m_sceneGraph.Add(*w);
 		w = weaponGen.Generate(10.f, 0.f);
 		inventory.Add(*w);
-		factory.Add(*w);
-		Crate* crate = &factory.Make<Crate>(ei::Vec3(0.f, 0.f, 120.f), inventory, 10.f);
+		m_sceneGraph.Add(*w);
+		Crate* crate = new Crate(BASE_POSITON - ei::Vec3(0.f, 7.f, 150.f), inventory, 5.f);
+		m_sceneGraph.Add(*crate);
 		Actor::Handle hndl = crate->GetHandle();
 
 		// background
 		using namespace Generators;
-		Generators::AsteroidField asteroids(Vec3(0.f), 200.f, 120, { SpaceConstraint(crate->GetPosition(), 5.f), SpaceConstraint(_player) });
-		factory.Make<Sun>(Vec3(777.f, 1500.f, 10000.f), 2000.f);
-
-		// some cheap personnel
+		m_asteroids.Generate(120, { SpaceConstraint(crate->GetPosition(), 10.f), SpaceConstraint(_player), SpaceConstraint(researchBase) });
+		m_sceneGraph.Add(*new Sun(Vec3(777.f, 1500.f, 10000.f), 2000.f));
 
 		// --- events --------------------------------------- //
+
+		auto Aexplosion = CREATE_ACTION
+		{
+			BlackHole& blackHole = FactoryActor::GetThreadLocalInstance().Make<BlackHole>(BASE_POSITON, 90.f, 60.f, 16.f);
+			blackHole.Activate();
+		};
+
 		// 04
-		auto nextAct = CREATE_ACTION(
-			FactoryActor::GetThreadLocalInstance().Make<Ship>("TestShip", ei::Vec3(0.f));
-		);
+		auto AapproachFacility = CREATE_ACTION
+		{
+			CREATE_OBJECTIVE5(Conditions::IsClose, Aexplosion, "approach the facility",
+				_player, BASE_POSITON, 100.f);
+		};
 
 		// 03
-		auto beginDestroyShips = CREATE_ACTION(
-			CREATE_OBJECTIVE3(Conditions::Timer, nextAct, "destroy the ships near by", 8.f);
-		);
+		auto AbeginDestroyShips = CREATE_ACTION
+		{
+			Ship& ship01 = CreateShip("Dart", m_asteroids.FindPosition(10.f), 1, 8.f, 0.f);
+			CreateController<Control::WaspController>(ship01, playerHndl, _hud);
+			m_asteroids.AddConstraint(ship01);
+			Ship& ship02 = CreateShip("Dart", m_asteroids.FindPosition(10.f), 1, 8.f, 0.f);
+			CreateController<Control::WaspController>(ship02, playerHndl, _hud);
+
+			CREATE_OBJECTIVE4(Conditions::OnDestroy, AapproachFacility, "destroy the ships near by",
+				std::vector<Actor::Handle>({ ship01.GetHandle(), ship02.GetHandle() }), 2);
+		};
+
+		auto AtimeToEqiup = CREATE_ACTION
+		{
+			CREATE_OBJECTIVE3(Conditions::Timer, AbeginDestroyShips, "equip the weapons and wait", 10.f);
+		};
 
 		// 02
-		auto beginPickUpWeapon = CREATE_ACTION( 
-			CREATE_OBJECTIVE4(Conditions::OnDestroy, beginDestroyShips, 
-				"pick up and equip the weapons", std::vector<Actor::Handle>({ hndl }), 1);
+		auto AbeginPickUpWeapon = CREATE_ACTION
+		{
+			CREATE_OBJECTIVE4(Conditions::OnDestroy, AtimeToEqiup,
+				"pick up the testing equipment", std::vector<Actor::Handle>({ hndl }), 1);
 			_hud.AddIndicator(*crate, "crate", Color8U(1.f,1.f,0.f));
-		);
+		};
 
 		// 01
-		auto& ev = factory.Make<Event<Conditions::IsClose>>(beginPickUpWeapon, "get closer to the facility", _player, crate->GetPosition(), 60.f);
+		auto& ev = *new Event<Conditions::IsClose>(AbeginPickUpWeapon, "get closer to the facility", _player, researchBase.GetPosition(), 250.f);
 		_hud.AddObjective(ev);
-	//	_hud.AddIndicator(crate, "facility");
+		m_sceneGraph.Add(ev);
+		_hud.AddIndicator(researchBase, "research facility");
 
 	}
 }

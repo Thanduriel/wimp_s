@@ -136,8 +136,8 @@ namespace Control
 	{
 		if (m_targetingMode == TargetingMode::Tactical)
 		{
-			g_camera.Translate(Vec3(0.f, _dy, 0.f));
-			m_referenceGrid.Translate(Vec3(0.f, _dy, 0.f));
+			g_camera.Translate(Vec3(0.f, _dy * 4.f, 0.f));
+			m_referenceGrid.Translate(Vec3(0.f, _dy * 4.f, 0.f));
 		}
 	}
 
@@ -147,7 +147,7 @@ namespace Control
 		if (m_targetingMode == TargetingMode::Tactical)
 		{
 			// todo move this to a config
-			const float tacticalCamSpeed = 10.f;
+			const float tacticalCamSpeed = 30.f;
 			Vec3 camVel(0.f);
 			// todo: change this to virtual keys
 			if (InputManager::IsKeyPressed(GLFW_KEY_W))
