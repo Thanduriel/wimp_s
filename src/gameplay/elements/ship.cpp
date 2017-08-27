@@ -44,7 +44,7 @@ namespace Game
 		m_drivePositions(_node["DriveSockets"s].Size()),
 		m_weaponSockets(_node["WeaponSockets"s].Size()),
 		m_thrustParticles(m_drivePositions.capacity()),
-		m_thrustLights(m_drivePositions.capacity()),
+		m_thrustLights(m_drivePositions.capacity() + _node["Lights"s].Size()),
 		m_particleSpawnCount(0.f),
 		m_specialMove()
 	{
@@ -59,6 +59,15 @@ namespace Game
 			m_thrustParticles.emplace(THISACTOR, m_drivePositions[i]);
 			m_thrustLights.emplace(THISACTOR, m_drivePositions[i], 2.f, Utils::Color8U(0.f, 1.f, 0.f));
 		}
+		auto& lightsNode = _node["Lights"s];
+		for (int i = 0; i < lightsNode.Size(); ++i)
+		{
+			auto& lightInfo = lightsNode[i];
+			m_thrustLights.emplace(THISACTOR, GetGeometryComponent().GetMesh().GetSocket(lightInfo["Name"s]),
+				lightInfo["Range"s].Get(5.f), 
+				Utils::Color8U(lightInfo["R"s].Get(1.f), lightInfo["G"s].Get(1.f), lightInfo["B"s].Get(1.f)));
+		}
+
 		m_health = _node["BaseHealth"s].Get(42.f);
 		m_maxHealth = m_health;
 

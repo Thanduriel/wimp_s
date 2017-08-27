@@ -248,12 +248,15 @@ const std::unordered_map<std::string, Mesh::Format> Mesh::FORMAT_NAMES =
 			vertices.emplace_back(m_vertices[m_faces[i][2]]);
 			n += vertices.back().normal;
 
-			float l = sqrt(n[0] * n[0] + n[1] * n[1] + n[2] * n[2]);
-			n[0] /= l; n[1] /= l; n[2] /= l;
-			auto it = vertices.end();
-			(--it)->normal = n;
-			(--it)->normal = n;
-			(--it)->normal = n;
+			if (_normals)
+			{
+				float l = sqrt(n[0] * n[0] + n[1] * n[1] + n[2] * n[2]);
+				n[0] /= l; n[1] /= l; n[2] /= l;
+				auto it = vertices.end();
+				(--it)->normal = n;
+				(--it)->normal = n;
+				(--it)->normal = n;
+			}
 		}
 
 		return std::move(vertices);

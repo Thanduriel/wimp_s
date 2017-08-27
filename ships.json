@@ -29,10 +29,11 @@
 	"MinSpeed" 			: -10.0
   },
   "ResearchBase": {
-    "Mesh"				: "spaceship",
-	"BoundingMesh"		: "spaceshipbm",
+    "Mesh"				: "spacestation",
+	"BoundingMesh"		: "spacestationbm",
     "WeaponSockets"		: [],
 	"DriveSockets" 		: [],
+	"Lights"			: [{"Name" : "Point", "Range" : 90.f, "R" : 1.f, "G" : 1.f, "B" : 0.f}],
     "BaseHealth" 		: 1000.0,
 	"Mass" 				: 24000.0,
 	"Energy" 			: 800.0,
@@ -40,10 +41,10 @@
 	"Shield" 			: 220.0,
 	"ShieldRecharge" 	: 15.5,
 	"ShieldDelay" 		: 20.0,
-	"Thrust" 			: 0.0,
+	"Thrust" 			: 2000.0,
 	"MaxSpeed" 			: 0.0,
 	"MinSpeed" 			: 0.0,
-	"AngularSpeed: " 	: 0.0
+	"AngularSpeed"	 	: 0.2
   },
   "KamikazeShip": {
     "Mesh": "small_fighter",

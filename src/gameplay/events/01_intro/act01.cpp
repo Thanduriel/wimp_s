@@ -26,6 +26,7 @@ namespace Acts {
 
 		// the research base
 		Ship& researchBase = *new Ship("ResearchBase", BASE_POSITON);
+		researchBase.SetTargetAngularVelocity(Vec3(0.f, 0.2f, 0.f));
 		m_sceneGraph.Add(researchBase);
 
 		// some simple weapons
