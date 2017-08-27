@@ -7,16 +7,13 @@ namespace Control
 	using namespace ei;
 
 	WaspController::WaspController(Game::Ship& _ship, Game::Actor::Handle _target, GameStates::MainHud& _hud)
-		: Controller(_ship, _hud),
-		m_target(_target),
-		m_minDistance(75.0f),
-		m_maxDistance(250.0f),
-		m_lookForTarget(false),
-		m_followTimeCounter(0.0f),
-		m_maxFollowTime(5.0f),
-		m_evasionTime(5.0f),
-		m_evading(-1.0f)
+		: Controller(_ship, _hud)
 	{
+		m_target = _target;
+		m_minDistance = 75.0f;
+		m_maxDistance = 250.0f;
+		m_maxFollowTime = 5.0f;
+		m_evasionTime = 5.0f;
 		GetShip().SetSpeed(50.0f);
 		GetShip().SetAngularAcceleration(2.0f);
 		std::string tag = "Wasp Ship";
@@ -124,14 +121,5 @@ namespace Control
 			if (angle < ei::PI / 4.0f)
 				GetShip().Fire();
 		}
-	}
-
-	void WaspController::EvadeObstacles()
-	{
-		Vec3 forward = normalize(GetShip().GetRotationMatrix() * Vec3(0.0f, 0.0f, 1.0f));
-		Ray& ray = Ray(GetShip().GetPosition() + forward * 10.0f, forward);
-		Game::Actor* hitObj = s_sceneGraph->RayCast(ray, m_minDistance);
-		if (hitObj && hitObj != &**m_target)
-			GetShip().SetTargetAngularVelocity(GetShip().GetRotationMatrix() * Vec3(1.0f, 0.0f, 0.0f));
 	}
 }

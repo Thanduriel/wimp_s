@@ -23,10 +23,28 @@ namespace Control
 
 		void RotateTowards(ei::Vec3 _pos);
 
+		void EvadeObstacles();
+
 		void Fire();
+
+		float GetMaxDistance() const { return m_maxDistance; }
+		void SetMaxDistance(const float _distance) { m_maxDistance = _distance; };
+
+		float GetMinDistance() const { return m_minDistance; }
+		void SetMinDistance(const float _distance) { m_minDistance = _distance; };
+
 	protected:
 		Game::Ship& m_ship;
 		static Game::SceneGraph* s_sceneGraph;
+
+		float m_minDistance;
+		float m_maxDistance;
+		bool m_lookForTarget;
+		float m_followTimeCounter;
+		float m_maxFollowTime;
+		float m_evading;
+		float m_evasionTime;
+		Game::Actor::Handle m_target;
 
 		GameStates::MainHud& m_hud;
 	};

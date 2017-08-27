@@ -4,8 +4,11 @@ namespace Control
 {
 	Game::SceneGraph* Controller::s_sceneGraph = nullptr;
 
-	Controller::Controller(Game::Ship& _ship, GameStates::MainHud& _hud)
+	Controller::Controller(Game::Ship& _ship,  GameStates::MainHud& _hud)
 		: Game::DynamicComponent<Game::SceneComponent>(_ship),
+		m_lookForTarget(false),
+		m_followTimeCounter(0.0f),
+		m_evading(-1.0f),
 		m_ship(_ship),
 		m_hud(_hud)
 	{
@@ -22,5 +25,15 @@ namespace Control
 		float factor = clamp(angle, 0.0f, ei::PI) / (ei::PI);
 		Vec3 rotationVector = normalize(cross(forward, delta)) * sqrt(factor);
 		GetShip().SetTargetAngularVelocity(rotationVector);
+	}
+
+	void Controller::EvadeObstacles()
+	{
+		using namespace ei;
+		Vec3 forward = normalize(GetShip().GetRotationMatrix() * Vec3(0.0f, 0.0f, 1.0f));
+		Ray& ray = Ray(GetShip().GetPosition() + forward * 10.0f, forward);
+		Game::Actor* hitObj = s_sceneGraph->RayCast(ray, m_minDistance);
+		if (hitObj && hitObj != &**m_target)
+			GetShip().SetTargetAngularVelocity(GetShip().GetRotationMatrix() * Vec3(1.0f, 0.0f, 0.0f));
 	}
 }

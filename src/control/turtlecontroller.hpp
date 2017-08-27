@@ -18,22 +18,5 @@ namespace Control
 		void ManageDistanceToTarget();
 
 		void ManageShooting();
-
-		void EvadeObstacles();
-
-		float GetMaxDistance() const { return m_maxDistance; }
-		void SetMaxDistance(const float _distance) { m_maxDistance = _distance; };
-
-		float GetMinDistance() const { return m_minDistance; }
-		void SetMinDistance(const float _distance) { m_minDistance = _distance; };
-	private:
-		Game::Actor::Handle m_target;
-		float m_maxDistance;
-		float m_minDistance;
-		bool m_lookForTarget;
-		float m_followTimeCounter;
-		float m_maxFollowTime;
-		float m_evading;
-		float m_evasionTime;
 	};
 }
