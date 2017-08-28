@@ -6,6 +6,7 @@ in vec3 gs_eyeDirection;
 in vec3 gs_color;
 in float gs_radius;
 in float gs_fallOff;
+in float gs_intensity;
 
 uniform sampler2D screenTex;
 uniform sampler2D depthTex;
@@ -36,7 +37,7 @@ void main()
 	
 	vec3 normal = texture(normalTex, gs_texCoord).xyz;
 	float diffuse = max(0.0, dot(normal, dif.xyz / sqrt(dSqr)));
-	float intensity = clamp(1/(gs_fallOff * dSqr) - threshold,0, 1);
+	float intensity = clamp((1/(gs_fallOff * dSqr) - threshold) * gs_intensity,0, 1);
 //	float specular = pow(cosAngle, materialShininess);
 	
 	// intensity falls of ~ 1/r^2. To reach 0 at distance r the function is distorted and shifted

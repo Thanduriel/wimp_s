@@ -8,7 +8,7 @@ namespace Game {
 	class PointLightComponent : public ConstActorComponent, public Transformation
 	{
 	public:
-		PointLightComponent(const Actor& _actor, const ei::Vec3& _position, float _radius, Utils::Color8U _color);
+		PointLightComponent(const Actor& _actor, const ei::Vec3& _position, float _radius, Utils::Color8U _color, float _intensity = 1.f);
 		PointLightComponent(const Actor& _actor, const PointLightComponent& _orig);
 		~PointLightComponent();
 

@@ -2,6 +2,7 @@
 
 #include "gameplay/core/singlecomponentactor.hpp"
 #include "graphic/effects/sunrenderer.hpp"
+#include "light.hpp"
 
 namespace Game {
 
@@ -15,5 +16,16 @@ namespace Game {
 		Graphic::SunRenderer m_renderer;
 	};
 
-	typedef SingleComponentActor<SunComponent> Sun;
+	class Sun : public Actor
+	{
+	public:
+		Sun(const ei::Vec3& _position, float _radius);
+
+		void RegisterComponents(class SceneGraph& _sceneGraph) override;
+	private:
+		SunComponent m_sunComponent;
+		PointLightComponent m_lightComponent;
+	};
+
+//	typedef SingleComponentActor<SunComponent> Sun;
 }

@@ -10,11 +10,12 @@ namespace Graphic {
 	struct LightInfo
 	{
 		LightInfo() = default;
-		LightInfo(float _radius, Utils::Color8U _color);
+		LightInfo(float _radius, Utils::Color8U _color, float _intensity = 1.f);
 
 		ei::Vec3 position; //< position in world space
 		float radius;
 		Utils::Color8U color;
+		float intensity;
 	};
 
 	namespace Details {

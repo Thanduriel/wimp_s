@@ -4,6 +4,7 @@
 in vec3 vs_out_Position[1];
 in float vs_out_Radius[1];
 in vec3 vs_out_Color[1];
+in float vs_out_Intensity[1];
 
 layout(std140) uniform Object
 {
@@ -19,6 +20,7 @@ out vec3 gs_eyeDirection;
 out vec3 gs_color;
 out float gs_radius;
 out float gs_fallOff;
+out float gs_intensity;
 
 layout(points) in;
 layout(triangle_strip, max_vertices = 4) out;
@@ -27,6 +29,7 @@ void main(void)
 {
 	vec3 color = vs_out_Color[0].xyz;
 	float size = vs_out_Radius[0];
+	float intensity = vs_out_Intensity[0];
 	// intensity fall of can be calculated once per light
 	const float threshold = 0.25; // this const needs to be updated in light.ps aswell.
 	float fallOff = 1/(size * size * threshold);
@@ -42,27 +45,30 @@ void main(void)
 	float altPosZ;
 	
 	// manual cliping since no point of the sphere can be seen
-	if(farP.z <= 0)
+	if(position.z + size <= 0)
 		return;//altPosZ = farP.z;
 	else if(nearP.z >= 0) // whole volume is in front -> use the closest plane
+	{
 		altPosZ = nearP.z;
+		// the clip plane is always the one furthest in front of the camera
+		position.xyz = farP;
+	}
 	else // camera is inside the volume -> use camera plane
 	{
 	//	float l = - position.z / cubeFace.z;
 		altPosZ = 0.0;//vec3(position.xy  + cubeFace.xy * l, 0);
+		// 
+		position.z += size + 0.1;
 	//	color = vec3(0,0,1);
 	}
 	
-	// the clip plane is always the one furthest in front of the camera
-	position.xyz = farP;
 	position = vec4(position.xyz * c_vProjection.xyz + vec3(0,0,c_vProjection.w), position.z);
-
 	// only z component is required for the correct size
 	altPosZ = altPosZ * c_vProjection.z + c_vProjection.w;
+	if(abs(position.z) <= 0.1) {position.z = 0.1; /*altPosZ = 0.01;*/}
 	size *= position.z / altPosZ;
 	
 	gl_Position = position + vec4(-size, -size* c_fAspect, 0, 0);// * vec4(c_vProjection.xy,0,0);
-//	gl_Position.xy = gl_Position.xy * c_vProjection.xy; gl_Position.y /= c_fAspect;
 	gs_texCoord = gl_Position.xy / gl_Position.w;
 	gs_eyeDirection = vec3(gs_texCoord * c_vInverseProjection.xy , 1.0);
 	gs_texCoord = gs_texCoord * 0.5 + 0.5;
@@ -70,10 +76,10 @@ void main(void)
 	gs_radius = size;
 	gs_fallOff = fallOff;
 	gs_color = color;
+	gs_intensity = intensity;
 	EmitVertex();
 
 	gl_Position = position + vec4( size, -size* c_fAspect , 0, 0);// * vec4(c_vProjection.xy,0,0);
-//	gl_Position.xy = gl_Position.xy * c_vProjection.xy; gl_Position.y /= c_fAspect;
 	gs_texCoord = gl_Position.xy / gl_Position.w;
 	gs_eyeDirection = vec3(gs_texCoord * c_vInverseProjection.xy , 1.0);
 	gs_texCoord = gs_texCoord * 0.5 + 0.5;
@@ -81,10 +87,10 @@ void main(void)
 	gs_radius = size;
 	gs_fallOff = fallOff;
 	gs_color = color;
+	gs_intensity = intensity;
 	EmitVertex();
 
 	gl_Position = position + vec4(-size,  size* c_fAspect, 0, 0);// * vec4(c_vProjection.xy,0,0);
-//	gl_Position.xy = gl_Position.xy * c_vProjection.xy; gl_Position.y /= c_fAspect;
 	gs_texCoord = gl_Position.xy / gl_Position.w;
 	gs_eyeDirection = vec3(gs_texCoord * c_vInverseProjection.xy , 1.0);
 	gs_texCoord = gs_texCoord * 0.5 + 0.5;
@@ -92,11 +98,10 @@ void main(void)
 	gs_radius = size;
 	gs_fallOff = fallOff;
 	gs_color = color;
+	gs_intensity = intensity;
 	EmitVertex();
 
 	gl_Position = position + vec4( size,  size* c_fAspect, 0, 0);// * vec4(c_vProjection.xy,0,0);
-//	gl_Position.xy = gl_Position.xy * c_vProjection.xy; gl_Position.y /= c_fAspect;
-//	gl_Position.xy = vec4(vec3(gl_Position.xy, gl_Position.z + size) * c_vProjection.xyz + vec3(0,0,c_vProjection.w), 1).xy;
 	gs_texCoord = gl_Position.xy / gl_Position.w;
 	gs_eyeDirection = vec3(gs_texCoord * c_vInverseProjection.xy , 1.0);
 	gs_texCoord = gs_texCoord * 0.5 + 0.5;
@@ -104,6 +109,7 @@ void main(void)
 	gs_radius = size;
 	gs_fallOff = fallOff;
 	gs_color = color;
+	gs_intensity = intensity;
 	EmitVertex();
 	EndPrimitive();
 }

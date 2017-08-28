@@ -5,13 +5,15 @@
 #include "control/camera.hpp"
 #include "graphic/core/uniformbuffer.hpp"
 
+#include "math/extensions.hpp"
+#include <iostream>
 namespace Graphic {
 	Details::LightKey LightSystem::m_currentKey;
 	VertexArrayBuffer* LightSystem::m_vertices;
 	Details::LightInfoContainer LightSystem::m_lightInfos;
 
-	LightInfo::LightInfo(float _radius, Utils::Color8U _color)
-		: radius(_radius), color(_color)
+	LightInfo::LightInfo(float _radius, Utils::Color8U _color, float _intensity)
+		: radius(_radius), color(_color), intensity(_intensity)
 	{}
 
 	LightInfo& LightHandle::operator*()
@@ -38,7 +40,7 @@ namespace Graphic {
 	void LightSystem::Initialize()
 	{
 		m_vertices = new VertexArrayBuffer(VertexArrayBuffer::PrimitiveType::POINT,
-			{ { VertexAttribute::VEC3, 0 },{ VertexAttribute::FLOAT, 1 },{ VertexAttribute::COLOR, 2 } });
+		{ { VertexAttribute::VEC3, 0 },{ VertexAttribute::FLOAT, 1 },{ VertexAttribute::COLOR, 2 }, {VertexAttribute::FLOAT, 3} });
 	}
 
 	void LightSystem::Close()
@@ -71,6 +73,13 @@ namespace Graphic {
 		LightInfo* buffer = static_cast<LightInfo*>(malloc(num * sizeof(LightInfo)));
 		for (auto& info : m_lightInfos)
 		{
+	/*		static int count = 0;
+			++count;
+			if (count % 2 && info.second.radius == 29.f)
+			{
+				std::cout << (Control::g_camera.GetView() * info.second.position).z << " | "
+					<< (Control::g_camera.GetViewProjection() * info.second.position).z << std::endl;
+			}*/
 			buffer[i] = info.second;
 			++i;
 		}
