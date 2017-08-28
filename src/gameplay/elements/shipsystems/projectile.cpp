@@ -12,9 +12,9 @@ namespace Game {
 	const float PARTICLESPAWN = 300.f; // in particles per second
 
 	// ********************************************************************** //
-	Projectile::Projectile(const ei::Vec3& _position, const ei::Vec3& _velocity, float _damage, float _lifeTime, DamageType _damageType)
+	Projectile::Projectile(const ei::Vec3& _position, const ei::Vec3& _velocity, float _damage, float _lifeTime, DamageType _damageType, bool _explodeOnTimeOut)
 		: DynamicActor(_position, Quaternion(Vec3(0.f,0.f,1.f), _velocity)),
-		m_lifeTimeComponent(THISACTOR, _lifeTime),
+		m_lifeTimeComponent(THISACTOR, _lifeTime, _explodeOnTimeOut),
 		m_damage(_damage),
 		m_damageType(_damageType)
 	{
@@ -48,7 +48,7 @@ namespace Game {
 	// ********************************************************************** //
 	const float BOLT_SIZE = 0.02f;
 	Bolt::Bolt(const ei::Vec3& _position, const ei::Vec3& _velocity, float _damage, float _lifeTime, DamageType _damageType, const Utils::Color8U& _color)
-		: Projectile(_position, _velocity, _damage, _lifeTime, _damageType),
+		: Projectile(_position, _velocity, _damage, _lifeTime, _damageType, false),
 		m_particles(THISACTOR, Vec3(0.f), Graphic::Resources::GetTexture("bolt")),
 		m_color(_color),
 		m_collisionComponent(THISACTOR, BOLT_SIZE, CollisionComponent::Type::Any | CollisionComponent::Type::Dynamic /*, ei::Box(Vec3(sqrt(-BOLT_SIZE/2.f)), Vec3(sqrt(BOLT_SIZE/2.f)))*/)

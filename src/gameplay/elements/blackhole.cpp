@@ -42,6 +42,7 @@ namespace Game {
 
 		for (auto& p : actors)
 		{
+			Assert(p.second != 0.f, "Do not spawn a black hole directly on something else!");
 			DynamicActor* dynAct = static_cast<DynamicActor*>(p.first);
 			float f = m_fact / p.second;
 
@@ -50,7 +51,7 @@ namespace Game {
 	}
 
 	// radius of the event horizon as ratio to _radius
-	const float EVENT_HORIZON = 0.1f;
+	const float EVENT_HORIZON = 0.12f;
 	const Utils::Color32F BASE_GRID_COLOR = Utils::Color32F(0.2f, 0.85f, 0.4f, 0.7f);
 	const Utils::Color32F INVALID_GRID_COLOR = Utils::Color32F(1.0f, 0.2f, 0.2f, 0.7f);
 	BlackHole::BlackHole(const ei::Vec3& _position, float _radius, float _strength, float _duration)
@@ -59,7 +60,8 @@ namespace Game {
 		m_visualComponent(THISACTOR, EVENT_HORIZON * _radius),
 		m_lifeTime(THISACTOR, _duration),
 		m_grid(THISACTOR, BASE_GRID_COLOR, 32, 16, _radius),
-		m_collisionComponent(THISACTOR, EVENT_HORIZON * _radius, CollisionComponent::Type::Any) // no collision at first
+		m_collisionComponent(THISACTOR, EVENT_HORIZON * _radius, CollisionComponent::Type::Any), // no collision at first
+		m_deltaTime(0.f) // when instantly activated the delta time will not be set otherwise
 	{}
 
 	void BlackHole::Process(float _deltaTime)
@@ -83,7 +85,7 @@ namespace Game {
 		_sceneGraph.RegisterComponent(m_collisionComponent);
 	}
 
-	const float DAMAGE_PER_SECOND = 0.2f;
+	const float DAMAGE_PER_SECOND = 0.43f;
 	void BlackHole::OnCollision(Actor& _other)
 	{
 		m_isColliding = true;

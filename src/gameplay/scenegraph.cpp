@@ -360,7 +360,7 @@ namespace Game {
 
 						static const uint32_t PHYSICSBODY = CollisionComponent::Type::Solid | CollisionComponent::Type::Dynamic;
 						// resolve impulse
-						if (slfComp->GetType() & PHYSICSBODY && othComp->GetType() & PHYSICSBODY)
+						if ((slfComp->GetType() & PHYSICSBODY) == PHYSICSBODY && (othComp->GetType() & PHYSICSBODY) == PHYSICSBODY)
 						{
 							DynamicActor* slfDyn = static_cast<DynamicActor*>(&slf);
 							DynamicActor* othDyn = static_cast<DynamicActor*>(&oth);

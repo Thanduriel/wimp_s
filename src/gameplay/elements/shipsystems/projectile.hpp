@@ -18,7 +18,7 @@ namespace Game {
 		static constexpr float DEFAULT_SPEED = 290.f;
 
 		Projectile(const ei::Vec3& _position, const ei::Vec3& _velocity,
-			float _damage, float _lifeTime, DamageType _damageType = DamageType::Normal);
+			float _damage, float _lifeTime, DamageType _damageType = DamageType::Normal, bool _explodeOnTimeOut = true);
 
 		// does a correct copy of the given projectile including components
 		Projectile(const Projectile& _proj);

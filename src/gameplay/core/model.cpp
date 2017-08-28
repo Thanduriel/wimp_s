@@ -36,13 +36,13 @@ namespace Game {
 			: GeometryComponent(_actor, _meshName),
 			CollisionComponent(_actor, GetMesh().GetMeshBounds().boundingRadius,
 				ei::Box(GetMesh().GetMeshBounds().lowerBound, GetMesh().GetMeshBounds().upperBound),
-				CollisionComponent::Type::Any | CollisionComponent::Type::Solid)
+				CollisionComponent::Type::Any | CollisionComponent::Type::Solid | CollisionComponent::Type::Dynamic)
 		{
 		}
 
 		ModelComponentImpl::ModelComponentImpl(Actor& _actor, const std::string& _meshName, const std::string& _boundingMeshName)
 			: GeometryComponent(_actor, _meshName),
-			CollisionComponent(_actor, _boundingMeshName, CollisionComponent::Type::Any | CollisionComponent::Type::Solid)
+			CollisionComponent(_actor, _boundingMeshName, CollisionComponent::Type::Any | CollisionComponent::Type::Solid | CollisionComponent::Type::Dynamic)
 		{
 		}
 

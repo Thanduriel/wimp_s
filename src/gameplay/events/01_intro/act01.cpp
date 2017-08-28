@@ -51,7 +51,7 @@ namespace Acts {
 
 		auto Aexplosion = CREATE_ACTION
 		{
-			BlackHole& blackHole = FactoryActor::GetThreadLocalInstance().Make<BlackHole>(BASE_POSITON, 90.f, 60.f, 16.f);
+			BlackHole& blackHole = FactoryActor::GetThreadLocalInstance().Make<BlackHole>(BASE_POSITON + Vec3(0.f,0.f,0.2f), 210.f, 7.f, 21.f);
 			blackHole.Activate();
 		};
 
