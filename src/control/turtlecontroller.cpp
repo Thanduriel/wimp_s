@@ -6,7 +6,7 @@ namespace Control
 {
 	using namespace ei;
 
-	TurtleController::TurtleController(Game::Ship& _ship, Game::Actor::Handle _target, GameStates::MainHud& _hud)
+	TurtleController::TurtleController(Game::Ship& _ship, Game::Actor::ConstHandle _target, GameStates::MainHud& _hud)
 		: Controller(_ship, _hud)
 	{
 		m_target = _target;
@@ -34,7 +34,7 @@ namespace Control
 
 	void TurtleController::ManageDistanceToTarget()
 	{
-		Game::Ship* target = static_cast<Game::Ship*>(&**m_target);
+		const Game::Ship* target = static_cast<const Game::Ship*>(&**m_target);
 
 		GetShip().SetTargetAngularVelocity(Vec3(0.0f, 0.0f, 0.0f));
 		Vec3 delta = target->GetPosition() - GetShip().GetPosition();
@@ -57,13 +57,13 @@ namespace Control
 
 	void TurtleController::ManageShooting()
 	{
-		Game::Ship* target = static_cast<Game::Ship*>(&**m_target);
+		const Game::Ship* target = static_cast<const Game::Ship*>(&**m_target);
 
 		Vec3 delta = target->GetPosition() - GetShip().GetPosition();
 		if (len(delta) < m_maxDistance)
 		{
 			Vec3 forward = GetShip().GetRotationMatrix() * Vec3(0.0f, 0.0f, 1.0f);
-			float distance;
+
 			if (dot(delta, forward) > 0.0f)
 			{
 				float angle = acosf(clamp(dot(normalize(delta), forward), -1.0f, 1.0f));

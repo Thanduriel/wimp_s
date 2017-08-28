@@ -44,7 +44,7 @@ namespace Control
 		float m_maxFollowTime;
 		float m_evading;
 		float m_evasionTime;
-		Game::Actor::Handle m_target;
+		Game::Actor::ConstHandle m_target;
 
 		GameStates::MainHud& m_hud;
 	};
