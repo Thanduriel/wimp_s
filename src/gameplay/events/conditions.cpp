@@ -1,5 +1,6 @@
 #include "conditions.hpp"
 #include "event.hpp"
+#include "utils/stringutils.hpp"
 
 namespace Game {
 namespace Conditions {
@@ -50,7 +51,7 @@ namespace Conditions {
 
 	std::string Timer::GetProgression() const
 	{
-		return std::to_string(m_timeLeft);
+		return Utils::ToFixPoint(m_timeLeft, 1);
 	}
 
 	// ********************************************************************* //
@@ -70,7 +71,7 @@ namespace Conditions {
 
 	std::string IsClose::GetProgression() const
 	{
-		return std::to_string(int(ei::len(m_target.GetPosition() - m_position)));
+		return Utils::ToFixPoint(ei::len(m_target.GetPosition() - m_position), 1);
 	}
 
 	// ********************************************************************* //

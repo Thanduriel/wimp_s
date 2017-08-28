@@ -48,6 +48,19 @@ namespace Graphic
 	//	delete m_dbgLabel;
 	}
 
+	void Hud::DeleteScreenElement(ScreenPosition& _element)
+	{
+		_element.Unregister(*this);
+		auto it = std::find_if(m_screenElements.begin(), m_screenElements.end(), [&](const std::unique_ptr<ScreenPosition>& _ptr)
+		{
+			return _ptr.get() == &_element;
+		});
+		Assert(it != m_screenElements.end(), "Trying to delete an element not managed by this hud.");
+
+		if (static_cast<ScreenPosition*>(m_preElem) == &_element) m_preElem = nullptr;
+		m_screenElements.erase(it);
+	}
+
 	// ************************************************************************* //
 	Hud* Hud::CreateContainer(Vec2 _pos, Vec2 _size) 
 	{

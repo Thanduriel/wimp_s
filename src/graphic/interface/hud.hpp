@@ -34,22 +34,8 @@ namespace Graphic {
 			return *ptr;
 		}
 
-		template< typename _T, typename = std::enable_if< std::is_base_of<ScreenPosition, _T>::value >::type >//only ScreenPositions should be made with this
-		void DeleteScreenElement(_T& _element)
-		{
-			_element.Unregister(*this);
-			for (int i = 0; i < m_screenElements.size(); i++)
-			{
-				auto ptr1 = m_screenElements[i].get();
-				auto ptr2 = static_cast<ScreenPosition*>(&_element);
-				if (ptr1 == ptr2)
-				{
-					if (static_cast<ScreenPosition*>(m_preElem) == ptr1)
-						m_preElem = nullptr;
-					m_screenElements.erase(m_screenElements.begin() + i);
-				}
-			}
-		}
+		void DeleteScreenElement(ScreenPosition& _element);
+
 		/// \brief Creates an container in the current Hud and returns it as Hud* to fill it with elements 
 		Hud* CreateContainer(ei::Vec2 _pos = ei::Vec2(-1.f, -1.f), ei::Vec2 _size = ei::Vec2(2.f, 2.f));
 

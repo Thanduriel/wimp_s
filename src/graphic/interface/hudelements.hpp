@@ -201,7 +201,8 @@ namespace Graphic {
 		Direction GetDirection() const { return m_direction; };
 
 		void SetDirection(Direction _direction);
-		const Game::Actor& GetTarget() const { return m_target; };
+		const Game::Actor& GetTarget() const { return **m_target; };
+		bool TargetIsDestroyed() const {return !*m_target; }
 
 		void Register(Hud& _hud) override;
 		void Unregister(Hud& _hud) override;
@@ -212,7 +213,7 @@ namespace Graphic {
 		void UpdateLabel();
 
 		Direction m_direction;
-		const Game::Actor& m_target;
+		const Game::Actor::ConstHandle m_target;
 		ScreenTexture m_textures[5];
 		TextRender m_distanceLabel;
 		std::string m_tag;

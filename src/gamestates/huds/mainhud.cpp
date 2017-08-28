@@ -81,9 +81,9 @@ namespace GameStates {
 
 	void MainHud::UpdateIndicators(Vec3 _playerPos)
 	{
-		auto removeBeg = std::remove_if(m_indicators.begin(), m_indicators.end(), [&](Indicator* _indicator) 
+		auto removeBeg = std::remove_if(m_indicators.begin(), m_indicators.end(), [this](Indicator* _indicator) 
 		{
-			if (_indicator->GetTarget().IsDestroyed())
+			if (_indicator->TargetIsDestroyed())
 			{
 				// the pointer is lost after this, so remove it right now
 				DeleteScreenElement(*_indicator);

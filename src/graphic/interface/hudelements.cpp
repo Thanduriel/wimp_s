@@ -384,7 +384,7 @@ namespace Graphic
 
 	Indicator::Indicator(Vec2 _position, const Game::Actor& _target, Hud& _hud, const std::string& _tag, Utils::Color8U _color)
 		: ScreenTexture("", _position, PixelOffset(32, 32), DefinitionPoint::MidMid, Anchor(DefinitionPoint::MidMid, &_hud)),
-		m_target(_target),
+		m_target(_target.GetHandle()),
 		m_tag(_tag),
 		m_textures{ { "indicator_up", _position, PixelOffset(32, 32), DefinitionPoint::MidMid, Anchor(DefinitionPoint::MidMid, &_hud) },
 			{ "indicator_down", _position, PixelOffset(32, 32), DefinitionPoint::MidMid, Anchor(DefinitionPoint::MidMid, &_hud) },
@@ -441,7 +441,9 @@ namespace Graphic
 			break;
 		}
 
-		float dist = len(Control::g_camera.GetPosition() - m_target.GetPosition());
+	//	if (!*m_target) return;
+
+		float dist = len(Control::g_camera.GetPosition() - (*m_target)->GetPosition());
 		std::string distString = std::to_string(dist);
 		size_t pos = distString.find('.', 0);
 		// dist > 999: 0 digits behind point
