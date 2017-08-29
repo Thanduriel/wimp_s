@@ -72,6 +72,7 @@ namespace Graphic {
 		void DetachElement(DraggableTexture& _element);
 
 		std::vector<DraggableTexture*>& GetElements() { return m_elements; }
+		void SetDropEvent(DropEventFn _onDrop) { m_onDrop = _onDrop; }
 
 		enum struct State
 		{

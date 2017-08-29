@@ -19,4 +19,19 @@ namespace Game {
 		"<c 220 235 32>",
 		"<c 222 75 44>"
 	};
+
+	const std::array<int, (size_t)Item::Quality::COUNT> Item::QUALITY_VALUE = 
+	{
+		60,
+		100,
+		200,
+		500
+	};
+
+	Item::Item(Quality _quality, const std::string& _name, const std::string& _description, int _value)
+		: m_quality(_quality),
+		m_name(_name),
+		m_description(_description),
+		m_value(_value == -1 ? QUALITY_VALUE[(int)_quality] : _value)
+	{}
 }

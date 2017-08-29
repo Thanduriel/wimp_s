@@ -25,7 +25,7 @@ namespace GameStates
 		: m_ship(_ship),
 		m_oldCamPosition(Control::g_camera.GetPosition()),
 		m_oldCamRotation(Control::g_camera.GetRotation()),
-		m_money(1050),
+		m_money(_ship.GetInventory().GetCredits()),
 		m_upgradeLvls()
 	{
 		using namespace Game;
@@ -93,23 +93,38 @@ namespace GameStates
 			}
 			++i;
 		}
+
+		m_hud.m_sellField->SetDropEvent([&](DropField& _this, DraggableTexture& _texture) 
+		{
+			Game::Weapon* itm = const_cast<Game::Weapon*>(static_cast<const Game::Weapon*>(_texture.GetContent()));
+			m_money += itm->GetValue();
+			m_ship.GetInventory().Remove(*itm);
+			itm->Destroy();
+			_this.DetachElement(_texture);
+			// since the inventory hud is rebuild every time they do not need to be actually destroyed here
+			_texture.SetActive(false);
+			_texture.SetVisible(false);
+			//m_hud.DeleteScreenElement(_texture);
+		});
 	}
 
 	InventoryState::~InventoryState()
 	{
+		const int OTHER_FIELDS = 2;
 		// update changed weapons
-		// the first field is the inventory
-		for (size_t i = 1; i < m_hud.m_weaponFields.size(); ++i)
+		// the first field is the inventory, second the sell field
+		for (size_t i = OTHER_FIELDS; i < m_hud.m_weaponFields.size(); ++i)
 		{
 			auto& elements = m_hud.m_weaponFields[i]->GetElements();
 			if (elements.size())
 			{
 				const Game::Weapon* itm = static_cast<const Game::Weapon*>(elements.front()->GetContent());
 				// the inventory does not change the weapon's state; but here full access is required
-				m_ship.SetWeapon(int(i - 1), const_cast<Game::Weapon*>(itm));
+				m_ship.SetWeapon(int(i - OTHER_FIELDS), const_cast<Game::Weapon*>(itm));
 			}
-			else m_ship.SetWeapon(int(i - 1), nullptr);
+			else m_ship.SetWeapon(int(i - OTHER_FIELDS), nullptr);
 		}
+		m_ship.GetInventory().SetCredits(m_money);
 
 		// restore camera state
 		g_camera.SetPosition(m_oldCamPosition);

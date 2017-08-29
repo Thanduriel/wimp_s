@@ -16,6 +16,9 @@ namespace Game {
 		void Transfer(Inventory& _source);
 		size_t GetNumElements() const { return m_items.size(); }
 
+		void SetCredits(int _credits) { m_credits = _credits; }
+		void AddCredits(int _credits) { m_credits += _credits; }
+		int GetCredits() const { return m_credits; }
 
 		auto begin() { return m_items.begin(); }
 		auto end() { return m_items.end(); }
@@ -24,5 +27,6 @@ namespace Game {
 		auto end() const { return m_items.end(); }
 	private:
 		std::unordered_set<Item*> m_items;
+		int m_credits = 0; //< money hold by this state
 	};
 }

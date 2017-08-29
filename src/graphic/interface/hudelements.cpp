@@ -219,6 +219,7 @@ namespace Graphic
 					&& cursor.y >= pos.y && cursor.y <= pos.y + m_fields[i]->GetSize().y)
 				{
 					m_fields[i]->DropElement(*this);
+					break;
 				}
 			}
 

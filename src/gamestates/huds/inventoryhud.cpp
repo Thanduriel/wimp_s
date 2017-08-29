@@ -23,14 +23,20 @@ namespace GameStates
 			m_vicinityField->DropElement(*item);
 			item->SetPosition(item->GetBackupPosition());
 		}*/
+		
+		// weapon related
 		m_inventoryField = &CreateScreenElement<DropField>("box_uncut", PixelOffset(0, 0), PixelOffset(400, 400), DefP::TopRight, Anchor(DefP::TopRight, this));
 		m_weaponFields.push_back(m_inventoryField);
 		m_descriptionLabel = &CreateScreenElement<TextRender>(Vec2(0.05f, 0.05f), ScreenPosition::Anchor(DefP::MidLeft, this));
 		m_descriptionLabel->SetDefaultSize(0.5f);
+		m_sellField = &CreateScreenElement<DropField>("box_uncut", Vec2(0.f), PixelOffset(96, 96), DefP::TopMid, Anchor(DefP::BotMid, m_inventoryField));
+		m_weaponFields.push_back(m_sellField);
 
+		// general information
 		m_shipInfoLabel = &CreateScreenElement<TextRender>(Vec2(0.05f, -0.05f), ScreenPosition::Anchor(DefP::TopLeft, this));
 		m_shipInfoLabel->SetDefaultSize(0.5f);
 
+		// upgrades
 		for (int i = 0; i < Upgrades::COUNT; i++)
 		{
 			m_upgradeBtns[i] = &CreateScreenElement<Button>("upgradeBtn", m_shipInfoLabel->GetPosition() + Vec2(m_shipInfoLabel->GetRectangle().x, 0.0f), PixelOffset(25.0f, 25.0f), DefP::TopLeft, Anchor(DefP::TopLeft, this));
