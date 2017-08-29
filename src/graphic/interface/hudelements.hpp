@@ -131,7 +131,7 @@ namespace Graphic {
 	// ************************************************************* //
 
 	/// \brief A press-able button with mouseover indication
-	class Button : public ScreenTexture
+	class Button : public ScreenOverlay
 	{
 	public:
 		/// \brief creates a button
@@ -147,8 +147,7 @@ namespace Graphic {
 		virtual void SetPosition(ei::Vec2 _pos) override;
 		virtual void SetSize(ei::Vec2 _size) override;
 		virtual void Scale(ei::Vec2 _scale) override;
-
-		void SetVisible(bool _visibility);
+		void SetVisible(bool _visible) override;
 
 	//	void SetMouseOverColor(Utils::Color8U _color)
 

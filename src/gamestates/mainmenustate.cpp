@@ -56,6 +56,9 @@ namespace GameStates
 		g_camera.SetRotation(ei::qidentity());
 		g_camera.FixRotation(g_camera.GetRotation(), g_camera.GetPosition());
 		g_camera.Process(0.f);
+
+		// updates the cursor position
+		MouseMove(0.f, 0.f);
 	}
 
 	void MainMenuState::Dispose()

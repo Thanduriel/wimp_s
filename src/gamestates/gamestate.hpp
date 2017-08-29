@@ -20,7 +20,7 @@ namespace GameStates {
 		virtual void Dispose() = 0;
 
 		// Called when this GameState is found on top of the stack after a state change.
-		virtual void OnActivate() {}
+		virtual void OnActivate() { MouseMove(0.f, 0.f); }
 
 		// input handling
 		virtual void MouseMove(float _dx, float _dy) {}

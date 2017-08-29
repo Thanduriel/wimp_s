@@ -104,7 +104,8 @@ namespace GameStates
 			// since the inventory hud is rebuild every time they do not need to be actually destroyed here
 			_texture.SetActive(false);
 			_texture.SetVisible(false);
-			//m_hud.DeleteScreenElement(_texture);
+			// money total changed
+			UpdateUpgradeLabels();
 		});
 	}
 

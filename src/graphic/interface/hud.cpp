@@ -77,12 +77,15 @@ namespace Graphic
 	void Hud::Draw(float _deltaTime)
 	{
 		ScissorRect scissor(m_position[0], m_position[1]-m_size[1], m_size[0], m_size[1]);
-		RenewBuffer();
 
-		Device::SetEffect( Resources::GetEffect(Effects::TEXTURE_2DQUAD) );
-		Device::SetTexture( m_texContainer, 7 );
-		//ignore cursor
-		Device::DrawVertices( m_characters, 0, m_characters.GetNumVertices()-1 );
+		RenewBuffer();
+		if (m_screenTextures.size() > 1)
+		{
+			Device::SetEffect(Resources::GetEffect(Effects::TEXTURE_2DQUAD));
+			Device::SetTexture(m_texContainer, 7);
+			//ignore cursor
+			Device::DrawVertices(m_characters, 0, m_characters.GetNumVertices() - 1);
+		}
 
 		for(int i = (int)m_textRenders.size() - 1; i >= 0; --i)
 			if(m_textRenders[i]->IsVisible()) m_textRenders[i]->Draw();
@@ -124,7 +127,7 @@ namespace Graphic
 	void Hud::RenewBuffer()
 	{
 		m_characters.Clear();
-		if (!m_screenTextures.size()) return;
+		
 		auto vbGuard = m_characters.GetBuffer(0);
 	
 		for (size_t i = 0; i < m_screenTextures.size(); i++)
@@ -135,8 +138,8 @@ namespace Graphic
 		}
 		//cursor
 		ScreenTexture* screenTex = static_cast<ScreenTexture*>(m_screenOverlays[0]);
-		if (screenTex->IsVisible())
-			vbGuard->Add(screenTex->m_vertex);
+	//	if (screenTex->IsVisible())
+		vbGuard->Add(screenTex->m_vertex);
 	}
 
 	// ************************************************************************* //

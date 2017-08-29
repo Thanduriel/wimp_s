@@ -237,14 +237,14 @@ namespace Graphic
 	Button::Button(const std::string& _name, Vec2 _position, Vec2 _size,
 		DefinitionPoint _def, Anchor _anchor, const std::string& _caption,
 		std::function<void()> _OnMouseUp, Font* _font) :
-		ScreenTexture(_name + "Default", _position, _size, _def, _anchor, _OnMouseUp),
+		ScreenOverlay(_position, _size, _def, _anchor, _OnMouseUp),
 		m_btnDefault(_name + "Default", _position, _size, _def, _anchor),
 		m_btnOver(_name + "Over", _position, _size, _def, _anchor),
 		m_btnDown(_name + "Down", _position, _size, _def, _anchor),
 		m_caption(Vec2(0.f), Anchor(DefinitionPoint::TopLeft, this), _font),
 		m_autoCenter(true)
 	{
-		SetVisible(true);
+		this->SetSize(m_btnDefault.GetSize());
 		SetActive(true);
 
 		m_btnDefault.SetVisible(true);
@@ -265,7 +265,7 @@ namespace Graphic
 		m_btnDown.Register(_hud);
 
 		//add the collision overlay last so it is in front of the elements
-		ScreenTexture::Register(_hud);
+		ScreenOverlay::Register(_hud);
 
 		SetCaption(m_caption.GetText());
 	}
@@ -273,7 +273,7 @@ namespace Graphic
 	// ************************************************************************ //
 	void Button::SetPosition(Vec2 _pos)
 	{
-		ScreenTexture::SetPosition(_pos);
+		ScreenOverlay::SetPosition(_pos);
 		m_btnDefault.SetPosition(_pos);
 		m_btnOver.SetPosition(_pos);
 		m_btnDown.SetPosition(_pos);
@@ -294,7 +294,7 @@ namespace Graphic
 
 	void Button::Scale(Vec2 _scale)
 	{
-		ScreenTexture::Scale(_scale);
+		ScreenOverlay::Scale(_scale);
 		m_btnDefault.Scale(_scale);
 		m_btnOver.Scale(_scale);
 		m_btnDown.Scale(_scale);
@@ -318,9 +318,9 @@ namespace Graphic
 
 	}
 
-	void Button::SetVisible(bool _visibility)
+	void Button::SetVisible(bool _visible)
 	{
-		if (_visibility)
+		if (_visible)
 		{
 			if (m_btnState == State::Base)
 				m_btnDefault.SetVisible(true);
@@ -335,7 +335,7 @@ namespace Graphic
 			m_btnOver.SetVisible(false);
 			m_btnDown.SetVisible(false);
 		}
-		ScreenOverlay::SetVisible(_visibility);
+		ScreenOverlay::SetVisible(_visible);
 	}
 
 	void Button::MouseEnter()
