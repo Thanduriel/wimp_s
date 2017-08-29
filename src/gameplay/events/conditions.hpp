@@ -13,13 +13,13 @@ namespace Conditions {
 	class OnDestroy : public ActorComponent
 	{
 	public:
-		OnDestroy(Actor& _actor, std::vector<Actor::Handle>&& _targets, int _numKillsRequired);
+		OnDestroy(Actor& _actor, std::vector<Actor::ConstHandle>&& _targets, int _numKillsRequired);
 
 		void ProcessComponent(float _deltaTime) override;
 		
 		std::string GetProgression() const;
 	private:
-		const std::vector<Actor::Handle> m_targets;
+		const std::vector<Actor::ConstHandle> m_targets;
 		const int m_numKillsRequired;
 	};
 

@@ -38,7 +38,6 @@ namespace Control
 		m_controlParams(_params)
 	{
 		s_sceneGraph->Add(m_referenceGrid);
-		_ship.SetSpecialMove(*new Game::BlackHoleGenerator(4.f)); // small cd for testing
 	};
 
 	void PlayerController::ProcessComponent(float _deltaTime, const Game::SceneGraph& _sceneGraph)

@@ -15,14 +15,14 @@
 
 #define CREATE_ACTION [=, &_hud, &_player]()
 // Choose the variant with the appropriate amount of arguments. Since the type has to always be provided it does not count.
-#define CREATE_OBJECTIVE2(type, arg0, arg1) { auto& ev = FactoryActor::GetThreadLocalInstance().Make<Event< type >>(arg0,arg1); \
-											_hud.AddObjective(ev); }
-#define CREATE_OBJECTIVE3(type, arg0, arg1, arg2) { auto& ev = FactoryActor::GetThreadLocalInstance().Make<Event< type >>(arg0,arg1, arg2); \
-											_hud.AddObjective(ev); }
-#define CREATE_OBJECTIVE4(type, arg0, arg1, arg2, arg3) { auto& ev = FactoryActor::GetThreadLocalInstance().Make<Event< type >>(arg0,arg1, arg2, arg3); \
-											_hud.AddObjective(ev); }
-#define CREATE_OBJECTIVE5(type, arg0, arg1, arg2, arg3, arg4) { auto& ev = FactoryActor::GetThreadLocalInstance().Make<Event< type >>(arg0,arg1, arg2, arg3, arg4); \
-											_hud.AddObjective(ev); }
+#define CREATE_OBJECTIVE2(type, arg0, arg1) auto* ev = &FactoryActor::GetThreadLocalInstance().Make<Event< type >>(arg0,arg1); \
+											_hud.AddObjective(*ev);
+#define CREATE_OBJECTIVE3(type, arg0, arg1, arg2) auto* ev = &FactoryActor::GetThreadLocalInstance().Make<Event< type >>(arg0,arg1, arg2); \
+											_hud.AddObjective(*ev);
+#define CREATE_OBJECTIVE4(type, arg0, arg1, arg2, arg3) auto* ev = &FactoryActor::GetThreadLocalInstance().Make<Event< type >>(arg0,arg1, arg2, arg3); \
+											_hud.AddObjective(*ev);
+#define CREATE_OBJECTIVE5(type, arg0, arg1, arg2, arg3, arg4) auto* ev = &FactoryActor::GetThreadLocalInstance().Make<Event< type >>(arg0,arg1, arg2, arg3, arg4); \
+											_hud.AddObjective(*ev);
 
 
 namespace Game {
@@ -46,6 +46,8 @@ namespace Game {
 
 			return c;
 		}
+
+		void FinishMap();
 
 		SceneGraph& m_sceneGraph;
 		Generators::WeaponGenerator m_weaponGen;

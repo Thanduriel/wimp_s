@@ -20,4 +20,8 @@ namespace Game {
 
 		return ship;
 	}
+
+	void Map::FinishMap()
+	{
+	}
 }

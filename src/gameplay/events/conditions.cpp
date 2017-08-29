@@ -4,7 +4,7 @@
 
 namespace Game {
 namespace Conditions {
-	OnDestroy::OnDestroy(Actor& _actor, std::vector<Actor::Handle>&& _targets, int _numKills)
+	OnDestroy::OnDestroy(Actor& _actor, std::vector<Actor::ConstHandle>&& _targets, int _numKills)
 		: ActorComponent(_actor),
 		m_targets(std::move(_targets)),
 		m_numKillsRequired(_numKills)

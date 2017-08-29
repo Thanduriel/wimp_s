@@ -15,7 +15,7 @@ namespace Acts {
 	class Act01 : public Map
 	{
 	public:
-		Act01(SceneGraph& _sceneGraph, const Ship& _player, GameStates::MainHud& _hud);
+		Act01(SceneGraph& _sceneGraph, Ship& _player, GameStates::MainHud& _hud);
 
 	private:
 		Generators::AsteroidField m_asteroids;

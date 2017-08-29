@@ -9,6 +9,8 @@
 #include "generators/asteroidfield.hpp"
 #include "gamestates/mainstate.hpp"
 #include "control/waspcontroller.hpp"
+#include "gameplay/elements/shipsystems/specialmove.hpp"
+#include "control/kamikazecontroller.hpp"
 
 namespace Game {
 namespace Acts {
@@ -17,8 +19,10 @@ namespace Acts {
 	using namespace ei;
 
 	const Vec3 BASE_POSITON = Vec3(-240.f, 50.f, 820.f);
+	const Vec3 DRONE_SPAWN = Vec3(350.f, 24.f, 600.f);
+	const Vec3 EXIT_POSITION = Vec3(-1800.f, 38.f, 790.f);
 
-	Act01::Act01(SceneGraph& _sceneGraph, const Ship& _player, GameStates::MainHud& _hud)
+	Act01::Act01(SceneGraph& _sceneGraph, Ship& _player, GameStates::MainHud& _hud)
 		: Map(_sceneGraph),
 		m_asteroids(BASE_POSITON - Vec3(12.f, -6.f, 110.f), 200.f)
 	{
@@ -48,11 +52,40 @@ namespace Acts {
 		m_sceneGraph.Add(*new Sun(Vec3(777.f, 1500.f, 10000.f), 2000.f));
 
 		// --- events --------------------------------------- //
+		auto AfinishAct = CREATE_ACTION
+		{
+			FinishMap();
+		};
+		
+		auto AexitArea = CREATE_ACTION
+		{
+			CREATE_OBJECTIVE5(Conditions::IsClose, AfinishAct, "leave",
+				_player, EXIT_POSITION, 90.f);
+			ev->SetPosition(EXIT_POSITION);
+			_hud.AddIndicator(*ev, "exit direction", Color8U(1.f, 1.f, 0.f));
+		};
+
+		auto AblackHoleGenerator = CREATE_ACTION
+		{
+			_player.SetSpecialMove(*new Game::BlackHoleGenerator(30.f));
+
+			std::vector<Actor::ConstHandle> targets;
+			for (int i = 0; i < 8; ++i)
+			{
+				Ship& ship = CreateShip("DroneMK1", DRONE_SPAWN + Vec3(i,i,i), 1, 4.f, 0.f);
+				CreateController<Control::KamikazeController>(ship, playerHndl, _hud);
+				targets.push_back(ship.GetHandle());
+			}
+			CREATE_OBJECTIVE4(Conditions::OnDestroy, AexitArea, "defend yourself against the drones",
+				std::move(targets), (int)targets.size());
+		};
 
 		auto Aexplosion = CREATE_ACTION
 		{
 			BlackHole& blackHole = FactoryActor::GetThreadLocalInstance().Make<BlackHole>(BASE_POSITON + Vec3(0.f,0.f,0.2f), 210.f, 7.f, 21.f);
 			blackHole.Activate();
+
+			CREATE_OBJECTIVE3(Conditions::Timer, AblackHoleGenerator, "stay safe", 24.f);
 		};
 
 		// 04
@@ -72,7 +105,7 @@ namespace Acts {
 			CreateController<Control::WaspController>(ship02, playerHndl, _hud);
 
 			CREATE_OBJECTIVE4(Conditions::OnDestroy, AapproachFacility, "destroy the ships near by",
-				std::vector<Actor::Handle>({ ship01.GetHandle(), ship02.GetHandle() }), 2);
+				std::vector<Actor::ConstHandle>({ ship01.GetHandle(), ship02.GetHandle() }), 2);
 		};
 
 		auto AtimeToEqiup = CREATE_ACTION
@@ -84,7 +117,7 @@ namespace Acts {
 		auto AbeginPickUpWeapon = CREATE_ACTION
 		{
 			CREATE_OBJECTIVE4(Conditions::OnDestroy, AtimeToEqiup,
-				"pick up the testing equipment", std::vector<Actor::Handle>({ hndl }), 1);
+				"pick up the testing equipment", std::vector<Actor::ConstHandle>({ hndl }), 1);
 			_hud.AddIndicator(*crate, "crate", Color8U(1.f,1.f,0.f));
 		};
 
