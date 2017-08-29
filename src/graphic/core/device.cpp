@@ -154,7 +154,7 @@ namespace Graphic {
 #ifdef _DEBUG
 		glfwWindowHint(GLFW_OPENGL_DEBUG_CONTEXT, GL_TRUE);
 #endif
-		g_Device.m_window = glfwCreateWindow(_width, _height, "wimp_s", nullptr, nullptr);
+		g_Device.m_window = glfwCreateWindow(_width, _height, "wimp_s", _fullScreen ? glfwGetPrimaryMonitor() : nullptr, nullptr);
 		if( !g_Device.m_window )
 			LOG_CRITICAL("Window was not created.");
 		glfwMakeContextCurrent(g_Device.m_window);

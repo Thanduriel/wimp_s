@@ -16,6 +16,7 @@
 #include "utils/loggerinit.hpp"
 
 using namespace Graphic;
+using namespace std::string_literals;
 
 float Wimp_s::m_gameTime;
 
@@ -40,9 +41,10 @@ Wimp_s::Wimp_s()
 	}
 
 	// create context
-	const int screenWidth = 1366;
-	const int screenHeight = 768;
-	Graphic::Device::Initialize(screenWidth, screenHeight, false);
+	auto& cgraphic = m_config["Graphics"];
+	const int screenWidth = cgraphic["ScreenWidth"s].Get(1366);
+	const int screenHeight = cgraphic["ScreenHeight"s].Get(768);
+	Graphic::Device::Initialize(screenWidth, screenHeight, cgraphic["FullScreen"s].Get(false));
 
 	m_sceneColorTexture = new Texture(Graphic::Device::GetBackbufferSize()[0], Device::GetBackbufferSize()[1],
 		Texture::Format(4, 8, Texture::Format::ChannelType::UINT));
@@ -123,8 +125,8 @@ void Wimp_s::Run()
 		if (changedState && m_gameStates.size()) m_gameStates.back()->OnActivate();
 
 		// todo: move this when general input handling is implemented
-		if (m_gameStates.size() && glfwGetKey(Graphic::Device::GetWindow(), GLFW_KEY_ESCAPE)) 
-			m_gameStates.pop_back();
+	//	if (m_gameStates.size() && glfwGetKey(Graphic::Device::GetWindow(), GLFW_KEY_ESCAPE)) 
+	//		m_gameStates.pop_back();
 		if (m_gameStates.size())
 		{
 			Control::InputManager::SetGameState(m_gameStates.back().get());
@@ -149,12 +151,12 @@ void Wimp_s::BuildDefaultConfig()
 	cinput[std::string("Inventory")][0] = GLFW_KEY_I;
 	cinput[std::string("SwitchTactical")][0] = GLFW_KEY_SPACE;
 	cinput[std::string("Pause")][0] = GLFW_KEY_P;
+	cinput[std::string("Pause")][1] = GLFW_KEY_ESCAPE;
 
-	
-/*	auto& cgame = m_config[std::string("Game")];
-	cgame[std::string("Language")] = "english.json";
-
-	auto& cgraphics = Config[std::string("Graphics")];
+	auto& cgraphics = m_config[std::string("Graphics")];
 	cgraphics[std::string("ScreenWidth")] = 1366;
-	cgraphics[std::string("ScreenHeight")] = 768; */
+	cgraphics[std::string("ScreenHeight")] = 768;
+	cgraphics[std::string("FullScreen")] = false;
+/*	auto& cgame = m_config[std::string("Game")];
+	cgame[std::string("Language")] = "english.json"; */
 }

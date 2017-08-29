@@ -1,5 +1,6 @@
 #include "pausestate.hpp"
 #include "mainmenustate.hpp"
+#include "settingsstate.hpp"
 #include "graphic/interface/hud.hpp"
 #include "graphic/interface/pixelcoords.hpp"
 #include "graphic/interface/hudelements.hpp"
@@ -15,7 +16,7 @@ namespace GameStates
 		using namespace Graphic;
 		m_oldState = &_oldState;
 		m_hud.GetContinueButton().SetOnMouseUp([&]() { m_isFinished = true; });
-		m_hud.GetOptionsButton().SetOnMouseUp([&]() { });
+		m_hud.GetOptionsButton().SetOnMouseUp([&]() { m_newState = new SettingsState(); });
 		m_hud.GetMenuButton().SetOnMouseUp([&]() { m_isFinished = true; m_oldState->Finish(); });
 	}
 
@@ -53,7 +54,7 @@ namespace GameStates
 	void PauseState::KeyRelease(int _key)
 	{
 		if (InputManager::IsVirtualKey(_key, Control::VirtualKey::PAUSE))
-			m_newState = m_oldState;
+			m_isFinished = true;
 
 		if (m_hud.KeyUp(_key, 0)) return;
 	}
