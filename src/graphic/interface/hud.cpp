@@ -79,7 +79,7 @@ namespace Graphic
 		ScissorRect scissor(m_position[0], m_position[1]-m_size[1], m_size[0], m_size[1]);
 
 		RenewBuffer();
-		if (m_screenTextures.size() > 1)
+		if (m_screenTextures.size())
 		{
 			Device::SetEffect(Resources::GetEffect(Effects::TEXTURE_2DQUAD));
 			Device::SetTexture(m_texContainer, 7);

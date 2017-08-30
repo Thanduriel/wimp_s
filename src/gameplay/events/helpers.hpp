@@ -26,10 +26,25 @@
 
 
 namespace Game {
+
+	enum struct Level {
+		Act01,
+		Act02,
+		Act03,
+		Act04,
+		Act05,
+		COUNT
+	};
+
+
 	class Map
 	{
 	public:
 		Map(SceneGraph& _sceneGraph);
+		virtual ~Map() {}
+
+		Level GetNextLevel() const { return m_nextLevel; }
+		bool IsFinished() const { return m_isFinished; }
 	protected:
 		typedef std::function<void()> Objective;
 
@@ -47,9 +62,14 @@ namespace Game {
 			return c;
 		}
 
-		void FinishMap();
+		void SetupPlayer(Ship& _player, const ei::Vec3& _position, const ei::Quaternion& _rotation = ei::qidentity(), float _speed = 10.f);
+		void FinishMap(Level _nextLevel);
 
 		SceneGraph& m_sceneGraph;
 		Generators::WeaponGenerator m_weaponGen;
+
+	private:
+		Level m_nextLevel;
+		bool m_isFinished;
 	};
 }

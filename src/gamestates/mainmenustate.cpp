@@ -1,5 +1,5 @@
 #include "mainmenustate.hpp"
-#include "mainstate.hpp"
+#include "transitionstate.hpp"
 #include "huds/mainmenuhud.hpp"
 #include "graphic/interface/hud.hpp"
 #include "graphic/interface/pixelcoords.hpp"
@@ -10,6 +10,7 @@ namespace GameStates
 {
 	using namespace Graphic;
 	using namespace Control;
+	using namespace ei;
 
 	MainMenuState::MainMenuState()
 		: m_grid(ei::Vec3(0.f,0.f, 30.f), Utils::Color32F(0.f,1.f,0.f, 0.5f), 3.5f, 3.5f, 80.f),
@@ -20,7 +21,7 @@ namespace GameStates
 		m_blackHole.Process(0.f);
 
 		using namespace Graphic;
-		m_hud.m_startButton->SetOnMouseUp([&]() { m_newState = new MainState(); });
+		m_hud.m_startButton->SetOnMouseUp([&]() { m_newState = new TransitionState(Game::Level::Act01, nullptr); });
 		m_hud.m_exitButton->SetOnMouseUp([&]() { m_isFinished = true; });
 	}
 
@@ -40,11 +41,7 @@ namespace GameStates
 		m_grid.Draw();
 		m_hud.Draw(_deltaTime);
 
-		Texture& tex = *Device::GetCurrentFramebufferBinding()->GetColorAttachments().begin()->pTexture;
-		Device::BindFramebuffer(nullptr);
-		Device::SetEffect(Resources::GetEffect(Effects::SCREEN_OUTPUT));
-		Device::SetTexture(tex, 0);
-		Device::DrawFullscreen();
+		Device::DrawFramebufferToBackbuffer();
 
 		m_blackHole.Draw();
 	}

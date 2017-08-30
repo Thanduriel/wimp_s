@@ -46,6 +46,7 @@ namespace Game {
 		});
 		Assert(it != m_actors.end(), "This actor is not known by the SceneGraph.");
 
+		(*it).release();
 		(*it) = std::move(m_actors.back());
 		m_actors.pop_back();
 	}

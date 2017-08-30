@@ -14,6 +14,11 @@ namespace Control {
 	class PlayerController;
 }
 
+namespace Game {
+	class Ship;
+	class Map;
+}
+
 namespace GameStates{
 
 	/* MainState *******************************
@@ -23,7 +28,7 @@ namespace GameStates{
 	class MainState : public GameStateHT<MainHud>
 	{
 	public:
-		MainState();
+		MainState(Game::Ship& _player);
 		~MainState();
 
 		void Process(float _deltaTime) override;
@@ -37,9 +42,17 @@ namespace GameStates{
 		void KeyClick(int _key) override;
 		void KeyDoubleClick(int _key) override;
 
+		static Game::Ship& CreatePlayerShip();
+		Game::SceneGraph& GetSceneGraph() { return m_sceneGraph; }
+		void SetMap(Game::Map& _map);
 	private:
+		// remove player and associated equipment from the scenegraph
+		void RemovePlayer();
+
 		Graphic::Starbackground m_starbackground;
 
+		Game::Ship& m_playerShip; // needs to be stored to retrieve the player on closing
+		std::unique_ptr<Game::Map> m_map;
 		Control::PlayerController* m_playerController;
 		Control::GameTimeControl m_gameTimeControl;
 

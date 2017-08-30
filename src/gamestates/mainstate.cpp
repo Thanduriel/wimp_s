@@ -12,6 +12,7 @@
 #include "control/input.hpp"
 #include "graphic/effects/lightsystem.hpp"
 #include "control/controller.hpp"
+#include "transitionstate.hpp"
 // test related
 #include "graphic/interface/pixelcoords.hpp"
 #include "gameplay/elements/grid.hpp"
@@ -33,38 +34,40 @@ namespace GameStates {
 
 	Game::Ship* ship2;
 	Game::Model* boundingMeshTest = nullptr;
-	Acts::Act01* map;
 
-	MainState::MainState()
+	MainState::MainState(Game::Ship& _player)
 		: m_starbackground(2000, 20000.f, 14000),
-		m_gameTimeControl{1.f}
+		m_gameTimeControl{1.f},
+		m_playerShip(_player)
 	{
 		Controller::SetSceneGraph(m_sceneGraph);
 
 		// setup player controller
-		Ship* ship = new Ship("TestShip", Vec3(0.f));
-		m_sceneGraph.Add(*ship);
-		m_playerController = new Control::PlayerController(*ship, m_hud, m_gameTimeControl);
+		m_sceneGraph.Add(_player);
+		m_playerController = new Control::PlayerController(_player, m_hud, m_gameTimeControl);
 		m_sceneGraph.RegisterComponent(*m_playerController);
-		Control::g_camera.Attach(*ship);
+		Control::g_camera.Attach(_player);
+
+		//register weapons
+		for (auto& socket : _player.GetWeaponSockets())
+		{
+			Actor* w = socket.GetAttached();
+			if (w) m_sceneGraph.Add(*w);
+		}
 
 		//boundingMeshTest = new Model("default_shipbm", Vec3(), qidentity());
 		//boundingMeshTest->GetCollisionComponent().SetType(0x0); // no collision
 	//	m_sceneGraph.Add(*boundingMeshTest);
 
-		map = new Acts::Act01(m_sceneGraph, *ship, m_hud);
-
 		// test actors
-		ship = new Ship("WaspShip", Vec3(50.f,0.f,500.f));
-		m_sceneGraph.Add(*ship);
-		m_sceneGraph.RegisterComponent(*new Control::WaspController(*ship, m_playerController->GetShip().GetHandle(), m_hud));
-		ship2 = ship;
+		ship2 = new Ship("WaspShip", Vec3(50.f,0.f,500.f));
+		m_sceneGraph.Add(*ship2);
+		m_sceneGraph.RegisterComponent(*new Control::WaspController(*ship2, m_playerController->GetShip().GetHandle(), m_hud));
 	}
 
 	MainState::~MainState()
 	{
 		if (boundingMeshTest) delete boundingMeshTest;
-		delete map;
 	}
 
 	void MainState::Process(float _deltaTime)
@@ -75,6 +78,15 @@ namespace GameStates {
 
 		Control::g_camera.Process(_deltaTime);
 
+		if (m_map->IsFinished())
+		{
+			m_isFinished = true;
+			RemovePlayer();
+			m_newState = new TransitionState(m_map->GetNextLevel(), &m_playerShip);
+
+			// clear all particles
+			Graphic::ParticleSystems::Manager::ClearAll();
+		}
 		if (m_playerController->GetShip().IsDestroyed()) m_isFinished = true;
 	}
 
@@ -136,5 +148,26 @@ namespace GameStates {
 	void MainState::KeyDoubleClick(int _key)  
 	{ 
 //		if (m_hud.KeyDoubleClick(_key)) return;
+	}
+
+	// ******************************************************* //
+	Ship& MainState::CreatePlayerShip()
+	{
+		return *new Ship("TestShip", Vec3(0.f));
+	}
+
+	void MainState::SetMap(Game::Map& _map)
+	{
+		m_map.reset(&_map);
+	}
+
+	void MainState::RemovePlayer()
+	{
+		m_sceneGraph.Remove(m_playerShip);
+		for (auto& socket : m_playerShip.GetWeaponSockets())
+		{
+			Actor* w = socket.GetAttached();
+			if (w) m_sceneGraph.Remove(*w);
+		}
 	}
 }

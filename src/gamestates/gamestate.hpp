@@ -43,6 +43,8 @@ namespace GameStates {
 	class GameStateHT : public GameState
 	{
 	public:
+
+		HudT& GetHud() { return m_hud; }
 	protected:
 		HudT m_hud;
 	};

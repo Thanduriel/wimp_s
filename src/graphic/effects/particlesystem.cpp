@@ -219,6 +219,12 @@ void Manager::CleanUp()
 		system.second->CleanUp();
 }
 
+void Manager::ClearAll()
+{
+	for (auto& system : m_particleSystems)
+		system.second->Clear();
+}
+
 size_t Manager::GetNumParticlesTotal()
 {
 	size_t count = 0;

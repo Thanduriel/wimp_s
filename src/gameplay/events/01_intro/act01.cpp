@@ -18,6 +18,7 @@ namespace Acts {
 	using namespace Utils;
 	using namespace ei;
 
+	const Vec3 PLAYER_SPAWN = Vec3(0.f);
 	const Vec3 BASE_POSITON = Vec3(-240.f, 50.f, 820.f);
 	const Vec3 DRONE_SPAWN = Vec3(350.f, 24.f, 600.f);
 	const Vec3 EXIT_POSITION = Vec3(-1800.f, 38.f, 790.f);
@@ -26,6 +27,8 @@ namespace Acts {
 		: Map(_sceneGraph),
 		m_asteroids(BASE_POSITON - Vec3(12.f, -6.f, 110.f), 200.f)
 	{
+		SetupPlayer(_player, PLAYER_SPAWN);
+
 		Actor::ConstHandle playerHndl = _player.GetHandle();
 
 		// the research base
@@ -54,7 +57,7 @@ namespace Acts {
 		// --- events --------------------------------------- //
 		auto AfinishAct = CREATE_ACTION
 		{
-			FinishMap();
+			FinishMap(Level::Act01);
 		};
 		
 		auto AexitArea = CREATE_ACTION
@@ -116,6 +119,7 @@ namespace Acts {
 		// 02
 		auto AbeginPickUpWeapon = CREATE_ACTION
 		{
+			FinishMap(Level::Act01); //test
 			CREATE_OBJECTIVE4(Conditions::OnDestroy, AtimeToEqiup,
 				"pick up the testing equipment", std::vector<Actor::ConstHandle>({ hndl }), 1);
 			_hud.AddIndicator(*crate, "crate", Color8U(1.f,1.f,0.f));

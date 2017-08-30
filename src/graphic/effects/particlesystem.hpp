@@ -330,6 +330,7 @@ namespace Graphic {
 			virtual ~SystemActions() {}
 			virtual void Simulate(float _deltaTime) {}
 			virtual void CleanUp() {}
+			virtual void Clear() {}
 			void Draw(size_t _numVertices);
 			RenderType GetRenderType() const { return m_renderer; }
 			virtual uint32 GetNumParticles() const { return 0; }
@@ -378,6 +379,11 @@ namespace Graphic {
 				inherit_conditional<((PFlags & Component::LIFETIME) == 0), FuncDieAll<SystemData<PFlags>>, FuncNOP<SystemData<PFlags>>>::Run();
 			}
 
+			void Clear()
+			{
+				SystemData<PFlags>::Clear();
+			}
+
 			uint32 GetNumParticles() const { return m_numParticles; }
 
 		private:
@@ -406,6 +412,9 @@ namespace Graphic {
 			static void Draw(const Control::Camera& _camera);
 			static void Process(float _deltaTime);
 			static void CleanUp();
+
+			// kills all currently existing particles
+			static void ClearAll();
 
 			static size_t GetNumParticlesTotal();
 
