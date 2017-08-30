@@ -1,6 +1,5 @@
 #pragma once
 
-#include "graphic/interface/hud.hpp"
 #include "huds/mainhud.hpp"
 #include "gamestate.hpp"
 #include "graphic/effects/starbackground.hpp"

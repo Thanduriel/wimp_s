@@ -267,11 +267,8 @@ namespace GameStates
 		Graphic::Device::SetEffect(Graphic::Resources::GetEffect(Graphic::Effects::MESH));
 		m_ship.GetGeometryComponent().Draw();
 
-		Texture& tex = *Device::GetCurrentFramebufferBinding()->GetColorAttachments().begin()->pTexture;
-		Device::BindFramebuffer(nullptr);
-		Device::SetEffect(Resources::GetEffect(Effects::SCREEN_OUTPUT));
-		Device::SetTexture(tex, 0);
-		Device::DrawFullscreen();
+		Device::DrawFramebufferToBackbuffer();
+
 		m_hud.Draw(_deltaTime);
 	}
 

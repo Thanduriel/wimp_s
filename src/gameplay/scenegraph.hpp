@@ -49,6 +49,10 @@ namespace Game {
 			RegisterComponent(component_cast<T>(_component));
 		}
 
+		// Remove an object from the scene management.
+		// It is not destroyed.
+		void Remove(Actor& _element);
+
 		void Process(float _deltaTime, float _realdTime);
 		void Draw();
 

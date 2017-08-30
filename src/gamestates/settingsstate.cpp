@@ -18,13 +18,7 @@ namespace GameStates {
 
 	void SettingsState::Draw(float _deltaTime)
 	{
-		using namespace Graphic;
-		Texture& tex = *Device::GetCurrentFramebufferBinding()->GetColorAttachments().begin()->pTexture;
-
-		Device::BindFramebuffer(nullptr);
-		Device::SetEffect(Graphic::Resources::GetEffect(Effects::SCREEN_OUTPUT));
-		Device::SetTexture(tex, 0);
-		Device::DrawFullscreen();
+		Graphic::Device::DrawFramebufferToBackbuffer();
 
 		m_hud.Draw(_deltaTime);
 	}

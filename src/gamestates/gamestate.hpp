@@ -17,7 +17,7 @@ namespace GameStates {
 		virtual void Draw(float _deltaTime) = 0;
 
 		// Disposes the as destroyed marked actors.
-		virtual void Dispose() = 0;
+		virtual void Dispose() {}
 
 		// Called when this GameState is found on top of the stack after a state change.
 		virtual void OnActivate() { MouseMove(0.f, 0.f); }

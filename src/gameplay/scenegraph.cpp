@@ -38,6 +38,18 @@ namespace Game {
 		_element.RegisterComponents(*this);
 	}
 
+	void SceneGraph::Remove(Actor& _element)
+	{
+		auto it = std::find_if(m_actors.begin(), m_actors.end(), [&](const std::unique_ptr<Actor>& _ptr) 
+		{
+			return _ptr.get() == &_element;
+		});
+		Assert(it != m_actors.end(), "This actor is not known by the SceneGraph.");
+
+		(*it) = std::move(m_actors.back());
+		m_actors.pop_back();
+	}
+
 	void SceneGraph::Process(float _deltaTime, float _realdTime)
 	{
 		// for now all actors are processed
@@ -86,13 +98,8 @@ namespace Game {
 		for (auto component : m_markerComponents)
 			component->Draw();
 
-		// render the frame-buffer to the hardware back-buffer
-		Texture& tex = *Device::GetCurrentFramebufferBinding()->GetColorAttachments().begin()->pTexture;
-
-		Device::BindFramebuffer(nullptr);
-		Device::SetEffect(Graphic::Resources::GetEffect(Effects::SCREEN_OUTPUT));
-		Device::SetTexture(tex, 0);
-		Device::DrawFullscreen();
+		// switch to back-buffer to perform post processing without altering the source material
+		Device::DrawFramebufferToBackbuffer();
 
 		// post processing reads from the frame-buffer and writes to the back-buffer
 		for (auto component : m_postProcessComponents)

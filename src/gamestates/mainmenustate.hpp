@@ -1,6 +1,6 @@
 #pragma once
-#include "gamestate.hpp"
 #include "huds/mainmenuhud.hpp"
+#include "gamestate.hpp"
 
 #include "gameplay/elements/grid.hpp"
 #include "gameplay/elements/blackhole.hpp"

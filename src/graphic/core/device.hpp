@@ -73,6 +73,9 @@ namespace Graphic {
 
 		// A draw call that draws a screen aligned triangle.
 		static void DrawFullscreen();
+
+		// Switches to the backbuffer and overwrites its current content with the previous framebuffer.
+		static void DrawFramebufferToBackbuffer();
 	private:
 		GLFWwindow* m_window;		///< Reference to the one window created during Initialize()
 

@@ -7,6 +7,8 @@
 //#include <cstdio>
 #include "utils/assert.hpp"
 
+#include "../resources.hpp"
+
 namespace Graphic {
 
 	static Device g_Device;
@@ -382,5 +384,15 @@ namespace Graphic {
 	void Device::DrawFullscreen()
 	{
 		DrawVertices(*screenTriangle, 0, 3);
+	}
+
+	void Device::DrawFramebufferToBackbuffer()
+	{
+		Texture& tex = *GetCurrentFramebufferBinding()->GetColorAttachments().begin()->pTexture;
+
+		BindFramebuffer(nullptr);
+		SetEffect(Graphic::Resources::GetEffect(Effects::SCREEN_OUTPUT));
+		SetTexture(tex, 0);
+		DrawFullscreen();
 	}
 };

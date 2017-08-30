@@ -34,10 +34,6 @@ namespace GameStates
 		m_hud.Draw(_deltaTime);
 	}
 
-	void PauseState::Dispose()
-	{
-	}
-
 	// ******************************************************* //
 	void PauseState::MouseMove(float _dx, float _dy)
 	{

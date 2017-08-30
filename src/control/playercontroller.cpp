@@ -56,7 +56,7 @@ namespace Control
 		else
 			m_hud.UpdateCrossHair(0.f);
 
-		m_hud.ShowSpecialMoveMarker(m_ship.GetSpecialMove()->GetState() != Game::SpecialMove::State::Charging);
+		m_hud.ShowSpecialMoveMarker(m_ship.GetSpecialMove() && m_ship.GetSpecialMove()->GetState() != Game::SpecialMove::State::Charging);
 		m_hud.UpdateIndicators(GetShip().GetPosition());
 
 		if (m_targetingMode == TargetingMode::Tactical)
@@ -95,7 +95,7 @@ namespace Control
 			if (m_targetingMode == TargetingMode::Normal)
 			{
 				Game::SpecialMove* sm = m_ship.GetSpecialMove();
-				if (sm->GetState() == Game::SpecialMove::State::Ready)
+				if (sm && sm->GetState() == Game::SpecialMove::State::Ready)
 				{
 					sm->Target();
 					SwitchTargetingMode(TargetingMode::Tactical);

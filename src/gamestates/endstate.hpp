@@ -1,15 +1,15 @@
 #pragma once
-#include "huds/pausehud.hpp"
-#include "gamestate.hpp"
-#include "mainstate.hpp"
 
-namespace GameStates
-{
-	class PauseState : public GameStateHT<PauseHud>
+#include "graphic/interface/hud.hpp"
+#include "gamestate.hpp"
+
+namespace GameStates {
+
+	// Post game display with stats.
+	class EndState : public GameStateHT<>
 	{
 	public:
-		PauseState(MainState& _oldState);
-		~PauseState();
+		EndState();
 
 		void Process(float _deltaTime) override;
 		void Draw(float _deltaTime) override;
@@ -22,6 +22,5 @@ namespace GameStates
 		void KeyDoubleClick(int _key) override;
 
 	private:
-		MainState* m_oldState;
 	};
 }
