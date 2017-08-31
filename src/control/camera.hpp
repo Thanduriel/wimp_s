@@ -56,6 +56,8 @@ namespace Control {
 		float GetAspectRatio() const { return m_aspectRatio; };
 	private:
 		void ProcessFreeMove(float _deltaTime);
+		void MoveTo(const ei::Vec3& _position, const ei::Quaternion& _rotation, float _time = 0.6f);
+		void SetFollowOrientation(float _deltaTime);
 
 		float m_fov;
 		ei::Mat4x4 m_projection;
@@ -65,6 +67,7 @@ namespace Control {
 
 		ei::Vec3 m_targetPosition;
 		ei::Quaternion m_targetRotation;
+		float m_transitionSpeed;
 		Mode m_mode;
 		Mode m_nextMode; // mode after the target position has been reached
 		const Game::Actor* m_target;

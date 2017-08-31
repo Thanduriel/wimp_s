@@ -228,7 +228,9 @@ namespace Control
 
 		// update stats on the hud
 		// this might not be the best place for this
-		m_hud.UpdateSpeedLabel(GetShip().GetCurrentSpeed());
+		static int frameCount = 0;
+		++frameCount; // prevent this label from flickering between two numbers
+		if(frameCount % 4 == 0) m_hud.UpdateSpeedLabel(GetShip().GetCurrentSpeed());
 		m_hud.UpdateSpeedBar(GetShip().GetCurrentSpeed(), GetShip().GetMaxSpeed());
 		m_hud.UpdateTargetSpeedSlider(m_targetSpeed, GetShip().GetMaxSpeed());
 		m_hud.GetEnergyBar().SetFillLevel(GetShip().GetEnergy() / GetShip().GetMaxEnergy());
@@ -251,7 +253,7 @@ namespace Control
 	//		g_camera.FixRotation(ei::Quaternion(Vec3(1.f, 0.f, 0.f), m_tacticalDirSign * angle) * rot,
 	//			GetShip().GetPosition() + Vec3(0.f, m_tacticalDirSign * TACTICALCAM_DIST, -TACTICALCAM_DIST / tan(angle)));
 
-			Vec3 camPos = m_ship.GetPosition() + m_ship.GetRotationMatrix() * Vec3(0.f, m_tacticalDirSign * TACTICALCAM_DIST, -TACTICALCAM_DIST / tan(angle));
+			Vec3 camPos = m_ship.GetPosition() + m_ship.GetRotationMatrix() * Vec3(0.f, TACTICALCAM_DIST, -TACTICALCAM_DIST / tan(angle));
 
 			g_camera.FixRotation(Quaternion(m_ship.GetRotationMatrix() * Vec3(0.f, 0.f, 1.f),
 				normalize(m_ship.GetPosition() - camPos)) * m_ship.GetRotation(), camPos);

@@ -129,7 +129,6 @@ namespace Acts {
 		_hud.AddObjective(ev);
 		m_sceneGraph.Add(ev);
 		_hud.AddIndicator(researchBase, "research facility");
-
 	}
 }
 }

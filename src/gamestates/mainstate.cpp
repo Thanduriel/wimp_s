@@ -46,7 +46,6 @@ namespace GameStates {
 		m_sceneGraph.Add(_player);
 		m_playerController = new Control::PlayerController(_player, m_hud, m_gameTimeControl);
 		m_sceneGraph.RegisterComponent(*m_playerController);
-		Control::g_camera.Attach(_player);
 
 		//register weapons
 		for (auto& socket : _player.GetWeaponSockets())
@@ -68,6 +67,7 @@ namespace GameStates {
 	MainState::~MainState()
 	{
 		if (boundingMeshTest) delete boundingMeshTest;
+		ParticleSystems::Manager::ClearAll();
 	}
 
 	void MainState::Process(float _deltaTime)

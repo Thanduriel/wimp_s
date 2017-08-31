@@ -38,16 +38,7 @@ namespace Control {
 		case Mode::Follow:
 			if (m_target)
 			{
-				//Set the acceleration relative to the target acceleration
-				m_acceleration = 0.005f * ((Game::Ship*)m_target)->GetThrust() / ((Game::Ship*)m_target)->GetMass();
-
-				m_currentOffset = m_targetOffset;
-				m_speed = lerp(m_speed, ((Game::Ship*)m_target)->GetCurrentSpeed(), m_acceleration * _deltaTime);
-				/*m_speed = 1.0f;*/
-				m_currentOffset.z = m_targetOffset.z - (1.0f - (m_speed - ((Game::Ship*)m_target)->GetCurrentSpeed()) / ((Game::Ship*)m_target)->GetMaxSpeed()) * 10.0f;
-
-				m_targetPosition = m_target->GetPosition() + m_target->GetRotationMatrix() * GetDistance();
-				m_targetRotation = m_target->GetRotation();
+				SetFollowOrientation(_deltaTime);
 
 				// move to the desired configuration
 				m_position = m_targetPosition;
@@ -59,10 +50,19 @@ namespace Control {
 			// move to the desired configuration
 			Vec3 dir = m_targetPosition - m_position;
 			float l = len(dir);
-			float d = MOVEMENT_FACTOR * _deltaTime;
+			float d = m_transitionSpeed * _deltaTime;
 			m_position = m_position + (d < l ? dir / l * d : dir);
-			if (l > 0.01f) m_rotation = slerpLess(m_rotation, m_targetRotation, min(1.0f, d / l));
+			// check against new position
+			float lSq = lensq(m_targetPosition - m_position);
+			if (lSq > 0.1) m_rotation = slerpLess(m_rotation, m_targetRotation, min(1.0f, d / l));
 			else m_mode = m_nextMode;
+
+			// the target changes position while the camera moves
+			if (m_nextMode == Mode::Follow)
+			{
+			//	if(m_targetPosition)
+				SetFollowOrientation(_deltaTime);
+			}
 		}
 		default:
 			break;
@@ -83,18 +83,14 @@ namespace Control {
 	void Camera::Attach(const Actor& _target)
 	{
 		m_nextMode = Mode::Follow;
-		m_mode = Mode::MoveTo;
 		m_target = &_target;
-		m_targetPosition = m_target->GetPosition() + m_target->GetRotationMatrix() * GetDistance();
-		m_targetRotation = m_target->GetRotation();
+		MoveTo(m_target->GetPosition() + m_target->GetRotationMatrix() * GetDistance(), m_target->GetRotation());
 	}
 
 	void Camera::FixRotation(const ei::Quaternion& _rotation, const ei::Vec3& _position)
 	{
 		m_nextMode = Mode::Tactical;
-		m_mode = Mode::MoveTo;
-		m_targetRotation = _rotation;
-		m_targetPosition = _position;
+		MoveTo(_position, _rotation);
 	}
 
 	// ******************************************************************* //
@@ -128,6 +124,7 @@ namespace Control {
 		m_rotation *= Quaternion(dy, dx, 0.f);
 	}
 
+	// ******************************************************************* //
 	void Camera::Detach()
 	{
 		m_mode = Mode::Free;
@@ -136,6 +133,16 @@ namespace Control {
 		glfwSetCursorPos(Graphic::Device::GetWindow(), size.x, size.y);
 	}
 
+	// ******************************************************************* //
+	void Camera::MoveTo(const ei::Vec3& _position, const ei::Quaternion& _rotation, float _time)
+	{
+		m_mode = Mode::MoveTo;
+		m_targetRotation = _rotation;
+		m_targetPosition = _position;
+		m_transitionSpeed = len(m_position - m_targetPosition) / _time;
+	}
+
+	// ******************************************************************* //
 	using namespace Graphic;
 	void Camera::UpdateUbo(UniformBuffer& _ubo)
 	{
@@ -152,6 +159,20 @@ namespace Control {
 		float factor = ((Game::Ship*)m_target)->GetCurrentSpeed() / ((Game::Ship*)m_target)->GetMaxSpeed();
 		Vec3 localAngularVelocity = ((Game::Ship*)m_target)->GetInverseRotationMatrix() * ((Game::Ship*)m_target)->GetAngularVelocity();
 		return Vec3(localAngularVelocity.y, m_currentOffset.y - localAngularVelocity.x, m_currentOffset.z);
+	}
+
+	void Camera::SetFollowOrientation(float _deltaTime)
+	{
+		//Set the acceleration relative to the target acceleration
+		m_acceleration = 0.005f * ((Game::Ship*)m_target)->GetThrust() / ((Game::Ship*)m_target)->GetMass();
+
+		m_currentOffset = m_targetOffset;
+		m_speed = lerp(m_speed, ((Game::Ship*)m_target)->GetCurrentSpeed(), m_acceleration * _deltaTime);
+		/*m_speed = 1.0f;*/
+		m_currentOffset.z = m_targetOffset.z - (1.0f - (m_speed - ((Game::Ship*)m_target)->GetCurrentSpeed()) / ((Game::Ship*)m_target)->GetMaxSpeed()) * 10.0f;
+
+		m_targetPosition = m_target->GetPosition() + m_target->GetRotationMatrix() * GetDistance();
+		m_targetRotation = m_target->GetRotation();
 	}
 
 	// ******************************************************************* //

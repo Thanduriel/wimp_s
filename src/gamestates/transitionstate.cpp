@@ -76,9 +76,16 @@ namespace GameStates {
 			break;
 		case 5:
 			m_hud.m_descriptionLabel.SetText("loading textures");
-			// todo preload textures
+			Resources::GetTexture("mist");
+			Resources::GetTexture("shock");
+			Resources::GetTexture("spacestationtex");
+			Resources::GetTexture("stone01");
 			break;
 		case 6:
+			Resources::GetTexture("cratetex");
+			Resources::GetTexture("bolt");
+			Resources::GetTexture("dronetex");
+			Resources::GetTexture("dark_fighter_6_color");
 			break;
 		case 7:
 			m_hud.m_descriptionLabel.SetText("loading meshes");

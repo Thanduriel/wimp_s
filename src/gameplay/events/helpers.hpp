@@ -62,7 +62,7 @@ namespace Game {
 			return c;
 		}
 
-		void SetupPlayer(Ship& _player, const ei::Vec3& _position, const ei::Quaternion& _rotation = ei::qidentity(), float _speed = 10.f);
+		void SetupPlayer(Ship& _player, const ei::Vec3& _position, const ei::Quaternion& _rotation = ei::qidentity(), float _speed = 42.f);
 		void FinishMap(Level _nextLevel);
 
 		SceneGraph& m_sceneGraph;
