@@ -4,27 +4,23 @@
 
 namespace Utils
 {
-	/// \brief Returns _num as string with exactly _numDigits chars after the point.
-	/// Pads the whole string with leading spaces to have _digits size.
+	/// \brief Returns _num as string with exactly _digits chars after the point.
+	/// Pads the whole string with leading spaces to have _numDigits size.
 	template < typename _T >
 	std::string ToConstDigit(_T _num, unsigned int _digits, unsigned int _numDigits = 0)
 	{
-		std::string ret = std::to_string(_num);
-
+		std::string ret = ToFixPoint(_num, _digits);
 
 		auto i = _numDigits ? _numDigits : ret.size();
-		ret.resize(_digits);
+		auto s = ret.size();
+		if (s > _numDigits) _numDigits = (unsigned)s;
 
-		//copy string to the end
-		auto begin = _digits - i;
-		for (size_t j = begin; j < _digits; ++j)
-			ret[j] = ret[j - begin];
+		std::string pading; 
+		pading.resize(_numDigits - s);
+		for (auto& c : pading)
+			c = ' ';
 
-		//fill beginning with spaces
-		for (size_t j = 0; j < begin; ++j)
-			ret[j] = ' ';
-
-		return std::move(ret);
+		return pading + ret;
 	}
 
 
@@ -36,7 +32,7 @@ namespace Utils
 
 		size_t i = ret.find('.');
 
-		ret.resize(i + _digits + 1);
+		if(i != std::string::npos) ret.resize(i + _digits + 1);
 
 		return std::move(ret);
 	}

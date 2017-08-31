@@ -47,7 +47,8 @@ namespace Game
 		m_thrustParticles(m_drivePositions.capacity()),
 		m_thrustLights(m_drivePositions.capacity() + _node["Lights"s].Size()),
 		m_particleSpawnCount(0.f),
-		m_specialMove()
+		m_specialMove(),
+		m_upgradeLevels{}
 	{
 		auto& weaponsNode = _node["WeaponSockets"s];
 		for (int i = 0; i < m_weaponSockets.capacity(); ++i)

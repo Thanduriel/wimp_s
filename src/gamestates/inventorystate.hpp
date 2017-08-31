@@ -36,7 +36,7 @@ namespace GameStates
 
 		int m_money;
 
-		int m_upgradeLvls[Upgrades::COUNT];
+		std::array<int, Upgrades::COUNT>& m_upgradeLvls;
 
 		//The rows in which the upgradeable values of the ship info label are displayed
 		std::array<int, Upgrades::COUNT> m_rows = { 2, 3, 5, 6, 7, 9 };

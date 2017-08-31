@@ -109,6 +109,7 @@ namespace Game
 
 		void SetSpecialMove(SpecialMove& _sm);
 		SpecialMove* GetSpecialMove() const { return m_specialMove.get(); }
+		std::array<int, 6>& GetUpgradeLevels() { return m_upgradeLevels; }
 	private:
 		// actual constructor
 		Ship(const Jo::Files::MetaFileWrapper::Node& _node, const Vec3& _position);
@@ -150,5 +151,6 @@ namespace Game
 
 		Inventory m_inventory;
 		std::unique_ptr< class SpecialMove > m_specialMove;
+		std::array<int, 6> m_upgradeLevels;
 	};
 }

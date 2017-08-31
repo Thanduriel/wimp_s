@@ -26,7 +26,7 @@ namespace GameStates
 		m_oldCamPosition(Control::g_camera.GetPosition()),
 		m_oldCamRotation(Control::g_camera.GetRotation()),
 		m_money(_ship.GetInventory().GetCredits()),
-		m_upgradeLvls()
+		m_upgradeLvls(_ship.GetUpgradeLevels())
 	{
 		using namespace Game;
 		using namespace ei;
@@ -140,12 +140,12 @@ namespace GameStates
 
 		// show basic stats
 		m_hud.m_shipInfoLabel->SetText("ship properties\n"s + '\n'
-			+ "energy:   " + ToConstDigit(m_ship.GetEnergy(), 5, 5) + " / " + ToConstDigit(m_ship.GetMaxEnergy(), 5, 5) + '\n'
-			+ "recharge: " + ToConstDigit(m_ship.GetEnergyRecharge(), 13, 5) + "\n\n"
-			+ "shield:   " + ToConstDigit(m_ship.GetShield(), 5, 5) + " / " + ToConstDigit(m_ship.GetMaxShield(), 5, 5) + '\n'
-			+ "recharge: " + ToConstDigit(m_ship.GetShieldRecharge(), 13, 5) + "\n"
-			+ "delay:    " + ToConstDigit(m_ship.GetShieldDelay(), 13, 5) + "\n\n"
-			+ "hull:     " + ToConstDigit(m_ship.GetHealth(), 5, 5) + " / " + ToConstDigit(m_ship.GetMaxHealth(), 5, 5) + "\n\n");
+			+ "energy:   " + ToConstDigit(m_ship.GetEnergy(), 1, 5) + " / " + ToConstDigit(m_ship.GetMaxEnergy(), 1, 5) + '\n'
+			+ "recharge: " + ToConstDigit(m_ship.GetEnergyRecharge(), 1, 13) + "\n\n"
+			+ "shield:   " + ToConstDigit(m_ship.GetShield(), 1, 5) + " / " + ToConstDigit(m_ship.GetMaxShield(), 1, 5) + '\n'
+			+ "recharge: " + ToConstDigit(m_ship.GetShieldRecharge(), 1, 13) + "\n"
+			+ "delay:    " + ToConstDigit(m_ship.GetShieldDelay(), 1, 13) + "\n\n"
+			+ "hull:     " + ToConstDigit(m_ship.GetHealth(), 1, 5) + " / " + ToConstDigit(m_ship.GetMaxHealth(), 1, 5) + "\n\n");
 
 		Vec2 margin = PixelOffset(10.0f, 0.0f);
 		float values[Upgrades::COUNT]{
@@ -161,9 +161,9 @@ namespace GameStates
 			if (GetUpgradeCost((Upgrades)i) <= m_money)
 			{
 				if (i != Upgrades::SHIELD_REG_DELAY)
-					m_hud.m_upgradeLabels[i]->SetText("(+" + ToConstDigit(NextUpgradeValue((Upgrades)i) - values[i], 5, 5) + ")");
+					m_hud.m_upgradeLabels[i]->SetText("(+" + ToConstDigit(NextUpgradeValue((Upgrades)i) - values[i], 1, 5) + ")");
 				else
-					m_hud.m_upgradeLabels[i]->SetText("(" + ToConstDigit(NextUpgradeValue((Upgrades)i) - values[i], 6, 6) + ")");
+					m_hud.m_upgradeLabels[i]->SetText("(" + ToConstDigit(NextUpgradeValue((Upgrades)i) - values[i], 1, 6) + ")");
 				m_hud.m_upgradeBtns[i]->SetVisible(true);
 			}
 			else
@@ -248,11 +248,11 @@ namespace GameStates
 	{
 		using namespace Utils;
 
-		std::string text = "money:    " + ToConstDigit(m_money, 5, 5) + " $";
+		std::string text = "money:    " + ToConstDigit(m_money, 0, 6) + " $";
 		for (int i = 0; i < Upgrades::COUNT; i++)
 		{
 			if (m_hud.m_upgradeBtns[i]->GetButtonState() == Graphic::Button::State::MouseOver && m_hud.m_upgradeBtns[i]->IsVisible())
-				text += " (-" + ToConstDigit(GetUpgradeCost((Upgrades)i), 5, 5) + "$)";
+				text += " (-" + ToConstDigit(GetUpgradeCost((Upgrades)i), 0, 6) + "$)";
 		}
 		m_hud.m_moneyLabel->SetText(text);
 		//if (InputManager::IsVirtualKeyPressed(Control::VirtualKey::INVENTORY))
