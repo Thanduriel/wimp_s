@@ -32,8 +32,9 @@ namespace GameStates
 	void MainMenuState::Process(float _deltaTime)
 	{
 		static float sum = 0.f;
-		sum += _deltaTime;
-		m_blackHole.SetPosition(7.6f * Vec3(cos(sum), sin(sum), 0.f));
+		sum += _deltaTime * 0.4f;
+		Quaternion rot(normalize(Vec3(0.2f, 0.f, 1.f)), sum);
+		m_blackHole.SetPosition(transform(Vec3(13.f,0.f,0.f), rot));
 	}
 
 	void MainMenuState::Draw(float _deltaTime)
