@@ -164,5 +164,6 @@ namespace Game {
 
 		ei::Vec3 m_velocity;
 		ei::Vec3 m_angularVelocity; // the length is the rotation speed
+		bool m_rotateVelocity;
 	};
 }

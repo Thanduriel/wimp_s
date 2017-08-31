@@ -15,7 +15,7 @@ namespace Game {
 	public:
 		// projectile speed is constant for now
 		// since hitting moving targets is near impossible otherwise
-		static constexpr float DEFAULT_SPEED = 290.f;
+		static constexpr float DEFAULT_SPEED = 390.f;
 
 		Projectile(const ei::Vec3& _position, const ei::Vec3& _velocity,
 			float _damage, float _lifeTime, DamageType _damageType = DamageType::Normal, bool _explodeOnTimeOut = true);
@@ -62,7 +62,7 @@ namespace Game {
 	class Rocket : public Projectile
 	{
 	public:
-		static constexpr float DEFAULT_SPEED = 18.f;
+		static constexpr float DEFAULT_SPEED = 28.f;
 
 		Rocket(const ei::Vec3& _position, const ei::Vec3& _velocity, float _damage, float _lifeTime = 10.f);
 		Rocket(const Rocket& _orig);

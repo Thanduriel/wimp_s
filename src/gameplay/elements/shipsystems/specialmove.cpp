@@ -68,7 +68,7 @@ namespace Game {
 
 	void BlackHoleGenerator::OnTarget()
 	{
-		m_indicator = new Game::BlackHole(ei::Vec3(0.f), 25.f, 10.f, 10.f);
+		m_indicator = new Game::BlackHole(ei::Vec3(0.f), 30.f, 5.f, 10.f);
 		Game::FactoryActor::GetThreadLocalInstance().Add(*m_indicator);
 	}
 

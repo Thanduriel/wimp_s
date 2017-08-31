@@ -11,7 +11,7 @@ namespace Control
 	class KamikazeController : public Controller
 	{
 	public:
-		KamikazeController(Game::Ship& _ship, Game::Actor::ConstHandle _target, GameStates::MainHud& _hud);
+		KamikazeController(Game::Ship& _ship, Game::Actor::ConstHandle _target, GameStates::MainHud& _hud, const std::string& _name = "Kamikaze Ship");
 
 		void ProcessComponent(float _deltaTime, const Game::SceneGraph& _sceneGraph) override;
 

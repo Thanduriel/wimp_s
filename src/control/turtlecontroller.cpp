@@ -6,7 +6,7 @@ namespace Control
 {
 	using namespace ei;
 
-	TurtleController::TurtleController(Game::Ship& _ship, Game::Actor::ConstHandle _target, GameStates::MainHud& _hud)
+	TurtleController::TurtleController(Game::Ship& _ship, Game::Actor::ConstHandle _target, GameStates::MainHud& _hud, const std::string& _name)
 		: Controller(_ship, _hud)
 	{
 		m_target = _target;
@@ -16,7 +16,7 @@ namespace Control
 		m_evasionTime = 5.0f;
 		GetShip().SetSpeed(0.0f);
 		GetShip().SetAngularAcceleration(0.5f);
-		m_hud.AddIndicator(this->GetShip(), "Turtle Ship");
+		m_hud.AddIndicator(this->GetShip(), _name);
 	}
 
 	void TurtleController::ProcessComponent(float _deltaTime, const Game::SceneGraph& _sceneGraph)

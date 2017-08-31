@@ -6,7 +6,7 @@ namespace Control
 {
 	using namespace ei;
 
-	WaspController::WaspController(Game::Ship& _ship, Game::Actor::ConstHandle _target, GameStates::MainHud& _hud)
+	WaspController::WaspController(Game::Ship& _ship, Game::Actor::ConstHandle _target, GameStates::MainHud& _hud, const std::string& _name)
 		: Controller(_ship, _hud)
 	{
 		m_target = _target;
@@ -16,8 +16,7 @@ namespace Control
 		m_evasionTime = 5.0f;
 		GetShip().SetSpeed(50.0f);
 		GetShip().SetAngularAcceleration(2.0f);
-		std::string tag = "Wasp Ship";
-		m_hud.AddIndicator(this->GetShip(), tag);
+		m_hud.AddIndicator(this->GetShip(), _name);
 	}
 
 	void WaspController::ProcessComponent(float _deltaTime, const Game::SceneGraph& _sceneGraph)

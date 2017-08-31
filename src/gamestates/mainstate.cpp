@@ -60,9 +60,9 @@ namespace GameStates {
 	//	m_sceneGraph.Add(*boundingMeshTest);
 
 		// test actors
-		ship2 = new Ship("WaspShip", Vec3(50.f,0.f,500.f));
+/*		ship2 = new Ship("WaspShip", Vec3(50.f,0.f,500.f));
 		m_sceneGraph.Add(*ship2);
-		m_sceneGraph.RegisterComponent(*new Control::WaspController(*ship2, m_playerController->GetShip().GetHandle(), m_hud));
+		m_sceneGraph.RegisterComponent(*new Control::WaspController(*ship2, m_playerController->GetShip().GetHandle(), m_hud));*/
 	}
 
 	MainState::~MainState()

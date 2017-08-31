@@ -76,7 +76,7 @@ namespace Acts {
 			for (int i = 0; i < 8; ++i)
 			{
 				Ship& ship = CreateShip("DroneMK1", DRONE_SPAWN + Vec3(i,i,i), 1, 4.f, 0.f);
-				CreateController<Control::KamikazeController>(ship, playerHndl, _hud);
+				CreateController<Control::KamikazeController>(ship, playerHndl, _hud, "Drone");
 				targets.push_back(ship.GetHandle());
 			}
 			CREATE_OBJECTIVE4(Conditions::OnDestroy, AexitArea, "defend yourself against the drones",
@@ -102,10 +102,10 @@ namespace Acts {
 		auto AbeginDestroyShips = CREATE_ACTION
 		{
 			Ship& ship01 = CreateShip("Dart", m_asteroids.FindPosition(10.f), 1, 8.f, 0.f);
-			CreateController<Control::WaspController>(ship01, playerHndl, _hud);
+			CreateController<Control::WaspController>(ship01, playerHndl, _hud, "Dart");
 			m_asteroids.AddConstraint(ship01);
 			Ship& ship02 = CreateShip("Dart", m_asteroids.FindPosition(10.f), 1, 8.f, 0.f);
-			CreateController<Control::WaspController>(ship02, playerHndl, _hud);
+			CreateController<Control::WaspController>(ship02, playerHndl, _hud, "Dart");
 
 			CREATE_OBJECTIVE4(Conditions::OnDestroy, AapproachFacility, "destroy the ships near by",
 				std::vector<Actor::ConstHandle>({ ship01.GetHandle(), ship02.GetHandle() }), 2);
@@ -119,7 +119,6 @@ namespace Acts {
 		// 02
 		auto AbeginPickUpWeapon = CREATE_ACTION
 		{
-			FinishMap(Level::Act01); //test
 			CREATE_OBJECTIVE4(Conditions::OnDestroy, AtimeToEqiup,
 				"pick up the testing equipment", std::vector<Actor::ConstHandle>({ hndl }), 1);
 			_hud.AddIndicator(*crate, "crate", Color8U(1.f,1.f,0.f));

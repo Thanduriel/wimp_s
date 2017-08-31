@@ -85,7 +85,8 @@ namespace Game {
 		m_angularVelocity(0.f),
 		m_mass(0.f),
 		m_inertiaTensor(ei::identity3x3()),
-		m_inverseInertiaTensor(ei::identity3x3())
+		m_inverseInertiaTensor(ei::identity3x3()),
+		m_rotateVelocity(false)
 	{}
 
 	void DynamicActor::Process(float _deltaTime)
@@ -114,6 +115,7 @@ namespace Game {
 		deltaRot.k = theta[2] * s;
 
 		Rotate(deltaRot);
+		if (m_rotateVelocity) m_velocity = transform(m_velocity, deltaRot);
 
 		UpdateMatrices();
 	}

@@ -7,7 +7,7 @@ namespace Control
 	class WaspController : public Controller
 	{
 	public:
-		WaspController(Game::Ship& _ship, Game::Actor::ConstHandle _target, GameStates::MainHud& _hud);
+		WaspController(Game::Ship& _ship, Game::Actor::ConstHandle _target, GameStates::MainHud& _hud, const std::string& _name = "Wasp");
 
 		void ProcessComponent(float _deltaTime, const Game::SceneGraph& _sceneGraph) override;
 

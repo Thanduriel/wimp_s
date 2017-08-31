@@ -40,6 +40,8 @@ namespace Control
 		s_sceneGraph->Add(m_referenceGrid);
 	};
 
+	const float FOCUS_RANGE = 650.f;
+
 	void PlayerController::ProcessComponent(float _deltaTime, const Game::SceneGraph& _sceneGraph)
 	{
 		// restore actual time passed for correct camera movement speed
@@ -47,7 +49,7 @@ namespace Control
 		// Apply the input to the model
 		HandleInput(_deltaTime);
 
-		auto actor = _sceneGraph.RayCast(g_camera.GetRay(Vec2(0.f, 0.f)), 200.f, Game::CollisionComponent::Type::Ship);
+		auto actor = _sceneGraph.RayCast(g_camera.GetRay(Vec2(0.f, 0.f)), FOCUS_RANGE, Game::CollisionComponent::Type::Ship);
 		if (actor)
 		{
 			m_hud.UpdateCrossHair(1.f);
@@ -63,7 +65,7 @@ namespace Control
 		{
 			Vec3 pos = m_referenceGrid.GetPosition();
 
-			Plane plane(Vec3(0.f, 1.f, 0.f), pos);
+			Plane plane(normalize(m_ship.GetRotationMatrix() * Vec3(0.f, 1.f, 0.f)), pos);
 			Ray ray = g_camera.GetRay(InputManager::GetCursorPosScreenSpace());
 			float d = dot((pos - ray.origin), plane.n) / dot(ray.direction, plane.n);
 			m_ship.GetSpecialMove()->SetIndicator(ray.origin + d * ray.direction);
@@ -157,8 +159,8 @@ namespace Control
 				camVel.x -= tacticalCamSpeed * m_tacticalDirSign;
 			if (InputManager::IsKeyPressed(GLFW_KEY_D))
 				camVel.x += tacticalCamSpeed * m_tacticalDirSign;
-			g_camera.Translate(camVel * _deltaTime);
-			m_referenceGrid.Translate(camVel * _deltaTime);
+			g_camera.Translate(m_ship.GetRotationMatrix() * camVel * _deltaTime);
+		//	m_referenceGrid.Translate(camVel * _deltaTime);
 		}
 		else
 		{
@@ -246,10 +248,16 @@ namespace Control
 			m_tacticalDirSign = GetShip().GetPosition().y < g_camera.GetPosition().y ? 1.f : -1.f;
 			Quaternion rot = m_tacticalDirSign < 0.f ? Quaternion(Vec3(0.f, 0.f, 1.f), PI) : qidentity();
 			// shift the camera back so that the player is in the center
-			g_camera.FixRotation(ei::Quaternion(Vec3(1.f, 0.f, 0.f), m_tacticalDirSign * angle) * rot,
-				GetShip().GetPosition() + Vec3(0.f, m_tacticalDirSign * TACTICALCAM_DIST, -TACTICALCAM_DIST / tan(angle)));
+	//		g_camera.FixRotation(ei::Quaternion(Vec3(1.f, 0.f, 0.f), m_tacticalDirSign * angle) * rot,
+	//			GetShip().GetPosition() + Vec3(0.f, m_tacticalDirSign * TACTICALCAM_DIST, -TACTICALCAM_DIST / tan(angle)));
+
+			Vec3 camPos = m_ship.GetPosition() + m_ship.GetRotationMatrix() * Vec3(0.f, m_tacticalDirSign * TACTICALCAM_DIST, -TACTICALCAM_DIST / tan(angle));
+
+			g_camera.FixRotation(Quaternion(m_ship.GetRotationMatrix() * Vec3(0.f, 0.f, 1.f),
+				normalize(m_ship.GetPosition() - camPos)) * m_ship.GetRotation(), camPos);
 
 			m_referenceGrid.SetPosition(GetShip().GetPosition());
+			m_referenceGrid.SetRotation(m_ship.GetRotation());
 			component_cast<Game::GridComponent>(m_referenceGrid).ReverseTransition();
 			m_controlParams.m_timeScale = 0.02f;
 		}

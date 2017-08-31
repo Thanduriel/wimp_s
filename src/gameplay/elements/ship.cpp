@@ -6,6 +6,7 @@
 #include "ei/3dintersection.hpp"
 #include "shipsystems/specialmove.hpp"
 #include "crate.hpp"
+#include "explosion.hpp"
 
 namespace Game
 {
@@ -82,12 +83,14 @@ namespace Game
 		m_canTakeDamage = true;
 		GetCollisionComponent().SetType(CollisionComponent::Type::Any | CollisionComponent::Type::Solid 
 			| CollisionComponent::Type::Ship | CollisionComponent::Type::Dynamic);
+		m_rotateVelocity = true;
 	}
 
 	void Ship::OnDestroy()
 	{
 		// leave items behind
-		FactoryActor::GetThreadLocalInstance().Make<Crate>(m_position, m_inventory);
+		if(m_inventory.GetNumElements()) FactoryActor::GetThreadLocalInstance().Make<Crate>(m_position, m_inventory);
+		FactoryActor::GetThreadLocalInstance().Make<Explosion>(m_position, m_maxHealth / 5.f, 0.f, Utils::Color8U(0.8f, 0.67f, 0.42f, 0.5f), "mist");
 		Model::OnDestroy();
 	}
 
@@ -111,7 +114,7 @@ namespace Game
 	// ****************************************************************** //
 	float Ship::GetCurrentSpeed() const
 	{
-		Vec3 forward = ei::rotation(GetRotation()) * Vec3(0.0f, 0.0f, 1.0f);
+		Vec3 forward = m_rotationMatrix * Vec3(0.0f, 0.0f, 1.0f);
 		float forwardVelocity = 0.0f;
 		float l = len(GetVelocity());
 		if (l > 0.0f)
@@ -121,27 +124,22 @@ namespace Game
 
 	void Ship::UpdateSpeed(float currentSpeed, float _deltaTime)
 	{
-		Vec3 forward = ei::rotation(GetRotation()) * Vec3(0.0f, 0.0f, 1.0f);
+		Vec3 forward = m_rotationMatrix * Vec3(0.0f, 0.0f, 1.0f);
+		Vec3 dif = forward * m_speed - m_velocity;
+		float l = len(dif);
 		float deltaSpeed = 0.f;
-		if (currentSpeed < m_speed)
+		if (l > 0.01f)
 		{
 			// since we have newtons second axiom: F = m * a => a = F / m
 			float acceleration = m_thrust / m_mass;
 			// and since delta_v = a * delta_t
-			deltaSpeed = acceleration * _deltaTime;
+			deltaSpeed = ei::min(acceleration * _deltaTime, l);
 			// Apply the velocity to the player ship in the current direction
 			// min() to prevent ship from freaking out at low framerates
-			Vec3 newVel = ei::min(sign(m_speed) * len(GetVelocity()) + deltaSpeed, m_speed) * forward;
-			SetVelocity(newVel);
-		}
-		else if (m_speed < currentSpeed)
-		{
-			// same as above, but decelerate
-			float deceleration = -m_thrust / m_mass;
-			deltaSpeed = deceleration * _deltaTime;
-			// max() to prevent ship from freaking out at low framerates
-			Vec3 newVel = ei::max(sign(m_speed) * len(GetVelocity()) + deltaSpeed, m_speed) * forward;
-			SetVelocity(newVel);
+			AddVelocity(dif / l * deltaSpeed);
+		//	if(currentSpeed < m_speed) newVel = ei::min(sign(m_speed) * len(GetVelocity()) + deltaSpeed, m_speed) * forward;
+		//	else newVel = ei::max(sign(m_speed) * len(GetVelocity()) - deltaSpeed, m_speed) * forward;
+		//	SetVelocity(newVel);
 		}
 	}
 
@@ -189,7 +187,10 @@ namespace Game
 
 	//	AdjustWeaponOrientation(Vec3(0.f, 0.f, 1.f));
 
+	//	Quaternion oldRot = m_rotation;
 		Model::Process(_deltaTime);
+	//	Quaternion delta = oldRot / m_rotation;
+	//	m_velocity = transform(m_velocity, delta);
 	}
 
 	void Ship::RegisterComponents(SceneGraph& _sceneGraph)
