@@ -33,6 +33,7 @@ namespace GameStates
 
 		ei::Vec3 m_oldCamPosition;
 		ei::Quaternion m_oldCamRotation;
+		Control::Camera m_oldCamera;
 
 		int m_money;
 

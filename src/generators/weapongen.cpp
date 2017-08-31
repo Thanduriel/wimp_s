@@ -103,6 +103,8 @@ namespace Generators {
 
 		// roll basic type; -2 since lasers are not implemented
 		WeaponType type = (WeaponType)m_randomSampler.Uniform(0, (int32_t)NAMES.size()-((int)rarity> 0 ? 2 : 3));
+		// decrease chance for rocket launchers; todo: refractory this
+		if (type == WeaponType::Rocket && !m_randomSampler.Uniform(0, 2)) type = WeaponType::Simple;
 		m_name = NAMES[(int)type];
 		// rocket properties count as trait
 		if (type == WeaponType::Rocket)

@@ -18,7 +18,7 @@ namespace Acts {
 	using namespace Utils;
 	using namespace ei;
 
-	const Vec3 PLAYER_SPAWN = Vec3(0.f);
+	const Vec3 PLAYER_SPAWN = Vec3(0.f,0.f,-734.f);
 	const Vec3 BASE_POSITON = Vec3(-240.f, 50.f, 820.f);
 	const Vec3 DRONE_SPAWN = Vec3(350.f, 24.f, 600.f);
 	const Vec3 EXIT_POSITION = Vec3(-1800.f, 38.f, 790.f);

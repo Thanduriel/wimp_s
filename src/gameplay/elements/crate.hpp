@@ -17,7 +17,7 @@ namespace Game {
 	{
 	public:
 		// Create a crate at _position that takes all items form _inventory
-		Crate(const ei::Vec3& _position, Inventory& _inventory, float _pickupRadius = 50.f);
+		Crate(const ei::Vec3& _position, Inventory& _inventory, float _pickupRadius = 5.f);
 
 		void RegisterComponents(class SceneGraph& _sceneGraph) override;
 	private:

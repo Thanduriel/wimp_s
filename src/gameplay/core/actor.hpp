@@ -24,9 +24,9 @@ namespace Game {
 		Actor();
 		Actor(const ei::Vec3& _position, const ei::Quaternion& _rotation = ei::qidentity());
 		Actor(const Actor& _orig);
+		Actor& operator=(const Actor&);
 		// this could be implemented sensibly but the auto generated version does not work due to m_handle
 		Actor(Actor&&) = delete;
-		Actor& operator=(const Actor&) = delete;
 		Actor& operator=(Actor&&) = delete;
 
 		virtual ~Actor();

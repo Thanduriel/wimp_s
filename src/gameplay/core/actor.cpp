@@ -39,6 +39,23 @@ namespace Game {
 		m_handle(std::make_shared<HandleImpl>(*this))
 	{}
 
+	Actor& Actor::operator=(const Actor& _orig)
+	{
+		m_canTick = _orig.m_canTick;
+		m_canTakeDamage = _orig.m_canTakeDamage;
+		m_position = _orig.m_position;
+		m_rotation = _orig.m_rotation;
+		m_rotationMatrix = _orig.m_rotationMatrix;
+		m_inverseRotationMatrix = _orig.m_inverseRotationMatrix;
+		m_transformation = _orig.m_transformation;
+		m_inverseTransformation = _orig.m_inverseTransformation;
+		m_isDestroyed = false;
+		m_health = _orig.m_health;
+		m_maxHealth = _orig.m_maxHealth;
+
+		return *this;
+	}
+
 	Actor::~Actor()
 	{
 		m_handle->actor = nullptr;

@@ -25,6 +25,7 @@ namespace GameStates
 		: m_ship(_ship),
 		m_oldCamPosition(Control::g_camera.GetPosition()),
 		m_oldCamRotation(Control::g_camera.GetRotation()),
+		m_oldCamera(Control::g_camera),
 		m_money(_ship.GetInventory().GetCredits()),
 		m_upgradeLvls(_ship.GetUpgradeLevels())
 	{
@@ -128,9 +129,10 @@ namespace GameStates
 		m_ship.GetInventory().SetCredits(m_money);
 
 		// restore camera state
-		g_camera.SetPosition(m_oldCamPosition);
-		g_camera.SetRotation(m_oldCamRotation);
-		g_camera.Attach(m_ship);
+	//	g_camera.SetPosition(m_oldCamPosition);
+	//	g_camera.SetRotation(m_oldCamRotation);
+	//	g_camera.Attach(m_ship);
+		Control::g_camera = m_oldCamera;
 	}
 
 	void InventoryState::UpdateUpgradeLabels()

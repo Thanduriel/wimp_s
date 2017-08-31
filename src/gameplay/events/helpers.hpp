@@ -48,10 +48,16 @@ namespace Game {
 	protected:
 		typedef std::function<void()> Objective;
 
+		enum struct Drop
+		{
+			Weapons,
+			Credits,
+			Nothing
+		};
 		// Creates a ship with Controller type T.
 		// Equips it with _numWeapons. Does not check for available sockets.
 		// Additional Arguments are forwarded to the Controller's constructor.
-		Ship& CreateShip(const std::string& _type, const ei::Vec3& _position, int _numWeapons, float _power, float _rarityMod = 1.f);
+		Ship& CreateShip(const std::string& _type, const ei::Vec3& _position, int _numWeapons, float _power, float _rarityMod = 1.f, Drop _drop = Drop::Weapons);
 
 		template<typename T, typename... Args>
 		T& CreateController(Args&&... _args)
@@ -62,7 +68,7 @@ namespace Game {
 			return c;
 		}
 
-		void SetupPlayer(Ship& _player, const ei::Vec3& _position, const ei::Quaternion& _rotation = ei::qidentity(), float _speed = 42.f);
+		void SetupPlayer(Ship& _player, const ei::Vec3& _position, const ei::Quaternion& _rotation = ei::qidentity(), float _speed = 200.f);
 		void FinishMap(Level _nextLevel);
 
 		SceneGraph& m_sceneGraph;

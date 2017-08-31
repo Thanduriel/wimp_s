@@ -90,7 +90,7 @@ namespace Game
 	void Ship::OnDestroy()
 	{
 		// leave items behind
-		if(m_inventory.GetNumElements()) FactoryActor::GetThreadLocalInstance().Make<Crate>(m_position, m_inventory);
+		if(m_inventory.GetNumElements() || m_inventory.GetCredits()) FactoryActor::GetThreadLocalInstance().Make<Crate>(m_position, m_inventory);
 		FactoryActor::GetThreadLocalInstance().Make<Explosion>(m_position, m_maxHealth / 5.f, 0.f, Utils::Color8U(0.8f, 0.67f, 0.42f, 0.5f), "mist");
 		Model::OnDestroy();
 	}

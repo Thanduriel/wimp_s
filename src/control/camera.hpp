@@ -25,6 +25,8 @@ namespace Control {
 		};
 
 		Camera(const ei::Vec3& _position, const ei::Quaternion& _rotation, float _fov, float _aspectRatio);
+		Camera(const Camera& _orig) = default;
+		Camera& operator=(const Camera& _other) = default;
 
 		void Process(float _deltaTime);
 
