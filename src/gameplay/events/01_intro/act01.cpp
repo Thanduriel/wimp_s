@@ -91,11 +91,54 @@ namespace Acts {
 			CREATE_OBJECTIVE3(Conditions::Timer, AblackHoleGenerator, "stay safe", 24.f);
 		};
 
+		auto AactivateVirus = CREATE_ACTION
+		{
+			CREATE_OBJECTIVE3(Conditions::Timer, Aexplosion, "wait for the virus to finish", 6.f);
+		};
+
+		auto AgetBlackHoleGenerator = CREATE_ACTION
+		{
+			Vec3 dir = normalize(_player.GetPosition() - BASE_POSITON);
+
+			Inventory inventory;
+			inventory.AddCredits(100);
+			Crate* smCrate = new Crate(BASE_POSITON + dir * 50.f, inventory, 3.f);
+			FactoryActor::GetThreadLocalInstance().Add(*smCrate);
+			smCrate->SetVelocity(dir * 45.f);
+			_hud.AddIndicator(*smCrate, "black hole generator", Color8U(1.f, 1.f, 0.f));
+
+			CREATE_OBJECTIVE4(Conditions::OnDestroy, AactivateVirus, "pickup the generator",
+				std::vector<Actor::ConstHandle>({ smCrate->GetHandle() }), 1);
+		};
+
+		auto AwaitForHack = CREATE_ACTION
+		{
+			CREATE_OBJECTIVE3(Conditions::Timer, AgetBlackHoleGenerator, "wait for the virus upload", 8.f);
+		};
+
 		// 04
 		auto AapproachFacility = CREATE_ACTION
 		{
-			CREATE_OBJECTIVE5(Conditions::IsClose, Aexplosion, "approach the facility",
-				_player, BASE_POSITON, 100.f);
+			CREATE_OBJECTIVE6(Conditions::IsClose, AwaitForHack, "get in 180m distance of the facility",
+				_player, BASE_POSITON, 175.f, 185.f);
+		};
+
+		auto AdestroySecondWave = CREATE_ACTION
+		{
+			// generate ship with rocket launcher
+			Ship& ship01 = CreateShip("RocketFighter", BASE_POSITON + Vec3(17.f, 15.f, 240.f), 0, 10.f, 0.f);
+			Generators::WeaponGenerator weaponGen(0x6); // extra generator to not fix the seed for future applications
+			Weapon* w = weaponGen.Generate(10.f);
+			FactoryActor::GetThreadLocalInstance().Add(*w);
+			ship01.GetInventory().Add(*w);
+			ship01.SetWeapon(0, w);
+			CreateController<Control::WaspController>(ship01, playerHndl, _hud, "Fighter");
+			
+			Ship& ship02 = CreateShip("Dart", BASE_POSITON + Vec3(17.f, -15.f, 240.f), 1, 10.f, 0.f);
+			CreateController<Control::WaspController>(ship02, playerHndl, _hud, "Dart");
+
+			CREATE_OBJECTIVE4(Conditions::OnDestroy, AapproachFacility, "destroy the approaching ships",
+				std::vector<Actor::ConstHandle>({ ship01.GetHandle(), ship02.GetHandle() }), 2);
 		};
 
 		// 03
@@ -107,7 +150,7 @@ namespace Acts {
 			Ship& ship02 = CreateShip("Dart", m_asteroids.FindPosition(10.f), 1, 8.f, 0.f);
 			CreateController<Control::WaspController>(ship02, playerHndl, _hud, "Dart");
 
-			CREATE_OBJECTIVE4(Conditions::OnDestroy, AapproachFacility, "destroy the ships near by",
+			CREATE_OBJECTIVE4(Conditions::OnDestroy, AdestroySecondWave, "destroy the ships near by",
 				std::vector<Actor::ConstHandle>({ ship01.GetHandle(), ship02.GetHandle() }), 2);
 		};
 

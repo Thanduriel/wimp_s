@@ -153,7 +153,7 @@ namespace GameStates {
 	// ******************************************************* //
 	Ship& MainState::CreatePlayerShip()
 	{
-		return *new Ship("TestShip", Vec3(0.f));
+		return *new Ship("PlayerShip", Vec3(0.f));
 	}
 
 	void MainState::SetMap(Game::Map& _map)

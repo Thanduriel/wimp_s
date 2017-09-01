@@ -7,7 +7,8 @@ namespace Utils {
 	{
 		uint16_t ver;
 		Read(_stream, ver);
-		if (ver != FORMAT_VERSION) LOG_ERROR("Expected mesh format version "
+		if (ver != FORMAT_VERSION) 
+			LOG_ERROR("Expected mesh format version "
 			+ std::to_string(FORMAT_VERSION) + ", but found " + std::to_string(ver));
 		uint16_t format;
 		Read(_stream, format);

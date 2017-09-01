@@ -309,7 +309,7 @@ namespace Graphic
 
 		//set the (new) caption first to rebuild the buffer
 		m_caption.SetText(_caption);
-		m_caption.SetRectangle(m_size);
+		m_caption.SetRectangle(m_size * 0.9f);
 
 		// center in both directions
 		Vec2 rect = m_caption.GetRectangle();//captionDim[0] * charCountMax * m_caption.GetDefaultSize()

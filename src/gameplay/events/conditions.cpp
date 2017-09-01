@@ -55,17 +55,19 @@ namespace Conditions {
 	}
 
 	// ********************************************************************* //
-	IsClose::IsClose(Actor& _actor, const Actor& _target, const ei::Vec3& _position, float _maxDistance)
+	IsClose::IsClose(Actor& _actor, const Actor& _target, const ei::Vec3& _position, float _maxDistance, float _minDistance)
 		: ActorComponent(_actor),
 		m_target(_target),
 		m_position(_position),
-		m_maxDistSqr(_maxDistance * _maxDistance)
+		m_maxDistSqr(_maxDistance * _maxDistance),
+		m_minDistSqr(_minDistance * _minDistance)
 	{
 	}
 
 	void IsClose::ProcessComponent(float _deltaTime)
 	{
-		if (ei::lensq(m_target.GetPosition() - m_position) <= m_maxDistSqr)
+		float d = ei::lensq(m_target.GetPosition() - m_position);
+		if (d <= m_maxDistSqr && d >= m_minDistSqr)
 			m_actor.Destroy();
 	}
 

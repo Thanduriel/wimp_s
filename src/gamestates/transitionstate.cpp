@@ -17,11 +17,15 @@ namespace GameStates {
 
 	const std::array< LevelDescription, (size_t)Game::Level::COUNT> LEVEL_DESCRIPTIONS =
 	{ {
-		{"Act I", "business as usual", ""},
-		{ "Act II", "business as usual", "" },
-		{ "Act III", "business as usual", "" },
-		{ "Act IV", "business as usual", "" },
-		{ "Act V", "business as usual", "" }
+		{"Act I", "business as usual", "You are an elite pilot making money with all kinds of delicate dirty work.\
+			\nCurrently employed by DymonIndustries you tasked with infiltrating a secret research base and stealing there work.\n\
+			Setup with a fake id and a fitting ship there should be no major complications. To pass the security checks\n\
+			weapons had to be left behind, so in case of unforeseen complications a suitable replacement need to be improvised."},
+		{ "Act II", "a change of plan", "Now the only thing left to do is delivering the black-hole generator to the rendezvous\
+			coordinates and exchanging it for the not inconsiderable amount of credits that where promised." },
+		{ "Act III", "getting back in shape", "" },
+		{ "Act IV", "collecting information", "" },
+		{ "Act V", "revenge", "" }
 	} };
 
 	using namespace Control;
@@ -36,6 +40,8 @@ namespace GameStates {
 		m_hud.CenterLabel(m_hud.m_titleLabel);
 		m_hud.m_subtitleLabel.SetText(LEVEL_DESCRIPTIONS[(int)_level].subtitle);
 		m_hud.CenterLabel(m_hud.m_subtitleLabel);
+		m_hud.m_storyLabel.SetText(LEVEL_DESCRIPTIONS[(int)_level].introduction);
+		m_hud.CenterLabel(m_hud.m_storyLabel);
 	}
 
 	const float LOAD_STAGES = 12.f;

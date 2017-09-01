@@ -13,7 +13,7 @@ namespace Game {
 	 * A container for items that can be placed in space and picked up
 	 * by getting close to it.
 	 */
-	class Crate : public Actor
+	class Crate : public DynamicActor
 	{
 	public:
 		// Create a crate at _position that takes all items form _inventory

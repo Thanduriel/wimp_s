@@ -106,9 +106,6 @@ namespace Generators {
 		// decrease chance for rocket launchers; todo: refractory this
 		if (type == WeaponType::Rocket && !m_randomSampler.Uniform(0, 2)) type = WeaponType::Simple;
 		m_name = NAMES[(int)type];
-		// rocket properties count as trait
-		if (type == WeaponType::Rocket)
-			numTraits -= 1;
 		m_description.clear();
 		m_baseStats.clear();
 
@@ -123,6 +120,13 @@ namespace Generators {
 		float lifeTime = m_randomSampler.Uniform(LIFETIME_RANGE[(int)type]);
 
 		float eCost = damage / (cooldown * _power);
+		if (type == WeaponType::Rocket)
+		{
+			// rocket properties count as trait
+			if (type == WeaponType::Rocket)
+				numTraits -= 1;
+			eCost *= 4.f;
+		}
 
 		Weapon::FireFunction fireFn;
 		Weapon::ReloadFunction reloadFn;

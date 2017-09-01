@@ -16,6 +16,7 @@ namespace Control
 		m_evasionTime = 5.0f;
 		GetShip().SetSpeed(50.0f);
 		GetShip().SetAngularAcceleration(2.0f);
+		GetShip().SetWeaponTarget(**_target);
 		m_hud.AddIndicator(this->GetShip(), _name);
 	}
 

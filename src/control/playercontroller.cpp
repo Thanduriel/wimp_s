@@ -50,7 +50,7 @@ namespace Control
 		HandleInput(_deltaTime);
 
 		auto actor = _sceneGraph.RayCast(g_camera.GetRay(Vec2(0.f, 0.f)), FOCUS_RANGE, Game::CollisionComponent::Type::Ship);
-		if (actor)
+		if (actor && actor != &m_ship)
 		{
 			m_hud.UpdateCrossHair(1.f);
 			m_focus = actor->GetHandle();
@@ -122,8 +122,10 @@ namespace Control
 		// test stuff
 		if (_key == GLFW_KEY_R)
 		{
+			static uint32_t count = 2;
+			++count;
 			Generators::WeaponGenerator gen;
-			Game::Weapon* w = gen.Generate(5.f, 2.f);
+			Game::Weapon* w = gen.Generate(count, 10.f);//gen.Generate(5.f, 2.f);
 			Game::FactoryActor::GetThreadLocalInstance().Add(*w);
 			m_ship.GetInventory().Add(*w);
 		}
@@ -151,13 +153,13 @@ namespace Control
 			const float tacticalCamSpeed = 30.f;
 			Vec3 camVel(0.f);
 			// todo: change this to virtual keys
-			if (InputManager::IsKeyPressed(GLFW_KEY_W))
+			if (InputManager::IsVirtualKeyPressed(Control::VirtualKey::ACC_FORWARD))
 				camVel.z += tacticalCamSpeed;
-			if (InputManager::IsKeyPressed(GLFW_KEY_S))
+			if (InputManager::IsVirtualKeyPressed(Control::VirtualKey::ACC_BACKWARD))
 				camVel.z -= tacticalCamSpeed;
-			if (InputManager::IsKeyPressed(GLFW_KEY_A))
+			if (InputManager::IsVirtualKeyPressed(Control::VirtualKey::ACC_LEFT))
 				camVel.x -= tacticalCamSpeed * m_tacticalDirSign;
-			if (InputManager::IsKeyPressed(GLFW_KEY_D))
+			if (InputManager::IsVirtualKeyPressed(Control::VirtualKey::ACC_RIGHT))
 				camVel.x += tacticalCamSpeed * m_tacticalDirSign;
 			g_camera.Translate(m_ship.GetRotationMatrix() * camVel * _deltaTime);
 		//	m_referenceGrid.Translate(camVel * _deltaTime);

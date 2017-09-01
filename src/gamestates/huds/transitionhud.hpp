@@ -13,6 +13,7 @@ namespace GameStates {
 
 		Graphic::TextRender m_titleLabel;
 		Graphic::TextRender m_subtitleLabel;
+		Graphic::TextRender m_storyLabel;
 		Graphic::FillBar m_loadBar;
 		Graphic::TextRender m_descriptionLabel;
 		Graphic::TextRender m_finishLabel;

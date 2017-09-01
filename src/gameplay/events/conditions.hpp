@@ -44,7 +44,7 @@ namespace Conditions {
 	public:
 		// @param _target The Actor to track
 		// @param _position The position _target must reach.
-		IsClose(Actor& _actor, const Actor& _target, const ei::Vec3& _position, float _maxDistance);
+		IsClose(Actor& _actor, const Actor& _target, const ei::Vec3& _position, float _maxDistance, float _minDistance = 0.f);
 
 		void ProcessComponent(float _deltaTime) override;
 
@@ -53,6 +53,7 @@ namespace Conditions {
 		const Actor& m_target;
 		ei::Vec3 m_position;
 		float m_maxDistSqr;
+		float m_minDistSqr;
 	};
 
 	// ********************************************************************* //

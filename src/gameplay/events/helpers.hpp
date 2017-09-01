@@ -23,6 +23,8 @@
 											_hud.AddObjective(*ev);
 #define CREATE_OBJECTIVE5(type, arg0, arg1, arg2, arg3, arg4) auto* ev = &FactoryActor::GetThreadLocalInstance().Make<Event< type >>(arg0,arg1, arg2, arg3, arg4); \
 											_hud.AddObjective(*ev);
+#define CREATE_OBJECTIVE6(type, arg0, arg1, arg2, arg3, arg4, arg5) auto* ev = &FactoryActor::GetThreadLocalInstance().Make<Event< type >>(arg0,arg1, arg2, arg3, arg4, arg5); \
+											_hud.AddObjective(*ev);
 
 
 namespace Game {
@@ -57,7 +59,7 @@ namespace Game {
 		// Creates a ship with Controller type T.
 		// Equips it with _numWeapons. Does not check for available sockets.
 		// Additional Arguments are forwarded to the Controller's constructor.
-		Ship& CreateShip(const std::string& _type, const ei::Vec3& _position, int _numWeapons, float _power, float _rarityMod = 1.f, Drop _drop = Drop::Weapons);
+		Ship& CreateShip(const std::string& _type, const ei::Vec3& _position, int _numWeapons = 0, float _power = 0, float _rarityMod = 1.f, Drop _drop = Drop::Weapons);
 
 		template<typename T, typename... Args>
 		T& CreateController(Args&&... _args)
