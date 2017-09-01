@@ -10,7 +10,8 @@
 	"EnergyRecharge" 	: 1.5,
 	"Shield" 			: 32.0,
 	"ShieldRecharge" 	: 6.0,
-	"ShieldDelay" 		: 4.0
+	"ShieldDelay" 		: 4.0,
+	"AngularSpeed"	 	: 1.2
   },
    "Dart": {
     "Mesh"				: "default_ship",
@@ -99,6 +100,24 @@
 	"MaxSpeed" 			: 55.0,
 	"MinSpeed" 			: -5.0,
 	"AngularSpeed"	 	: 0.5
+  },
+  "BattleShip": {
+    "Mesh": "battleship",
+	"BoundingMesh": "battleshipbm",
+    "WeaponSockets": ["LeftTurret", "RightTurret", "CenterTurret", "LeftTurrentBank", "LeftFrontTurret", "RightFrontTurret", "RightSideTurret"],
+	"DriveSockets" : ["LeftDrive", "RightDrive", "OuterLeftDrive", "OuterRightDrive", "InnerLeftDrive", "InnerRightDrive"],
+    "Lights"			: [],
+    "BaseHealth" 		: 300.0,
+	"Mass" 				: 10000.0,
+	"Energy" 			: 100.0,
+	"EnergyRecharge" 	: 7.25,
+	"Shield" 			: 40.0,
+	"ShieldRecharge" 	: 1.5,
+	"ShieldDelay" 		: 12.0,
+	"Thrust" 			: 14000.0,
+	"MaxSpeed" 			: 45.0,
+	"MinSpeed" 			: -15.0,
+	"AngularSpeed"	 	: 0.04
   },
   "KamikazeShip": {
     "Mesh": "small_fighter",

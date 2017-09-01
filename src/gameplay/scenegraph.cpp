@@ -11,6 +11,7 @@
 #include "elements/factorycomponent.hpp"
 #include "elements/collisioncomponent.hpp"
 #include "elements/shieldcomponent.hpp"
+#include "elements/shipsystems/projectile.hpp"
 
 #define REGISTER_COMPONENT_IMPL(x,y) 
 
@@ -345,10 +346,16 @@ namespace Game {
 				&& m_collisionComponents[j]->m_AABB.max.x > slfComp->m_AABB.min.x; --j)
 			{
 				CollisionComponent* othComp = m_collisionComponents[j];
-				if (!othComp->GetType() & CollisionComponent::Type::Any) continue;
 
 				Actor& slf = slfComp->GetActor();
 				Actor& oth = othComp->GetActor();
+
+				if (!othComp->GetType() & CollisionComponent::Type::Any) continue;
+				// two projectiles with the same owner can not collide
+				if (slfComp->GetType() & CollisionComponent::Type::Projectile & othComp->GetType()
+					&& static_cast<Projectile*>(&slf)->GetOwner() == static_cast<Projectile*>(&oth)->GetOwner())
+					continue;
+
 				float distSq = ei::lensq(slf.GetPosition()
 					- oth.GetPosition());
 

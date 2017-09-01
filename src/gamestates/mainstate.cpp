@@ -95,7 +95,7 @@ namespace GameStates {
 				m_playerController = nullptr;
 				m_sceneGraph.Remove(m_playerShip);
 				g_camera.FixRotation(g_camera.GetRotation(), g_camera.GetPosition());
-				m_timeLeft = 9.f;
+				m_timeLeft = 7.f;
 			}
 		}
 		else

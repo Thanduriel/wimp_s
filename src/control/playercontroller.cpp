@@ -122,10 +122,10 @@ namespace Control
 		// test stuff
 		if (_key == GLFW_KEY_R)
 		{
-			static uint32_t count = 2;
-			++count;
+		//	static uint32_t count = 2;
+		//	++count;
 			Generators::WeaponGenerator gen;
-			Game::Weapon* w = gen.Generate(count, 10.f);//gen.Generate(5.f, 2.f);
+			Game::Weapon* w = gen.Generate(10.f, 2.f);
 			Game::FactoryActor::GetThreadLocalInstance().Add(*w);
 			m_ship.GetInventory().Add(*w);
 		}

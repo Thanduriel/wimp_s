@@ -32,6 +32,7 @@ namespace Game {
 		// @return The energy consumed.
 		float Fire(const ei::Vec3& _velocity, float _energyAvailable);
 		void SetTarget(const Actor& _actor) { m_target = _actor.GetHandle(); }
+		void SetOwner(const void* _owner) { m_owner = _owner; }
 
 		float GetEnergyCost() const { return m_energyCost; }
 		float GetRange() const { return m_range; }
@@ -48,6 +49,7 @@ namespace Game {
 		ReloadFunction m_reloadImpl;
 
 		Actor::ConstHandle m_target;
+		const void* m_owner;
 
 		friend class WeaponTrait;
 	};

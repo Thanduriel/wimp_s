@@ -18,6 +18,18 @@ namespace Control
 	void Controller::RotateTowards(ei::Vec3 _pos)
 	{
 		using namespace ei;
+	/*	Vec3 delta = _pos - GetShip().GetPosition();
+		Vec3 forward = normalize(GetShip().GetRotationMatrix() * Vec3(0.0f, 0.0f, 1.0f));
+		float angle = acos(dot(delta, forward));
+
+		if (abs(angle) > 0.03f)
+		{
+			Vec3 axis = cross(delta, forward);
+			Vec3 temp = cross(axis, forward);
+			if (dot(temp, delta) < 0) angle = -angle;
+			//	m_ship->SetRotation(Quaternion(Vec3(0.f, 0.f, 1.f), m_targetDirection));
+			m_ship.SetTargetAngularVelocity(normalize(axis) *  angle * 1.2f);
+		}*/
 		Vec3 delta = _pos - GetShip().GetPosition();
 		Vec3 forward = normalize(GetShip().GetRotationMatrix() * Vec3(0.0f, 0.0f, 1.0f));
 		//Clamp the dot product to avoid getting a domain error

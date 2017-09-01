@@ -14,6 +14,8 @@ namespace GameStates {
 	{
 		ShowCursor(Hud::CursorType::Crosshair);
 
+		GetDebugLabel().SetDefaultSize(0.7f);
+
 		float outerSpeedBarHeight = 512;
 		m_outerSpeedBar = &CreateScreenElement<ScreenTexture>("speed_bar_outer", PixelOffset(10, 10), PixelOffset(64, outerSpeedBarHeight), DefP::BotLeft, Anchor(DefP::BotLeft, this));
 		m_innerSpeedBar = &CreateScreenElement<ScreenTexture>("speed_bar_inner", PixelOffset(10, 10), PixelOffset(64, 512), DefP::BotLeft, Anchor(DefP::BotLeft, this));
@@ -36,7 +38,7 @@ namespace GameStates {
 		m_energyBar = &CreateScreenElement<FillBar>(PixelOffset(-36, 0), PixelOffset(220, 28), DefP::MidRight, Anchor(DefP::MidRight, this));
 		m_energyBar->SetColor(Utils::Color8U(35_uc, 71_uc, 141_uc));
 
-		m_objectivesLabel = &CreateScreenElement<TextRender>(Vec2(0.f), ScreenPosition::Anchor(DefP::TopMid, this));
+		m_objectivesLabel = &CreateScreenElement<TextRender>(PixelOffset(170, -40), ScreenPosition::Anchor(DefP::TopMid, this));
 		m_objectivesLabel->SetDefaultSize(0.6f);
 
 	}

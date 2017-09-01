@@ -68,7 +68,8 @@ namespace Game {
 				Any = 1,
 				Solid = 2,
 				Dynamic = 4,
-				Ship = 8
+				Ship = 8,
+				Projectile = 16
 			};
 		};
 		CollisionFlags GetType() const { return m_type; }

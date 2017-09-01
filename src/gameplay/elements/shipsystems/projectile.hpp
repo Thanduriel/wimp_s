@@ -25,11 +25,15 @@ namespace Game {
 
 		void OnCollision(Actor& _other) override;
 		void RegisterComponents(class SceneGraph& _sceneGraph) override;
+		
+		void SetOwner(const void* _owner) { m_owner = _owner; }
+		const void* GetOwner() const { return m_owner; }
 	protected:
 		float m_damage;
 		DamageType m_damageType;
 
 		LifeTimeComponent m_lifeTimeComponent;
+		const void* m_owner;
 		friend class WeaponTrait;
 	};
 

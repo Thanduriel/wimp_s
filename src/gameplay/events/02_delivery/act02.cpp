@@ -6,6 +6,7 @@
 #include "gameplay/elements/sun.hpp"
 #include "gamestates/huds/mainhud.hpp"
 #include "control/waspcontroller.hpp"
+#include "control/turtlecontroller.hpp"
 
 namespace Game {
 namespace Acts {
@@ -22,8 +23,15 @@ namespace Acts {
 		Actor::ConstHandle playerHandle = _player.GetHandle();
 
 		m_sceneGraph.Add(*new Sun(Vec3(-3457.f, -1500.f, 20000.f), 3300.f));
+		Ship& boss = CreateShip("BattleShip", MEETING_POSITION, 7, 13.f);
+		Actor::Handle bossHandle = boss.GetHandle();
 
-		auto& ev = *new Event<Conditions::IsClose>([]() {}, "reach the rendezvous coordinates", _player, MEETING_POSITION, 50.f);
+		auto AturnAround = CREATE_ACTION
+		{
+			CreateController<Control::TurtleController>(static_cast<Ship&>(**bossHandle), playerHandle, _hud, "BattleShip");
+		};
+
+		auto& ev = *new Event<Conditions::IsClose>(AturnAround, "reach the rendezvous coordinates", _player, MEETING_POSITION, 250.f);
 		_hud.AddObjective(ev);
 		m_sceneGraph.Add(ev);
 		ev.SetPosition(MEETING_POSITION);

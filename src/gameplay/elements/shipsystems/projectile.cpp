@@ -51,7 +51,8 @@ namespace Game {
 		: Projectile(_position, _velocity, _damage, _lifeTime, _damageType, false),
 		m_particles(THISACTOR, Vec3(0.f), Graphic::Resources::GetTexture("bolt")),
 		m_color(_color),
-		m_collisionComponent(THISACTOR, BOLT_SIZE, CollisionComponent::Type::Any | CollisionComponent::Type::Dynamic /*, ei::Box(Vec3(sqrt(-BOLT_SIZE/2.f)), Vec3(sqrt(BOLT_SIZE/2.f)))*/)
+		m_collisionComponent(THISACTOR, BOLT_SIZE, CollisionComponent::Type::Any 
+			| CollisionComponent::Type::Dynamic | CollisionComponent::Type::Projectile /*, ei::Box(Vec3(sqrt(-BOLT_SIZE/2.f)), Vec3(sqrt(BOLT_SIZE/2.f)))*/)
 	{
 	}
 
@@ -118,7 +119,8 @@ namespace Game {
 		float passed = m_lifeTimeComponent.GetLifeTimeMax() - m_lifeTimeComponent.GetLifeTimeLeft();
 		if (passed > SETUP_TIME && m_target && *m_target)
 		{
-			GetCollisionComponent().SetType(CollisionComponent::Type::Any | CollisionComponent::Type::Solid);
+			GetCollisionComponent().SetType(CollisionComponent::Type::Any | CollisionComponent::Type::Solid
+				| CollisionComponent::Type::Projectile | CollisionComponent::Type::Dynamic);
 			float l = ei::len(m_velocity);
 			// have both acceleration and conversion of TARGETING_STRENGTH in the desired direction
 			SetVelocity(GetVelocity() * (1.f - TARGETING_STRENGTH * _deltaTime) + normalize((**m_target).GetPosition() - m_position) 

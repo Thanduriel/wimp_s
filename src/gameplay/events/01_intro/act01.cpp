@@ -57,7 +57,7 @@ namespace Acts {
 		// --- events --------------------------------------- //
 		auto AfinishAct = CREATE_ACTION
 		{
-			FinishMap(Level::Act01);
+			FinishMap(Level::Act02);
 		};
 		
 		auto AexitArea = CREATE_ACTION

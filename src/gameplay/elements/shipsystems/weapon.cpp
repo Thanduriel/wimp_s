@@ -122,6 +122,7 @@ namespace Game {
 	{
 		_proj.SetVelocity(_weapon.GetRotationMatrix() * _vel + _weapon.m_beginVelocity);
 		_proj.SetRotation(ei::Quaternion(ei::Vec3(0.f, 0.f, 1.f), _proj.GetVelocity()));
+		_proj.SetOwner(_weapon.m_owner);
 	}
 
 	// ********************************************************************* //

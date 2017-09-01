@@ -1,6 +1,7 @@
 #include "turtlecontroller.hpp"
 #include "gameplay/elements/ship.hpp"
 #include "gamestates/huds/mainhud.hpp"
+#include "math/extensions.hpp"
 
 namespace Control
 {
@@ -11,11 +12,12 @@ namespace Control
 	{
 		m_target = _target;
 		m_minDistance = 50.0f;
-		m_maxDistance = 200.0f;
+		m_maxDistance = 400.0f;
 		m_maxFollowTime = 5.0f;
 		m_evasionTime = 5.0f;
 		GetShip().SetSpeed(0.0f);
-		GetShip().SetAngularAcceleration(0.5f);
+	//	GetShip().SetAngularAcceleration(0.5f);
+		GetShip().SetWeaponTarget(**_target);
 		m_hud.AddIndicator(this->GetShip(), _name);
 	}
 
@@ -28,7 +30,7 @@ namespace Control
 
 			ManageShooting();
 
-			EvadeObstacles();
+		//	EvadeObstacles();
 		}
 	}
 
@@ -64,11 +66,22 @@ namespace Control
 		{
 			Vec3 forward = GetShip().GetRotationMatrix() * Vec3(0.0f, 0.0f, 1.0f);
 
-			if (dot(delta, forward) > 0.0f)
+		//	if (dot(delta, forward) > 0.0f)
 			{
 				float angle = acosf(clamp(dot(normalize(delta), forward), -1.0f, 1.0f));
-				if (angle < ei::PI / 4.0f)
+				if (angle < ei::PI / 2.0f)
+				{
+					Ray ray(m_ship.GetPosition(), normalize(delta));
+					ray.origin = m_ship.GetInverseTransformation() * ray.origin;
+					ray.direction = m_ship.GetInverseRotationMatrix() * ray.direction;
+
+					// put origin outside of the sphere and invert direction
+					// so that the intersection test finds the right point
+					ray.origin += ray.direction * 100000.f;
+					ray.direction *= -1.f;
+					m_ship.AdjustWeaponOrientation(ray);
 					GetShip().Fire();
+				}
 			}
 		}
 	}

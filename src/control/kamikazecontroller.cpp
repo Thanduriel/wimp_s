@@ -15,7 +15,7 @@ namespace Control
 		m_maxFollowTime = 5.0f;
 		m_evasionTime = 5.0f;
 		GetShip().SetSpeed(50.0f);
-		GetShip().SetAngularAcceleration(2.0f);
+	//	GetShip().SetAngularAcceleration(2.0f);
 		m_hud.AddIndicator(this->GetShip(), _name);
 		GetShip().SetHealth(1.0f);
 	}

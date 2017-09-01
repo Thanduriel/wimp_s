@@ -289,6 +289,7 @@ namespace Game {
 		m_boundingMesh(_orig.m_boundingMesh),
 		m_isSimple(_orig.m_isSimple)
 	{}
+
 	// *************************************************************** //
 	void CollisionComponent::ProcessComponent(float _deltaTime)
 	{
