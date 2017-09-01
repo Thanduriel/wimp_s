@@ -87,7 +87,26 @@ namespace GameStates {
 			// clear all particles
 			Graphic::ParticleSystems::Manager::ClearAll();
 		}
-		if (m_playerController->GetShip().IsDestroyed()) m_isFinished = true;
+
+		if (m_playerController)
+		{
+			if (m_playerShip.IsDestroyed())
+			{
+				m_playerController = nullptr;
+				m_sceneGraph.Remove(m_playerShip);
+				g_camera.FixRotation(g_camera.GetRotation(), g_camera.GetPosition());
+				m_timeLeft = 9.f;
+			}
+		}
+		else
+		{
+			m_timeLeft -= _deltaTime;
+			if (m_timeLeft < 0.f)
+			{
+				m_isFinished = true;
+				delete &m_playerShip;
+			}
+		}
 	}
 
 	void MainState::Draw(float _deltaTime)
@@ -98,7 +117,7 @@ namespace GameStates {
 		// the hud should be drawn last
 		m_hud.GetDebugLabel().SetText("ft: <c 0 255 100>" + std::to_string(_deltaTime) + "</c>"
 							+ "\nnumP" + std::to_string(ParticleSystems::Manager::GetNumParticlesTotal()));
-		m_hud.Draw(_deltaTime);
+		if(m_playerController) m_hud.Draw(_deltaTime);
 	}
 
 	void MainState::Dispose()
@@ -112,30 +131,34 @@ namespace GameStates {
 	{ 
 		m_hud.MouseMove(_dx, _dy);
 
-		m_playerController->MouseMove(_dx, _dy);
+		if(m_playerController) m_playerController->MouseMove(_dx, _dy);
 	}
 	void MainState::Scroll(float _dx, float _dy)
 	{ 
 		if (m_hud.Scroll(_dx, _dy)) return;
 
-		m_playerController->Scroll(_dx, _dy);
+		if (m_playerController) m_playerController->Scroll(_dx, _dy);
 	}
 	void MainState::KeyDown(int _key, int _modifiers)  
 	{ 
 		if(m_hud.KeyDown(_key, _modifiers)) return; 
 
-		m_playerController->KeyDown(_key, _modifiers);
+		if (m_playerController) m_playerController->KeyDown(_key, _modifiers);
 	}
 	void MainState::KeyRelease(int _key)  
-	{ 
-		if (InputManager::IsVirtualKey(_key, Control::VirtualKey::INVENTORY))
+	{
+		// cant manually change the state when game over
+		if (m_playerController)
 		{
-			// Change to inventory state
-			m_newState = new GameStates::InventoryState(m_playerController->GetShip());
-		}
-		else if (InputManager::IsVirtualKey(_key, Control::VirtualKey::PAUSE))
-		{
-			m_newState = new GameStates::PauseState(*this);
+			if (InputManager::IsVirtualKey(_key, Control::VirtualKey::INVENTORY))
+			{
+				// Change to inventory state
+				m_newState = new GameStates::InventoryState(m_playerController->GetShip());
+			}
+			else if (InputManager::IsVirtualKey(_key, Control::VirtualKey::PAUSE))
+			{
+				m_newState = new GameStates::PauseState(*this);
+			}
 		}
 
 		if(m_hud.KeyUp(_key, 0)) return; 
@@ -143,7 +166,7 @@ namespace GameStates {
 	void MainState::KeyClick(int _key)  
 	{ 
 //		if(m_hud.KeyClick(_key)) return; 
-		m_playerController->KeyClick(_key);
+		if (m_playerController) m_playerController->KeyClick(_key);
 	}
 	void MainState::KeyDoubleClick(int _key)  
 	{ 

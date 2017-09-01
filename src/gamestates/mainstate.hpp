@@ -55,6 +55,7 @@ namespace GameStates{
 		std::unique_ptr<Game::Map> m_map;
 		Control::PlayerController* m_playerController;
 		Control::GameTimeControl m_gameTimeControl;
+		float m_timeLeft; // timer after the player got destroyed
 
 		Game::SceneGraph m_sceneGraph;
 	};

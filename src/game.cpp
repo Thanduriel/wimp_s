@@ -124,9 +124,6 @@ void Wimp_s::Run()
 		}
 		if (changedState && m_gameStates.size()) m_gameStates.back()->OnActivate();
 
-		// todo: move this when general input handling is implemented
-	//	if (m_gameStates.size() && glfwGetKey(Graphic::Device::GetWindow(), GLFW_KEY_ESCAPE)) 
-	//		m_gameStates.pop_back();
 		if (m_gameStates.size())
 		{
 			Control::InputManager::SetGameState(m_gameStates.back().get());

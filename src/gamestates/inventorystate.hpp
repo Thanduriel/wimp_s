@@ -18,6 +18,7 @@ namespace GameStates
 		void Process(float _deltaTime) override;
 		void Draw(float _deltaTime) override;
 		void Dispose() override;
+		void OnActivate() override;
 
 		void MouseMove(float _dx, float _dy) override;
 		void Scroll(float _dx, float _dy) override;
@@ -31,8 +32,6 @@ namespace GameStates
 	private:
 		Game::Ship& m_ship;
 
-		ei::Vec3 m_oldCamPosition;
-		ei::Quaternion m_oldCamRotation;
 		Control::Camera m_oldCamera;
 
 		int m_money;

@@ -27,7 +27,7 @@ namespace GameStates
 		// weapon related
 		m_inventoryField = &CreateScreenElement<DropField>("box_uncut", PixelOffset(0, 0), PixelOffset(400, 400), DefP::TopRight, Anchor(DefP::TopRight, this));
 		m_weaponFields.push_back(m_inventoryField);
-		m_descriptionLabel = &CreateScreenElement<TextRender>(Vec2(0.05f, 0.05f), ScreenPosition::Anchor(DefP::MidLeft, this));
+		m_descriptionLabel = &CreateScreenElement<TextRender>(Vec2(0.05f, -0.15f), ScreenPosition::Anchor(DefP::MidLeft, this));
 		m_descriptionLabel->SetDefaultSize(0.5f);
 		m_sellField = &CreateScreenElement<DropField>("box_uncut", Vec2(0.f), PixelOffset(96, 96), DefP::TopMid, Anchor(DefP::BotMid, m_inventoryField));
 		m_weaponFields.push_back(m_sellField);

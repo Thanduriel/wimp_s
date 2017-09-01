@@ -10,6 +10,7 @@
 #include "gameplay/elements/shipsystems/weapon.hpp"
 #include "math/extensions.hpp"
 #include "utils/stringutils.hpp"
+#include "GLFW/glfw3.h"
 
 namespace GameStates
 {
@@ -23,8 +24,6 @@ namespace GameStates
 
 	InventoryState::InventoryState(Game::Ship& _ship)
 		: m_ship(_ship),
-		m_oldCamPosition(Control::g_camera.GetPosition()),
-		m_oldCamRotation(Control::g_camera.GetRotation()),
 		m_oldCamera(Control::g_camera),
 		m_money(_ship.GetInventory().GetCredits()),
 		m_upgradeLvls(_ship.GetUpgradeLevels())
@@ -129,12 +128,23 @@ namespace GameStates
 		m_ship.GetInventory().SetCredits(m_money);
 
 		// restore camera state
-	//	g_camera.SetPosition(m_oldCamPosition);
-	//	g_camera.SetRotation(m_oldCamRotation);
-	//	g_camera.Attach(m_ship);
 		Control::g_camera = m_oldCamera;
 	}
 
+	void InventoryState::OnActivate()
+	{
+		// update camera again because the ship position might have been updated once
+		const float radius = m_ship.GetGeometryComponent().GetMesh().GetMeshBounds().boundingRadius * 1.1f;
+		float height = radius / tan(g_camera.GetFov() * 0.5f);
+		g_camera.SetPosition(m_ship.GetPosition() + m_ship.GetRotationMatrix() * Vec3(0.f, height, 0.f));
+		// look down so that the center of the ship is in the center of the camera
+		g_camera.SetRotation(Quaternion(m_ship.GetRotationMatrix() * Vec3(0.f, 0.f, 1.f),
+			normalize(m_ship.GetPosition() - g_camera.GetPosition())) * m_ship.GetRotation());
+		g_camera.FixRotation(g_camera.GetRotation(), g_camera.GetPosition());
+		g_camera.Process(0.f);
+	}
+
+	// ******************************************************** //
 	void InventoryState::UpdateUpgradeLabels()
 	{
 		using namespace Utils;
@@ -293,7 +303,7 @@ namespace GameStates
 	}
 	void InventoryState::KeyRelease(int _key)
 	{
-		if (InputManager::IsVirtualKey(_key, Control::VirtualKey::INVENTORY)) m_isFinished = true;
+		if (InputManager::IsVirtualKey(_key, Control::VirtualKey::INVENTORY) || _key == GLFW_KEY_ESCAPE) m_isFinished = true;
 		if (m_hud.KeyUp(_key, 0)) return;
 	}
 	void InventoryState::KeyClick(int _key)
