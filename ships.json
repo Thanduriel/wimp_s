@@ -82,6 +82,24 @@
 	"MinSpeed" 			: -5.0,
 	"AngularSpeed"	 	: 0.5
   },
+  "Fighter": {
+    "Mesh": "dark_fighter",
+	"BoundingMesh": "dark_fighterbm",
+    "WeaponSockets": ["LeftTurret", "RightTurret"],
+	"DriveSockets" : ["LeftDrive", "RightDrive"],
+    "Lights"			: [],
+    "BaseHealth" 		: 50.0,
+	"Mass" 				: 2000.0,
+	"Energy" 			: 7.0,
+	"EnergyRecharge" 	: 1.25,
+	"Shield" 			: 10.0,
+	"ShieldRecharge" 	: 0.5,
+	"ShieldDelay" 		: 6.0,
+	"Thrust" 			: 4000.0,
+	"MaxSpeed" 			: 55.0,
+	"MinSpeed" 			: -5.0,
+	"AngularSpeed"	 	: 0.5
+  },
   "KamikazeShip": {
     "Mesh": "small_fighter",
 	"BoundingMesh": "small_fighterbm",

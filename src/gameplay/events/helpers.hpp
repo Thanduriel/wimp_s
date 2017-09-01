@@ -5,6 +5,7 @@
 #include "gameplay/scenegraph.hpp"
 #include "gameplay/elements/ship.hpp"
 #include "generators/weapongen.hpp"
+#include "control/controller.hpp"
 
 // some macros to simplify the syntax of event creation
 /* A reasonable default capture list for actions:
@@ -42,7 +43,7 @@ namespace Game {
 	class Map
 	{
 	public:
-		Map(SceneGraph& _sceneGraph);
+		Map(SceneGraph& _sceneGraph, const Ship& _playerShip, GameStates::MainHud& _hud);
 		virtual ~Map() {}
 
 		Level GetNextLevel() const { return m_nextLevel; }
@@ -73,10 +74,30 @@ namespace Game {
 		void SetupPlayer(Ship& _player, const ei::Vec3& _position, const ei::Quaternion& _rotation = ei::qidentity(), float _speed = 200.f);
 		void FinishMap(Level _nextLevel);
 
-		SceneGraph& m_sceneGraph;
-		Generators::WeaponGenerator m_weaponGen;
+		enum ShipType {
+			Drone,
+			Dart,
+			Fighter,
+			BattleShip,
+			COUNT
+		};
+		// Generates a group of ships.
+		void CreateAsaultForce(std::vector<ShipType>&& _shipTypes, const ei::Vec3& _position, const Ship& _target, int _strength, float _weaponPower, float _rarityMod = 1.f);
 
+		SceneGraph& m_sceneGraph;
+		GameStates::MainHud& m_mainHud;
+		const Ship& m_playerShip;
+		Generators::WeaponGenerator m_weaponGen;
+		Generators::RandomGenerator m_randomGen;
 	private:
+		struct ShipValue
+		{
+			std::string typeName;
+			int value;
+			int numWeapons;
+			Control::AIControllerType controllerType;
+		};
+		const static std::array< ShipValue, (size_t)ShipType::COUNT> SHIP_VALUES;
 		Level m_nextLevel;
 		bool m_isFinished;
 	};

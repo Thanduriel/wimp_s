@@ -6,6 +6,7 @@
 #include "graphic/resources.hpp"
 #include "gameplay/content.hpp"
 #include "gameplay/events/01_intro/act01.hpp"
+#include "gameplay/events/02_delivery/act02.hpp"
 
 namespace GameStates {
 
@@ -22,7 +23,9 @@ namespace GameStates {
 			Setup with a fake id and a fitting ship there should be no major complications. To pass the security checks\n\
 			weapons had to be left behind, so in case of unforeseen complications a suitable replacement need to be improvised."},
 		{ "Act II", "a change of plan", "Now the only thing left to do is delivering the black-hole generator to the rendezvous\
-			coordinates and exchanging it for the not inconsiderable amount of credits that where promised." },
+			coordinates\n and exchanging it for the not inconsiderable amount of credits that where negotiated.\n\n\
+			Note from the developer: To have the core mechanics of this game play out the vision of this Act had to be compromised\n\
+			to meet the date constraints." },
 		{ "Act III", "getting back in shape", "" },
 		{ "Act IV", "collecting information", "" },
 		{ "Act V", "revenge", "" }
@@ -92,6 +95,7 @@ namespace GameStates {
 			Resources::GetTexture("bolt");
 			Resources::GetTexture("dronetex");
 			Resources::GetTexture("dark_fighter_6_color");
+			Resources::GetTexture("SciFi_Fighter-MK6-diffuse");
 			break;
 		case 7:
 			m_hud.m_descriptionLabel.SetText("loading meshes");
@@ -102,12 +106,14 @@ namespace GameStates {
 			Resources::GetMesh("default_ship");
 			Resources::GetMesh("spacestation");
 			Resources::GetMesh("dark_fighter");
+			Resources::GetMesh("advanced_ship");
 			break;
 		case 8:
 			Content::GetBoundingMesh("asteroidbm");
 			Content::GetBoundingMesh("asteroid02bm");
 			Content::GetBoundingMesh("default_shipbm");
 			Content::GetBoundingMesh("spacestationbm");
+			Content::GetBoundingMesh("advanced_shipbm");
 			break;
 		case 9:
 			m_hud.m_descriptionLabel.SetText("creating stars");
@@ -178,6 +184,8 @@ namespace GameStates {
 		switch (_level)
 		{
 		case Level::Act01: map = new Acts::Act01(m_createdState->GetSceneGraph(), *m_playerShip, m_createdState->GetHud());
+			break;
+		case Level::Act02: map = new Acts::Act02(m_createdState->GetSceneGraph(), *m_playerShip, m_createdState->GetHud());
 			break;
 		default:
 			Assert(false, "This level is unknown.");

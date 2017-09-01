@@ -24,7 +24,7 @@ namespace Acts {
 	const Vec3 EXIT_POSITION = Vec3(-1800.f, 38.f, 790.f);
 
 	Act01::Act01(SceneGraph& _sceneGraph, Ship& _player, GameStates::MainHud& _hud)
-		: Map(_sceneGraph),
+		: Map(_sceneGraph, _player, _hud),
 		m_asteroids(BASE_POSITON - Vec3(12.f, -6.f, 110.f), 200.f)
 	{
 		SetupPlayer(_player, PLAYER_SPAWN);

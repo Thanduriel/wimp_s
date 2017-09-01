@@ -48,4 +48,11 @@ namespace Control
 
 		GameStates::MainHud& m_hud;
 	};
+
+	enum struct AIControllerType
+	{
+		Wasp,
+		Kamikaze,
+		Turtle
+	};
 }

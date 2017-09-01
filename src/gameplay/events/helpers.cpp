@@ -1,9 +1,19 @@
 #include "helpers.hpp"
 #include "control/camera.hpp"
+#include "control/kamikazecontroller.hpp"
+#include "control/waspcontroller.hpp"
+#include "control/turtlecontroller.hpp"
+#include "generators/asteroidfield.hpp"
 
 namespace Game {
 
-	Map::Map(SceneGraph& _sceneGraph) : m_sceneGraph(_sceneGraph), m_weaponGen(0x0), m_isFinished(false)
+	Map::Map(SceneGraph& _sceneGraph, const Ship& _playerShip, GameStates::MainHud& _hud)
+		: m_sceneGraph(_sceneGraph), 
+		m_mainHud(_hud),
+		m_playerShip(_playerShip),
+		m_weaponGen(0x0), 
+		m_isFinished(false),
+		m_randomGen(0x0)
 	{
 	}
 
@@ -39,5 +49,55 @@ namespace Game {
 	{
 		m_nextLevel = _nextLevel;
 		m_isFinished = true;
+	}
+
+	using namespace Control;
+	const std::array< Map::ShipValue, (size_t)Map::ShipType::COUNT> Map::SHIP_VALUES = 
+	{ {	
+		{ "DroneMK1", 1, 1, AIControllerType::Kamikaze},
+		{ "Dart", 3, 1, AIControllerType::Wasp },
+		{ "Fighter", 6, 2, AIControllerType::Wasp },
+		{ "BattleShip", 24, 4, AIControllerType::Wasp }
+	} };
+
+	void Map::CreateAsaultForce(std::vector<ShipType>&& _shipTypes, const Vec3& _position, const Ship& _target,
+		int _strength, float _weaponPower, float _rarityMod)
+	{
+		// used to organize occupied spaces
+		Generators::AsteroidField spawnfield(_position, _strength * 8.f);
+		int strengthLeft = _strength;
+		Quaternion rot = m_randomGen.Rotation();
+
+		while(true)
+		{
+			auto it = _shipTypes.begin();
+			for (; it != _shipTypes.end(); ++it)
+				if (SHIP_VALUES[*it].value > strengthLeft) break;
+			int num = (int)std::distance(_shipTypes.begin(), it) - 1; // current element is to expensive
+			// even the cheapest is not enough
+			if (num < 0) break;
+			ShipType type = _shipTypes[m_randomGen.Uniform(0, num)];
+			strengthLeft -= SHIP_VALUES[type].value;
+
+			// create ship with 50% chance to drop weapon / credits
+			Ship& ship = CreateShip(SHIP_VALUES[type].typeName, _position, SHIP_VALUES[type].numWeapons, _weaponPower,
+				_rarityMod, m_randomGen() % 2 ? Drop::Weapons : Drop::Credits);
+			ship.SetRotation(rot);
+
+			// find suitable position that is not occupied
+			float r = ship.GetCollisionComponent().GetBoundingRadiusSq();
+			Vec3 pos = spawnfield.FindPosition(r);
+			ship.SetPosition(pos);
+			spawnfield.AddConstraint(Generators::SpaceConstraint(ship));
+			switch (SHIP_VALUES[type].controllerType)
+			{
+			case AIControllerType::Kamikaze: CreateController<Control::KamikazeController>(ship, _target.GetHandle(), m_mainHud, SHIP_VALUES[type].typeName);
+				break;
+			case AIControllerType::Wasp: CreateController<Control::WaspController>(ship, _target.GetHandle(), m_mainHud, SHIP_VALUES[type].typeName);
+				break;
+			case AIControllerType::Turtle: CreateController<Control::TurtleController>(ship, _target.GetHandle(), m_mainHud, SHIP_VALUES[type].typeName);
+				break;
+			}
+		}
 	}
 }
