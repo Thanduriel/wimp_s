@@ -120,12 +120,12 @@ namespace Control
 			m_targetSpeed = 0.f;
 
 		// test stuff
-		if (_key == GLFW_KEY_R)
+		if (_key == GLFW_KEY_F5)
 		{
 		//	static uint32_t count = 2;
 		//	++count;
 			Generators::WeaponGenerator gen;
-			Game::Weapon* w = gen.Generate(10.f, 2.f);
+			Game::Weapon* w = gen.Generate(10.f, 4.f);
 			Game::FactoryActor::GetThreadLocalInstance().Add(*w);
 			m_ship.GetInventory().Add(*w);
 		}
@@ -158,9 +158,9 @@ namespace Control
 			if (InputManager::IsVirtualKeyPressed(Control::VirtualKey::ACC_BACKWARD))
 				camVel.z -= tacticalCamSpeed;
 			if (InputManager::IsVirtualKeyPressed(Control::VirtualKey::ACC_LEFT))
-				camVel.x -= tacticalCamSpeed * m_tacticalDirSign;
+				camVel.x -= tacticalCamSpeed;
 			if (InputManager::IsVirtualKeyPressed(Control::VirtualKey::ACC_RIGHT))
-				camVel.x += tacticalCamSpeed * m_tacticalDirSign;
+				camVel.x += tacticalCamSpeed;
 			g_camera.Translate(m_ship.GetRotationMatrix() * camVel * _deltaTime);
 		//	m_referenceGrid.Translate(camVel * _deltaTime);
 		}

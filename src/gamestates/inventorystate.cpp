@@ -20,7 +20,7 @@ namespace GameStates
 	const ei::Vec2 SHIP_VIEW_SHIFT = ei::Vec2(0.f, 0.f);
 	const ei::Vec2 SHIP_VIEW_SIZE = ei::Vec2(0.9f, 0.5f);
 
-	const float UPGRADES_BASE_VALUE[Upgrades::COUNT] = { 10.0f, 1.5f, 32.0f, 10.0f, 2.0f, 132.0f };
+	const float UPGRADES_BASE_VALUE[Upgrades::COUNT] = { 8.0f, 1.5f, 32.0f, 6.0f, 4.0f, 80.0f };
 
 	InventoryState::InventoryState(Game::Ship& _ship)
 		: m_ship(_ship),

@@ -24,7 +24,7 @@ namespace Game {
 		void RegisterComponents(class SceneGraph& _sceneGraph) override;
 	private:
 		SunComponent m_sunComponent;
-		PointLightComponent m_lightComponent;
+	//	PointLightComponent m_lightComponent;
 	};
 
 //	typedef SingleComponentActor<SunComponent> Sun;

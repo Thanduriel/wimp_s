@@ -17,6 +17,7 @@ namespace Game {
 			Act02(SceneGraph& _sceneGraph, Ship& _player, GameStates::MainHud& _hud);
 
 		private:
+			BaseEvent m_finishDescription;
 		};
 	}
 }

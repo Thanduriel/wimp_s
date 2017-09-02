@@ -48,10 +48,9 @@ namespace GameStates {
 		m_sceneGraph.RegisterComponent(*m_playerController);
 
 		//register weapons
-		for (auto& socket : _player.GetWeaponSockets())
+		for (auto item : _player.GetInventory())
 		{
-			Actor* w = socket.GetAttached();
-			if (w) m_sceneGraph.Add(*w);
+			m_sceneGraph.Add(*static_cast<Weapon*>(item));
 		}
 
 		//boundingMeshTest = new Model("default_shipbm", Vec3(), qidentity());
@@ -187,10 +186,9 @@ namespace GameStates {
 	void MainState::RemovePlayer()
 	{
 		m_sceneGraph.Remove(m_playerShip);
-		for (auto& socket : m_playerShip.GetWeaponSockets())
+		for (auto item : m_playerShip.GetInventory())
 		{
-			Actor* w = socket.GetAttached();
-			if (w) m_sceneGraph.Remove(*w);
+			m_sceneGraph.Remove(*static_cast<Weapon*>(item));
 		}
 	}
 }

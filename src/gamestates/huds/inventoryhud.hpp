@@ -28,6 +28,7 @@ namespace GameStates
 		Graphic::DropField* m_sellField;
 		std::vector<Graphic::DropField*> m_weaponFields;
 		Graphic::TextRender* m_descriptionLabel;
+		Graphic::TextRender* m_sellLabel;
 
 		Graphic::TextRender* m_shipInfoLabel;
 

@@ -97,7 +97,7 @@ void main()
 		starSphere		= texture( patternTex, starUV ).rgb * 0.7 + vec3(0.3,0.3,0.3);
 	}
 	
-	float starGlow	= min( max( 1.0 - dist * ( 1.0 - brightness ), 0.0 ), 1.0 );
+	float starGlow	= min( max( 1.0 - dist * 1.2 * ( 1.0 - brightness ), 0.0 ), 1.0 );
 	//fragColor.rgb	= vec3( r );
 	fragColor.rgb	= vec3( f * ( 0.75 + brightness * 0.3 ) * orange ) + starSphere + corona * orange + starGlow * orangeRed;
 	fragColor.a		= min(1.0, fragColor.r + fragColor.g + fragColor.b);

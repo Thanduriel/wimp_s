@@ -32,6 +32,10 @@ namespace GameStates
 		m_sellField = &CreateScreenElement<DropField>("box_uncut", Vec2(0.f), PixelOffset(96, 96), DefP::TopMid, Anchor(DefP::BotMid, m_inventoryField));
 		m_weaponFields.push_back(m_sellField);
 
+		m_sellLabel = &CreateScreenElement<TextRender>(Vec2(0.f), ScreenPosition::Anchor(DefP::BotLeft, m_sellField));
+		m_sellLabel->SetText("sell");
+		m_sellLabel->SetDefaultSize(0.8f);
+
 		// general information
 		m_shipInfoLabel = &CreateScreenElement<TextRender>(Vec2(0.05f, -0.05f), ScreenPosition::Anchor(DefP::TopLeft, this));
 		m_shipInfoLabel->SetDefaultSize(0.5f);

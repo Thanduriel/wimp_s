@@ -17,7 +17,8 @@ namespace Acts {
 	const Vec3 PLAYER_SPAWN = Vec3(0.f);
 	const Vec3 MEETING_POSITION = Vec3(100.f, 600.f, 3000.f);
 	Act02::Act02(SceneGraph& _sceneGraph, Ship& _player, GameStates::MainHud& _hud)
-		: Map(_sceneGraph, _player, _hud)
+		: Map(_sceneGraph, _player, _hud),
+		m_finishDescription("You won! There is nothing left to do.")
 	{
 		SetupPlayer(_player, PLAYER_SPAWN);
 		Actor::ConstHandle playerHandle = _player.GetHandle();
@@ -26,9 +27,17 @@ namespace Acts {
 		Ship& boss = CreateShip("BattleShip", MEETING_POSITION, 7, 13.f);
 		Actor::Handle bossHandle = boss.GetHandle();
 
+		auto Aaction = CREATE_ACTION
+		{
+			_hud.AddObjective(m_finishDescription);
+		};
+
 		auto AturnAround = CREATE_ACTION
 		{
 			CreateController<Control::TurtleController>(static_cast<Ship&>(**bossHandle), playerHandle, _hud, "BattleShip");
+
+			CREATE_OBJECTIVE4(Conditions::OnDestroy, Aaction, "destroy the battleship",
+				std::vector<Actor::ConstHandle>({ bossHandle }), 1);
 		};
 
 		auto& ev = *new Event<Conditions::IsClose>(AturnAround, "reach the rendezvous coordinates", _player, MEETING_POSITION, 250.f);

@@ -75,11 +75,11 @@ namespace Acts {
 			std::vector<Actor::ConstHandle> targets;
 			for (int i = 0; i < 8; ++i)
 			{
-				Ship& ship = CreateShip("DroneMK1", DRONE_SPAWN + Vec3(i,i,i), 1, 4.f, 0.f);
+				Ship& ship = CreateShip("DroneMK1", DRONE_SPAWN + Vec3(0.f,i*2.f,i*2.f), 1, 4.f, 0.f);
 				CreateController<Control::KamikazeController>(ship, playerHndl, _hud, "Drone");
 				targets.push_back(ship.GetHandle());
 			}
-			CREATE_OBJECTIVE4(Conditions::OnDestroy, AexitArea, "defend yourself against the drones",
+			CREATE_OBJECTIVE4(Conditions::OnDestroy, AexitArea, "use a black hole against the drones",
 				std::move(targets), (int)targets.size());
 		};
 
@@ -120,7 +120,7 @@ namespace Acts {
 		auto AapproachFacility = CREATE_ACTION
 		{
 			CREATE_OBJECTIVE6(Conditions::IsClose, AwaitForHack, "get in 180m distance of the facility",
-				_player, BASE_POSITON, 175.f, 185.f);
+				_player, BASE_POSITON, 185.f, 175.f);
 		};
 
 		auto AdestroySecondWave = CREATE_ACTION
