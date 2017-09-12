@@ -88,7 +88,7 @@ namespace Acts {
 			BlackHole& blackHole = FactoryActor::GetThreadLocalInstance().Make<BlackHole>(BASE_POSITON + Vec3(0.f,0.f,0.2f), 210.f, 7.f, 21.f);
 			blackHole.Activate();
 
-			CREATE_OBJECTIVE3(Conditions::Timer, AblackHoleGenerator, "stay safe", 24.f);
+			CREATE_OBJECTIVE3(Conditions::Timer, AblackHoleGenerator, "stay save", 24.f);
 		};
 
 		auto AactivateVirus = CREATE_ACTION

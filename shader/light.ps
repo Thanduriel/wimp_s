@@ -5,7 +5,6 @@ in vec4 gs_center;
 in vec3 gs_eyeDirection;
 in vec3 gs_color;
 in float gs_radius;
-in float gs_fallOff;
 in float gs_intensity;
 
 uniform sampler2D screenTex;
@@ -25,7 +24,10 @@ vec4 CalcEyeFromWindow(in float windowZ, in vec3 eyeDirection)
   return vec4(eyeDirection * eyeZ, 1);
 }
 
-const float threshold = 0.25; // same value as light.gs
+const float threshold = 0.1; // same value as light.gs
+const float lambda = 1 + threshold;
+const float beta = (1 + threshold)/threshold - 1;
+const float gamma = threshold;
 
 void main()
 {	
@@ -33,14 +35,15 @@ void main()
 	vec4 dif = gs_center - eyePos;
 	dif.w = 0;
 	
-	float dSqr = dot(dif,dif);
+	float dSqr = dot(dif.xyz,dif.xyz);
 	
 	vec3 normal = texture(normalTex, gs_texCoord).xyz;
 	float diffuse = max(0.0, dot(normal, dif.xyz / sqrt(dSqr)));
-	float intensity = clamp((1/(gs_fallOff * dSqr) - threshold) * gs_intensity,0, 1);
-//	float specular = pow(cosAngle, materialShininess);
 	
 	// intensity falls of ~ 1/r^2. To reach 0 at distance r the function is distorted and shifted
+	float intensity = clamp(lambda * gs_radius / (gs_radius + beta * dSqr) - gamma, 0, 1);//clamp((1/(gs_fallOff * dSqr) - threshold) * gs_intensity,0, 1);
+//	float specular = pow(cosAngle, materialShininess);
+	
 	fragColor = vec4(gs_color, intensity * diffuse);
 //	fragColor += vec4(0.5,0.5,0.5,0.2);
 }

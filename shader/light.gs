@@ -19,7 +19,6 @@ out vec4 gs_center;
 out vec3 gs_eyeDirection;
 out vec3 gs_color;
 out float gs_radius;
-out float gs_fallOff;
 out float gs_intensity;
 
 layout(points) in;
@@ -29,10 +28,8 @@ void main(void)
 {
 	vec3 color = vs_out_Color[0].xyz;
 	float size = vs_out_Radius[0];
+	float radSq = vs_out_Radius[0] * vs_out_Radius[0];
 	float intensity = vs_out_Intensity[0];
-	// intensity fall of can be calculated once per light
-	const float threshold = 0.25; // this const needs to be updated in light.ps aswell.
-	float fallOff = 1/(size * size * threshold);
 
 	vec4 center = vec4(vs_out_Position[0].xyz, 1) * c_mView;//vec4(position.xyz * c_vInverseProjection.xyz + vec3(0,0,c_vInverseProjection.w), 1);//position / position.w;
 	vec4 position = center;
@@ -73,8 +70,7 @@ void main(void)
 	gs_eyeDirection = vec3(gs_texCoord * c_vInverseProjection.xy , 1.0);
 	gs_texCoord = gs_texCoord * 0.5 + 0.5;
 	gs_center = center;
-	gs_radius = size;
-	gs_fallOff = fallOff;
+	gs_radius = radSq;
 	gs_color = color;
 	gs_intensity = intensity;
 	EmitVertex();
@@ -84,8 +80,7 @@ void main(void)
 	gs_eyeDirection = vec3(gs_texCoord * c_vInverseProjection.xy , 1.0);
 	gs_texCoord = gs_texCoord * 0.5 + 0.5;
 	gs_center = center;
-	gs_radius = size;
-	gs_fallOff = fallOff;
+	gs_radius = radSq;
 	gs_color = color;
 	gs_intensity = intensity;
 	EmitVertex();
@@ -95,8 +90,7 @@ void main(void)
 	gs_eyeDirection = vec3(gs_texCoord * c_vInverseProjection.xy , 1.0);
 	gs_texCoord = gs_texCoord * 0.5 + 0.5;
 	gs_center = center;
-	gs_radius = size;
-	gs_fallOff = fallOff;
+	gs_radius = radSq;
 	gs_color = color;
 	gs_intensity = intensity;
 	EmitVertex();
@@ -106,8 +100,7 @@ void main(void)
 	gs_eyeDirection = vec3(gs_texCoord * c_vInverseProjection.xy , 1.0);
 	gs_texCoord = gs_texCoord * 0.5 + 0.5;
 	gs_center = center;
-	gs_radius = size;
-	gs_fallOff = fallOff;
+	gs_radius = radSq;
 	gs_color = color;
 	gs_intensity = intensity;
 	EmitVertex();
