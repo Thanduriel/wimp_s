@@ -25,6 +25,10 @@ namespace Control {
 		/// \brief Release all resources
 		static void Close();
 
+		/// \brief Write the current key config back to he virtual file.
+		/// \details The file is not written to the disk.
+		static void Save(Jo::Files::MetaFileWrapper::Node& _keyConfig);
+
 		/// \brief Switch which game state gets the input.
 		/// \param [in] _gameState null to disable input handling or a
 		///		game state which should receive the input events.
@@ -44,6 +48,8 @@ namespace Control {
 
 		/// \brief The cursors position in screen space coordinates [-1,1]² inside the window.
 		static ei::Vec2 GetCursorPosScreenSpace();
+
+		static void SetMouseSensitivtiy(float _sensitivity);
 	private:
 		GameStates::GameState* m_gameState;
 		GLFWwindow* m_window;		///< The one reference window
@@ -53,6 +59,7 @@ namespace Control {
 		double m_cursorY;	///< Last known position of the cursor
 		ei::Vec2 m_lastClickedPosition;	///< Used for double click detection for mouse buttons
 		bool m_justEntered;	///< Has the cursor (re)entered the window since last mouse move.
+		float m_mouseSensitivtiy;
 
 		static void CursorPosFun(GLFWwindow *, double, double);
 		static void CursorEnterFun(GLFWwindow *, int);

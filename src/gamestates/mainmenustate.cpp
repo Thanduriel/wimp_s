@@ -1,5 +1,6 @@
 #include "mainmenustate.hpp"
 #include "transitionstate.hpp"
+#include "settingsstate.hpp"
 #include "huds/mainmenuhud.hpp"
 #include "graphic/interface/hud.hpp"
 #include "graphic/interface/pixelcoords.hpp"
@@ -22,6 +23,7 @@ namespace GameStates
 
 		using namespace Graphic;
 		m_hud.m_startButton->SetOnMouseUp([&]() { m_newState = new TransitionState(Game::Level::Act01, nullptr); });
+		m_hud.m_optionsButton->SetOnMouseUp([&]() {m_newState = new SettingsState(); });
 		m_hud.m_exitButton->SetOnMouseUp([&]() { m_isFinished = true; });
 	}
 

@@ -515,19 +515,19 @@ namespace Graphic
 
 	// ************************************************************** //
 
-	EditField::EditField(Vec2 _position, Vec2 _size, Font* _font, int _lines, float _fontSize) :
-		ScreenTexture("componentBtnDefault", _position, _size),
+	EditField::EditField(Vec2 _position, Vec2 _size, DefinitionPoint _def, Anchor _anchor, Font* _font, int _lines, float _fontSize) :
+		ScreenTexture("box_cutout", _position, _size, _def, _anchor),
 		m_linesMax(_lines),
 		m_font(_font),
 		m_fontSize(_fontSize),
-		m_textRender(Vec2(0.f), Anchor(), m_font),
+		m_textRender(Vec2(0.f), Anchor(DefP::TopLeft, this), m_font),
 		m_content(""),//init with cursor indicator
 		m_cursor(0)
 	{
 		//	m_lines.emplace_back(new TextRender(_font));
 		//	SetVisible(false);
 		//	SetActive(true);
-		m_textRender.SetText("");
+		m_textRender.SetText("A");
 		Vec2 dim = m_textRender.GetCharSize();
 
 		const float textToBoxSize = 0.75f;
@@ -539,7 +539,7 @@ namespace Graphic
 		}
 		m_textRender.SetRectangle(_size);
 		//offset of an half char in x direction ;center in y direction
-		m_textRender.SetPosition(m_position + Vec2(m_fontSize * m_textRender.GetCharSize()[0] * 0.5f, -m_size[1] * (textToBoxSize) * 0.5f/* * 0.5f /*- m_textRender.GetRectangle()[1] * 0.5f*/));
+		m_textRender.SetPosition(Vec2(m_textRender.GetRectangle().x * 0.5f, (1.f - textToBoxSize) * m_size.y * 0.5f));
 	}
 
 	void EditField::Register(Hud& _hud)

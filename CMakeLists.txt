@@ -1,8 +1,8 @@
 cmake_minimum_required (VERSION 3.1)
 project (wimp_s)
 
-# require c++14; in future maybe update to 17
-set (CMAKE_CXX_STANDARD 14)
+# require c++17 since it is finished
+set (CMAKE_CXX_STANDARD 17)
 
 # find all source and header files
 file(GLOB_RECURSE SOURCE_FILES "src/*.hpp" "src/*.cpp")

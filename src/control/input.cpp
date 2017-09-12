@@ -1,3 +1,5 @@
+#include <algorithm>
+
 #include "input.hpp"
 #include <ei/vector.hpp>
 #include "graphic/core/device.hpp"
@@ -19,7 +21,7 @@ namespace Control {
 	void InputManager::Initialize( GLFWwindow* _window, Jo::Files::MetaFileWrapper::Node& _keyConfig )
 	{
 		// GLFW setup
-		glfwSetInputMode( _window, GLFW_CURSOR, GLFW_CURSOR_HIDDEN );
+		glfwSetInputMode( _window, GLFW_CURSOR, GLFW_CURSOR_DISABLED);
 		glfwSetInputMode( _window, GLFW_STICKY_KEYS, GL_FALSE );
 		glfwSetInputMode( _window, GLFW_STICKY_MOUSE_BUTTONS, GL_FALSE );
 
@@ -48,12 +50,21 @@ namespace Control {
 		InputManagerInstance.m_keyMap[(int)VirtualKey::INVENTORY] = &_keyConfig[string("Inventory")];
 		InputManagerInstance.m_keyMap[(int)VirtualKey::SWITCH_TACTICAL] = &_keyConfig[string("SwitchTactical")];
 		InputManagerInstance.m_keyMap[(int)VirtualKey::PAUSE] = &_keyConfig[string("Pause")];
+
+		// read other params
+		InputManagerInstance.m_mouseSensitivtiy = _keyConfig[string("MouseSensitivity")].Get(1.f);
 	}
 
 	// ********************************************************************* //
 	void InputManager::Close()
 	{
 		delete[] InputManagerInstance.m_keyMap;
+	}
+
+	// ********************************************************************* //
+	void InputManager::Save(Jo::Files::MetaFileWrapper::Node& _keyConfig)
+	{
+		_keyConfig[string("MouseSensitivity")] = InputManagerInstance.m_mouseSensitivtiy;
 	}
 
 	// ********************************************************************* //
@@ -96,19 +107,26 @@ namespace Control {
 	}
 
 	// ********************************************************************* //
-	void InputManager::CursorPosFun(GLFWwindow*, double _x, double _y)
+	void InputManager::CursorPosFun(GLFWwindow* _window, double _x, double _y)
 	{
+		const double dx = (_x - InputManagerInstance.m_cursorX) * InputManagerInstance.m_mouseSensitivtiy;
+		const double dy = (_y - InputManagerInstance.m_cursorY) * InputManagerInstance.m_mouseSensitivtiy;
+
+		int xSize, ySize;
+		glfwGetWindowSize(_window, &xSize, &ySize);
+		const double vx = std::clamp(InputManagerInstance.m_cursorX + dx, 0.0, (double)xSize);
+		const double vy = std::clamp(InputManagerInstance.m_cursorY + dy, 0.0, (double)ySize);
+		glfwSetCursorPos(_window, vx, vy);
 		// Leave/enter events are handled by m_justEntered (reset position without jump)
 		// Compute change of cursor and update its position
-		double dx = _x - InputManagerInstance.m_cursorX;
-		double dy = _y - InputManagerInstance.m_cursorY;
-		if( InputManagerInstance.m_justEntered ) dx = 0.0, dy = 0.0;
-		InputManagerInstance.m_cursorX = _x;
-		InputManagerInstance.m_cursorY = _y;
+//		if( InputManagerInstance.m_justEntered ) dx = 0.0, dy = 0.0;
+		InputManagerInstance.m_cursorX = vx;
+		InputManagerInstance.m_cursorY = vy;
 		InputManagerInstance.m_justEntered = false;
 		// Do a mouse move event.
 		if( InputManagerInstance.m_gameState )
-			InputManagerInstance.m_gameState->MouseMove( (float)dx, (float)dy );
+			InputManagerInstance.m_gameState->MouseMove(InputManagerInstance.m_mouseSensitivtiy * (float)dx, 
+				InputManagerInstance.m_mouseSensitivtiy *(float)dy );
 	}
 
 	// ********************************************************************* //
@@ -212,6 +230,12 @@ namespace Control {
 		return cursorPos;
 	}
 
+
+	// ********************************************************************* //
+	void InputManager::SetMouseSensitivtiy(float _sensitivtiy)
+	{
+		InputManagerInstance.m_mouseSensitivtiy = _sensitivtiy;
+	}
 
 	// ********************************************************************* //
 	char KEY_TO_CHAR[81][3] = {

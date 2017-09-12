@@ -224,13 +224,13 @@ namespace Graphic {
 	class EditField : public ScreenTexture
 	{
 	public:
-		/// \brief Create a useable EditField on the screen
+		/// \brief Create a usable EditField on the screen
 		/// \details param [in] informations needed for texture and Textrender
 		/// _lines The amount of lines the field has; 0 means automatic
-		/// _fontSize used fontsize for the text; 0 means automatic
-		EditField(ei::Vec2 _position, ei::Vec2 _size, 
+		/// _fontSize used font size for the text; 0 means automatic
+		EditField(ei::Vec2 _position, ei::Vec2 _size, DefinitionPoint _def, Anchor _anchor,
 			Font* _font = &Graphic::Resources::GetFont(Graphic::Fonts::DEFAULT),
-			int _lines = 1, float _fontSize = 1);
+			int _lines = 1, float _fontSize = 0);
 
 		void Register(Hud& _hud) override;
 
