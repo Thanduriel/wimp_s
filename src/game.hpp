@@ -13,6 +13,8 @@ public:
 
 	void Run();
 
+	void SaveConfig();
+
 	static float GetGameTime(){ return m_gameTime; }
 private:
 	void BuildDefaultConfig();

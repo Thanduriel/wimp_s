@@ -531,15 +531,12 @@ namespace Graphic
 		Vec2 dim = m_textRender.GetCharSize();
 
 		const float textToBoxSize = 0.75f;
-		//automatic rezising of the text to fit the field
-		if (!_fontSize)
-		{
-			m_fontSize = m_size[1] * textToBoxSize / dim[1];
-			m_textRender.SetDefaultSize(m_fontSize);
-		}
-		m_textRender.SetRectangle(_size);
+		m_textRender.SetRectangle(_size * ei::Vec2(1.f, textToBoxSize));
+		m_fontSize = m_textRender.GetDefaultSize();
 		//offset of an half char in x direction ;center in y direction
-		m_textRender.SetPosition(Vec2(m_textRender.GetRectangle().x * 0.5f, (1.f - textToBoxSize) * m_size.y * 0.5f));
+		m_textRender.SetPosition(Vec2(m_textRender.GetRectangle().x * 0.5f, -(m_size.y - m_textRender.GetRectangle().y) * 0.5f));
+
+		m_textRender.SetText("");
 	}
 
 	void EditField::Register(Hud& _hud)
@@ -549,6 +546,12 @@ namespace Graphic
 	}
 
 	// ************************************************************** //
+
+	void EditField::SetText(const std::string& _text)
+	{
+		m_content = _text;
+		m_textRender.SetText(_text);
+	}
 
 	void EditField::AddLine(int _preLine)
 	{
@@ -567,8 +570,8 @@ namespace Graphic
 		//mouse click -> set cursor
 		if (_key == GLFW_MOUSE_BUTTON_LEFT)
 		{
-			//	m_cursor = 0;
-			return true; //nothing more happens
+			m_cursor = 0;
+		//	return true; //nothing more happens
 		}
 		//right arrow key -> shift cursor 
 		else if (_key == GLFW_KEY_RIGHT && m_cursor < (int)m_content.size())
@@ -608,7 +611,7 @@ namespace Graphic
 
 		//update textRender
 		std::string str = m_content;
-		str.insert(m_cursor, 1, 'I');
+		str.insert(m_cursor, 1, 'Î');
 		m_textRender.SetText(str);
 		//calc pursor pos
 		//take dimensions of the first char, as every 

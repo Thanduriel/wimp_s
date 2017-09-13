@@ -18,6 +18,7 @@ int main()
 
 	Wimp_s game;
 	game.Run();
-
+	
+	game.SaveConfig();
 	return 0;
 }

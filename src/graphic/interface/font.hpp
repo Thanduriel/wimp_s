@@ -20,11 +20,13 @@ namespace Graphic {
 		/// \brief Load a bitmap font and initialize the render effect.
 		Font(const std::string& _fontName);
 
+		void SetShift(unsigned char _char, float _shift);
 	private:
 		friend class TextRender;
 
 		ei::Vec2 m_sizeTable[256];
 		ei::Vec2 m_coordTable[256];
+		float m_shiftTable[256]; // the x offset of the next char
 		Effect m_effect;
 		Texture m_texture;
 	};

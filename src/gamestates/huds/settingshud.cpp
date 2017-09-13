@@ -14,5 +14,8 @@ namespace GameStates {
 		m_cancelButton->Scale(Vec2(0.5f, 0.5f));
 
 		m_mouseSensitivity = &CreateScreenElement<EditField>(Vec2(0.f), PixelOffset(200, 50), DefP::BotLeft, Anchor(DefP::MidMid, this));
+		TextRender& label = CreateScreenElement<TextRender>(Vec2(0.f), Anchor(DefP::TopLeft, m_mouseSensitivity), nullptr, "mouse sensitivity: ");
+		label.SetDefaultSize(0.6f);
+		label.SetPosition(Vec2(-label.GetRectangle().x, 0.f));
 	}
 }

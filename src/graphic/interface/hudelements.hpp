@@ -236,11 +236,9 @@ namespace Graphic {
 
 		/// \brief Returns the current text the field contains.
 		const std::string& GetText() const { return m_content; };
+		void SetText(const std::string& _text);
 
-		/// \brief Returns the textRender to directly manipulate the text.
-		TextRender* getTextRender() { return &m_textRender; };
 	private:
-
 		/// \brief Adds an line after the specified one when it does not violate m_linesMax 
 		void AddLine(int _preLine);
 

@@ -8,7 +8,19 @@ namespace GameStates {
 
 	SettingsState::SettingsState()
 	{
-		m_hud.m_applyButton->SetOnMouseUp([this]() { m_isFinished = true;});
+		std::string s = std::to_string(InputManager::GetMouseSensitivity());
+		s.resize(7);
+		m_hud.m_mouseSensitivity->SetText(s);
+
+		m_hud.m_applyButton->SetOnMouseUp([this]() 
+		{
+			try {
+				float f = std::stof(m_hud.m_mouseSensitivity->GetText());
+				InputManager::SetMouseSensitivtiy(std::clamp(f, 0.1f, 10.f));
+			} catch(std::invalid_argument)
+			{ }
+			m_isFinished = true;
+		});
 		m_hud.m_cancelButton->SetOnMouseUp([this]() {m_isFinished = true; });
 	}
 

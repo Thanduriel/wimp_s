@@ -33,9 +33,18 @@ namespace Graphic
 			m_sizeTable[i] = Vec2((float)sizeX[i],(float)sizeY[i]);
 			// Half pixel offset necessary - otherwise rounding errors in shader
 			m_coordTable[i] = Vec2(float(PosX[i]) + 0.5f/m_texture.Width(),(float)PosY[i]);
+			m_shiftTable[i] = m_sizeTable[i].x;
 		}
+
+		SetShift('Î', 0.f);
 	}
 
+	void Font::SetShift(unsigned char _char, float _shift)
+	{
+		m_shiftTable[_char] = _shift;
+	}
+
+	// ***************************************************** //
 	TextRender::TextRender(ei::Vec2 _position, ScreenOverlay::Anchor _anchor, Font* _font,
 		const std::string& _text, float _scale) :
 		ScreenPosition(_position, _anchor),
@@ -84,8 +93,8 @@ namespace Graphic
 
 	Vec2 TextRender::GetCharSize()
 	{
-		m_charSize = Vec2(m_font.m_sizeTable[0][0],
-						m_font.m_sizeTable[0][1] * (m_font.m_texture.Height()
+		m_charSize = Vec2(m_font.m_sizeTable[64][0],
+						m_font.m_sizeTable[64][1] * (m_font.m_texture.Height()
 						/ (float)m_font.m_texture.Width()) * Device::GetAspectRatio());
 		return m_charSize;
 	}
@@ -244,13 +253,13 @@ namespace Graphic
 				if (ignoreCntr)
 				{
 					ignoreCntr = false;
-					currentPos[0] += m_font.m_sizeTable[(unsigned char)*it][0] * m_size;
+					currentPos[0] += m_font.m_shiftTable[(unsigned char)*it] * m_size;
 				} else {
 					ignoreCntr = CntrlChr(it);
 					continue;
 				}
 			} 
-			else currentPos[0]  += m_font.m_sizeTable[(unsigned char)*it][0] * m_size;
+			else currentPos[0]  += m_font.m_shiftTable[(unsigned char)*it] * m_size;
 
  			vbGuard->Add(CV);
 

@@ -50,6 +50,7 @@ namespace Control {
 		static ei::Vec2 GetCursorPosScreenSpace();
 
 		static void SetMouseSensitivtiy(float _sensitivity);
+		static float GetMouseSensitivity();
 	private:
 		GameStates::GameState* m_gameState;
 		GLFWwindow* m_window;		///< The one reference window

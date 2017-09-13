@@ -3,6 +3,7 @@ project (wimp_s)
 
 # require c++17 since it is finished
 set (CMAKE_CXX_STANDARD 17)
+set (CMAKE_CXX_STANDARD_REQUIRED ON)
 
 # find all source and header files
 file(GLOB_RECURSE SOURCE_FILES "src/*.hpp" "src/*.cpp")
@@ -27,8 +28,10 @@ endmacro()
 GroupSources(src)
 
 # faster compilation with multithreading
+# cmake does not support vs compiler switches for std
 if(MSVC)
 	add_compile_options( /MP )
+	add_compile_options( /std:c++17 )
 endif(MSVC)
 
 # needs to be known to link with the libraries

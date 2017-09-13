@@ -133,6 +133,18 @@ void Wimp_s::Run()
 	}
 }
 
+void Wimp_s::SaveConfig()
+{
+	Control::InputManager::Save(m_config[std::string("Input")]);
+	try {
+		Jo::Files::HDDFile file("config.json", Jo::Files::HDDFile::OVERWRITE);
+		m_config.Write(file, Jo::Files::Format::JSON);
+	}
+	catch (std::string _message) {
+		LOG_ERROR("Failed to save config file with message:\n" + _message);
+	}
+}
+
 void Wimp_s::BuildDefaultConfig()
 {
 	auto& cinput = m_config[std::string("Input")];
@@ -149,6 +161,7 @@ void Wimp_s::BuildDefaultConfig()
 	cinput[std::string("SwitchTactical")][0] = GLFW_KEY_SPACE;
 	cinput[std::string("Pause")][0] = GLFW_KEY_P;
 	cinput[std::string("Pause")][1] = GLFW_KEY_ESCAPE;
+	cinput["MouseSensitivity"s] = 1.f;
 
 	auto& cgraphics = m_config[std::string("Graphics")];
 	cgraphics[std::string("ScreenWidth")] = 1366;

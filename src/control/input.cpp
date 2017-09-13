@@ -64,7 +64,7 @@ namespace Control {
 	// ********************************************************************* //
 	void InputManager::Save(Jo::Files::MetaFileWrapper::Node& _keyConfig)
 	{
-		_keyConfig[string("MouseSensitivity")] = InputManagerInstance.m_mouseSensitivtiy;
+		_keyConfig[string("MouseSensitivity")] = (double)InputManagerInstance.m_mouseSensitivtiy;
 	}
 
 	// ********************************************************************* //
@@ -235,6 +235,11 @@ namespace Control {
 	void InputManager::SetMouseSensitivtiy(float _sensitivtiy)
 	{
 		InputManagerInstance.m_mouseSensitivtiy = _sensitivtiy;
+	}
+
+	float InputManager::GetMouseSensitivity()
+	{
+		return InputManagerInstance.m_mouseSensitivtiy;
 	}
 
 	// ********************************************************************* //
