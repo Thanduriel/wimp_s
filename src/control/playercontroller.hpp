@@ -69,10 +69,13 @@ namespace Control
 		// Control the input of the player
 		void HandleInput(float _deltaTime);
 
+		void UpdateAimAssist();
+
 		// helpers for special weapon placement
 		Game::Grid& m_referenceGrid;
 		GameTimeControl& m_controlParams;
 
 		Game::Actor::Handle m_focus;
+		bool m_lookForTarget;
 	};
 }

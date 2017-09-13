@@ -42,6 +42,7 @@ namespace GameStates {
 		m_objectivesLabel = &CreateScreenElement<TextRender>(PixelOffset(170, -40), ScreenPosition::Anchor(DefP::TopMid, this));
 		m_objectivesLabel->SetDefaultSize(0.6f);
 
+		m_aimAssist = &CreateScreenElement<ScreenTexture>("crosshair_dot", PixelOffset(0, -20), PixelOffset(64, 64), DefP::MidMid);
 	}
 
 	void MainHud::UpdateSpeedLabel(float _speed)
@@ -115,6 +116,11 @@ namespace GameStates {
 			s += static_cast<const Game::BaseEvent&>(**ev).GetObjective() + "\n";
 
 		m_objectivesLabel->SetText(s);
+	}
+
+	void MainHud::UpdateAimAssist(const ei::Vec2 _position)
+	{
+		m_aimAssist->SetPosition(_position);
 	}
 
 	// ******************************************************************** //

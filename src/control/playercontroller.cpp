@@ -35,7 +35,8 @@ namespace Control
 		m_referenceGrid(*new Game::Grid(ei::Vec3(0.f),
 			Utils::Color32F(0.f, 1.f, 0.f, 0.6f), 2.f, 2.f,
 			50.f, Game::GridComponent::TransitionInfo(4800.f, 0.25f))),
-		m_controlParams(_params)
+		m_controlParams(_params),
+		m_lookForTarget(false)
 	{
 		s_sceneGraph->Add(m_referenceGrid);
 	};
@@ -53,7 +54,7 @@ namespace Control
 		if (actor && actor != &m_ship)
 		{
 			m_hud.UpdateCrossHair(1.f);
-			m_focus = actor->GetHandle();
+		//	m_focus = actor->GetHandle();
 		}
 		else
 			m_hud.UpdateCrossHair(0.f);
@@ -71,6 +72,45 @@ namespace Control
 			m_ship.GetSpecialMove()->SetIndicator(ray.origin + d * ray.direction);
 			m_ship.GetSpecialMove()->TestPlacement(_sceneGraph);
 		}
+
+		if (m_lookForTarget)
+		{
+			m_lookForTarget = false;
+			auto hits = _sceneGraph.SphereQuery(ei::Sphere(m_ship.GetPosition(), 1000.f), Game::CollisionComponent::Type::Ship);
+			
+			if (hits.size())
+			{
+				for (auto& hit : hits)
+				{
+					// the player ship should be ignored
+					if (hit.second == 0.f)
+					{
+						hit.second = 2.f;
+						continue;
+					}
+
+					const Vec4 projectedPos = Control::g_camera.GetViewProjection() * Vec4(hit.first->GetPosition());
+					// behind the camera
+					if (projectedPos.z <= 0.f)
+					{
+						hit.second = 2.f;
+						continue;
+					}
+
+					hit.second = lensq(Vec2(projectedPos) / projectedPos.w * Vec2(Graphic::Device::GetAspectRatio(), 1.f));
+				}
+				auto it = std::min_element(hits.begin(), hits.end(), [](const auto& _lhs, const auto& _rhs) {
+					return _lhs.second < _rhs.second;
+				});
+				// maximum tolerance, second condition takes out self as well
+				if(it->second < 0.44f * 0.44f) m_focus = it->first->GetHandle();
+				else m_focus = nullptr;
+			}
+			else m_focus = nullptr;
+
+		}
+
+		UpdateAimAssist();
 	}
 
 	// ************************************************************ //
@@ -122,13 +162,15 @@ namespace Control
 		// test stuff
 		if (_key == GLFW_KEY_F5)
 		{
-		//	static uint32_t count = 2;
-		//	++count;
+			//	static uint32_t count = 2;
+			//	++count;
 			Generators::WeaponGenerator gen;
 			Game::Weapon* w = gen.Generate(10.f, 4.f);
 			Game::FactoryActor::GetThreadLocalInstance().Add(*w);
 			m_ship.GetInventory().Add(*w);
 		}
+		else if (_key == GLFW_KEY_R)
+			m_lookForTarget = true;
 	}
 
 	void PlayerController::KeyDown(int _key, int _modifiers)
@@ -272,5 +314,28 @@ namespace Control
 			g_camera.Attach(GetShip());
 			m_controlParams.m_timeScale = 1.f;
 		}
+	}
+
+	void PlayerController::UpdateAimAssist()
+	{
+		if (!m_focus || !*m_focus) return;
+
+		const Game::DynamicActor& target = static_cast<const Game::DynamicActor&>(**m_focus);
+
+		Vec3 dif = target.GetPosition() - m_ship.GetPosition();
+	//	float t = len(dif) / Game::Projectile::DEFAULT_SPEED;
+	//	Vec3 expectedPos = target.GetPosition() + target.GetVelocity() * t;
+		const float projSpeed = Game::Projectile::DEFAULT_SPEED + len(m_ship.GetVelocity());
+		const float a = dot(target.GetVelocity(), target.GetVelocity()) - projSpeed * projSpeed;
+
+		const float p = -2.f * ei::sum(target.GetVelocity()) / a;
+		const float q = dot(dif, dif) / a;
+
+		float t = p / 2.f + sqrt(p*p / 4.f - q);
+		Vec3 expectedPos = target.GetPosition() + target.GetVelocity() * t;
+
+		Vec4 projected = Control::g_camera.GetViewProjection() * Vec4(expectedPos, 1.f);
+
+		m_hud.UpdateAimAssist(Vec2(projected) * 1.f / projected.w);
 	}
 }

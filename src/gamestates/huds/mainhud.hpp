@@ -23,6 +23,7 @@ namespace GameStates {
 		void UpdateIndicators(Vec3 _playerPos);
 		// refreshes currently shown objectives based on all Events known by this.
 		void UpdateObjectives();
+		void UpdateAimAssist(const ei::Vec2 _position);
 
 		void AddIndicator(const Game::Actor& _actor, const std::string& _tag, Utils::Color8U _color = Utils::Color8U(1.f,1.f,1.f));
 		void AddObjective(const Game::BaseEvent& _event);
@@ -39,6 +40,7 @@ namespace GameStates {
 		Graphic::ScreenTexture* m_crossHairDot;
 		Graphic::ScreenTexture* m_crossHairLeft;
 		Graphic::ScreenTexture* m_crossHairRight;
+		Graphic::ScreenTexture* m_aimAssist;
 
 		Graphic::ScreenTexture* m_specialMoveIndicator;
 		Graphic::FillBar* m_energyBar;
