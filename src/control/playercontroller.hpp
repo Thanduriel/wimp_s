@@ -42,9 +42,8 @@ namespace Control
 		void KeyDown(int _key, int _modifiers);
 		void Scroll(float _dx, float _dy);
 
-		// Setter and getter for the mouse sensitivity
-		void SetMouseSensitivity(const Vec2& _sensitivity) { m_mouseSensitivity = _sensitivity; };
-		const Vec2& GetMouseSensitivity() const { return m_mouseSensitivity; };
+		void SetFocus(Game::Ship* _actor);
+		static bool HAS_AIM_ASSIST;
 	private:
 		enum struct TargetingMode
 		{
@@ -55,9 +54,6 @@ namespace Control
 		void SwitchTargetingMode(TargetingMode _newMode);
 
 		float m_tacticalDirSign; // -1 when the grid.y > camera.y
-
-		// The sensitivity of the mouse... duh
-		Vec2 m_mouseSensitivity;
 
 		// the target speed
 		float m_targetSpeed;

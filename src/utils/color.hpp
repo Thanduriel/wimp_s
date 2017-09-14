@@ -5,7 +5,7 @@
 #include <cstdint>
 
 // literal to call the correct constructor of Color8U
-inline uint8 operator""_uc(unsigned long long _arg) { return static_cast<uint8>(_arg); }
+inline constexpr uint8 operator""_uc(unsigned long long _arg) { return static_cast<uint8>(_arg); }
 
 namespace Utils {
 
@@ -113,22 +113,22 @@ namespace Utils {
 	{
 	public:
 		/// \brief From main color class
-		Color8U(const Color32F& _color)							{ m_color = 0; for(int i=0; i<4; ++i) { m_color<<=8; m_color |= uint8(ei::saturate(_color[3-i]) * 255); } }
+		constexpr Color8U(const Color32F& _color): m_color(0)				{ for(int i=0; i<4; ++i) { m_color<<=8; m_color |= uint8(ei::saturate(_color[3-i]) * 255); } }
 
 		/// \brief From main vector class
-		Color8U(const ei::Vec4& _color)							{ m_color = 0; for(int i=0; i<4; ++i) { m_color<<=8; m_color |= uint8(ei::saturate(_color[3-i]) * 255); } }
+		constexpr Color8U(const ei::Vec4& _color) : m_color(0)				{ for(int i=0; i<4; ++i) { m_color<<=8; m_color |= uint8(ei::saturate(_color[3-i]) * 255); } }
 
 		/// \brief From single RGBA 32 bit integer
-		Color8U(const uint32& _color) : m_color(_color)		{}
+		constexpr Color8U(const uint32& _color) : m_color(_color)			{}
 
 		/// \brief Default: Uninitialized for speed
-		Color8U()												{}
+		Color8U()															{}
 
 		/// \brief From single bytes
-		Color8U(uint8 r, uint8 g, uint8 b, uint8 a=255)	{ m_color = r | (g<<8) | (b<<16) | (a<<24); }
+		constexpr Color8U(uint8 r, uint8 g, uint8 b, uint8 a=255) : m_color(r | (g << 8) | (b << 16) | (a << 24)) { }
 
 		/// \brief From single floats
-		Color8U(float r, float g, float b, float a=1.0f)		{ m_color = uint8(ei::saturate(r)*255.0f) | (uint8(ei::saturate(g)*255.0f)<<8) | (uint8(ei::saturate(b)*255.0f)<<16) | (uint8(ei::saturate(a)*255.0f)<<24); }
+		Color8U(float r, float g, float b, float a=1.0f) : m_color(uint8(ei::saturate(r)*255.0f) | (uint8(ei::saturate(g)*255.0f) << 8) | (uint8(ei::saturate(b)*255.0f) << 16) | (uint8(ei::saturate(a)*255.0f) << 24) ){ }
 
 		/// \brief Conversion to main color class
 		operator Color32F() const								{ return Color32F(R(), G(), B(), A()); }

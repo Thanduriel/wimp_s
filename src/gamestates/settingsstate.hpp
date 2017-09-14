@@ -23,5 +23,6 @@ namespace GameStates {
 	private:
 		ei::Vec2 m_screenSize;
 		bool m_isFullScreen;
+		bool m_enableAimAssist;
 	};
 }

@@ -513,6 +513,15 @@ namespace Graphic
 		ScreenTexture::Unregister(_hud);
 	}
 
+	void Indicator::SetColor(Utils::Color8U _color)
+	{
+		for (int i = 0; i < 5; i++)
+		{
+			m_textures[i].SetColor(_color);
+		}
+		m_distanceLabel.SetDefaultColor(_color);
+	}
+
 	// ************************************************************** //
 
 	EditField::EditField(Vec2 _position, Vec2 _size, DefinitionPoint _def, Anchor _anchor, Font* _font, int _lines, float _fontSize) :

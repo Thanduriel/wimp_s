@@ -24,8 +24,10 @@ namespace GameStates {
 		// refreshes currently shown objectives based on all Events known by this.
 		void UpdateObjectives();
 		void UpdateAimAssist(const ei::Vec2 _position);
+		void ShowAimAssist(bool _show) { m_aimAssist->SetVisible(_show); }
 
-		void AddIndicator(const Game::Actor& _actor, const std::string& _tag, Utils::Color8U _color = Utils::Color8U(1.f,1.f,1.f));
+		void AddIndicator(const Game::Actor& _actor, const std::string& _tag, Utils::Color8U _color = Graphic::Indicator::DEFAULT_COLOR);
+		Graphic::Indicator* FindIndicator(const Game::Actor& _actor) const;
 		void AddObjective(const Game::BaseEvent& _event);
 		
 		void ShowSpecialMoveMarker(bool _show) { m_specialMoveIndicator->SetVisible(_show); }

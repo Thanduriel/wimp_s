@@ -2,23 +2,36 @@
 #include "control/input.hpp"
 #include "GLFW/glfw3.h"
 #include "graphic/core/device.hpp"
+#include "control/playercontroller.hpp"
 
 namespace GameStates {
 	using namespace Control;
 
 	SettingsState::SettingsState()
+		: m_enableAimAssist(PlayerController::HAS_AIM_ASSIST)
 	{
 		std::string s = std::to_string(InputManager::GetMouseSensitivity());
 		s.resize(7);
 		m_hud.m_mouseSensitivity->SetText(s);
 
+		m_hud.m_aimAssistButton->SetCaption(m_enableAimAssist ? "aim assist: ON " : "aim assist: OFF");
+		m_hud.m_aimAssistButton->SetOnMouseUp([this]() 
+		{
+			m_enableAimAssist = !m_enableAimAssist;
+
+			m_hud.m_aimAssistButton->SetCaption(m_enableAimAssist ? "aim assist: ON " : "aim assist: OFF");
+		});
+
 		m_hud.m_applyButton->SetOnMouseUp([this]() 
 		{
+			// mouse sensitivity, catch invalid input
 			try {
 				float f = std::stof(m_hud.m_mouseSensitivity->GetText());
 				InputManager::SetMouseSensitivtiy(std::clamp(f, 0.1f, 10.f));
 			} catch(std::invalid_argument)
 			{ }
+			PlayerController::HAS_AIM_ASSIST = m_enableAimAssist;
+
 			m_isFinished = true;
 		});
 		m_hud.m_cancelButton->SetOnMouseUp([this]() {m_isFinished = true; });

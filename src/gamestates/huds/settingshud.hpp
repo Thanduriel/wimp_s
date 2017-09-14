@@ -12,6 +12,7 @@ namespace GameStates {
 		Graphic::Button* m_applyButton;
 		Graphic::Button* m_cancelButton;
 
+		Graphic::Button* m_aimAssistButton;
 		Graphic::EditField* m_mouseSensitivity;
 
 		friend class SettingsState;

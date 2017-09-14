@@ -24,11 +24,11 @@ namespace Control
 {
 	using namespace ei;
 
+	bool PlayerController::HAS_AIM_ASSIST;
 	const float TACTICALCAM_DIST = 52.f;
 
 	PlayerController::PlayerController(Game::Ship& _ship, GameStates::MainHud& _hud, GameTimeControl& _params)
 		: Controller(_ship, _hud),
-		m_mouseSensitivity(10.0f),
 		m_sliderSensitivity(100.0f),
 		m_targetSpeed(10.0f),
 		m_targetingMode(TargetingMode::Normal),
@@ -103,10 +103,10 @@ namespace Control
 					return _lhs.second < _rhs.second;
 				});
 				// maximum tolerance, second condition takes out self as well
-				if(it->second < 0.44f * 0.44f) m_focus = it->first->GetHandle();
-				else m_focus = nullptr;
+				if (it->second < 0.44f * 0.44f) SetFocus(static_cast<Game::Ship*>(it->first));
+				else SetFocus(nullptr);
 			}
-			else m_focus = nullptr;
+			else SetFocus(nullptr);
 
 		}
 
@@ -284,6 +284,27 @@ namespace Control
 	//	m_hud.UpdateCrossHair(m_ship->GetSprayRadius());
 	}
 
+	// **************************************************************** //
+	void PlayerController::SetFocus(Game::Ship* _actor)
+	{
+		// remove old focus
+		if (m_focus && *m_focus)
+		{
+			Game::Ship& ship = static_cast<Game::Ship&>(**m_focus);
+			Graphic::Indicator* indicator = m_hud.FindIndicator(ship);
+			if (indicator) indicator->SetColor(Graphic::Indicator::DEFAULT_COLOR);
+		}
+
+		if (_actor)
+		{
+			m_focus = _actor->GetHandle();
+			Graphic::Indicator* indicator = m_hud.FindIndicator(*_actor);
+			if (indicator) indicator->SetColor(Utils::Color8U(1.f, 0.f, 0.f));
+		}
+		else m_focus = nullptr;
+	}
+
+	// **************************************************************** //
 	void PlayerController::SwitchTargetingMode(TargetingMode _newMode)
 	{
 		m_targetingMode = _newMode;
@@ -318,7 +339,11 @@ namespace Control
 
 	void PlayerController::UpdateAimAssist()
 	{
-		if (!m_focus || !*m_focus) return;
+		if (!HAS_AIM_ASSIST || !m_focus || !*m_focus)
+		{
+			m_hud.ShowAimAssist(false);
+			return;
+		}
 
 		const Game::DynamicActor& target = static_cast<const Game::DynamicActor&>(**m_focus);
 
@@ -335,7 +360,7 @@ namespace Control
 		Vec3 expectedPos = target.GetPosition() + target.GetVelocity() * t;
 
 		Vec4 projected = Control::g_camera.GetViewProjection() * Vec4(expectedPos, 1.f);
-
+		if(projected.z > 0.f) m_hud.ShowAimAssist(true);
 		m_hud.UpdateAimAssist(Vec2(projected) * 1.f / projected.w);
 	}
 }

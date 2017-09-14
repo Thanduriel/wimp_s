@@ -33,8 +33,9 @@ namespace Graphic
 		
 		m_cursors.emplace_back("cursor");
 		m_cursors.back().texture.SetActive(false);
-		m_cursors.emplace_back("cursorAlt", DefP::MidMid);
+		m_cursors.emplace_back("cursorAlt", DefP::MidMid, 0.62f);
 		m_cursors.back().texture.SetActive(false);
+		m_cursors.back().texture.SetColor(Utils::Color8U(65_uc, 107_uc, 174_uc));
 
 		//cursor occupies address [0]
 		RegisterElement(*static_cast<ScreenOverlay*>(&m_cursors[0].texture));
@@ -309,10 +310,10 @@ namespace Graphic
 		}
 	}
 
-	Hud::CursorData::CursorData(const std::string& _name, DefinitionPoint _defP)
+	Hud::CursorData::CursorData(const std::string& _name, DefinitionPoint _defP, float _scale)
 		: texture(_name, Vec2(0.f), Vec2(0.f), _defP)
 	{
-		texture.Scale(Vec2(0.5f));
+		texture.Scale(Vec2(_scale));
 	};
 
 };

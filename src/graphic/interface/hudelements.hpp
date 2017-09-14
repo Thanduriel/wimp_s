@@ -195,7 +195,8 @@ namespace Graphic {
 	class Indicator : public ScreenTexture
 	{
 	public:
-		Indicator(ei::Vec2 _position, const Game::Actor& _target, Hud& _hud, const std::string& _tag, Utils::Color8U _color = Utils::Color8U(1.f,1.f,1.f));
+		static constexpr Utils::Color8U DEFAULT_COLOR = Utils::Color8U(68_uc, 109_uc, 178_uc);
+		Indicator(ei::Vec2 _position, const Game::Actor& _target, Hud& _hud, const std::string& _tag, Utils::Color8U _color = DEFAULT_COLOR);
 		
 		void SetPosition(ei::Vec2 _pos) override;
 		Direction GetDirection() const { return m_direction; };
@@ -203,6 +204,8 @@ namespace Graphic {
 		void SetDirection(Direction _direction);
 		const Game::Actor& GetTarget() const { return **m_target; };
 		bool TargetIsDestroyed() const {return !*m_target; }
+
+		void SetColor(Utils::Color8U _color);
 
 		void Register(Hud& _hud) override;
 		void Unregister(Hud& _hud) override;

@@ -8,6 +8,7 @@
 #include "graphic/core/texture.hpp"
 #include "graphic/resources.hpp"
 #include "control/input.hpp"
+#include "control/playercontroller.hpp"
 #include "graphic/effects/lightsystem.hpp"
 #include "graphic/effects/particlesystem.hpp"
 #include "gameplay/content.hpp"
@@ -58,6 +59,10 @@ Wimp_s::Wimp_s()
 	Control::InputManager::Initialize(Graphic::Device::GetWindow(), m_config[std::string("Input")]);//config[std::string("Input")]
 
 	LightSystem::Initialize();
+
+	// load other properties
+	auto& cgame = m_config["Game"];
+	Control::PlayerController::HAS_AIM_ASSIST = cgame["AimAssist"s];
 
 	m_gameStates.emplace_back(new GameStates::MainMenuState());
 	m_gameStates.back()->OnActivate();
@@ -136,6 +141,8 @@ void Wimp_s::Run()
 void Wimp_s::SaveConfig()
 {
 	Control::InputManager::Save(m_config[std::string("Input")]);
+	m_config["Game"s]["AimAssist"s] = Control::PlayerController::HAS_AIM_ASSIST;
+
 	try {
 		Jo::Files::HDDFile file("config.json", Jo::Files::HDDFile::OVERWRITE);
 		m_config.Write(file, Jo::Files::Format::JSON);
@@ -167,6 +174,7 @@ void Wimp_s::BuildDefaultConfig()
 	cgraphics[std::string("ScreenWidth")] = 1366;
 	cgraphics[std::string("ScreenHeight")] = 768;
 	cgraphics[std::string("FullScreen")] = false;
-/*	auto& cgame = m_config[std::string("Game")];
-	cgame[std::string("Language")] = "english.json"; */
+
+	auto& cgame = m_config[std::string("Game")];
+	cgame["AimAssist"s] = false;
 }

@@ -122,7 +122,7 @@ namespace Graphic {
 		struct CursorData
 		{
 			CursorData(const std::string& _name,
-				DefinitionPoint _defP = DefinitionPoint::TopLeft);
+				DefinitionPoint _defP = DefinitionPoint::TopLeft, float _scale = 0.5f);
 
 			ScreenTexture texture;
 		};

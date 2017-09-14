@@ -43,6 +43,7 @@ namespace GameStates {
 		m_objectivesLabel->SetDefaultSize(0.6f);
 
 		m_aimAssist = &CreateScreenElement<ScreenTexture>("crosshair_dot", PixelOffset(0, -20), PixelOffset(64, 64), DefP::MidMid);
+		m_aimAssist->SetColor(Utils::Color8U(35_uc, 77_uc, 144_uc));
 	}
 
 	void MainHud::UpdateSpeedLabel(float _speed)
@@ -127,6 +128,16 @@ namespace GameStates {
 	void MainHud::AddIndicator(const Game::Actor& _target, const std::string& _tag, Utils::Color8U _color)
 	{
 		m_indicators.push_back(&CreateScreenElement<Indicator>(Vec2(0.0f, 0.0f), _target, *this, _tag, _color));
+	}
+
+	Indicator* MainHud::FindIndicator(const Game::Actor& _actor) const
+	{
+		auto it = std::find_if(m_indicators.begin(), m_indicators.end(), [&](const Indicator* _indicator)
+		{
+			return &_indicator->GetTarget() == &_actor;
+		});
+
+		return it != m_indicators.end() ? *it : nullptr;
 	}
 
 	void MainHud::AddObjective(const Game::BaseEvent& _event)
