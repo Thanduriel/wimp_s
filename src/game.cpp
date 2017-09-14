@@ -14,15 +14,21 @@
 #include "gameplay/content.hpp"
 #include "graphic/core/uniformbuffer.hpp"
 
+#include <Windows.h>
+
 #include "utils/loggerinit.hpp"
 
 using namespace Graphic;
 using namespace std::string_literals;
 
 float Wimp_s::m_gameTime;
+int Wimp_s::m_targetFrameTime;
+Wimp_s* Wimp_s::m_instance;
 
 Wimp_s::Wimp_s()
 {
+	m_instance = this;
+	SetTargetFPS(144.f);
 	// Load configuration
 	try {
 		Jo::Files::HDDFile file("config.json");
@@ -94,7 +100,7 @@ void Wimp_s::Run()
 
 	while (m_gameStates.size())
 	{
-		// messure delta time
+		// measure delta time
 		steady_clock::time_point end = steady_clock::now();
 		duration<float> d = duration_cast<duration<float>>(end - begin);
 		begin = end;
@@ -135,6 +141,11 @@ void Wimp_s::Run()
 			glfwPollEvents();
 		}
 		if (glfwWindowShouldClose(Graphic::Device::GetWindow())) m_gameStates.clear();
+
+		// measure time required for this frame
+		end = steady_clock::now();
+		d = duration_cast<duration<float>>(end - begin);
+		if (d.count() < m_targetFrameTime) std::this_thread::sleep_for(milliseconds(m_targetFrameTime) - d);
 	}
 }
 
@@ -150,6 +161,11 @@ void Wimp_s::SaveConfig()
 	catch (std::string _message) {
 		LOG_ERROR("Failed to save config file with message:\n" + _message);
 	}
+}
+
+void Wimp_s::SetTargetFPS(float _fps)
+{
+	m_targetFrameTime = int(1000.f / _fps) - 1;
 }
 
 void Wimp_s::BuildDefaultConfig()
@@ -174,6 +190,7 @@ void Wimp_s::BuildDefaultConfig()
 	cgraphics[std::string("ScreenWidth")] = 1366;
 	cgraphics[std::string("ScreenHeight")] = 768;
 	cgraphics[std::string("FullScreen")] = false;
+	cgraphics["TargetFPS"s] = 144.0;
 
 	auto& cgame = m_config[std::string("Game")];
 	cgame["AimAssist"s] = false;

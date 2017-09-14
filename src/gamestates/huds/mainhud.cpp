@@ -15,7 +15,9 @@ namespace GameStates {
 		ShowCursor(Hud::CursorType::Crosshair);
 
 		GetDebugLabel().SetDefaultSize(0.7f);
+#ifndef _DEBUG
 		GetDebugLabel().SetVisible(false);
+#endif // !_DEBUG
 
 		float outerSpeedBarHeight = 512;
 		m_outerSpeedBar = &CreateScreenElement<ScreenTexture>("speed_bar_outer", PixelOffset(10, 10), PixelOffset(64, outerSpeedBarHeight), DefP::BotLeft, Anchor(DefP::BotLeft, this));

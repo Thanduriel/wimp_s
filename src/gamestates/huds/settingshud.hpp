@@ -14,6 +14,9 @@ namespace GameStates {
 
 		Graphic::Button* m_aimAssistButton;
 		Graphic::EditField* m_mouseSensitivity;
+		Graphic::Button* m_resolutionButton;
+		Graphic::Button* m_fullScreenButton;
+		Graphic::EditField* m_frameCountTarget;
 
 		friend class SettingsState;
 	};

@@ -241,6 +241,7 @@ namespace Graphic {
 		const std::string& GetText() const { return m_content; };
 		void SetText(const std::string& _text);
 
+		void Unfocus();
 	private:
 		/// \brief Adds an line after the specified one when it does not violate m_linesMax 
 		void AddLine(int _preLine);

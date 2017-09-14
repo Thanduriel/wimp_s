@@ -150,7 +150,6 @@ namespace Graphic
 		Vec2 cursorPos = Control::InputManager::GetCursorPosScreenSpace();
 		if (m_cursor)	m_cursor->texture.SetPosition(cursorPos);
 
-		//todo: include mousespeed in config  
 		if (m_focus)
 			m_focus->MouseMove(_dx, _dy);
 
@@ -189,8 +188,12 @@ namespace Graphic
 		//clicking on a screenOverlay
 		if(_key == GLFW_MOUSE_BUTTON_LEFT && m_preElem != nullptr)
 		{
-			if (m_focus = dynamic_cast<DraggableTexture*>(m_preElem))
-				MoveToFront(static_cast<ScreenTexture&>(*m_focus));
+			DraggableTexture* el = dynamic_cast<DraggableTexture*>(m_preElem);
+			if (el)
+			{
+				m_focus = el;
+				MoveToFront(*el);
+			}
 			return m_preElem->KeyDown(_key, _modifiers);
 		}
 
@@ -207,6 +210,9 @@ namespace Graphic
 	{
 		if(_key == GLFW_MOUSE_BUTTON_LEFT && m_preElem != nullptr)
 		{
+			EditField* field = dynamic_cast<EditField*>(m_focus);
+			if (field) field->Unfocus();
+
 			m_focus = dynamic_cast<EditField*>(m_preElem);
 
 			return	m_preElem->KeyUp(_key, _modifiers);

@@ -574,13 +574,18 @@ namespace Graphic
 			*/
 	}
 
+	void EditField::Unfocus()
+	{
+		// remove visible cursor
+		m_textRender.SetText(m_content);
+	}
+
 	bool EditField::KeyDown(int _key, int _modifiers, Vec2 _pos)
 	{
 		//mouse click -> set cursor
 		if (_key == GLFW_MOUSE_BUTTON_LEFT)
 		{
 			m_cursor = 0;
-		//	return true; //nothing more happens
 		}
 		//right arrow key -> shift cursor 
 		else if (_key == GLFW_KEY_RIGHT && m_cursor < (int)m_content.size())

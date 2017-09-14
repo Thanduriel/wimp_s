@@ -16,6 +16,9 @@ public:
 	void SaveConfig();
 
 	static float GetGameTime(){ return m_gameTime; }
+	static void SetTargetFPS(float _fps);
+	// only call this from the main thread
+	static Jo::Files::MetaFileWrapper& GetConfig() { return m_instance->m_config; }
 private:
 	void BuildDefaultConfig();
 
@@ -29,4 +32,6 @@ private:
 	Graphic::Framebuffer* m_sceneFramebuffer; ///< Framebuffer into which the entire 3D scene is rendered before it is passed to the postprocessing module.
 
 	static float m_gameTime;
+	static int m_targetFrameTime;
+	static Wimp_s* m_instance;
 };
