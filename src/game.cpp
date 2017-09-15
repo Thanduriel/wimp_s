@@ -28,7 +28,6 @@ Wimp_s* Wimp_s::m_instance;
 Wimp_s::Wimp_s()
 {
 	m_instance = this;
-	SetTargetFPS(144.f);
 	// Load configuration
 	try {
 		Jo::Files::HDDFile file("config.json");
@@ -69,6 +68,7 @@ Wimp_s::Wimp_s()
 	// load other properties
 	auto& cgame = m_config["Game"];
 	Control::PlayerController::HAS_AIM_ASSIST = cgame["AimAssist"s];
+	SetTargetFPS(cgraphic["TargetFPS"s].Get(144.f));
 
 	m_gameStates.emplace_back(new GameStates::MainMenuState());
 	m_gameStates.back()->OnActivate();

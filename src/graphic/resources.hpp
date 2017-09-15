@@ -16,6 +16,8 @@ namespace Graphic {
 		MESH,
 		SHIELD,
 		DEFFERED_LIGHT,
+		DARKEN,
+		DD_LIGHT,
 		BACKGROUNDSTAR,
 		TEXTURE_2DQUAD,
 		TEXT,
@@ -38,6 +40,7 @@ namespace Graphic {
 		OBJECT_LINES,
 		OBJECT_GEOMETRY,
 		OBJECT_SHIELD,
+		DOMINANT_LIGHT,
 		COUNT
 	};
 

@@ -1,0 +1,28 @@
+#version 330
+
+in vec2 vs_out_TexCoord;
+
+uniform sampler2D screenTex;
+uniform sampler2D depthTex;
+uniform sampler2D normalTex;
+
+layout(location = 0) out vec4 out_FragColor;
+layout(location = 1) out vec4 out_Normal;
+
+layout(std140) uniform DominantDirectionLight
+{
+	vec3 c_vDirection;
+	vec3 c_vColor;
+	float c_fIntensity;
+};
+
+void main()
+{
+	vec3 normal = texture(normalTex, vs_out_TexCoord).xyz;
+	float diffuse = max(0.0, dot(normal, c_vDirection));
+	
+	float intensity = diffuse * c_fIntensity;
+	out_FragColor = vec4(c_vColor, intensity * 0.1);
+	out_Normal = vec4(0,0,0,intensity);
+//	fragColor += vec4(0.5,0.5,0.5,0.2);
+}

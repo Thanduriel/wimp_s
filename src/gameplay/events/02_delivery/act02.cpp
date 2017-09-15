@@ -24,6 +24,7 @@ namespace Acts {
 		Actor::ConstHandle playerHandle = _player.GetHandle();
 
 		m_sceneGraph.Add(*new Sun(Vec3(-3457.f, -1500.f, 20000.f), 3300.f));
+		Graphic::LightSystem::SetDominantLight(ei::normalize(Vec3(-3457.f, -1500.f, 20000.f) - PLAYER_SPAWN));
 		Ship& boss = CreateShip("BattleShip", MEETING_POSITION, 7, 13.f);
 		Actor::Handle bossHandle = boss.GetHandle();
 

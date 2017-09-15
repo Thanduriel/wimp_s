@@ -1,0 +1,15 @@
+#version 330
+
+in vec2 vs_out_TexCoord;
+
+uniform sampler2D normalTex;
+
+out vec4 fragColor;
+
+#include "globalubo.glsl"
+
+void main()
+{
+	ivec2 texelCoord = ivec2(vs_out_TexCoord.x * c_fBBWidth, vs_out_TexCoord.y * c_fBBHeight);
+	fragColor = vec4(1,1,1, clamp((1 - texelFetch(normalTex, texelCoord, 0).a) * 0.20, 0, 0.20));
+}

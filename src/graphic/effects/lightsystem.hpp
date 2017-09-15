@@ -18,6 +18,12 @@ namespace Graphic {
 		float intensity;
 	};
 
+	struct DDLightInfo
+	{ 
+		ei::Vec3 direction, color; 
+		float intensity;
+	};
+
 	namespace Details {
 		typedef uint32_t LightKey;
 		typedef std::unordered_map<LightKey, LightInfo> LightInfoContainer;
@@ -48,11 +54,13 @@ namespace Graphic {
 		static LightHandle Register(const LightInfo& _info);
 		static void DeRegister(const LightHandle& _hndl);
 
+		static void SetDominantLight(const ei::Vec3& _direction, const ei::Vec3& _color = ei::Vec3(1.f,1.f,0.6f), float _intensity = 1.f);
 		static void Draw();
 	private:
 		static Details::LightKey m_currentKey;
 
 		static VertexArrayBuffer* m_vertices;
 		static Details::LightInfoContainer m_lightInfos;
+		static DDLightInfo m_dominantDirectionLight;
 	};
 }

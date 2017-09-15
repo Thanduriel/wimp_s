@@ -53,6 +53,7 @@ namespace Acts {
 		using namespace Generators;
 		m_asteroids.Generate(120, { SpaceConstraint(crate->GetPosition(), 10.f), SpaceConstraint(_player), SpaceConstraint(researchBase) });
 		m_sceneGraph.Add(*new Sun(Vec3(777.f, 1500.f, 10000.f), 2000.f));
+		Graphic::LightSystem::SetDominantLight(ei::normalize(Vec3(777.f, 1500.f, 10000.f) - PLAYER_SPAWN));
 
 		// --- events --------------------------------------- //
 		auto AfinishAct = CREATE_ACTION

@@ -11,6 +11,7 @@ namespace Graphic {
 	Details::LightKey LightSystem::m_currentKey;
 	VertexArrayBuffer* LightSystem::m_vertices;
 	Details::LightInfoContainer LightSystem::m_lightInfos;
+	DDLightInfo LightSystem::m_dominantDirectionLight;
 
 	LightInfo::LightInfo(float _radius, Utils::Color8U _color, float _intensity)
 		: radius(_radius), color(_color), intensity(_intensity)
@@ -63,6 +64,18 @@ namespace Graphic {
 	}
 
 	// ************************************************************ //
+	void LightSystem::SetDominantLight(const ei::Vec3& _direction, const ei::Vec3& _color, float _intensity)
+	{
+		m_dominantDirectionLight.direction = _direction;
+		m_dominantDirectionLight.color = _color;
+		m_dominantDirectionLight.intensity = _intensity;
+
+		UniformBuffer& ddubo = Resources::GetUBO(UniformBuffers::DOMINANT_LIGHT);
+		ddubo["Color"] = _color;
+		ddubo["Intensity"] = _intensity;
+	}
+
+	// ************************************************************ //
 	void LightSystem::Draw()
 	{
 		if (!m_lightInfos.size()) return;
@@ -96,5 +109,15 @@ namespace Graphic {
 		Texture& normalTex = *Device::GetCurrentFramebufferBinding()->GetColorAttachments().back().pTexture;
 		Device::SetTexture(normalTex, 2);
 		Device::DrawVertices(*m_vertices, 0, (int)num);
+
+		// draw dominant direction light
+		UniformBuffer& ddubo = Resources::GetUBO(UniformBuffers::DOMINANT_LIGHT);
+		ddubo["Direction"] = Control::g_camera.GetInverseRotationMatrix() * m_dominantDirectionLight.direction;
+		Device::SetEffect(Graphic::Resources::GetEffect(Graphic::Effects::DD_LIGHT));
+		Device::DrawFullscreen();
+
+		// darken everything not illuminated
+		Device::SetEffect(Graphic::Resources::GetEffect(Graphic::Effects::DARKEN));
+		Device::DrawFullscreen();
 	}
 }

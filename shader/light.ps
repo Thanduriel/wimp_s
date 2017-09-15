@@ -11,7 +11,8 @@ uniform sampler2D screenTex;
 uniform sampler2D depthTex;
 uniform sampler2D normalTex;
 
-out vec4 fragColor;
+layout(location = 0) out vec4 out_FragColor;
+layout(location = 1) out vec4 out_Normal;
 
 #include "globalubo.glsl"
 #include "cameraubo.glsl"
@@ -44,6 +45,8 @@ void main()
 	float intensity = clamp(lambda * gs_radius / (gs_radius + beta * dSqr) - gamma, 0, 1);//clamp((1/(gs_fallOff * dSqr) - threshold) * gs_intensity,0, 1);
 //	float specular = pow(cosAngle, materialShininess);
 	
-	fragColor = vec4(gs_color, intensity * diffuse);
+	intensity *= diffuse * gs_intensity;
+	out_FragColor = vec4(gs_color, intensity);
+	out_Normal = vec4(0,0,0,intensity);
 //	fragColor += vec4(0.5,0.5,0.5,0.2);
 }

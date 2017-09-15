@@ -34,6 +34,7 @@ namespace Graphic {
 			effects[ind]->SetDepthStencilState(DepthStencilState(Graphic::DepthStencilState::COMPARISON_FUNC::LESS, true));
 			effects[ind]->SetRasterizerState(RasterizerState(RasterizerState::CULL_MODE::FRONT, RasterizerState::FILL_MODE::SOLID));
 			effects[ind]->BindUniformBuffer(GetUBO(UniformBuffers::OBJECT_GEOMETRY));
+			effects[ind]->BindTexture("diffuseTex", 0, Resources::GetSamplerState(SamplerStates::LINEAR));
 			break;
 		case Effects::SHIELD:
 			effects[ind] = new Effect("shader/shield.vs", "shader/shield.ps");
@@ -52,6 +53,23 @@ namespace Graphic {
 			effects[ind]->BindUniformBuffer(GetUBO(UniformBuffers::SIMPLE_OBJECT));
 			effects[ind]->BindUniformBuffer(GetUBO(UniformBuffers::GLOBAL));
 			effects[ind]->BindUniformBuffer(GetUBO(UniformBuffers::CAMERA));
+			break;
+		case Effects::DD_LIGHT:
+			effects[ind] = new Effect("shader/fullscreentri.vs", "shader/dominant_light.ps");
+			effects[ind]->SetBlendState(BlendState(Graphic::BlendState::BLEND_OPERATION::ADD, Graphic::BlendState::BLEND::SRC_ALPHA, Graphic::BlendState::BLEND::ONE));
+			effects[ind]->SetDepthStencilState(DepthStencilState(Graphic::DepthStencilState::COMPARISON_FUNC::ALWAYS, false));
+			effects[ind]->BindTexture("screenTex", 0, Resources::GetSamplerState(SamplerStates::POINT));
+			effects[ind]->BindTexture("depthTex", 1, Resources::GetSamplerState(SamplerStates::POINT));
+			effects[ind]->BindTexture("normalTex", 2, Resources::GetSamplerState(SamplerStates::POINT));
+			effects[ind]->BindUniformBuffer(Resources::GetUBO(UniformBuffers::DOMINANT_LIGHT));
+			break;
+		case Effects::DARKEN:
+			effects[ind] = new Effect("shader/fullscreentri.vs", "shader/darken.ps");
+			effects[ind]->SetRasterizerState(RasterizerState(RasterizerState::CULL_MODE::NONE, RasterizerState::FILL_MODE::SOLID));
+			effects[ind]->SetDepthStencilState(DepthStencilState(DepthStencilState::COMPARISON_FUNC::ALWAYS, false));
+			effects[ind]->SetBlendState(BlendState(BlendState::BLEND_OPERATION::REVERSE_SUBTRACT, BlendState::BLEND::SRC_ALPHA, BlendState::BLEND::ONE));
+			effects[ind]->BindUniformBuffer(Resources::GetUBO(UniformBuffers::GLOBAL));
+			effects[ind]->BindTexture("normalTex", 2, Resources::GetSamplerState(SamplerStates::LINEAR));
 			break;
 		case Effects::TEXTURE_2DQUAD:
 			effects[ind] = new Effect("shader/screentex.vs", "shader/screentex.ps", "shader/screentex.gs");
@@ -189,6 +207,12 @@ namespace Graphic {
 			uniformBuffers[ind]->AddAttribute("c_WorldViewProjection", UniformBuffer::ATTRIBUTE_TYPE::MATRIX);
 			uniformBuffers[ind]->AddAttribute("c_PointOfOrigin", UniformBuffer::ATTRIBUTE_TYPE::VEC3);
 			uniformBuffers[ind]->AddAttribute("c_LocalTime", UniformBuffer::ATTRIBUTE_TYPE::FLOAT);
+			break;
+		case UniformBuffers::DOMINANT_LIGHT:
+			uniformBuffers[ind] = new UniformBuffer("DominantDirectionLight");
+			uniformBuffers[ind]->AddAttribute("Direction", UniformBuffer::ATTRIBUTE_TYPE::VEC3);
+			uniformBuffers[ind]->AddAttribute("Color", UniformBuffer::ATTRIBUTE_TYPE::VEC3);
+			uniformBuffers[ind]->AddAttribute("Intensity", UniformBuffer::ATTRIBUTE_TYPE::FLOAT);
 			break;
 		default:
 			Assert(false, "This uniform buffer is not implemented.");
