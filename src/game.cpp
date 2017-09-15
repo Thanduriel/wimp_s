@@ -72,6 +72,10 @@ Wimp_s::Wimp_s()
 
 	m_gameStates.emplace_back(new GameStates::MainMenuState());
 	m_gameStates.back()->OnActivate();
+
+	UniformBuffer& ubo = Resources::GetUBO(UniformBuffers::BRIGHTNESS_PARAMS);
+	ubo["Brightness"] = cgraphic["Brightness"s].Get(0.f);
+	ubo["Contrast"] = cgraphic["Contrast"s].Get(1.f);
 }
 
 Wimp_s::~Wimp_s()
@@ -117,7 +121,7 @@ void Wimp_s::Run()
 		ubo["Time"] = m_gameTime;
 		current.Draw(d.count());
 
-		// Present if not closed
+		// Present
 		glfwSwapBuffers(Graphic::Device::GetWindow());
 
 		// delete all marked actors in the scene
@@ -191,6 +195,8 @@ void Wimp_s::BuildDefaultConfig()
 	cgraphics[std::string("ScreenHeight")] = 768;
 	cgraphics[std::string("FullScreen")] = false;
 	cgraphics["TargetFPS"s] = 144.0;
+	cgraphics["Brightness"s] = 0.0;
+	cgraphics["Contrast"s] = 1.0;
 
 	auto& cgame = m_config[std::string("Game")];
 	cgame["AimAssist"s] = false;

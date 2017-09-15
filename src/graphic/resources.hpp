@@ -28,6 +28,7 @@ namespace Graphic {
 		PARTICLE_BLOB,
 		PARTICLE_RAY,
 		PARTICLE_TEXQAUD,
+		BRIGHTNESS,
 		COUNT
 	};
 
@@ -41,6 +42,7 @@ namespace Graphic {
 		OBJECT_GEOMETRY,
 		OBJECT_SHIELD,
 		DOMINANT_LIGHT,
+		BRIGHTNESS_PARAMS,
 		COUNT
 	};
 

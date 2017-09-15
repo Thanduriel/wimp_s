@@ -133,6 +133,15 @@ namespace Graphic {
 			effects[ind]->BindUniformBuffer(GetUBO(UniformBuffers::SIMPLE_OBJECT));
 			effects[ind]->BindUniformBuffer(GetUBO(UniformBuffers::GLOBAL));
 			break;
+		case Effects::BRIGHTNESS:
+			effects[ind] = new Effect("shader/fullscreentri.vs", "shader/postprocessing/brightness.ps");
+			effects[ind]->SetRasterizerState(RasterizerState(RasterizerState::CULL_MODE::NONE, RasterizerState::FILL_MODE::SOLID));
+			effects[ind]->SetDepthStencilState(DepthStencilState(DepthStencilState::COMPARISON_FUNC::ALWAYS, false));
+			effects[ind]->SetBlendState(BlendState(BlendState::BLEND_OPERATION::DISABLE, BlendState::BLEND::SRC_ALPHA, BlendState::BLEND::ONE));
+			effects[ind]->BindUniformBuffer(GetUBO(UniformBuffers::BRIGHTNESS_PARAMS));
+			effects[ind]->BindUniformBuffer(GetUBO(UniformBuffers::GLOBAL));
+			effects[ind]->BindTexture("screenTex", 0, GetSamplerState(SamplerStates::LINEAR));
+			break;
 		default:
 			Assert(false, "This effect is not implemented.");
 			break;
@@ -213,6 +222,11 @@ namespace Graphic {
 			uniformBuffers[ind]->AddAttribute("Direction", UniformBuffer::ATTRIBUTE_TYPE::VEC3);
 			uniformBuffers[ind]->AddAttribute("Color", UniformBuffer::ATTRIBUTE_TYPE::VEC3);
 			uniformBuffers[ind]->AddAttribute("Intensity", UniformBuffer::ATTRIBUTE_TYPE::FLOAT);
+			break;
+		case UniformBuffers::BRIGHTNESS_PARAMS:
+			uniformBuffers[ind] = new UniformBuffer("BrightnessParams");
+			uniformBuffers[ind]->AddAttribute("Brightness", UniformBuffer::ATTRIBUTE_TYPE::FLOAT);
+			uniformBuffers[ind]->AddAttribute("Contrast", UniformBuffer::ATTRIBUTE_TYPE::FLOAT);
 			break;
 		default:
 			Assert(false, "This uniform buffer is not implemented.");

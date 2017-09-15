@@ -75,7 +75,7 @@ namespace Graphic {
 		static void DrawFullscreen();
 
 		// Switches to the backbuffer and overwrites its current content with the previous framebuffer.
-		static void DrawFramebufferToBackbuffer();
+		static void DrawFramebufferToBackbuffer(bool _colorFilter = true);
 	private:
 		GLFWwindow* m_window;		///< Reference to the one window created during Initialize()
 

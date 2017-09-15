@@ -8,6 +8,7 @@
 #include "utils/assert.hpp"
 
 #include "../resources.hpp"
+#include "uniformbuffer.hpp"
 
 namespace Graphic {
 
@@ -386,9 +387,15 @@ namespace Graphic {
 		DrawVertices(*screenTriangle, 0, 3);
 	}
 
-	void Device::DrawFramebufferToBackbuffer()
+	void Device::DrawFramebufferToBackbuffer(bool _colorFilter)
 	{
 		Texture& tex = *GetCurrentFramebufferBinding()->GetColorAttachments().begin()->pTexture;
+		if (_colorFilter)
+		{
+			SetEffect(Graphic::Resources::GetEffect(Effects::BRIGHTNESS));
+			SetTexture(tex, 0);
+			DrawFullscreen();
+		}
 
 		BindFramebuffer(nullptr);
 		SetEffect(Graphic::Resources::GetEffect(Effects::SCREEN_OUTPUT));
