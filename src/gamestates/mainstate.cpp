@@ -23,6 +23,7 @@
 #include "gameplay/events/event.hpp"
 #include "gameplay/events/conditions.hpp"
 #include "gameplay/events/01_intro/act01.hpp"
+#include "demoparams.hpp"
 
 namespace GameStates {
 
@@ -71,6 +72,8 @@ namespace GameStates {
 
 	void MainState::Process(float _deltaTime)
 	{
+		if (!Demo::Run) return;
+
 		m_sceneGraph.Process(m_gameTimeControl.m_timeScale * _deltaTime, _deltaTime);
 		//boundingMeshTest->SetPosition(m_playerController->GetShip().GetPosition());
 		//boundingMeshTest->SetRotation(m_playerController->GetShip().GetRotation());
@@ -110,13 +113,13 @@ namespace GameStates {
 
 	void MainState::Draw(float _deltaTime)
 	{
-		m_starbackground.Draw();
+		if(Demo::Stars) m_starbackground.Draw();
 
 		m_sceneGraph.Draw();
 		// the hud should be drawn last
 		m_hud.GetDebugLabel().SetText("ft: <c 0 255 100>" + std::to_string(_deltaTime) + "</c>"
 							+ "\nnumP" + std::to_string(ParticleSystems::Manager::GetNumParticlesTotal()));
-		if(m_playerController) m_hud.Draw(_deltaTime);
+		if(m_playerController && Demo::Hud) m_hud.Draw(_deltaTime);
 	}
 
 	void MainState::Dispose()

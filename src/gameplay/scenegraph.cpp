@@ -12,6 +12,7 @@
 #include "elements/collisioncomponent.hpp"
 #include "elements/shieldcomponent.hpp"
 #include "elements/shipsystems/projectile.hpp"
+#include "demoparams.hpp"
 
 #define REGISTER_COMPONENT_IMPL(x,y) 
 
@@ -78,34 +79,41 @@ namespace Game {
 
 	void SceneGraph::Draw()
 	{
-		Graphic::Device::SetEffect(Graphic::Resources::GetEffect(Graphic::Effects::MESH));
-		// first step: render geometry to g-Buffer
-		for (auto component : m_geometryComponents)
-			component->Draw();
+		if (Demo::Meshes) {
+			Graphic::Device::SetEffect(Graphic::Resources::GetEffect(Graphic::Effects::MESH));
+			// first step: render geometry to g-Buffer
+			for (auto component : m_geometryComponents)
+				component->Draw();
+		}
 
 		// particles can be illuminated too
-		Graphic::ParticleSystems::Manager::Draw(Control::g_camera);
+		if(Demo::Particles) Graphic::ParticleSystems::Manager::Draw(Control::g_camera);
 
 		// shields
-		Device::SetEffect(Resources::GetEffect(Effects::SHIELD));
-		for (auto component : m_shieldComponents)
-			if (component->IsActive()) component->Draw();
+		if (Demo::Shields) {
+			Device::SetEffect(Resources::GetEffect(Effects::SHIELD));
+			for (auto component : m_shieldComponents)
+				if (component->IsActive()) component->Draw();
+		}
 
 		// apply lights to the frame-buffer
 		for (auto component : m_lightComponents)
 			component->Draw();
-		Graphic::LightSystem::Draw();
+		if (Demo::Lighting) Graphic::LightSystem::Draw();
 
 		// post lighting 3d effects
-		for (auto component : m_markerComponents)
-			component->Draw();
-
+		if (Demo::Marker) {
+			for (auto component : m_markerComponents)
+				component->Draw();
+		}
 		// switch to back-buffer to perform post processing without altering the source material
 		Device::DrawFramebufferToBackbuffer();
 
 		// post processing reads from the frame-buffer and writes to the back-buffer
-		for (auto component : m_postProcessComponents)
-			if(component->IsActive()) component->Draw();
+		if (Demo::Blackholes) {
+			for (auto component : m_postProcessComponents)
+				if (component->IsActive()) component->Draw();
+		}
 	}
 
 	// *********************************************************** //

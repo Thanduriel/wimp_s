@@ -1,0 +1,26 @@
+#version 330
+
+in vec2 vs_out_TexCoord;
+
+uniform sampler2D screenTex;
+
+out vec3 fragColor;
+
+#include "../globalubo.glsl"
+
+layout(std140) uniform BrightnessParams
+{
+	float c_fBrightness;
+	float c_fContrast;
+};
+
+const float BLEND_LIMIT = 0.2;
+const float BLEND_FACTOR = 1 / BLEND_LIMIT;
+
+void main()
+{
+	ivec2 texelCoord = ivec2(vs_out_TexCoord.x * c_fBBWidth, vs_out_TexCoord.y * c_fBBHeight);
+	vec3 color = texelFetch(screenTex, texelCoord, 0).rgb * c_fContrast;
+	color += clamp(color.r + color.g + color.b,0, BLEND_LIMIT) * BLEND_FACTOR * vec3(1,1,1) * c_fBrightness;
+	fragColor = color;
+}

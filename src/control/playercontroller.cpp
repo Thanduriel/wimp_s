@@ -19,6 +19,20 @@
 #include "generators/weapongen.hpp"
 #include "gameplay/elements/blackhole.hpp"
 #include "gameplay/elements/factorycomponent.hpp"
+#include "demoparams.hpp"
+
+namespace Demo {
+	bool Stars = true;
+	bool Meshes = true;
+	bool Particles = true;
+	bool Shields = true;
+	bool Lighting = true;
+	bool Marker = true;
+	bool Blackholes = true;
+	bool Hud = true;
+
+	bool Run = true;
+}
 
 namespace Control
 {
@@ -171,6 +185,24 @@ namespace Control
 		}
 		else if (_key == GLFW_KEY_R)
 			m_lookForTarget = true;
+		else if (_key == GLFW_KEY_0)
+			Demo::Stars = !Demo::Stars;
+		else if (_key == GLFW_KEY_1)
+			Demo::Meshes = !Demo::Meshes;
+		else if (_key == GLFW_KEY_2)
+			Demo::Particles = !Demo::Particles;
+		else if (_key == GLFW_KEY_3)
+			Demo::Shields = !Demo::Shields;
+		else if (_key == GLFW_KEY_4)
+			Demo::Lighting = !Demo::Lighting;
+		else if (_key == GLFW_KEY_5)
+			Demo::Marker = !Demo::Marker;
+		else if (_key == GLFW_KEY_6)
+			Demo::Blackholes = !Demo::Blackholes;
+		else if (_key == GLFW_KEY_7)
+			Demo::Hud = !Demo::Hud;
+		else if (_key == GLFW_KEY_T)
+			Demo::Run = !Demo::Run;
 	}
 
 	void PlayerController::KeyDown(int _key, int _modifiers)

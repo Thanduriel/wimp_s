@@ -173,6 +173,8 @@ namespace Acts {
 		_hud.AddObjective(ev);
 		m_sceneGraph.Add(ev);
 		_hud.AddIndicator(researchBase, "research facility");
+
+		_player.SetSpecialMove(*new Game::BlackHoleGenerator(30.f));
 	}
 }
 }
