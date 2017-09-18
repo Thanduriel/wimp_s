@@ -39,10 +39,10 @@ namespace Acts {
 		// some simple weapons
 		Inventory inventory;
 		Generators::WeaponGenerator weaponGen(0x42);
-		Weapon* w = weaponGen.Generate(10.f, 0.f);
+		Weapon* w = weaponGen.Generate(18.f, 10.f);
 		inventory.Add(*w);
 		m_sceneGraph.Add(*w);
-		w = weaponGen.Generate(10.f, 0.f);
+		w = weaponGen.Generate(0x47, 19.f, 100.f);
 		inventory.Add(*w);
 		m_sceneGraph.Add(*w);
 		Crate* crate = new Crate(BASE_POSITON - ei::Vec3(0.f, 7.f, 150.f), inventory, 5.f);

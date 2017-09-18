@@ -213,8 +213,9 @@ namespace Control
 	{
 		if (m_targetingMode == TargetingMode::Tactical)
 		{
-			g_camera.Translate(Vec3(0.f, _dy * 4.f, 0.f));
-			m_referenceGrid.Translate(Vec3(0.f, _dy * 4.f, 0.f));
+			const Vec3 dir = m_ship.GetRotationMatrix() * Vec3(0.f, _dy * 4.f, 0.f);
+			g_camera.Translate(dir);
+			m_referenceGrid.Translate(dir);
 		}
 	}
 
