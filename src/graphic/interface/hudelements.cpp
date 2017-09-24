@@ -392,7 +392,7 @@ namespace Graphic
 			{"indicator_left", _position, PixelOffset(32, 32), DefinitionPoint::MidMid, Anchor(DefinitionPoint::MidMid, &_hud) },
 			{ "indicator_right", _position, PixelOffset(32, 32), DefinitionPoint::MidMid, Anchor(DefinitionPoint::MidMid, &_hud) },
 			{ "focus_indicator", _position, PixelOffset(64, 64), DefinitionPoint::MidMid, Anchor(DefinitionPoint::MidMid, &_hud) } },
-		m_distanceLabel(Vec2(0.f), Anchor(DefinitionPoint::MidMid, this), nullptr, "", 0.5f)
+		m_distanceLabel(Vec2(0.f), Anchor(DefinitionPoint::MidMid, this), nullptr, "")
 	{
 		SetVisible(false);
 		for (int i = 0; i < 5; i++)
@@ -402,6 +402,7 @@ namespace Graphic
 			m_textures[i].SetColor(_color);
 		}
 		m_direction = Direction::None;
+		m_distanceLabel.SetDefaultSize(0.5f);
 		m_distanceLabel.SetDefaultColor(_color);
 	}
 
@@ -665,5 +666,27 @@ namespace Graphic
 		//to update texture vertex
 		//todo: remove this
 		m_texture.Scale(Vec2(1.f));
+	}
+
+	// ************************************************************************ //
+	MessageBox::MessageBox(ei::Vec2 _position, ei::Vec2 _size, DefinitionPoint _def, Anchor _anchor)
+		: ScreenOverlay(_position, _size, _def, _anchor),
+		m_textRender(Vec2(0.f), Anchor(DefP::MidLeft, this), nullptr, "", DefP::MidLeft)
+	{
+
+	}
+
+	void MessageBox::Register(Hud& _hud)
+	{
+		_hud.RegisterElement(*this);
+		_hud.RegisterElement(m_textRender);
+	}
+
+	void MessageBox::Next()
+	{
+		std::string s = m_messages.front().first;
+		
+		m_textRender.SetText(s);
+		m_messages.pop();
 	}
 };

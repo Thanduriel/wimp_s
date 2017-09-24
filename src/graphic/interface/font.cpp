@@ -45,8 +45,8 @@ namespace Graphic
 	}
 
 	// ***************************************************** //
-	TextRender::TextRender(ei::Vec2 _position, ScreenOverlay::Anchor _anchor, Font* _font,
-		const std::string& _text, float _scale) :
+	TextRender::TextRender(ei::Vec2 _position, ScreenOverlay::Anchor _anchor,
+		Font* _font, const std::string& _text, DefinitionPoint _defP) :
 		ScreenPosition(_position, _anchor),
 		m_font(_font ? *_font : Resources::GetFont(Fonts::DEFAULT)),
 		m_text(_text),
@@ -55,11 +55,12 @@ namespace Graphic
 				{Graphic::VertexAttribute::VEC2, 13}, {Graphic::VertexAttribute::COLOR, 3},
 				{Graphic::VertexAttribute::FLOAT, 14}, {Graphic::VertexAttribute::FLOAT, 15}
 		} ),
-		m_sizeD(_scale),
+		m_sizeD(1.f),
 		m_colorD((uint8)255,(uint8)255,(uint8)255,(uint8)255),
 		m_thicknessD(0.7f),
 		m_visible(true),
-		m_sizeMax(0)
+		m_sizeMax(0),
+		m_defPoint(_defP)
 	{
 		m_size = m_sizeD;
 		m_color = m_colorD;
@@ -89,6 +90,14 @@ namespace Graphic
 		//only happens on control char endings, thus refresh now
 		m_size = m_sizeD;
 		RenewBuffer();
+	}
+
+	void TextRender::SetDefaultSize(PixelSize _size)
+	{
+		const float yDim = m_font.m_sizeTable[64][1];
+		float pSize = 0.5f * Device::GetBackbufferSize().y * yDim * m_font.m_texture.Height() / (float)m_font.m_texture.Width() * Device::GetAspectRatio();
+
+		SetDefaultSize(_size.m_size / pSize );
 	}
 
 	Vec2 TextRender::GetCharSize()
@@ -272,5 +281,19 @@ namespace Graphic
 		if (currentPos[0] > maxExpanseX) maxExpanseX = currentPos[0];
 		//calculate size using the start and end point; the points are always the lower left of the char
 		m_rectangle = abs((m_position + Vec2(-maxExpanseX, m_charSize[1] * m_sizeMax * GetCharSize()[1] - currentPos[1])));
+
+		if (m_defPoint != DefP::TopLeft)
+		{
+			int px = (int)m_defPoint % 3;
+			int py = (int)m_defPoint / 3;
+
+			const Vec2 offset = Vec2(-px * 0.5f * m_rectangle.x, py * 0.5f * m_rectangle.y);
+			CharacterVertex* cv = static_cast<CharacterVertex*>(vbGuard->GetDirectAccess());
+			for (int i = 0; i < vbGuard->GetNumElements(); ++i)
+			{
+				cv->position += offset;
+				++cv;
+			}
+		}
 	}
 }; 

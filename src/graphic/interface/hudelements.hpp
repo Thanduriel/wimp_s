@@ -7,6 +7,7 @@
 #include "gameplay/elements/ship.hpp"
 
 #include <memory>
+#include <queue>
 
 namespace Graphic {
 
@@ -275,6 +276,26 @@ namespace Graphic {
 	private:
 		const bool m_growsRight;
 		ScreenTexture m_texture;
+	};
+
+	// ************************************************************* //
+	class MessageBox : public ScreenOverlay
+	{
+	public:
+		MessageBox(ei::Vec2 _position, ei::Vec2 _size, DefinitionPoint _def = DefP::TopLeft, Anchor _anchor = Anchor());
+
+		void Register(Hud& _hud) override;
+
+
+		constexpr static float AUTO = 0.f;
+		constexpr static float INFINITE = -1.f;
+		void Push(const std::string& _text, float _time = AUTO);
+
+	private:
+		void Next(); // advance queue
+
+		TextRender m_textRender;
+		std::queue<std::pair<std::string, float>> m_messages;
 	};
 
 };

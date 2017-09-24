@@ -31,6 +31,15 @@ namespace Graphic {
 		Texture m_texture;
 	};
 
+	// For Font sizes
+	struct PixelSize
+	{
+		constexpr PixelSize(int _size) : m_size(_size) {}
+	private:
+		friend class TextRender;
+		int m_size;
+	};
+
 	/// \brief A buffer with a formated string to draw.
 	class TextRender : public ScreenPosition
 	{
@@ -49,8 +58,8 @@ namespace Graphic {
 	public:
 		/// \brief Create a text of a specific font.
 		TextRender( ei::Vec2 _position = ei::Vec2(0.f), 
-			ScreenOverlay::Anchor _anchor = ScreenOverlay::Anchor(),
-			Font* _font = nullptr, const std::string& _text = "", float _scale = 1.f);
+			ScreenOverlay::Anchor _anchor = ScreenOverlay::Anchor(), Font* _font = nullptr,
+			const std::string& _text = "", DefinitionPoint _defP = DefP::TopLeft);
 
 		void Register(class Hud& _hud) override;
 		void Unregister(class Hud& _hud) override;
@@ -77,6 +86,7 @@ namespace Graphic {
 
 		/// \brief Sets the default size of the Textrender which gets used while no control char overrides it
 		void SetDefaultSize(float _size);
+		void SetDefaultSize(PixelSize _size);
 		float GetDefaultSize() const {return m_sizeD;};
 
 		void SetDefaultColor(Utils::Color8U _color) { m_colorD = _color; RenewBuffer(); };
@@ -96,6 +106,7 @@ namespace Graphic {
 
 	private:
 		void RenewBuffer();
+		DefinitionPoint m_defPoint;
 
 		typedef std::string::iterator strIterator;
 		/// \brief Resolves control chars and applies them.
