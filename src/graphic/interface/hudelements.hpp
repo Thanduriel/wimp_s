@@ -291,11 +291,14 @@ namespace Graphic {
 		constexpr static float INFINITE = -1.f;
 		void Push(const std::string& _text, float _time = AUTO);
 
+		void Process(float _deltaTime);
 	private:
 		void Next(); // advance queue
+		std::string CutString(const std::string& _s) const; // adds line breaks so that the text fits the box
 
 		TextRender m_textRender;
 		std::queue<std::pair<std::string, float>> m_messages;
+		float m_timer;
 	};
 
 };

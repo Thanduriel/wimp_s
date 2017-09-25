@@ -67,7 +67,9 @@ namespace Graphic
 		m_thickness = m_thicknessD;
 
 		//calculates the screen ratio
-		GetCharSize();
+		m_charSize = Vec2(m_font.m_sizeTable[64][0],
+			m_font.m_sizeTable[64][1] * (m_font.m_texture.Height()
+				/ (float)m_font.m_texture.Width()) * Device::GetAspectRatio());
 	}
 
 
@@ -100,11 +102,8 @@ namespace Graphic
 		SetDefaultSize(_size.m_size / pSize );
 	}
 
-	Vec2 TextRender::GetCharSize()
+	Vec2 TextRender::GetCharSize() const
 	{
-		m_charSize = Vec2(m_font.m_sizeTable[64][0],
-						m_font.m_sizeTable[64][1] * (m_font.m_texture.Height()
-						/ (float)m_font.m_texture.Width()) * Device::GetAspectRatio());
 		return m_charSize;
 	}
 

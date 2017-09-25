@@ -671,9 +671,10 @@ namespace Graphic
 	// ************************************************************************ //
 	MessageBox::MessageBox(ei::Vec2 _position, ei::Vec2 _size, DefinitionPoint _def, Anchor _anchor)
 		: ScreenOverlay(_position, _size, _def, _anchor),
-		m_textRender(Vec2(0.f), Anchor(DefP::MidLeft, this), nullptr, "", DefP::MidLeft)
+		m_textRender(Vec2(0.f), Anchor(DefP::MidLeft, this), nullptr, "", DefP::MidLeft),
+		m_timer(0.f)
 	{
-
+		m_textRender.SetDefaultSize(24_px);
 	}
 
 	void MessageBox::Register(Hud& _hud)
@@ -682,11 +683,56 @@ namespace Graphic
 		_hud.RegisterElement(m_textRender);
 	}
 
+	void MessageBox::Push(const std::string& _text, float _time)
+	{
+		if (_time == AUTO) _time = _text.size() / 20.f;
+		m_messages.push(std::make_pair(_text, _time));
+	}
+
+	void MessageBox::Process(float _deltaTime)
+	{
+		m_timer -= _deltaTime;
+		if (m_timer <= 0.f && m_messages.size()) Next();
+	}
+
 	void MessageBox::Next()
 	{
-		std::string s = m_messages.front().first;
-		
-		m_textRender.SetText(s);
+		m_timer = m_messages.front().second;
+
+		m_textRender.SetText(CutString(m_messages.front().first));
 		m_messages.pop();
+	}
+
+	std::string  MessageBox::CutString(const std::string& _s) const
+	{
+		std::string s(_s);
+		const float charSize = m_textRender.GetCharSize().x * m_textRender.GetDefaultSize();
+		float curSize = 0.f;
+		size_t lastSpace = std::numeric_limits<size_t>::max();
+
+		for (size_t i = 0; i < _s.size(); ++i)
+		{
+			curSize += charSize;
+			if (_s[i] == '\n') curSize = 0.f;
+			else if (_s[i] == ' ') lastSpace = i;
+			// to large for this box
+			if (curSize > GetSize().x)
+			{
+				// word is to long for the box
+				if (lastSpace == std::numeric_limits<size_t>::max())
+				{
+					s.insert(s.begin() + i, '\n');
+					lastSpace = i;
+				}
+
+				// add line break where convenient
+				s[lastSpace] = '\n';
+				i = lastSpace + 1;
+				curSize = 0.f;
+				lastSpace = std::numeric_limits<size_t>::max();
+			}
+		}
+
+		return std::move(s);
 	}
 };

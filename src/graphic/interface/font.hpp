@@ -35,10 +35,12 @@ namespace Graphic {
 	struct PixelSize
 	{
 		constexpr PixelSize(int _size) : m_size(_size) {}
+
 	private:
 		friend class TextRender;
 		int m_size;
 	};
+	inline constexpr PixelSize operator""_px(unsigned long long _arg) { return PixelSize(static_cast<int>(_arg)); }
 
 	/// \brief A buffer with a formated string to draw.
 	class TextRender : public ScreenPosition
@@ -93,7 +95,7 @@ namespace Graphic {
 
 		/// \brief returns the real dimensions the chars are drawn in
 		/// \details chars are stretched to preserve the right view on the screen
-		ei::Vec2 GetCharSize();
+		ei::Vec2 GetCharSize() const;
 
 		/// \brief returns the size of the smallest rectangle in screen coords in which the displayed text would fit in
 		ei::Vec2 GetRectangle() const;
