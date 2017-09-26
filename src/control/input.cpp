@@ -217,6 +217,28 @@ namespace Control {
 	}
 
 	// ********************************************************************* //
+	std::string InputManager::GetBoundKey(VirtualKey _vkey)
+	{
+		Jo::Files::MetaFileWrapper::Node& currentKeys = *InputManagerInstance.m_keyMap[(int)_vkey];
+
+		const int key = (int)currentKeys[0];
+		std::string s;
+		switch (key)
+		{
+		case GLFW_KEY_LEFT_SHIFT:
+			s = "lshift";
+			break;
+		case GLFW_KEY_TAB:
+			s = "tab";
+			break;
+		default:
+			s = KeyToChar(key, 0);
+		}
+
+		return s;
+	}
+
+	// ********************************************************************* //
 	ei::Vec2 InputManager::GetCursorPos()
 	{
 		return ei::Vec2( (float)InputManagerInstance.m_cursorX, (float)InputManagerInstance.m_cursorY );

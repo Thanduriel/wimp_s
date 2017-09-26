@@ -11,12 +11,14 @@
 #include "control/waspcontroller.hpp"
 #include "gameplay/elements/shipsystems/specialmove.hpp"
 #include "control/kamikazecontroller.hpp"
+#include "control/input.hpp"
 
 namespace Game {
 namespace Acts {
 
 	using namespace Utils;
 	using namespace ei;
+	using namespace Control;
 
 	const Vec3 PLAYER_SPAWN = Vec3(0.f,0.f,-734.f);
 	const Vec3 BASE_POSITON = Vec3(-240.f, 50.f, 820.f);
@@ -158,6 +160,7 @@ namespace Acts {
 		auto AtimeToEqiup = CREATE_ACTION
 		{
 			CREATE_OBJECTIVE3(Conditions::Timer, AbeginDestroyShips, "equip the weapons and wait", 10.f);
+			_hud.ShowMessage("Press " + GetColoredKeyName(VirtualKey::INVENTORY) + " to open the inventory");
 		};
 
 		// 02
@@ -173,6 +176,12 @@ namespace Acts {
 		_hud.AddObjective(ev);
 		m_sceneGraph.Add(ev);
 		_hud.AddIndicator(researchBase, "research facility");
+		_hud.ShowMessage("Use "s 
+			+ GetColoredKeyName(VirtualKey::ACC_FORWARD) + '/'
+			+ GetColoredKeyName(VirtualKey::ACC_BACKWARD)
+			+  " to accelerate/decelerate temporarily or additionally " 
+			+ GetColoredKeyName(VirtualKey::ADJUST_TARGET_ACC)
+			+ " to change the target speed.");
 	}
 }
 }

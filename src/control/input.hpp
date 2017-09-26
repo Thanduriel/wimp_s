@@ -43,6 +43,9 @@ namespace Control {
 		/// \brief Check if a physical key maps to a certain virtual key.
 		static bool IsVirtualKey( int _key, VirtualKey _vkey );
 
+		/// \brief Gives the char of the actual key associated with the virual key.
+		static std::string GetBoundKey(VirtualKey _vkey);
+
 		/// \brief The cursors position in pixels inside the window.
 		static ei::Vec2 GetCursorPos();
 

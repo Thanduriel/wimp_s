@@ -6,6 +6,7 @@
 #include "gameplay/elements/ship.hpp"
 #include "generators/weapongen.hpp"
 #include "control/controller.hpp"
+#include "control/input.hpp"
 
 // some macros to simplify the syntax of event creation
 /* A reasonable default capture list for actions:
@@ -39,6 +40,7 @@ namespace Game {
 		COUNT
 	};
 
+	std::string GetColoredKeyName(Control::VirtualKey _vkey);
 
 	class Map
 	{

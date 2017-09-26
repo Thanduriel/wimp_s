@@ -7,6 +7,11 @@
 
 namespace Game {
 
+	std::string GetColoredKeyName(Control::VirtualKey _vkey)
+	{
+		return "<c 0 255 0>" + Control::InputManager::GetBoundKey(_vkey) + "</c>";
+	}
+
 	Map::Map(SceneGraph& _sceneGraph, const Ship& _playerShip, GameStates::MainHud& _hud)
 		: m_sceneGraph(_sceneGraph), 
 		m_mainHud(_hud),

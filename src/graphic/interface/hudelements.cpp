@@ -686,19 +686,24 @@ namespace Graphic
 	void MessageBox::Push(const std::string& _text, float _time)
 	{
 		if (_time == AUTO) _time = _text.size() / 20.f;
-		m_messages.push(std::make_pair(_text, _time));
+ 		m_messages.push(std::make_pair(_text, _time));
 	}
 
 	void MessageBox::Process(float _deltaTime)
 	{
 		m_timer -= _deltaTime;
-		if (m_timer <= 0.f && m_messages.size()) Next();
+		if (m_timer <= 0.f) 
+		{
+			if(m_messages.size()) Next();
+			else m_textRender.SetVisible(false);
+		}
 	}
 
 	void MessageBox::Next()
 	{
 		m_timer = m_messages.front().second;
 
+		m_textRender.SetVisible(true);
 		m_textRender.SetText(CutString(m_messages.front().first));
 		m_messages.pop();
 	}
@@ -715,6 +720,8 @@ namespace Graphic
 			curSize += charSize;
 			if (_s[i] == '\n') curSize = 0.f;
 			else if (_s[i] == ' ') lastSpace = i;
+			else if (_s[i] == '<')
+				i = _s.find('>', i + 1) + 1;
 			// to large for this box
 			if (curSize > GetSize().x)
 			{

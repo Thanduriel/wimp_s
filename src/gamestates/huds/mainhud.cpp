@@ -11,6 +11,7 @@ namespace GameStates {
 	using namespace ei;
 
 	MainHud::MainHud()
+		: m_messageBox(PixelOffset(0, -80), PixelOffset(800, 200), DefP::TopMid, Anchor(DefP::TopMid, this))
 	{
 		ShowCursor(Hud::CursorType::Crosshair);
 
@@ -18,6 +19,8 @@ namespace GameStates {
 #ifndef _DEBUG
 		GetDebugLabel().SetVisible(false);
 #endif // !_DEBUG
+
+		m_messageBox.Register(*this);
 
 		float outerSpeedBarHeight = 512;
 		m_outerSpeedBar = &CreateScreenElement<ScreenTexture>("speed_bar_outer", PixelOffset(10, 10), PixelOffset(64, outerSpeedBarHeight), DefP::BotLeft, Anchor(DefP::BotLeft, this));
@@ -46,6 +49,11 @@ namespace GameStates {
 
 		m_aimAssist = &CreateScreenElement<ScreenTexture>("crosshair_dot", PixelOffset(0, -20), PixelOffset(64, 64), DefP::MidMid);
 		m_aimAssist->SetColor(Utils::Color8U(35_uc, 77_uc, 144_uc));
+	}
+
+	void MainHud::Process(float _deltaTime)
+	{
+		m_messageBox.Process(_deltaTime);
 	}
 
 	void MainHud::UpdateSpeedLabel(float _speed)
@@ -145,5 +153,10 @@ namespace GameStates {
 	void MainHud::AddObjective(const Game::BaseEvent& _event)
 	{
 		m_currentEvents.push_back(_event.GetHandle());
+	}
+
+	void MainHud::ShowMessage(const std::string& _message, float _time)
+	{
+		m_messageBox.Push(_message, _time);
 	}
 }

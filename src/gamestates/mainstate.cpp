@@ -106,6 +106,8 @@ namespace GameStates {
 				delete &m_playerShip;
 			}
 		}
+
+		m_hud.Process(_deltaTime); // use real game time
 	}
 
 	void MainState::Draw(float _deltaTime)
