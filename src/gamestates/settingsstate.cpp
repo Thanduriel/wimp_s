@@ -18,8 +18,22 @@ namespace GameStates {
 	} };
 
 	SettingsState::SettingsState()
-		: m_enableAimAssist(PlayerController::HAS_AIM_ASSIST)
+		: m_enableAimAssist(PlayerController::HAS_AIM_ASSIST),
+		m_grid(ei::Vec3(0.f, 0.f, 30.f), Utils::Color32F(0.f, 1.f, 0.f, 0.5f), 3.5f, 3.5f, 80.f),
+		m_oldCamera(g_camera)
 	{
+		m_grid.Rotate(ei::Quaternion(ei::normalize(ei::Vec3(1.f, 0.f, 0.f)), ei::PI * 0.5f));
+		m_grid.Process(0.f);
+
+		using namespace Control;
+		g_camera.SetPosition(ei::Vec3(0.f, 0.f, -25.f));
+		g_camera.SetRotation(ei::qidentity());
+		g_camera.FixRotation(g_camera.GetRotation(), g_camera.GetPosition());
+		g_camera.Process(0.f);
+
+		// updates the cursor position
+		MouseMove(0.f, 0.f);
+
 		Jo::Files::MetaFileWrapper& config = Wimp_s::GetConfig();
 		auto& cgraphics = config["Graphics"s];
 
@@ -99,12 +113,18 @@ namespace GameStates {
 		m_hud.m_cancelButton->SetOnMouseUp([this]() {m_isFinished = true; });
 	}
 
+	SettingsState::~SettingsState()
+	{
+		g_camera = m_oldCamera;
+	}
+
 	void SettingsState::Process(float _deltaTime)
 	{
 	}
 
 	void SettingsState::Draw(float _deltaTime)
 	{
+		m_grid.Draw();
 		Graphic::Device::DrawFramebufferToBackbuffer();
 
 		m_hud.Draw(_deltaTime);

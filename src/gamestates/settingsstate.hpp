@@ -2,12 +2,14 @@
 
 #include "gamestate.hpp"
 #include "huds/settingshud.hpp"
+#include "gameplay/elements/grid.hpp"
 
 namespace GameStates {
 	class SettingsState : public GameStateHT<SettingsHud>
 	{
 	public:
 		SettingsState();
+		~SettingsState();
 
 		void Process(float _deltaTime) override;
 		void Draw(float _deltaTime) override;
@@ -25,5 +27,8 @@ namespace GameStates {
 		bool m_isFullScreen;
 		bool m_enableAimAssist;
 		int m_currentResolution;
+
+		Control::Camera m_oldCamera;
+		Game::Grid m_grid;
 	};
 }

@@ -86,10 +86,10 @@ namespace Acts {
 
 		auto Aexplosion = CREATE_ACTION
 		{
-			BlackHole& blackHole = FactoryActor::GetThreadLocalInstance().Make<BlackHole>(BASE_POSITON + Vec3(0.f,0.f,0.2f), 210.f, 7.f, 21.f);
+			BlackHole& blackHole = FactoryActor::GetThreadLocalInstance().Make<BlackHole>(BASE_POSITON + Vec3(0.f,0.f,0.2f), 210.f, 7.f, 11.f);
 			blackHole.Activate();
 
-			CREATE_OBJECTIVE3(Conditions::Timer, AblackHoleGenerator, "stay save", 24.f);
+			CREATE_OBJECTIVE3(Conditions::Timer, AblackHoleGenerator, "stay save", 14.f);
 		};
 
 		auto AactivateVirus = CREATE_ACTION
@@ -151,7 +151,7 @@ namespace Acts {
 			Ship& ship02 = CreateShip("Dart", m_asteroids.FindPosition(10.f), 1, 8.f, 0.f);
 			CreateController<Control::WaspController>(ship02, playerHndl, _hud, "Dart");
 
-			CREATE_OBJECTIVE4(Conditions::OnDestroy, AdestroySecondWave, "destroy the ships near by",
+			CREATE_OBJECTIVE4(Conditions::OnDestroy, AapproachFacility, "destroy the ships near by",
 				std::vector<Actor::ConstHandle>({ ship01.GetHandle(), ship02.GetHandle() }), 2);
 		};
 
