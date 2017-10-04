@@ -80,6 +80,8 @@ namespace Graphic {
 		void SetText(const std::string& _text);
 		const std::string& GetText() const {return m_text;};
 
+		static std::string GetColoredText(const std::string& _text, const Utils::Color8U& _color);
+
 		bool IsVisible() const { return m_visible; }
 		void SetVisible(bool _visible) { m_visible = _visible; }
 

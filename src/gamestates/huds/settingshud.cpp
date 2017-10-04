@@ -31,9 +31,5 @@ namespace GameStates {
 
 		TextRender& note = CreateScreenElement<TextRender>(Vec2(0.f), Anchor(DefP::TopLeft, m_applyButton), nullptr, "|changes to video settings require a restart", DefP::BotLeft);
 		note.SetDefaultSize(18_px);
-
-		MessageBox& box = CreateScreenElement<MessageBox>(Vec2(0.f), PixelOffset(200, 200));
-		box.Push("The world was young, the mountains green, no stain yet on the moon was seen. theworldwasfairindurinsday");
-		box.Process(0.f);
 	}
 }

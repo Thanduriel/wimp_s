@@ -68,6 +68,7 @@ namespace Game {
 		T& CreateController(Args&&... _args)
 		{
 			auto& c = *new T(std::forward<Args>(_args)...);
+			// this could potentially cause trouble if a controller uses its regular process step
 			m_sceneGraph.RegisterComponent(c);
 
 			return c;

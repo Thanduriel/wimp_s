@@ -235,7 +235,7 @@ namespace Control {
 			s = KeyToChar(key, 0);
 		}
 
-		return s;
+		return std::move(s);
 	}
 
 	// ********************************************************************* //

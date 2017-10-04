@@ -79,6 +79,12 @@ namespace Graphic
 		RenewBuffer();
 	}
 
+	std::string TextRender::GetColoredText(const std::string& _text, const Utils::Color8U& _color)
+	{
+		return "<c " + std::to_string(_color.R()) + ' ' + std::to_string(_color.G()) + ' ' + std::to_string(_color.B())
+			+ ">" + _text + "</c>";
+	}
+
 
 	void TextRender::SetPosition(Vec2 _screenPos)
 	{ 

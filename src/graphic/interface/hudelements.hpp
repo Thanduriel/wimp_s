@@ -287,11 +287,17 @@ namespace Graphic {
 		void Register(Hud& _hud) override;
 
 
+		// special time constants
 		constexpr static float AUTO = 0.f;
 		constexpr static float INFINITE = -1.f;
+		// Add a string to the back of the queue that will be displayed for _time seconds.
 		void Push(const std::string& _text, float _time = AUTO);
 
 		void Process(float _deltaTime);
+
+		// should the text be centered?
+		void SetCentered(bool _center) { m_isCentered = _center; }
+		bool IsCentered() const { return m_isCentered; }
 	private:
 		void Next(); // advance queue
 		std::string CutString(const std::string& _s) const; // adds line breaks so that the text fits the box
@@ -299,6 +305,7 @@ namespace Graphic {
 		TextRender m_textRender;
 		std::queue<std::pair<std::string, float>> m_messages;
 		float m_timer;
+		bool m_isCentered;
 	};
 
 };

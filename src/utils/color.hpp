@@ -134,26 +134,26 @@ namespace Utils {
 		operator Color32F() const								{ return Color32F(R(), G(), B(), A()); }
 
 		/// \brief Access single color component: Red
-		uint8 R() const										{ return m_color; }
+		constexpr uint8 R() const								{ return m_color; }
 
 		/// \brief Access single color component: Green
-		uint8 G() const										{ return m_color >> 8; }
+		constexpr uint8 G() const								{ return m_color >> 8; }
 
 		/// \brief Access single color component: Blue
-		uint8 B() const										{ return m_color >> 16; }
+		constexpr uint8 B() const								{ return m_color >> 16; }
 
 		/// \brief Access single color component: Alpha
-		uint8 A() const										{ return m_color >> 24; }
+		constexpr uint8 A() const								{ return m_color >> 24; }
 
 		
 		/// \brief Access all components in vertex shader direction
-		uint32 RGBA() const {return m_color;}		
+		constexpr uint32 RGBA() const							{return m_color;}		
 
 		/// \brief Returns true, if both colors are identical in all components.
-		bool operator==( const Color8U& _c) const				{ return m_color == _c.m_color; }
+		constexpr bool operator==( const Color8U& _c) const		{ return m_color == _c.m_color; }
 
 		/// \brief Returns true, if both colors are not identical in all components.
-		bool operator!=( const Color8U& _c) const				{ return m_color != _c.m_color; }
+		constexpr bool operator!=( const Color8U& _c) const		{ return m_color != _c.m_color; }
 
 	protected:
 		uint32 m_color;		///< The RGBA bytes

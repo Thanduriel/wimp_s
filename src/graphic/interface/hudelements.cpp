@@ -672,7 +672,8 @@ namespace Graphic
 	MessageBox::MessageBox(ei::Vec2 _position, ei::Vec2 _size, DefinitionPoint _def, Anchor _anchor)
 		: ScreenOverlay(_position, _size, _def, _anchor),
 		m_textRender(Vec2(0.f), Anchor(DefP::MidLeft, this), nullptr, "", DefP::MidLeft),
-		m_timer(0.f)
+		m_timer(0.f),
+		m_isCentered(false)
 	{
 		m_textRender.SetDefaultSize(24_px);
 	}
@@ -710,17 +711,30 @@ namespace Graphic
 
 	std::string  MessageBox::CutString(const std::string& _s) const
 	{
-		std::string s(_s);
+		std::vector<std::pair<size_t, int>> spacePadding;
+		std::string s(_s + '\n'); // add an enter to have a center attempt for the last line
 		const float charSize = m_textRender.GetCharSize().x * m_textRender.GetDefaultSize();
 		float curSize = 0.f;
 		size_t lastSpace = std::numeric_limits<size_t>::max();
+		size_t newLine = 0;
 
-		for (size_t i = 0; i < _s.size(); ++i)
+		for (size_t i = 0; i < _s.size() + 1; ++i)
 		{
 			curSize += charSize;
-			if (_s[i] == '\n') curSize = 0.f;
-			else if (_s[i] == ' ') lastSpace = i;
-			else if (_s[i] == '<')
+			if (s[i] == '\n')
+			{
+				if (m_isCentered)
+				{
+					float emptySpace = GetSize().x - curSize;
+					emptySpace /= charSize;
+					int numSpaces = int(emptySpace / 2.f);
+					if(numSpaces) spacePadding.emplace_back(newLine, numSpaces);
+				}
+				curSize = 0.f;
+				newLine = i+1;
+			}
+			else if (s[i] == ' ') lastSpace = i;
+			else if (s[i] == '<') // skip control chars
 				i = _s.find('>', i + 1) + 1;
 			// to large for this box
 			if (curSize > GetSize().x)
@@ -735,9 +749,18 @@ namespace Graphic
 				// add line break where convenient
 				s[lastSpace] = '\n';
 				i = lastSpace + 1;
+				newLine = i;
 				curSize = 0.f;
 				lastSpace = std::numeric_limits<size_t>::max();
 			}
+		}
+
+		while (spacePadding.size())
+		{
+			auto& p = spacePadding.back();
+			// this might need more spaces
+			s.insert(p.first, "                                                                                                                     ", p.second);
+			spacePadding.pop_back();
 		}
 
 		return std::move(s);

@@ -25,12 +25,12 @@ namespace Game {
 	Ship& Map::CreateShip(const std::string& _type, const ei::Vec3& _position, int _numWeapons, float _power, float _rarityMod, Drop _drop)
 	{
 		Ship& ship = *new Ship(_type, _position);
-		m_sceneGraph.Add(ship);
+		FactoryActor::GetThreadLocalInstance().Add(ship);
 
 		for (int i = 0; i < _numWeapons; ++i)
 		{
 			Weapon* w = m_weaponGen.Generate(_power, _rarityMod);
-			m_sceneGraph.Add(*w);
+			FactoryActor::GetThreadLocalInstance().Add(*w);
 			ship.SetWeapon(i, w);
 			if (_drop == Drop::Weapons) ship.GetInventory().Add(*w);
 			else if (_drop == Drop::Credits) ship.GetInventory().AddCredits(w->GetValue());
