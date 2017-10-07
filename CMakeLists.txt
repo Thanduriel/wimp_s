@@ -32,6 +32,15 @@ GroupSources(src)
 if(MSVC)
 	add_compile_options( /MP )
 	add_compile_options( /std:c++17 )
+	
+	set(OPTIMIZATION_OPTIONS 
+    $<$<CONFIG:Debug>:>
+    $<$<CONFIG:RelWithDebInfo>:>
+    $<$<CONFIG:Release>: /O2 /Ob2 /Oi /Ot /GL > 
+    $<$<CONFIG:MinSizeRel>:>
+    )
+	
+	add_compile_options( "${OPTIMIZATION_OPTIONS}" )
 endif(MSVC)
 
 # needs to be known to link with the libraries
@@ -59,6 +68,16 @@ include_directories("dependencies/epsilon/include")
 file(GLOB SOURCE_FILES_EPSILON "dependencies/epsilon/src/*.cpp")
 add_library(epsilon STATIC ${SOURCE_FILES_EPSILON})
 target_link_libraries (wimp_s epsilon)
+
+# sound engine
+option(WITH_SSE "" ON)
+set(SDL_LIBRARY_TEMP "dependencies/sdl")
+set(SDL_INCLUDE_DIR "dependencies/sdl/include")
+include_directories("dependencies/sdl/include")
+find_package(SDL)
+add_subdirectory("dependencies/clunk")
+include_directories("dependencies/clunk")
+target_link_libraries (wimp_s clunk)
 
 # You can define two import-locations: one for debug and one for release.
 #set_target_properties( jofilelib PROPERTIES IMPORTED_LOCATION dependencies/jofilelib/debug )

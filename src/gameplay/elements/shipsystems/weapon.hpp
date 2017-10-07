@@ -4,6 +4,7 @@
 
 #include "gameplay/core/actor.hpp"
 #include "gameplay/elements/factorycomponent.hpp"
+#include "gameplay/elements/audiocomponent.hpp"
 #include "projectile.hpp"
 #include "item.hpp"
 
@@ -44,6 +45,7 @@ namespace Game {
 		ei::Vec3 m_beginVelocity;
 	private:
 		FactoryComponent m_factoryComponent;
+		AudioComponent m_audioComponent;
 		
 		FireFunction m_fireImpl;
 		ReloadFunction m_reloadImpl;

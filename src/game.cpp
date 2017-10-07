@@ -13,7 +13,7 @@
 #include "graphic/effects/particlesystem.hpp"
 #include "gameplay/content.hpp"
 #include "graphic/core/uniformbuffer.hpp"
-
+#include "gameplay/elements/audiocomponent.hpp"
 //#include <Windows.h>
 
 #include "utils/loggerinit.hpp"
@@ -64,6 +64,7 @@ Wimp_s::Wimp_s()
 	Control::InputManager::Initialize(Graphic::Device::GetWindow(), m_config[std::string("Input")]);//config[std::string("Input")]
 
 	LightSystem::Initialize();
+	Game::AudioSystem::Initialize();
 
 	// load other properties
 	auto& cgame = m_config["Game"];
@@ -83,6 +84,7 @@ Wimp_s::~Wimp_s()
 	Control::InputManager::Close();
 	LightSystem::Close();
 	ParticleSystems::Manager::Close();
+	Game::AudioSystem::Close();
 
 	Game::Content::Unload();
 

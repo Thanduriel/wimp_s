@@ -1,6 +1,7 @@
 #include "weapon.hpp"
 #include "gameplay/scenegraph.hpp"
 #include "projectile.hpp"
+#include "gameplay/content.hpp"
 
 namespace Game {
 
@@ -131,6 +132,7 @@ namespace Game {
 		: Actor(ei::Vec3()),
 		Item(_quality, _name, _description),
 		m_factoryComponent(THISACTOR),
+		m_audioComponent(THISACTOR, Content::GetSound("scissors")),
 		m_cooldown(0.f),
 		m_cooldownMax(_cooldown),
 		m_range(_range),
@@ -146,6 +148,7 @@ namespace Game {
 	void Weapon::RegisterComponents(SceneGraph& _sceneGraph)
 	{
 		_sceneGraph.RegisterComponent(m_factoryComponent);
+		_sceneGraph.RegisterComponent(m_audioComponent);
 	}
 
 	void Weapon::Process(float _deltaTime)
@@ -162,6 +165,7 @@ namespace Game {
 			m_beginVelocity = _velocity;
 			m_cooldown = m_cooldownMax;
 			m_fireImpl(*this);
+			m_audioComponent.Play();
 
 			return m_energyCost;
 		}

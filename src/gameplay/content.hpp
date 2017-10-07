@@ -8,6 +8,10 @@
 #include "predeclarations.hpp"
 #include "jofilelib.hpp"
 
+namespace clunk {
+	class Sample;
+}
+
 namespace Game {
 
 	struct BoundingMesh;
@@ -23,6 +27,8 @@ namespace Game {
 		// @Return an empty bounding mesh.
 		static const BoundingMesh& GetBoundingMesh();
 
+		static const clunk::Sample& GetSound(const std::string& _name);
+
 		// @Return Tree of ship types
 		static const Jo::Files::MetaFileWrapper& GetShipData();
 
@@ -30,6 +36,7 @@ namespace Game {
 	private:
 		static std::unordered_map<std::string, BoundingMesh*> boundingMeshes;
 		static std::unordered_map<BoundingMeshKeyType, BoundingMesh*> anonymBoundingMeshes;
+		static std::unordered_map<std::string, clunk::Sample*> sounds;
 
 		static Jo::Files::MetaFileWrapper* shipData;
 	};

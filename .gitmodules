@@ -18,3 +18,6 @@
 [submodule "tools/meshprocessor/dependencies/quickhull"]
 	path = tools/meshprocessor/dependencies/quickhull
 	url = git@github.com:akuukka/quickhull.git
+[submodule "dependencies/clunk"]
+	path = dependencies/clunk
+	url = git@github.com:whoozle/clunk.git

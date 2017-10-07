@@ -1,10 +1,17 @@
 #include "content.hpp"
 
+#include <clunk/context.h>
+#include <clunk/backend/sdl/backend.h>
+#include <clunk/source.h>
+#include <clunk/wav_file.h>
+
 #include "elements/collisioncomponent.hpp"
+#include "elements/audiocomponent.hpp"
 
 namespace Game {
 	std::unordered_map<std::string, BoundingMesh*> Content::boundingMeshes;
 	std::unordered_map<Content::BoundingMeshKeyType, BoundingMesh*> Content::anonymBoundingMeshes;
+	std::unordered_map<std::string, clunk::Sample*> Content::sounds;
 
 	Jo::Files::MetaFileWrapper* Content::shipData;
 
@@ -43,6 +50,22 @@ namespace Game {
 		return m;
 	}
 
+	const clunk::Sample& Content::GetSound(const std::string& _name)
+	{
+		using namespace clunk;
+
+		auto it = sounds.find(_name);
+		Sample* sound;
+		if (it == sounds.end())
+		{
+			sound = WavFile::load(AudioSystem::GetContext(),_name + ".wav");
+			sounds.emplace(_name, sound);
+		}
+		else sound = it->second;
+
+		return *sound;
+	}
+
 	const Jo::Files::MetaFileWrapper& Content::GetShipData()
 	{
 		if (!shipData)
@@ -72,6 +95,9 @@ namespace Game {
 			delete p.second;
 
 		for (auto p : anonymBoundingMeshes)
+			delete p.second;
+
+		for (auto p : sounds)
 			delete p.second;
 
 		if(shipData) delete shipData;
