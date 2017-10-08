@@ -132,7 +132,7 @@ namespace Game {
 		: Actor(ei::Vec3()),
 		Item(_quality, _name, _description),
 		m_factoryComponent(THISACTOR),
-		m_audioComponent(THISACTOR, Content::GetSound("scissors")),
+		m_audioComponent(THISACTOR, Content::GetSound("shoot_blaster")),
 		m_cooldown(0.f),
 		m_cooldownMax(_cooldown),
 		m_range(_range),

@@ -70,11 +70,10 @@ add_library(epsilon STATIC ${SOURCE_FILES_EPSILON})
 target_link_libraries (wimp_s epsilon)
 
 # sound engine
-option(WITH_SSE "" ON)
-set(SDL_LIBRARY_TEMP "dependencies/sdl")
-set(SDL_INCLUDE_DIR "dependencies/sdl/include")
+#give hint where to find sdl from inside dependencies/clunk
+set(CMAKE_INCLUDE_PATH "../sdl/include")
+set(CMAKE_FRAMEWORK_PATH "../sdl")
 include_directories("dependencies/sdl/include")
-find_package(SDL)
 add_subdirectory("dependencies/clunk")
 include_directories("dependencies/clunk")
 target_link_libraries (wimp_s clunk)

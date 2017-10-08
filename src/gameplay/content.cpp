@@ -58,7 +58,13 @@ namespace Game {
 		Sample* sound;
 		if (it == sounds.end())
 		{
-			sound = WavFile::load(AudioSystem::GetContext(),_name + ".wav");
+			try {
+				sound = WavFile::load(AudioSystem::GetContext(), "sounds/" + _name + ".wav");
+			}
+			catch (std::runtime_error e)
+			{
+				int uiae = 13;
+			}
 			sounds.emplace(_name, sound);
 		}
 		else sound = it->second;
