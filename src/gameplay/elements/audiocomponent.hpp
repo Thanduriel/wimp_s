@@ -33,15 +33,15 @@ namespace Game {
 	class AudioComponent : public ConstActorComponent, public Transformation
 	{
 	public:
-		AudioComponent(const Actor& _actor, const clunk::Sample& _sound);
+		AudioComponent(const Actor& _actor, const ei::Vec3& _position = ei::Vec3(0.f));
 		~AudioComponent();
 
 		void ProcessComponent(float _deltaTime) override;
 
-		void Play();
+		void Play(const clunk::Sample& _sound);
 		void Stop();
 	private:
+		void UpdateSourcePos();
 		clunk::Object* m_object;
-		const clunk::Sample& m_sound;
 	};
 }

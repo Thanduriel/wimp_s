@@ -132,7 +132,7 @@ namespace Game {
 		: Actor(ei::Vec3()),
 		Item(_quality, _name, _description),
 		m_factoryComponent(THISACTOR),
-		m_audioComponent(THISACTOR, Content::GetSound("shoot_blaster")),
+		m_audioComponent(THISACTOR),
 		m_cooldown(0.f),
 		m_cooldownMax(_cooldown),
 		m_range(_range),
@@ -165,7 +165,9 @@ namespace Game {
 			m_beginVelocity = _velocity;
 			m_cooldown = m_cooldownMax;
 			m_fireImpl(*this);
-			m_audioComponent.Play();
+
+			static const clunk::Sample& sound = Content::GetSound("shoot_blaster");
+			m_audioComponent.Play(sound);
 
 			return m_energyCost;
 		}

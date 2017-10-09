@@ -84,8 +84,9 @@ namespace Game {
 
 	void Bolt::OnDestroy()
 	{
+		static const clunk::Sample& sound = Content::GetSound("small_boom");
 		FactoryActor::GetThreadLocalInstance().MakeP<Explosion>(m_position, m_damage / 4.f, 0.f, m_color, 
-			m_damageType == DamageType::Ion ? "shock" : "mist");
+			m_damageType == DamageType::Ion ? "shock" : "mist", sound);
 	}
 
 	// ********************************************************************** //
@@ -117,16 +118,20 @@ namespace Game {
 		Projectile::Process(_deltaTime);
 
 		float passed = m_lifeTimeComponent.GetLifeTimeMax() - m_lifeTimeComponent.GetLifeTimeLeft();
-		if (passed > SETUP_TIME && m_target && *m_target)
+		if (passed > SETUP_TIME)
 		{
-			GetCollisionComponent().SetType(CollisionComponent::Type::Any | CollisionComponent::Type::Solid
-				| CollisionComponent::Type::Projectile | CollisionComponent::Type::Dynamic);
-			float l = ei::len(m_velocity);
-			// have both acceleration and conversion of TARGETING_STRENGTH in the desired direction
-			SetVelocity(GetVelocity() * (1.f - TARGETING_STRENGTH * _deltaTime) + normalize((**m_target).GetPosition() - m_position) 
-				* _deltaTime * (15.f + l * TARGETING_STRENGTH));
-			// movement direction changes -> update rotation
-			SetRotation(ei::Quaternion(ei::Vec3(0.f, 0.f, 1.f), GetVelocity()));
+			// activate collision delayed to prevent the rocket from hitting its source
+			if(!GetCollisionComponent().GetType()) GetCollisionComponent().SetType(CollisionComponent::Type::Any | CollisionComponent::Type::Solid
+								| CollisionComponent::Type::Projectile | CollisionComponent::Type::Dynamic);
+			if (m_target && *m_target)
+			{
+				float l = ei::len(m_velocity);
+				// have both acceleration and conversion of TARGETING_STRENGTH in the desired direction
+				SetVelocity(GetVelocity() * (1.f - TARGETING_STRENGTH * _deltaTime) + normalize((**m_target).GetPosition() - m_position)
+					* _deltaTime * (15.f + l * TARGETING_STRENGTH));
+				// movement direction changes -> update rotation
+				SetRotation(ei::Quaternion(ei::Vec3(0.f, 0.f, 1.f), GetVelocity()));
+			}
 		}
 		else SetVelocity(GetVelocity() + m_rotationMatrix * Vec3(0.f, 0.f, _deltaTime) * 15.f);
 
@@ -158,6 +163,7 @@ namespace Game {
 
 	void Rocket::OnDestroy()
 	{
-		FactoryActor::GetThreadLocalInstance().MakeP<Explosion>(m_position, 20.f, 0.f);
+		static const clunk::Sample& sound = Content::GetSound("explosion02");
+		FactoryActor::GetThreadLocalInstance().MakeP<Explosion>(m_position, 20.f, 0.f, Utils::Color8U(0.7f, 0.8f, 0.4f, 1.f), "mist", sound);
 	}
 }

@@ -2,6 +2,7 @@
 #include "../scenegraph.hpp"
 #include "generators/random.hpp"
 #include "graphic/resources.hpp"
+#include "gameplay/content.hpp"
 
 namespace Game {
 
@@ -11,15 +12,16 @@ namespace Game {
 	const float EXPANSIONTIME = 1.f;
 
 	// ********************************************************************** //
-	Explosion::Explosion(const ei::Vec3& _position, float _radius, float _damage, Utils::Color8U _color, const std::string& _effectTex)
+	Explosion::Explosion(const ei::Vec3& _position, float _radius, float _damage, Utils::Color8U _color, const std::string& _effectTex, const clunk::Sample& _sound)
 		: Actor(_position),
 		m_lifeTimeComponent(THISACTOR, 0.9f),
 		m_light(THISACTOR, Vec3(0.f), _radius, Utils::Color8U(0.0f, 0.0f, 1.0f)),
 		m_particles(THISACTOR, Vec3(0.f), Graphic::Resources::GetTexture(_effectTex)),
+		m_audio(THISACTOR),
 		m_radius(_radius)
 	{
-		if (_effectTex == "shock")
-			int uiae = 123;
+		m_audio.Play(_sound);
+
 		for (int i = 0; i < _radius * 18.f; ++i)
 		{
 			static thread_local Generators::RandomGenerator rng(0x614AA);
@@ -45,6 +47,7 @@ namespace Game {
 		_sceneGraph.RegisterComponent(m_light);
 		_sceneGraph.RegisterComponent(m_particles);
 		_sceneGraph.RegisterComponent(m_lifeTimeComponent);
+		_sceneGraph.RegisterComponent(m_audio);
 	}
 
 }

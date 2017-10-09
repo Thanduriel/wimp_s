@@ -1,0 +1,26 @@
+additonal models used
+https://free3d.com/3d-model/spacecraft-54534.html
+https://www.turbosquid.com/3d-models/fighter-1-3ds-free/526437
+https://www.turbosquid.com/3d-models/ready-games-real-time-max-free/644656
+https://www.turbosquid.com/3d-models/free-max-model-space/588767
+https://www.turbosquid.com/3d-models/free-spaceship-fighter-3d-model/727670
+
+sounds
+explosion01 - https://freesound.org/people/Quaker540/sounds/245372/
+explosion02 - https://freesound.org/people/ryansnook/sounds/110113/
+small_boom - https://freesound.org/people/unfa/sounds/189779/
+
+libraries
+glfw - http://www.glfw.org/
+glew - http://glew.sourceforge.net/
+assimp - http://assimp.org/
+epsilon - https://github.com/Jojendersie/Epsilon-Intersection
+JoFileLib - https://github.com/Jojendersie/JoFileLib
+QuickHull - https://github.com/akuukka/quickhull
+RectangleBinPack - https://github.com/juj/RectangleBinPack
+clunk - https://github.com/whoozle/clunk
+
+parts of Monolith - https://github.com/Jojendersie/Monolith
+
+
+

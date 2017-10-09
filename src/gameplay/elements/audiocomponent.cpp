@@ -21,6 +21,7 @@ namespace Game {
 		dm.rolloff_factor = 0.7f;
 		context.set_distance_model(dm);
 		context.get_listener()->update_view(clunk::v3f(0.f, 0.f, 1.f), clunk::v3f(0.f,1.f, 0.f));
+		context.set_max_sources(32);
 
 		backend.start();
 	}
@@ -36,10 +37,9 @@ namespace Game {
 		return s_backend->get_context();
 	}
 
-	AudioComponent::AudioComponent(const Actor& _actor, const clunk::Sample& _sound)
+	AudioComponent::AudioComponent(const Actor& _actor, const ei::Vec3& _position)
 		: ConstActorComponent(_actor),
-		Transformation(ei::Vec3(0.f)),
-		m_sound(_sound),
+		Transformation(_position),
 		m_object(AudioSystem::GetContext().create_object())
 	{
 
@@ -50,9 +50,10 @@ namespace Game {
 		delete m_object;
 	}
 
-	void AudioComponent::Play()
+	void AudioComponent::Play(const clunk::Sample& _sound)
 	{
-		clunk::Source* source = new clunk::Source(&m_sound, false);
+		clunk::Source* source = new clunk::Source(&_sound, false);
+		UpdateSourcePos(); // make sure that the position is already correct when the first sample is heard
 		m_object->play(0, source);
 	}
 
@@ -62,6 +63,11 @@ namespace Game {
 	}
 
 	void AudioComponent::ProcessComponent(float _deltaTime)
+	{
+		UpdateSourcePos();
+	}
+
+	void AudioComponent::UpdateSourcePos()
 	{
 		ei::Vec3 pos = ei::Vec3(Control::g_camera.GetView() * Transformation::Get(m_actor.GetTransformation()) * ei::Vec4(0.f, 0.f, 0.f, 1.f));
 		// the listener seems to be ignored so transform the system from z-forward, y-up to y-forward and z-up
