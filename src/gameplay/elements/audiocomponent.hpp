@@ -38,7 +38,9 @@ namespace Game {
 
 		void ProcessComponent(float _deltaTime) override;
 
-		void Play(const clunk::Sample& _sound);
+		void Play(const clunk::Sample& _sound, int _id = 0, bool _loop = false);
+		clunk::Object* GetObject();
+
 		void Stop();
 	private:
 		void UpdateSourcePos();

@@ -61,10 +61,12 @@ namespace GameStates {
 			m_hud.m_descriptionLabel.SetText("compiling shaders");
 			Resources::GetEffect(Effects::MESH);
 			Resources::GetEffect(Effects::SHIELD);
+			Resources::GetEffect(Effects::DARKEN);
 			break;
 		case 1:
 			Resources::GetEffect(Effects::DEFFERED_LIGHT);
 			Resources::GetEffect(Effects::BACKGROUNDSTAR);
+			Resources::GetEffect(Effects::DD_LIGHT);
 			break;
 		case 2:
 			Resources::GetEffect(Effects::BLACKHOLE);
@@ -82,6 +84,7 @@ namespace GameStates {
 			Resources::GetUBO(UniformBuffers::OBJECT_LINES);
 			Resources::GetUBO(UniformBuffers::OBJECT_GEOMETRY);
 			Resources::GetUBO(UniformBuffers::OBJECT_SHIELD);
+			Resources::GetUBO(UniformBuffers::DOMINANT_LIGHT);
 			break;
 		case 5:
 			m_hud.m_descriptionLabel.SetText("loading textures");
@@ -116,19 +119,24 @@ namespace GameStates {
 			Content::GetBoundingMesh("advanced_shipbm");
 			break;
 		case 9:
+			m_hud.m_descriptionLabel.SetText("loading sounds");
+			Content::GetSound("explosion01");
+			Content::GetSound("explosion02");
+			Content::GetSound("shoot_blaster");
+			Content::GetSound("small_boom");
+			break;
+		case 10:
 			m_hud.m_descriptionLabel.SetText("creating stars");
 			if (!m_playerShip) m_playerShip = &MainState::CreatePlayerShip();
 			m_createdState = new MainState(*m_playerShip);
 			break;
-		case 10:
+		case 11:
 		{
 			m_hud.m_descriptionLabel.SetText("setting up map");
 			Map& map = CreateLevel(m_level);
 			m_createdState->SetMap(map);
 			break;
 		}
-		case 11:
-			break;
 		case 12:
 			m_hud.m_descriptionLabel.SetVisible(false);
 			m_isReady = true;

@@ -21,11 +21,10 @@ namespace Control
 
 		static void SetSceneGraph(Game::SceneGraph& _graph) { s_sceneGraph = &_graph; }
 
-		void RotateTowards(ei::Vec3 _pos);
-
+		//@return the current angle
+		float RotateTowards(ei::Vec3 _pos);
+		void FlyTo(const ei::Vec3& _pos, float _speed);
 		void EvadeObstacles();
-
-		void Fire();
 
 		float GetMaxDistance() const { return m_maxDistance; }
 		void SetMaxDistance(const float _distance) { m_maxDistance = _distance; };

@@ -47,14 +47,20 @@ namespace Game {
 
 	AudioComponent::~AudioComponent()
 	{
+		m_object->cancel_all(true);
 		delete m_object;
 	}
 
-	void AudioComponent::Play(const clunk::Sample& _sound)
+	void AudioComponent::Play(const clunk::Sample& _sound, int _id, bool _loop)
 	{
-		clunk::Source* source = new clunk::Source(&_sound, false);
+		clunk::Source* source = new clunk::Source(&_sound, _loop);
 		UpdateSourcePos(); // make sure that the position is already correct when the first sample is heard
-		m_object->play(0, source);
+		m_object->play(_id, source);
+	}
+
+	clunk::Object* AudioComponent::GetObject()
+	{
+		return m_object;
 	}
 
 	void AudioComponent::Stop()

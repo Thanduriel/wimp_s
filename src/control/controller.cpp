@@ -12,10 +12,11 @@ namespace Control
 		m_ship(_ship),
 		m_hud(_hud)
 	{
+		// if this is changed the creation of controllers in Map needs to be updated
 		m_canTick = false;
 	}
 
-	void Controller::RotateTowards(ei::Vec3 _pos)
+	float Controller::RotateTowards(ei::Vec3 _pos)
 	{
 		using namespace ei;
 	/*	Vec3 delta = _pos - GetShip().GetPosition();
@@ -37,6 +38,19 @@ namespace Control
 		float factor = clamp(angle, 0.0f, ei::PI) / (ei::PI);
 		Vec3 rotationVector = normalize(cross(forward, delta)) * sqrt(factor);
 		GetShip().SetTargetAngularVelocity(rotationVector);
+
+		return angle;
+	}
+
+	void Controller::FlyTo(const ei::Vec3& _pos, float _speed)
+	{
+		ei::Vec3 dif = _pos - m_ship.GetPosition();
+		float len = ei::len(dif);
+		float a = RotateTowards(_pos);
+		if (a < 0.1f)
+		{
+			m_ship.SetSpeed(len < 5.f ? _speed : 0.f);
+		}
 	}
 
 	void Controller::EvadeObstacles()
