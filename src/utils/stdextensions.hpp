@@ -7,7 +7,7 @@ namespace std
 	{
 		typedef std::pair<T1, T2> argument_type;
 
-		size_t operator()(const argument_type& s) const
+		constexpr size_t operator()(const argument_type& s) const
 		{
 			size_t const h1(std::hash<T1>{}(s.first));
 			size_t const h2(std::hash<T2>{}(s.second));
@@ -20,7 +20,7 @@ namespace std
 	{
 		typedef std::tuple<T1, T2, T3> argument_type;
 
-		size_t operator()(const argument_type& s) const
+		constexpr size_t operator()(const argument_type& s) const
 		{
 			const size_t h1(std::hash<T1>{}(s[0]));
 			const size_t h2(std::hash<T2>{}(s[1]));

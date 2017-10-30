@@ -21,10 +21,6 @@ namespace Generators{
 		Game::Weapon* Generate(float _power, float _qualityFactor = 1.f);
 		Game::Weapon* Generate(uint32_t _seed, float _power, float _qualityFactor = 1.f);
 
-		// Returns the description of the last item.
-		// Only temporary, this should be handled by Item
-		const std::string& GetDescr() { return m_description; }
-		const std::string& GetName() { return m_name; }
 	private:
 		static Range GetDamageRange(Range _base, float _power);
 		static Range GetCooldownRange(Range _base, float _power);

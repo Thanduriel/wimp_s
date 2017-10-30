@@ -11,6 +11,8 @@ namespace Generators {
 		ExtR,
 		ExtD,
 		ExtC,
+		ExtT,
+		Short,
 		HighPower,
 		Gatling,
 		Iterative,
@@ -25,9 +27,11 @@ namespace Generators {
 	{ {
 		{"Burst", "cd increases with continues fire", true},
 		{"Twin", "fires additional projectile", true },
-		{"[EXT_R]", "10% increased rate of fire", false},
-		{"[EXT_D]", "12% increased damage", false},
-		{"[EXT_C]", "15% reduced power consumption", false},
+		{"[EX_R]", "10% increased rate of fire", false},
+		{"[EX_D]", "12% increased damage", false},
+		{"[EX_C]", "15% reduced power consumption", false},
+		{"[EX_T]", "20% increased life time", false },
+		{"Short", "40% reduced life time, 50% increased damage", true },
 		{"of High Power", "2x damage, 2x power consumption", false},
 		{"Gatling", "fire rate increases with continues fire", false},
 		{ "Iterative", "every 3rth shot deals 2xdamage", true },
@@ -159,6 +163,10 @@ namespace Generators {
 				break;
 			case WeaponTraitType::ExtC: eCost *= 0.85f;
 				break;
+			case WeaponTraitType::ExtT: lifeTime *= 1.2f;
+				break;
+			case WeaponTraitType::Short: lifeTime *= 0.6f; damage *= 1.4f;
+				break;
 			case WeaponTraitType::HighPower: damage *= 2.f; eCost *= 2.f;
 				hasTrait[LowPower] = 1;
 				break;
@@ -220,10 +228,10 @@ namespace Generators {
 		}
 		if (!fireFn) fireFn = WeaponTrait::FireDefault(std::move(projGenerator));
 
-		m_baseStats += "damage:    " + ToFixPoint(damage,1) + "\n";
-		m_baseStats += "cooldown:  " + ToFixPoint(cooldown,1) + "[s]\n";
-		m_baseStats += "power use: " + ToFixPoint(eCost,1) + "[J]\n";
-		//	m_description += "speed:     " + ToFixPoint(speed) + "[m/s]\n";
+		m_baseStats += "damage:   " + ToConstDigit(damage,1,4) + "\n";
+		m_baseStats += "cooldown:  " + ToFixPoint(cooldown,1) + " [s]\n";
+		m_baseStats += "power use: " + ToFixPoint(eCost,1) + " [J]\n";
+		m_baseStats += "lifetime: " + ToConstDigit(lifeTime,1, 4) + " [s]\n";
 
 		m_description = m_baseStats + "-----" + m_description;
 		// accumulated stats

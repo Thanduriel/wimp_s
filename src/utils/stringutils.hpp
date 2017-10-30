@@ -11,8 +11,8 @@ namespace Utils
 	{
 		std::string ret = ToFixPoint(_num, _digits);
 
-		auto i = _numDigits ? _numDigits : ret.size();
-		auto s = ret.size();
+		const auto i = _numDigits ? _numDigits : ret.size();
+		const auto s = ret.size();
 		if (s > _numDigits) _numDigits = (unsigned)s;
 
 		std::string pading; 
@@ -30,7 +30,7 @@ namespace Utils
 	{
 		std::string ret = std::to_string(_num);
 
-		size_t i = ret.find('.');
+		const size_t i = ret.find('.');
 
 		if(i != std::string::npos) ret.resize(i + _digits + 1);
 
