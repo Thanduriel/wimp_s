@@ -56,6 +56,9 @@ namespace Control {
 		float GetFov() const { return m_fov; };
 
 		float GetAspectRatio() const { return m_aspectRatio; };
+
+		// Returns the current view frustum.
+		ei::FastFrustum GetViewFrustum() const;
 	private:
 		void ProcessFreeMove(float _deltaTime);
 		void MoveTo(const ei::Vec3& _position, const ei::Quaternion& _rotation, float _time = 0.6f);

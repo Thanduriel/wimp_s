@@ -10,7 +10,12 @@ namespace Control {
 
 	using namespace ei;
 
-	Camera g_camera(ei::Vec3(0.f), ei::qidentity(), 0.9f, 16.f / 9.f);
+	const float NEAR_PLANE = 0.1f;
+	const float FAR_PLANE = 50000.f;
+
+	const float ASPECT_RATIO = 16.f / 9.f;
+
+	Camera g_camera(ei::Vec3(0.f), ei::qidentity(), 0.9f, ASPECT_RATIO);
 
 	const float MOVEMENT_FACTOR = 60.0f;
 	const float ROTATION_FACTOR = 7.f;
@@ -19,7 +24,7 @@ namespace Control {
 		: DynamicActor(_position, _rotation),
 		m_fov(_fov),
 		m_aspectRatio(_aspectRatio),
-		m_projection(ei::perspectiveGL(_fov, _aspectRatio, 0.1f, 50000.f)),
+		m_projection(ei::perspectiveGL(_fov, _aspectRatio, NEAR_PLANE, FAR_PLANE)),
 		m_viewProjection(),
 		m_mode(Mode::Follow),
 		m_targetOffset(Vec3(0.0f, 3.0f, -5.0f)),
@@ -189,5 +194,15 @@ namespace Control {
 		ray.origin = m_position - nearPoint;
 		ray.direction = normalize(nearPoint);
 		return ray;
+	}
+
+	// ******************************************************************* //
+	ei::FastFrustum Camera::GetViewFrustum() const
+	{
+		const float x = tan(m_fov) * FAR_PLANE;
+		const float y = x * 1.f / ASPECT_RATIO;
+
+		return ei::FastFrustum(m_position, ei::transform(Vec3(0.f, 0.f, 1.f), m_rotation),
+			ei::transform(Vec3(0.f, 1.f, 0.f), m_rotation), -x, x, -y, y, NEAR_PLANE, FAR_PLANE);
 	}
 }

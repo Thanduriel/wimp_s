@@ -16,7 +16,7 @@ namespace Game {
 		m_mesh(_orig.m_mesh)
 	{}
 
-	void GeometryComponent::Draw()
+	void GeometryComponent::Draw() const
 	{
 		Graphic::UniformBuffer& objectConstants = Graphic::Resources::GetUBO(Graphic::UniformBuffers::OBJECT_GEOMETRY);
 		ei::Mat4x4 modelViewProjection = Control::g_camera.GetViewProjection() * m_actor.GetTransformation();

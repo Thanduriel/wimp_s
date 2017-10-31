@@ -13,8 +13,6 @@
 #include "elements/shieldcomponent.hpp"
 #include "elements/shipsystems/projectile.hpp"
 
-#define REGISTER_COMPONENT_IMPL(x,y) 
-
 using namespace Graphic;
 
 namespace Game {
@@ -80,7 +78,8 @@ namespace Game {
 	{
 		Graphic::Device::SetEffect(Graphic::Resources::GetEffect(Graphic::Effects::MESH));
 		// first step: render geometry to g-Buffer
-		for (auto component : m_geometryComponents)
+		auto geometry = FrustumQuery(Control::g_camera.GetViewFrustum(), m_geometryComponents.begin(), m_geometryComponents.end());
+		for (auto component : geometry)
 			component->Draw();
 
 		// particles can be illuminated too
@@ -415,5 +414,19 @@ namespace Game {
 				}
 			}
 		}
+	}
+
+	// *********************************************************** //
+	std::vector<GeometryComponent*> SceneGraph::FrustumQuery(const ei::FastFrustum& _frustum,
+		GeometryComponentIt _begin, GeometryComponentIt _end)
+	{
+		using namespace ei;
+		std::vector<GeometryComponent*> results;
+
+		for (auto it = _begin; it != _end; ++it)
+			if (ei::intersects(Sphere((*it)->GetActor().GetPosition(), (*it)->GetMesh().GetMeshBounds().boundingRadius), _frustum))
+				results.push_back(*it);
+
+		return std::move(results);
 	}
 }

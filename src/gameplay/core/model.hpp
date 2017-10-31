@@ -13,7 +13,7 @@ namespace Game {
 		GeometryComponent(const Actor& _actor, const std::string& _pFile);
 		GeometryComponent(const Actor& _actor, const GeometryComponent& _orig);
 
-		void Draw();
+		void Draw() const;
 
 		const Graphic::Mesh& GetMesh() const { return *m_mesh; }
 	private:

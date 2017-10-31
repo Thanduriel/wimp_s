@@ -73,6 +73,10 @@ namespace Game {
 		// Only afterwards collision checks can be done.
 		void SortAxis();
 
+		typedef std::vector<GeometryComponent*>::iterator GeometryComponentIt;
+		std::vector<GeometryComponent*> FrustumQuery(const ei::FastFrustum& _frustum, 
+			GeometryComponentIt _begin, GeometryComponentIt _end);
+
 		void RegisterBaseComponent(ConstActorComponent& _component) { RegisterComponent(_component); }
 		void RegisterBaseComponent(ActorComponent& _component) { RegisterComponent(_component); }
 
