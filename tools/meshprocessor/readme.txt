@@ -12,6 +12,9 @@ Multiple filenames can be given at once.
 
 OPT ARGUMENTS
 
+-nom
+No mesh will be saved.
+
 -nobm
 No bounding mesh will be generated.
 
@@ -32,6 +35,9 @@ a larger epsilon reduces the amount of vertices required. The default is 0.05.
 
 -texture=<texturefile>
 Overwrites the used texture.
+
+-scale=<factor>
+Scales the mesh with the given factor.
 
 FORMATS
 

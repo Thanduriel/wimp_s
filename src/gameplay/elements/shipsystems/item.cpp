@@ -32,6 +32,6 @@ namespace Game {
 		: m_quality(_quality),
 		m_name(_name),
 		m_description(_description),
-		m_value(_value == -1 ? QUALITY_VALUE[(int)_quality] : _value)
+		m_value(_value == USE_QUALITY ? QUALITY_VALUE[(int)_quality] : _value)
 	{}
 }

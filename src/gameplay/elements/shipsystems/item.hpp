@@ -22,7 +22,9 @@ namespace Game {
 		static const std::array<std::string, (size_t)Quality::COUNT> QUALITY_COLOR_STR;
 		static const std::array<int, (size_t)Quality::COUNT> QUALITY_VALUE;
 
-		Item(Quality _quality, const std::string& _name, const std::string& _description, int _value = -1);
+		static constexpr int USE_QUALITY = -1;
+
+		Item(Quality _quality, const std::string& _name, const std::string& _description, int _value = USE_QUALITY);
 
 		Quality GetQuality() const { return m_quality; }
 		const std::string& GetName() const { return m_name; }

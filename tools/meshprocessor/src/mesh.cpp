@@ -103,11 +103,7 @@ const std::unordered_map<std::string, Mesh::Format> Mesh::FORMAT_NAMES =
 
 	bool Mesh::ImportModel(const std::string& _pFile)
 	{
-		// Create an instance of the Importer class
 		Assimp::Importer importer;
-		// And have it read the given file with some example postprocessing
-		// Usually - if speed is not the most important aspect for you - you'll 
-		// propably to request more postprocessing than we do in this example.
 		const aiScene* scene = importer.ReadFile(_pFile,
 			aiProcess_Triangulate |
 			aiProcess_GenUVCoords |
@@ -199,6 +195,13 @@ const std::unordered_map<std::string, Mesh::Format> Mesh::FORMAT_NAMES =
 	void Mesh::FlipNormals()
 	{
 		for (auto& n : m_normals) n = n * -1.f;
+	}
+
+	void Mesh::Scale(float _scale)
+	{
+		Vec3 s(_scale, _scale, _scale);
+		for (auto& v : m_vertices)
+			v.position = v.position * s;
 	}
 
 	// ****************************************************************** //

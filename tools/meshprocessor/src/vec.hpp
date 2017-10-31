@@ -54,6 +54,14 @@ struct Vec
 
 		return *this;
 	}
+
+	Vec<T, N>& operator *(const Vec<T,N>& _oth)
+	{
+		for (unsigned i = 0; i < N; ++i)
+			data[i] *= _oth[i];
+
+		return *this;
+	}
 private:
 	T data[N];
 };

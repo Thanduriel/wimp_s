@@ -67,9 +67,9 @@ namespace Graphic {
 			effects[ind] = new Effect("shader/fullscreentri.vs", "shader/darken.ps");
 			effects[ind]->SetRasterizerState(RasterizerState(RasterizerState::CULL_MODE::NONE, RasterizerState::FILL_MODE::SOLID));
 			effects[ind]->SetDepthStencilState(DepthStencilState(DepthStencilState::COMPARISON_FUNC::ALWAYS, false));
-			effects[ind]->SetBlendState(BlendState(BlendState::BLEND_OPERATION::REVERSE_SUBTRACT, BlendState::BLEND::SRC_ALPHA, BlendState::BLEND::ONE));
+			effects[ind]->SetBlendState(BlendState(BlendState::BLEND_OPERATION::ADD, BlendState::BLEND::ZERO, BlendState::BLEND::SRC_ALPHA));
 			effects[ind]->BindUniformBuffer(Resources::GetUBO(UniformBuffers::GLOBAL));
-			effects[ind]->BindTexture("normalTex", 2, Resources::GetSamplerState(SamplerStates::LINEAR));
+			effects[ind]->BindTexture("normalTex", 2, Resources::GetSamplerState(SamplerStates::POINT));
 			break;
 		case Effects::TEXTURE_2DQUAD:
 			effects[ind] = new Effect("shader/screentex.vs", "shader/screentex.ps", "shader/screentex.gs");

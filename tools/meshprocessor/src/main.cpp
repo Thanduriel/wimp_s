@@ -4,9 +4,12 @@
 #include <iostream>
 
 
+// configuration that is changed by optional arguments
 Mesh::Format meshFormat = Mesh::Format::Flat;
 Mesh::Format boundingMeshFormat = Mesh::Format::IndexedNormal;
 float epsilon = 0.05f;
+float scale = 1.f;
+bool saveMesh = true;
 bool saveBoundingMesh = true;
 bool flipBoundingNormals = false;
 bool flipNormals = false;
@@ -37,9 +40,15 @@ void ProcessArg(const std::string& _str)
 		ccw = false;
 		return;
 	}
+	else if(_str == "-nom")
+	{
+		saveMesh = false;
+		return;
+	}
 	
 	Mesh::Format* dst = nullptr;
 
+	// complex arguments of the from -<command>=<value>
 	auto split = _str.find('=', 0);
 	if (split == std::string::npos)
 	{
@@ -67,6 +76,8 @@ void ProcessArg(const std::string& _str)
 	}
 	else if (c == "-texture")
 		textureName = f;
+	else if (c == "-scale")
+		scale = stof(f);
 	else std::clog << "Ignoring unknown parameter: " + _str << endl;
 }
 
@@ -96,8 +107,9 @@ int main(int argc, char** args)
 			std::string name = PathUtils::GetName(PathUtils::CanonicalizePath(fname));
 
 			Mesh mesh(fname);
+			if (scale != 1.f) mesh.Scale(scale);
 			if (flipNormals) mesh.FlipNormals();
-			mesh.Save(name, meshFormat, false, textureName);
+			if(saveMesh) mesh.Save(name, meshFormat, false, textureName);
 
 			if (saveBoundingMesh)
 			{
