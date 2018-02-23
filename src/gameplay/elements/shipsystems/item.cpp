@@ -20,6 +20,12 @@ namespace Game {
 		"<c 222 75 44>"
 	};
 
+	const std::array<std::string, (size_t)Item::Icon::COUNT> Item::ICON_STR =
+	{
+		"weaponIcon",
+		"missileIcon"
+	};
+
 	const std::array<int, (size_t)Item::Quality::COUNT> Item::QUALITY_VALUE = 
 	{
 		60,
@@ -28,8 +34,9 @@ namespace Game {
 		500
 	};
 
-	Item::Item(Quality _quality, const std::string& _name, const std::string& _description, int _value)
+	Item::Item(Quality _quality, Icon _icon, const std::string& _name, const std::string& _description, int _value)
 		: m_quality(_quality),
+		m_icon(_icon),
 		m_name(_name),
 		m_description(_description),
 		m_value(_value == USE_QUALITY ? QUALITY_VALUE[(int)_quality] : _value)

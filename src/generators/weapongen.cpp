@@ -246,6 +246,7 @@ namespace Generators {
 			std::move(fireFn),
 			std::move(reloadFn),
 			rarity,
+			type == WeaponType::Simple ? Item::Icon::DefaultWeapon : Item::Icon::Missile,
 			std::move(m_name),
 			std::move(m_description));
 	}

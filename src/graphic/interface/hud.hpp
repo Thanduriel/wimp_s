@@ -23,7 +23,8 @@ namespace Graphic {
 
 		/// \brief Creates an 2d element that is registered and managed by this hud.
 		/// \details For parameters required check the corresponding constructors.
-		template< typename _T, typename... _Args, typename = std::enable_if< std::is_base_of<ScreenPosition, _T>::value >::type >//only ScreenPositions should be made with this
+		template< typename _T, typename... _Args, //only ScreenPositions should be made with this
+			typename = std::enable_if< std::is_base_of<ScreenPosition, _T>::value >::type >
 		_T& CreateScreenElement(_Args&&... _args)
 		{
 			auto ptr = new _T(std::forward<_Args>(_args)...);
@@ -31,6 +32,17 @@ namespace Graphic {
 			m_screenElements.emplace_back(ptr);
 			ptr->Register(*this);
 
+			return *ptr;
+		}
+
+		// Creates an element taking ownership, but does not register it.
+		template< typename _T, typename... _Args,
+			typename = std::enable_if< std::is_base_of<ScreenPosition, _T>::value >::type >
+			_T& CreateScreenElementNoRegister(_Args&&... _args)
+		{
+			auto ptr = new _T(std::forward<_Args>(_args)...);
+
+			m_screenElements.emplace_back(ptr);
 			return *ptr;
 		}
 
@@ -65,6 +77,7 @@ namespace Graphic {
 
 		/// \brief The given texture will be reordered to be rendered on top of others.
 		/// Undefined when the texture is not known to this hud.
+		/// \details Use this function sparsely as it is quite costly.
 		// todo: handle children
 		void MoveToFront(const ScreenTexture& _screenTex);
 		//	void MoveToBack(const ScreenTexture& _screenTex);

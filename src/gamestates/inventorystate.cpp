@@ -49,12 +49,13 @@ namespace GameStates
 		g_camera.Process(0.f);
 
 		// remember item -> texture relation to find them when handling equipped weapons
-		std::unordered_map<const Item*, DraggableTexture*> itemIcons;
+		std::unordered_map<const Item*, ItemIcon*> itemIcons;
+		// build icons for every item
 		for (const Item* item : _ship.GetInventory())
 		{
 			// since Weapon uses multi-inheritance Item has to be casted first to get the actual weapon pointer
-			auto& tex = m_hud.CreateScreenElement<DraggableTexture>("weaponIcon", Vec2(0.f), PixelOffset(64, 64), DefP::MidMid, ScreenPosition::Anchor(DefP::MidMid, &m_hud), m_hud.m_weaponFields, static_cast<const Weapon*>(item));
-			tex.SetColor(Item::QUALITY_COLOR[(int)item->GetQuality()]);
+			// do not register here so that they can be in front of the sockets
+			auto& tex = m_hud.CreateScreenElementNoRegister<ItemIcon>(*item, Vec2(0.f), PixelOffset(64, 64), DefP::MidMid, ScreenPosition::Anchor(DefP::MidMid, &m_hud), m_hud.m_weaponFields, static_cast<const Weapon*>(item));
 			m_hud.m_inventoryField->DropElement(tex);
 
 			itemIcons.emplace(item, &tex);
@@ -87,12 +88,13 @@ namespace GameStates
 				auto it = itemIcons.find(static_cast<const Item*>(weapon));
 				Assert(it != itemIcons.end(), "The equipped weapon is not found in the inventory.");
 				socketField.DropElement(*it->second);
-
-				// since the icons are created first the sockets are in front of them
-				m_hud.MoveToFront(*it->second);
 			}
 			++i;
 		}
+
+		// register item icons
+		for (auto& itm : itemIcons)
+			itm.second->Register(m_hud);
 
 		m_hud.m_sellField->SetDropEvent([&](DropField& _this, DraggableTexture& _texture) 
 		{

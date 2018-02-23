@@ -9,6 +9,10 @@
 #include <memory>
 #include <queue>
 
+namespace Game {
+	class Item;
+}
+
 namespace Graphic {
 
 	struct TextureVertex
@@ -127,6 +131,25 @@ namespace Graphic {
 		ei::Vec2 m_offset;
 
 		const void* m_content;
+	};
+
+	class ItemIcon : public DraggableTexture
+	{
+	public:
+		ItemIcon(const Game::Item& _item,
+			ei::Vec2 _position, ei::Vec2 _size, Graphic::DefinitionPoint _def,
+			Anchor _anchor,
+			std::vector<DropField*>& _fields, const void* _content = nullptr);
+
+		void Register(Hud& _hud) override;
+		void Unregister(Hud& _hud) override;
+
+		// todo: integrate this into parent changes
+		virtual void SetPosition(ei::Vec2 _pos) override;
+
+		const Graphic::ScreenTexture& GetObjectIcon() { return m_objectIcon; }
+	private:
+		Graphic::ScreenTexture m_objectIcon;
 	};
 
 	// ************************************************************* //

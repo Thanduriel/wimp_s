@@ -5,6 +5,8 @@
 #include "control/input.hpp"
 #include <algorithm>
 
+#include "gameplay/elements/shipsystems/item.hpp"
+
 using namespace ei;
 
 namespace Graphic
@@ -230,6 +232,37 @@ namespace Graphic
 		m_state = State::MouseOver;
 
 		return true;
+	}
+
+	// ************************************************************************ //
+	ItemIcon::ItemIcon(const Game::Item& _item,
+		ei::Vec2 _position, ei::Vec2 _size, DefinitionPoint _def,
+		Anchor _anchor,
+		std::vector<DropField*>& _fields, const void* _content)
+		: DraggableTexture(Game::Item::ICON_STR[(int)_item.GetIcon()], _position, _size, _def, _anchor, _fields, _content),
+		m_objectIcon(_item.GetQuality() == Game::Item::Quality::Unique ? "uniqueBorderIcon" : "borderIcon",
+			_position, _size, DefP::TopLeft, Anchor(DefP::TopLeft, this))
+	{
+		SetColor(Game::Item::QUALITY_COLOR[(int)_item.GetQuality()]);
+		m_objectIcon.SetColor(Game::Item::QUALITY_COLOR[(int)_item.GetQuality()]);
+	}
+
+	void ItemIcon::Register(Hud& _hud)
+	{
+		_hud.RegisterElement(m_objectIcon);
+		_hud.RegisterElement(*this);
+	}
+
+	void ItemIcon::Unregister(Hud& _hud)
+	{
+		_hud.UnregisterElement(*this);
+		_hud.UnregisterElement(m_objectIcon);
+	}
+
+	void ItemIcon::SetPosition(ei::Vec2 _pos)
+	{
+		DraggableTexture::SetPosition(_pos);
+		m_objectIcon.SetPosition(ei::Vec2(0.f));
 	}
 
 	// ************************************************************************ //

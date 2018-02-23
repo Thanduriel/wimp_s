@@ -53,6 +53,8 @@ namespace Graphic{
 		ScreenPosition::SetPosition(_pos);
 
 		UpdateParams();
+
+	//	for (ScreenOverlay* child : m_childs) child->UpdateParams();
 	}
 
 	void ScreenOverlay::Register(Hud& _hud)
