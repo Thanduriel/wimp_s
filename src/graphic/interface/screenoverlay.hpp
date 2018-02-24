@@ -102,7 +102,7 @@ namespace Graphic{
 
 		/// \brief An inactive screen overlay does not receive player input.
 		void SetActive(bool _state) { m_active = _state; };
-		virtual void SetVisible(bool _visibility){ m_visible = _visibility; };
+		virtual void SetVisible(bool _visibility);
 
 		bool IsActive() const { return m_active; };
 		bool IsVisible() const { return m_visible; };

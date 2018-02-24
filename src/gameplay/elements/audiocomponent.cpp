@@ -21,7 +21,7 @@ namespace Game {
 		dm.rolloff_factor = 0.7f;
 		context.set_distance_model(dm);
 		context.get_listener()->update_view(clunk::v3f(0.f, 0.f, 1.f), clunk::v3f(0.f,1.f, 0.f));
-		context.set_max_sources(32);
+		context.set_max_sources(16);
 
 		backend.start();
 	}
@@ -40,7 +40,8 @@ namespace Game {
 	AudioComponent::AudioComponent(const Actor& _actor, const ei::Vec3& _position)
 		: ConstActorComponent(_actor),
 		Transformation(_position),
-		m_object(AudioSystem::GetContext().create_object())
+		m_object(AudioSystem::GetContext().create_object()),
+		m_curId(0)
 	{
 
 	}
@@ -55,7 +56,8 @@ namespace Game {
 	{
 		clunk::Source* source = new clunk::Source(&_sound, _loop);
 		UpdateSourcePos(); // make sure that the position is already correct when the first sample is heard
-		m_object->play(_id, source);
+		m_curId = m_curId + 1 % 16;
+		m_object->play(m_curId, source);
 	}
 
 	clunk::Object* AudioComponent::GetObject()

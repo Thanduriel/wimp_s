@@ -69,6 +69,14 @@ namespace Graphic{
 
 	// ************************************************* //
 
+	void ScreenOverlay::SetVisible(bool _isVisible)
+	{
+		m_visible = _isVisible;
+		for (ScreenOverlay* child : m_childs) child->SetVisible(_isVisible);
+	}
+
+	// ************************************************* //
+
 	void ScreenOverlay::SetSize(Vec2 _size)
 	{
 		m_sizeBase = _size;

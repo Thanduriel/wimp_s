@@ -167,6 +167,7 @@ namespace Game {
 			m_fireImpl(*this);
 
 			static const clunk::Sample& sound = Content::GetSound("shoot_blaster");
+		//	m_audioComponent.Stop();
 			m_audioComponent.Play(sound);
 
 			return m_energyCost;

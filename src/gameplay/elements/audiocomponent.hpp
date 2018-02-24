@@ -45,5 +45,6 @@ namespace Game {
 	private:
 		void UpdateSourcePos();
 		clunk::Object* m_object;
+		int m_curId;
 	};
 }

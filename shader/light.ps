@@ -37,15 +37,18 @@ void main()
 	dif.w = 0;
 	
 	float dSqr = dot(dif.xyz,dif.xyz);
+	vec3 nDif = dif.xyz / sqrt(dSqr);
 	
 	vec3 normal = texture(normalTex, gs_texCoord).xyz;
-	float diffuse = max(0.0, dot(normal, dif.xyz / sqrt(dSqr)));
+	float diffuse = max(0.0, dot(normal, nDif));
+	vec3 lightReflect = normalize(reflect(nDif, normal));
+	float specular = pow(max(0.0, dot(lightReflect, gs_eyeDirection.xyz)),4);
 	
 	// intensity falls of ~ 1/r^2. To reach 0 at distance r the function is distorted and shifted
 	float intensity = clamp(lambda * gs_radius / (gs_radius + beta * dSqr) - gamma, 0, 1);//clamp((1/(gs_fallOff * dSqr) - threshold) * gs_intensity,0, 1);
 //	float specular = pow(cosAngle, materialShininess);
 	
-	intensity *= diffuse * gs_intensity;
+	intensity *= (diffuse+specular) * gs_intensity;
 	out_FragColor = vec4(gs_color, intensity);
 	out_Normal = vec4(0,0,0,intensity);
 //	fragColor += vec4(0.5,0.5,0.5,0.2);
