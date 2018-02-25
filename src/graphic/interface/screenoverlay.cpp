@@ -54,7 +54,7 @@ namespace Graphic{
 
 		UpdateParams();
 
-	//	for (ScreenOverlay* child : m_childs) child->UpdateParams();
+		for (ScreenOverlay* child : m_childs) child->SetPosition(child->GetPosition());
 	}
 
 	void ScreenOverlay::Register(Hud& _hud)
@@ -64,6 +64,8 @@ namespace Graphic{
 
 	void ScreenOverlay::Unregister(Hud& _hud)
 	{
+		for (ScreenOverlay* child : m_childs) child->Unregister(_hud);
+
 		_hud.UnregisterElement(*this);
 	}
 

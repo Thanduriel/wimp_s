@@ -45,7 +45,7 @@ namespace Graphic{
 		ei::Vec2 GetPosition() const { return m_positionDef; }
 		ei::Vec2 GetScreenSpacePosition() const { return m_position; }
 
-		/// \brief Called once by the hud to add it and its child.
+		/// \brief Called once by the hud to add this element and its childs.
 		/// \details The hud should take full ownership of all elements.
 		virtual void Register(class Hud& _hud) {};
 

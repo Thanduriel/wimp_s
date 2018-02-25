@@ -202,7 +202,8 @@ namespace Control {
 		const float x = tan(m_fov) * FAR_PLANE;
 		const float y = x * 1.f / ASPECT_RATIO;
 
-		return ei::FastFrustum(m_position, ei::transform(Vec3(0.f, 0.f, 1.f), m_rotation),
-			ei::transform(Vec3(0.f, 1.f, 0.f), m_rotation), -x, x, -y, y, NEAR_PLANE, FAR_PLANE);
+		// normalize for ei asserts
+		return ei::FastFrustum(m_position, ei::normalize(ei::transform(Vec3(0.f, 0.f, 1.f), m_rotation)),
+			ei::normalize(ei::transform(Vec3(0.f, 1.f, 0.f), m_rotation)), -x, x, -y, y, NEAR_PLANE, FAR_PLANE);
 	}
 }

@@ -142,10 +142,6 @@ namespace Graphic {
 			std::vector<DropField*>& _fields, const void* _content = nullptr);
 
 		void Register(Hud& _hud) override;
-		void Unregister(Hud& _hud) override;
-
-		// todo: integrate this into parent changes
-		virtual void SetPosition(ei::Vec2 _pos) override;
 
 		const Graphic::ScreenTexture& GetObjectIcon() { return m_objectIcon; }
 	private:
@@ -168,7 +164,6 @@ namespace Graphic {
 		void SetCaption(const std::string& _caption);
 
 		void Register(Hud& _hud) override;
-		virtual void SetPosition(ei::Vec2 _pos) override;
 		virtual void SetSize(ei::Vec2 _size) override;
 		virtual void Scale(ei::Vec2 _scale) override;
 		void SetVisible(bool _visible) override;

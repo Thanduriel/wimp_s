@@ -253,27 +253,15 @@ namespace Graphic
 		_hud.RegisterElement(*this);
 	}
 
-	void ItemIcon::Unregister(Hud& _hud)
-	{
-		_hud.UnregisterElement(*this);
-		_hud.UnregisterElement(m_objectIcon);
-	}
-
-	void ItemIcon::SetPosition(ei::Vec2 _pos)
-	{
-		DraggableTexture::SetPosition(_pos);
-		m_objectIcon.SetPosition(ei::Vec2(0.f));
-	}
-
 	// ************************************************************************ //
 
 	Button::Button(const std::string& _name, Vec2 _position, Vec2 _size,
 		DefinitionPoint _def, Anchor _anchor, const std::string& _caption,
 		std::function<void()> _OnMouseUp, Font* _font) :
 		ScreenOverlay(_position, _size, _def, _anchor, _OnMouseUp),
-		m_btnDefault(_name + "Default", _position, _size, _def, _anchor),
-		m_btnOver(_name + "Over", _position, _size, _def, _anchor),
-		m_btnDown(_name + "Down", _position, _size, _def, _anchor),
+		m_btnDefault(_name + "Default", Vec2(0.f), _size, DefP::TopLeft, Anchor(DefP::TopLeft,this)),
+		m_btnOver(_name + "Over", Vec2(0.f), _size, DefP::TopLeft, Anchor(DefP::TopLeft, this)),
+		m_btnDown(_name + "Down", Vec2(0.f), _size, DefP::TopLeft, Anchor(DefP::TopLeft, this)),
 		m_caption(Vec2(0.f), Anchor(DefinitionPoint::TopLeft, this), _font),
 		m_autoCenter(true)
 	{
@@ -302,18 +290,6 @@ namespace Graphic
 
 		SetCaption(m_caption.GetText());
 	}
-
-	// ************************************************************************ //
-	void Button::SetPosition(Vec2 _pos)
-	{
-		ScreenOverlay::SetPosition(_pos);
-		m_btnDefault.SetPosition(_pos);
-		m_btnOver.SetPosition(_pos);
-		m_btnDown.SetPosition(_pos);
-		m_caption.SetPosition(_pos);
-		SetCaption(m_caption.GetText());
-	}
-
 	// ************************************************************************ //
 	void Button::SetSize(Vec2 _size)
 	{
