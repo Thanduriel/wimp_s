@@ -10,6 +10,7 @@ layout(std140) uniform Object
 	mat4 c_mWorldViewProjection;
 	vec3 c_vPointOfOrigin;
 	float c_fLocalTime;
+	float c_fSize;
 };
 
 out vec3 vs_out_position;
@@ -21,6 +22,4 @@ void main()
 	vec4 position = vec4(vs_in_position, 1.0) * c_mWorldViewProjection;
 	vs_out_position = vs_in_position.xyz;
 	gl_Position = position;
-//	vs_out_normal = vec4(vs_in_normal, 0.0) * c_mNormalWorldView;
-//	vs_out_texCoords = vs_in_texCoords;
 }

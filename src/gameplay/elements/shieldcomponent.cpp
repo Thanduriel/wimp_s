@@ -9,7 +9,8 @@ namespace Game {
 		: ConstActorComponent(_actor),
 		m_mesh(_mesh),
 		m_localTime(0.f),
-		m_maxTime(_mesh.GetMeshBounds().boundingRadius)
+		m_maxTime(_mesh.GetMeshBounds().boundingRadius),
+		m_size(_mesh.GetMeshBounds().boundingRadius * 1.2f)
 	{
 	//	m_canTick = false;
 	}
@@ -28,7 +29,8 @@ namespace Game {
 
 		objectConstants["c_WorldViewProjection"] = modelViewProjection;
 		objectConstants["c_PointOfOrigin"] = ei::Vec3(0.f);
-		objectConstants["c_LocalTime"] = m_localTime * m_localTime;
+		objectConstants["c_LocalTime"] = m_localTime * m_localTime; // squared time is compared with squared distance
+		objectConstants["c_Size"] = m_size;
 
 		m_mesh.Draw();
 	}

@@ -17,6 +17,7 @@ namespace Game {
 	private:
 		float m_localTime;
 		float m_maxTime;
+		float m_size; // size of the line
 		const Graphic::Mesh& m_mesh;
 	};
 }

@@ -9,15 +9,17 @@ layout(std140) uniform Object
 	mat4 c_mWorldViewProjection;
 	vec3 c_vPointOfOrigin;
 	float c_fLocalTime;
+	float c_fSize;
 };
 
-const float INTERVAL_SIZE = 5.5f;
 const float MAX_ALPHA = 0.3f;
 
 void main()
 {
 	vec3 dif = vs_out_position - c_vPointOfOrigin;
+	float dx = abs(dif.x * dif.x - c_fLocalTime);
+	float dy = abs(dif.y * dif.y - c_fLocalTime);
 	float d = abs(dot(dif,dif) - c_fLocalTime);
-	if(d > INTERVAL_SIZE) discard;
-	out_FragColor = vec4(0.1,0.1,1,MAX_ALPHA - d * MAX_ALPHA / INTERVAL_SIZE);
+//	if(d > c_fSize) discard;
+	out_FragColor = vec4(0.1,0.1,1,MAX_ALPHA - max(dx,dy) * MAX_ALPHA / c_fSize);
 }
