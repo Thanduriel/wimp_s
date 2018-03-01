@@ -42,6 +42,8 @@ namespace Graphic {
 			effects[ind]->SetDepthStencilState(DepthStencilState(Graphic::DepthStencilState::COMPARISON_FUNC::EQUAL, false));
 			effects[ind]->SetRasterizerState(RasterizerState(RasterizerState::CULL_MODE::FRONT, RasterizerState::FILL_MODE::SOLID));
 			effects[ind]->BindUniformBuffer(GetUBO(UniformBuffers::OBJECT_SHIELD));
+			effects[ind]->BindTexture("diffuseTex", 0, Resources::GetSamplerState(SamplerStates::LINEAR));
+			effects[ind]->BindTexture("noiseTex", 1, Resources::GetSamplerState(SamplerStates::POINT));
 			break;
 		case Effects::DEFFERED_LIGHT:
 			effects[ind] = new Effect("shader/light.vs", "shader/light.ps", "shader/light.gs");

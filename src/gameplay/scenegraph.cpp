@@ -87,6 +87,7 @@ namespace Game {
 
 		// shields
 		Device::SetEffect(Resources::GetEffect(Effects::SHIELD));
+		Device::SetTexture(Resources::GetTexture("noise"), 1);
 		for (auto component : m_shieldComponents)
 			if (component->IsActive()) component->Draw();
 
