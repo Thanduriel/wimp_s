@@ -15,7 +15,7 @@ namespace Game {
 	//	m_canTick = false;
 	}
 
-	const float LINE_SPEED_MOD = 3.f;
+	const float LINE_SPEED_MOD = 2.f;
 	void ShieldComponent::ProcessComponent(float _deltaTime)
 	{
 		m_localTime += _deltaTime * LINE_SPEED_MOD;

@@ -22,4 +22,5 @@ void main()
 	vec4 position = vec4(vs_in_position, 1.0) * c_mWorldViewProjection;
 	vs_out_position = vs_in_position.xyz;
 	gl_Position = position;
+	vs_out_texCoords = vs_in_texCoords;
 }

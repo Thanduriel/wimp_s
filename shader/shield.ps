@@ -1,6 +1,9 @@
 #version 330
 
+uniform sampler2D diffuseTex;
+
 in vec3 vs_out_position;
+in vec2 vs_out_texCoords;
 
 layout(location = 0) out vec4 out_FragColor;
 
@@ -12,7 +15,8 @@ layout(std140) uniform Object
 	float c_fSize;
 };
 
-const float MAX_ALPHA = 0.3f;
+const float MAX_ALPHA = 1.0f;
+const vec3 BASE_COLOR = vec3(0.1,0.1,1);
 
 void main()
 {
@@ -21,5 +25,6 @@ void main()
 	float dy = abs(dif.y * dif.y - c_fLocalTime);
 	float d = abs(dot(dif,dif) - c_fLocalTime);
 //	if(d > c_fSize) discard;
-	out_FragColor = vec4(0.1,0.1,1,MAX_ALPHA - max(dx,dy) * MAX_ALPHA / c_fSize);
+	vec3 col = vec3(1,1,1);//texture(diffuseTex, vs_out_texCoords).xyz /** vec3(0.1-1,0.1-1,0.9-1)*/; // a * scale = a + b <=> a * (scale-1) = b
+	out_FragColor = vec4(BASE_COLOR, cos(d)); // MAX_ALPHA - dy * MAX_ALPHA / c_fSize
 }
