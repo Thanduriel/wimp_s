@@ -7,6 +7,7 @@
 #include "shipsystems/specialmove.hpp"
 #include "crate.hpp"
 #include "explosion.hpp"
+#include "clunk/clunk.h"
 
 namespace Game
 {
@@ -47,6 +48,7 @@ namespace Game
 		m_thrustParticles(m_drivePositions.capacity()),
 		m_thrustLights(m_drivePositions.capacity() + _node["Lights"s].Size()),
 		m_particleSpawnCount(0.f),
+		m_audioComponent(THISACTOR),
 		m_specialMove(),
 		m_upgradeLevels{}
 	{
@@ -85,6 +87,13 @@ namespace Game
 		GetCollisionComponent().SetType(CollisionComponent::Type::Any | CollisionComponent::Type::Solid 
 			| CollisionComponent::Type::Ship | CollisionComponent::Type::Dynamic);
 		m_rotateVelocity = true;
+
+		Vec3 avgPos{};
+		for (auto& pos : m_drivePositions)
+			avgPos += pos;
+		avgPos *= 1.f / static_cast<float>(m_drivePositions.size());
+		m_audioComponent.SetPosition(avgPos);
+		m_audioComponent.Play(Content::GetSound("thruster"), 0, true);
 	}
 
 	void Ship::OnDestroy()
@@ -185,6 +194,13 @@ namespace Game
 		for (auto& thruster : m_thrustParticles)
 			thruster.SetOutput(n);
 		UpdateSpeed(currentSpeed, _deltaTime);
+		m_audioComponent.GetSource(0)->gain = currentSpeed / m_maxSpeed;
+	/*	if (n < 4 && m_audioComponent.GetObject()->playing(0))
+		{
+			m_audioComponent.GetObject()->fade_out(0, 0.7f);
+		}
+		else if(n > 5 && !m_audioComponent.GetObject()->playing(0))
+			m_audioComponent.Play(Content::GetSound("thruster"), 0, true);*/
 
 		// Update angular velocity
 		UpdateAngularVelocity(_deltaTime);
@@ -202,6 +218,7 @@ namespace Game
 		Model::RegisterComponents(_sceneGraph);
 
 		_sceneGraph.RegisterComponent(m_shieldComponent);
+		_sceneGraph.RegisterComponent(m_audioComponent);
 
 		for(auto& socket : m_weaponSockets)
 			_sceneGraph.RegisterComponent(socket);

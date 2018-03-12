@@ -16,6 +16,7 @@ public:
 	const ei::Mat4x4& Get() { return m_transformation; }
 
 	ei::Vec3 GetPosition() const;
+	void SetPosition(const ei::Vec3& _position);
 
 	void SetRotation(const ei::Vec3& _direction);
 

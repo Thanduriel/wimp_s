@@ -13,12 +13,16 @@ namespace Game {
 
 	void AudioSystem::Initialize()
 	{
-		static clunk::sdl::Backend backend(44100, 2, 1024);
+		static clunk::sdl::Backend backend(48000, 2, 2048);
 		s_backend = &backend;
 
 		clunk::Context &context = backend.get_context();
 		clunk::DistanceModel dm(clunk::DistanceModel::Exponent, false);
-		dm.rolloff_factor = 0.7f;
+		dm.rolloff_factor = 0.55f;
+		dm.same_sounds_limit = 4;
+		dm.doppler_factor = 0.f;
+		dm.speed_of_sound = 1000.f;
+
 		context.set_distance_model(dm);
 		context.get_listener()->update_view(clunk::v3f(0.f, 0.f, 1.f), clunk::v3f(0.f,1.f, 0.f));
 		context.set_max_sources(16);
@@ -48,7 +52,7 @@ namespace Game {
 
 	AudioComponent::~AudioComponent()
 	{
-		m_object->cancel_all(true);
+		m_object->cancel_all(true,0.3f);
 		delete m_object;
 	}
 
@@ -56,8 +60,14 @@ namespace Game {
 	{
 		clunk::Source* source = new clunk::Source(&_sound, _loop);
 		UpdateSourcePos(); // make sure that the position is already correct when the first sample is heard
-		m_curId = m_curId + 1 % 16;
-		m_object->play(m_curId, source);
+		if (_id == -1)
+		{
+			m_curId = m_curId + 1 % 16;
+			m_object->play(m_curId, source);
+		}
+		else m_object->play(_id, source);
+
+		m_source = source;
 	}
 
 	clunk::Object* AudioComponent::GetObject()

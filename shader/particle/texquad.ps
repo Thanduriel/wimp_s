@@ -10,5 +10,5 @@ layout(location = 1) out vec4 out_Normal;
 void main()
 {
 	out_FragColor = texture(tex, gs_texCoord) * gs_color;
-	out_Normal = vec4(0,0,1,0);
+	out_Normal = vec4(0,0,1,out_FragColor.a);
 }

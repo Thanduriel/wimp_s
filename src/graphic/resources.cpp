@@ -130,7 +130,7 @@ namespace Graphic {
 			break;
 		case Effects::PARTICLE_TEXQAUD:
 			effects[ind] = new Effect("shader/particle/texquad.vs", "shader/particle/texquad.ps", "shader/particle/texquad.gs");
-			effects[ind]->SetBlendState(BlendState(BlendState::BLEND_OPERATION::MAX, BlendState::BLEND::SRC_ALPHA, BlendState::BLEND::ONE));
+			effects[ind]->SetBlendState(BlendState(BlendState::BLEND_OPERATION::ADD, BlendState::BLEND::SRC_ALPHA, BlendState::BLEND::ONE));
 			effects[ind]->SetDepthStencilState(DepthStencilState(Graphic::DepthStencilState::COMPARISON_FUNC::LESS, false));
 			effects[ind]->BindUniformBuffer(GetUBO(UniformBuffers::SIMPLE_OBJECT));
 			effects[ind]->BindUniformBuffer(GetUBO(UniformBuffers::GLOBAL));

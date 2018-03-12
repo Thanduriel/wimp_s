@@ -9,6 +9,7 @@ namespace clunk {
 	class Object;
 	class Sample;
 	class Context;
+	class Source;
 }
 
 
@@ -38,13 +39,15 @@ namespace Game {
 
 		void ProcessComponent(float _deltaTime) override;
 
-		void Play(const clunk::Sample& _sound, int _id = 0, bool _loop = false);
+		void Play(const clunk::Sample& _sound, int _id = -1, bool _loop = false);
 		clunk::Object* GetObject();
+		clunk::Source* GetSource(int _id) { return m_source; } // todo allow different sources
 
 		void Stop();
 	private:
 		void UpdateSourcePos();
 		clunk::Object* m_object;
+		clunk::Source* m_source;
 		int m_curId;
 	};
 }

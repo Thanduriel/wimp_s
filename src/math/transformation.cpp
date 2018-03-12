@@ -17,6 +17,14 @@ Vec3 Transformation::GetPosition() const
 	return Vec3(m_transformation.m03, m_transformation.m13, m_transformation.m23);
 }
 
+void Transformation::SetPosition(const ei::Vec3& _position)
+{
+	m_transformation.m03 = _position.x;
+	m_transformation.m13 = _position.y;
+	m_transformation.m23 = _position.z;
+}
+
+
 void Transformation::SetRotation(const ei::Vec3& _direction)
 {
 	ei::Mat3x3 newRot = ei::rotation(Vec3(0.f, 0.f, 1.f), _direction);

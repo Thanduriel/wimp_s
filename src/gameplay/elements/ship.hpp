@@ -11,6 +11,7 @@
 #include "particlesystemcomponent.hpp"
 #include "shipsystems/inventory.hpp"
 #include "shieldcomponent.hpp"
+#include "audiocomponent.hpp"
 
 namespace Game
 {
@@ -148,6 +149,7 @@ namespace Game
 		FixedArray<ParticleSystemComponent<Graphic::ParticleSystems::BASIC_SYSTEM, true>> m_thrustParticles;
 		FixedArray< PointLightComponent > m_thrustLights;
 		FixedArray<SocketComponent> m_weaponSockets;
+		AudioComponent m_audioComponent;
 
 		Inventory m_inventory;
 		std::unique_ptr< class SpecialMove > m_specialMove;

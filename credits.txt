@@ -9,6 +9,7 @@ sounds
 explosion01 - https://freesound.org/people/Quaker540/sounds/245372/
 explosion02 - https://freesound.org/people/ryansnook/sounds/110113/
 small_boom - https://freesound.org/people/unfa/sounds/189779/
+thruster - https://freesound.org/people/Zovex/sounds/237974/
 
 libraries
 glfw - http://www.glfw.org/
