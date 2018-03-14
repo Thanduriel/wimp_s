@@ -10,6 +10,7 @@
 namespace Game {
 
 	clunk::sdl::Backend* AudioSystem::s_backend;
+	AudioComponent* AudioSystem::s_audioComponent;
 
 	void AudioSystem::Initialize()
 	{
@@ -28,10 +29,13 @@ namespace Game {
 		context.set_max_sources(16);
 
 		backend.start();
+
+		s_audioComponent = new AudioComponent(Control::g_camera);
 	}
 
 	void AudioSystem::Close()
 	{
+		delete s_audioComponent;
 		s_backend->stop();
 	}
 
@@ -47,18 +51,19 @@ namespace Game {
 		m_object(AudioSystem::GetContext().create_object()),
 		m_curId(0)
 	{
-
 	}
 
 	AudioComponent::~AudioComponent()
 	{
 		m_object->cancel_all(true,0.3f);
 		delete m_object;
+		//m_object->autodelete();
 	}
 
-	void AudioComponent::Play(const clunk::Sample& _sound, int _id, bool _loop)
+	clunk::Source* AudioComponent::Play(const clunk::Sample& _sound, int _id, bool _loop, const ei::Vec3& _position)
 	{
 		clunk::Source* source = new clunk::Source(&_sound, _loop);
+		source->delta_position = clunk::v3f(_position.x, _position.y, _position.z);
 		UpdateSourcePos(); // make sure that the position is already correct when the first sample is heard
 		if (_id == -1)
 		{
@@ -67,7 +72,8 @@ namespace Game {
 		}
 		else m_object->play(_id, source);
 
-		m_source = source;
+		if(_loop) m_source = source;
+		return source;
 	}
 
 	clunk::Object* AudioComponent::GetObject()
@@ -75,9 +81,9 @@ namespace Game {
 		return m_object;
 	}
 
-	void AudioComponent::Stop()
+	void AudioComponent::Stop(float _fadeOut)
 	{
-		m_object->cancel_all();
+		m_object->cancel_all(true, _fadeOut);
 	}
 
 	void AudioComponent::ProcessComponent(float _deltaTime)

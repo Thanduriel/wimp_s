@@ -178,7 +178,8 @@ namespace Graphic {
 		virtual bool KeyDown(int _key, int _modifiers, ei::Vec2 _pos) override;
 		virtual bool KeyUp(int _key, int _modifiers, ei::Vec2 _pos) override;
 
-		void SetOnMouseUp(std::function<void()>&& _event) { OnMouseUp = std::move(_event); }
+		template<typename Fn>
+		void SetOnMouseUp(Fn&& _event) { OnMouseUp = std::forward<Fn>(_event); }
 
 		enum struct State
 		{

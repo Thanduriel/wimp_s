@@ -6,6 +6,8 @@
 
 namespace Game {
 
+	struct HitInfo;
+
 	enum struct DamageType
 	{
 		Normal,
@@ -73,7 +75,7 @@ namespace Game {
 
 		virtual void OnDestroy() {}
 		// Collision with another Actor was registered.
-		virtual void OnCollision(Actor& _other) {}
+		virtual void OnCollision(Actor& _other, const HitInfo& _hitInfo) {}
 		// Decide how damage is handled.
 		// Overwrite to implement custom behavior such as reduction or absorption.
 		virtual float OnDamageTaken(float _amount, Actor& _source, DamageType _type) { return _amount; }

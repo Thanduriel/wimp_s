@@ -45,7 +45,7 @@ namespace Game
 		void Process(float _deltaTime) override;
 
 		void RegisterComponents(class SceneGraph& _sceneGraph) override;
-		void OnCollision(Actor& _other) override;
+		void OnCollision(Actor& _other, const HitInfo& _info) override;
 
 		// When created the blackhole has no gravitation or collision.
 		void Activate();

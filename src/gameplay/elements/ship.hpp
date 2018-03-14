@@ -28,6 +28,7 @@ namespace Game
 
 		void Process(float _deltaTime) override;
 		void OnDestroy() override;
+		void OnCollision(Actor& _other, const HitInfo& _info) override;
 		float OnDamageTaken(float _amount, Actor& _source, DamageType _type) override;
 
 		// Update speed

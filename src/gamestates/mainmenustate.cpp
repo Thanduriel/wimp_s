@@ -7,6 +7,8 @@
 #include "graphic/interface/hudelements.hpp"
 #include "control/input.hpp"
 
+#include "gameplay/elements/audiocomponent.hpp"
+#include "gameplay/content.hpp"
 namespace GameStates
 {
 	using namespace Graphic;
@@ -22,8 +24,9 @@ namespace GameStates
 		m_blackHole.Process(0.f);
 
 		using namespace Graphic;
+	
 		m_hud.m_startButton->SetOnMouseUp([&]() { m_newState = new TransitionState(Game::Level::Act01, nullptr); });
-		m_hud.m_optionsButton->SetOnMouseUp([&]() {m_newState = new SettingsState(); });
+		m_hud.m_optionsButton->SetOnMouseUp([&]() {m_newState = new SettingsState();});
 		m_hud.m_exitButton->SetOnMouseUp([&]() { m_isFinished = true; });
 	}
 

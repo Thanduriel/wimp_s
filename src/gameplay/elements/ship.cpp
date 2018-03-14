@@ -102,6 +102,18 @@ namespace Game
 		if(m_inventory.GetNumElements() || m_inventory.GetCredits()) FactoryActor::GetThreadLocalInstance().Make<Crate>(m_position, m_inventory);
 		FactoryActor::GetThreadLocalInstance().Make<Explosion>(m_position, m_maxHealth / 5.f, 0.f, Utils::Color8U(0.8f, 0.67f, 0.42f, 0.5f), "mist");
 		Model::OnDestroy();
+		// sounds will otherwise only stop on component destruction
+		m_audioComponent.Stop(0.3f);
+	}
+
+	void Ship::OnCollision(Actor& _other, const HitInfo& _info)
+	{
+		Model::OnCollision(_other, _info);
+
+		static const clunk::Sample& sound = Content::GetSound("collision01");
+		ei::Vec4 localPos = GetInverseTransformation() * ei::Vec4(_info.position,1.f);
+		localPos = ei::invert(m_audioComponent.Get()) * localPos;
+		m_audioComponent.Play(sound, -1, false, ei::Vec3(localPos));
 	}
 
 	float Ship::OnDamageTaken(float _amount, Actor& _source, DamageType _type)
@@ -109,7 +121,7 @@ namespace Game
 		// shield absorbs damage first
 		float shieldDam = _amount;
 		if (_type == DamageType::Ion)
-			std::min(shieldDam * 1.5f, m_shield * 1.f / 1.5f);
+			shieldDam = std::min(shieldDam * 1.5f, m_shield * 1.f / 1.5f);
 		else shieldDam = std::min(shieldDam, m_shield);
 
 		m_shield -= shieldDam;

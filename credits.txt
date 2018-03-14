@@ -10,6 +10,9 @@ explosion01 - https://freesound.org/people/Quaker540/sounds/245372/
 explosion02 - https://freesound.org/people/ryansnook/sounds/110113/
 small_boom - https://freesound.org/people/unfa/sounds/189779/
 thruster - https://freesound.org/people/Zovex/sounds/237974/
+collision01 - https://freesound.org/people/P%C3%B3l/sounds/385937/
+button01 - https://freesound.org/people/bubaproducer/sounds/107132/
+button02 - https://freesound.org/people/bubaproducer/sounds/107137/
 
 libraries
 glfw - http://www.glfw.org/

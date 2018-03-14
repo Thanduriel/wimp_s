@@ -32,7 +32,7 @@ namespace Game {
 
 	}
 
-	void Projectile::OnCollision(Actor& _other)
+	void Projectile::OnCollision(Actor& _other, const HitInfo& _info)
 	{
 		_other.Damage(m_damage, *this, m_damageType);
 	//	Destroy();

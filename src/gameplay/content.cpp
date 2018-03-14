@@ -7,7 +7,7 @@
 
 #include "elements/collisioncomponent.hpp"
 #include "elements/audiocomponent.hpp"
-
+#include "utils/logger.hpp"
 namespace Game {
 	std::unordered_map<std::string, BoundingMesh*> Content::boundingMeshes;
 	std::unordered_map<Content::BoundingMeshKeyType, BoundingMesh*> Content::anonymBoundingMeshes;
@@ -63,7 +63,7 @@ namespace Game {
 			}
 			catch (std::runtime_error e)
 			{
-				int uiae = 13;
+				LOG_ERROR(std::string("Failed to load sound with message: ") + e.what());
 			}
 			sounds.emplace(_name, sound);
 		}

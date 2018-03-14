@@ -6,6 +6,9 @@
 #include "graphic/interface/hudelements.hpp"
 #include "control/input.hpp"
 
+#include "gameplay/elements/audiocomponent.hpp"
+#include "clunk/clunk.h"
+#include <iostream>
 namespace GameStates
 {
 	using namespace Graphic;
@@ -18,10 +21,16 @@ namespace GameStates
 		m_hud.GetContinueButton().SetOnMouseUp([&]() { m_isFinished = true; });
 		m_hud.GetOptionsButton().SetOnMouseUp([&]() { m_newState = new SettingsState(); });
 		m_hud.GetMenuButton().SetOnMouseUp([&]() { m_isFinished = true; m_oldState->Finish(); });
+	//	auto& c = Game::AudioSystem::GetContext();
+	//	for (int i = 0; i < std::numeric_limits<int>::max(); ++i)
+	//		if (Game::AudioSystem::GetContext().playing(i))
+	//			std::cout << i << std::endl;
+		Game::AudioSystem::GetContext().stop_all();
 	}
 
 	PauseState::~PauseState()
 	{
+		Game::AudioSystem::GetContext().pause(0);//set_max_sources(16);
 	}
 
 	void PauseState::Process(float _deltaTime)

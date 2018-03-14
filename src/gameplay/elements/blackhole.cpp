@@ -86,7 +86,7 @@ namespace Game {
 	}
 
 	const float DAMAGE_PER_SECOND = 0.43f;
-	void BlackHole::OnCollision(Actor& _other)
+	void BlackHole::OnCollision(Actor& _other, const HitInfo& _info)
 	{
 		m_isColliding = true;
 		if(m_gravitationComponent.IsActive())

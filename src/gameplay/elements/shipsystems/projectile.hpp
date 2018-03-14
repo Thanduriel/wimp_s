@@ -23,7 +23,7 @@ namespace Game {
 		// does a correct copy of the given projectile including components
 		Projectile(const Projectile& _proj);
 
-		void OnCollision(Actor& _other) override;
+		void OnCollision(Actor& _other, const HitInfo& _info) override;
 		void RegisterComponents(class SceneGraph& _sceneGraph) override;
 		
 		void SetOwner(const void* _owner) { m_owner = _owner; }

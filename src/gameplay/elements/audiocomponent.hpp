@@ -15,6 +15,8 @@ namespace clunk {
 
 namespace Game {
 
+	class AudioComponent;
+
 	class AudioSystem
 	{
 	public:
@@ -22,9 +24,11 @@ namespace Game {
 		static void Close();
 
 		static clunk::Context& GetContext();
+		static AudioComponent& GetGlobalAudio() { return *s_audioComponent; }
 	private:
 
 		static clunk::sdl::Backend* s_backend;
+		static AudioComponent* s_audioComponent;
 
 		friend class AudioComponent;
 		friend class Wimp_s;
@@ -39,11 +43,11 @@ namespace Game {
 
 		void ProcessComponent(float _deltaTime) override;
 
-		void Play(const clunk::Sample& _sound, int _id = -1, bool _loop = false);
+		clunk::Source* Play(const clunk::Sample& _sound, int _id = -1, bool _loop = false, const ei::Vec3& _position = {});
 		clunk::Object* GetObject();
 		clunk::Source* GetSource(int _id) { return m_source; } // todo allow different sources
 
-		void Stop();
+		void Stop(float _fadeOut = 0.1f);
 	private:
 		void UpdateSourcePos();
 		clunk::Object* m_object;

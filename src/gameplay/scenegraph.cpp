@@ -366,8 +366,8 @@ namespace Game {
 
 					if (slfComp->Check(*othComp, hitInfo))
 					{
-						slf.OnCollision(oth);
-						oth.OnCollision(slf);
+						slf.OnCollision(oth, hitInfo);
+						oth.OnCollision(slf, hitInfo);
 						// apply some damage to kill projectiles
 						// todo: move this back closer to Projectile
 						slf.Damage(0.001f, oth);
