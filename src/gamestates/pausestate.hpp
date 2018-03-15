@@ -23,5 +23,6 @@ namespace GameStates
 
 	private:
 		MainState* m_oldState;
+		float m_realFalloffFactor; //< to restore sound engine
 	};
 }
