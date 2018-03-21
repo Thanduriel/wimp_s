@@ -1,4 +1,5 @@
 #include "item.hpp"
+#include "../ship.hpp"
 
 namespace Game {
 
@@ -39,6 +40,23 @@ namespace Game {
 		m_icon(_icon),
 		m_name(_name),
 		m_description(_description),
-		m_value(_value == USE_QUALITY ? QUALITY_VALUE[(int)_quality] : _value)
+		m_value(_value == USE_QUALITY ? QUALITY_VALUE[(int)_quality] : _value),
+		m_maxEnergy(110.f),
+		m_isEquiped(false)
 	{}
+
+	// ******************************************************************* //
+	void Item::Equip(Ship& _ship) const
+	{
+		if (m_isEquiped) return;
+		m_isEquiped = true;
+		_ship.SetMaxEnergy(_ship.GetMaxEnergy() + m_maxEnergy);
+	}
+
+	void Item::UnEquip(Ship& _ship) const
+	{
+		if (!m_isEquiped) return;
+		m_isEquiped = false;
+		_ship.SetMaxEnergy(_ship.GetMaxEnergy() - m_maxEnergy);
+	}
 }

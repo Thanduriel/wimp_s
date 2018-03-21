@@ -6,6 +6,8 @@
 
 namespace Game {
 
+	class Ship;
+
 	class Item
 	{
 	public:
@@ -38,11 +40,20 @@ namespace Game {
 		const std::string& GetName() const { return m_name; }
 		const std::string& GetDescription() const { return m_description; }
 		int GetValue() const { return m_value; }
+
+		bool IsEquiped() const { return m_isEquiped; }
+
+		virtual void Equip(Ship& _ship) const;
+		virtual void UnEquip(Ship& _ship) const;
 	protected:
 		Quality m_quality;
 		Icon m_icon;
 		std::string m_name;
 		std::string m_description;
 		int m_value;
+
+		// global buffs
+		mutable bool m_isEquiped;
+		float m_maxEnergy;
 	};
 }

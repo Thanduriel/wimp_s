@@ -17,6 +17,10 @@ namespace GameStates
 	using namespace Graphic;
 	using namespace Control;
 
+	// fields that are not equipment sockets
+	// todo: use more elegant approach
+	const int OTHER_FIELDS = 2;
+
 	const ei::Vec2 SHIP_VIEW_SHIFT = ei::Vec2(0.f, 0.f);
 	const ei::Vec2 SHIP_VIEW_SIZE = ei::Vec2(0.9f, 0.5f);
 
@@ -61,6 +65,16 @@ namespace GameStates
 			itemIcons.emplace(item, &tex);
 		}
 
+		m_hud.m_inventoryField->SetDropEvent([this](DropField&, DraggableTexture& _tex)
+		{
+			const Game::Weapon* itm = static_cast<const Game::Weapon*>(_tex.GetContent());
+			if (itm->IsEquiped())
+			{
+				itm->UnEquip(m_ship);
+				UpdateUpgradeLabels();
+			}
+		});
+
 		int i = 0;
 		ei::Mat4x4 transform = g_camera.GetViewProjection() * m_ship.GetTransformation();
 		for (auto& socket : _ship.GetWeaponSockets())
@@ -80,6 +94,11 @@ namespace GameStates
 					m_hud.m_inventoryField->DropElement(tex);
 					tex.SetPosition(tex.GetBackupPosition());
 				}
+				const Game::Weapon* itm = static_cast<const Game::Weapon*>(_tex.GetContent());
+				itm->Equip(_ship);
+
+				// basic stats may have changed
+				UpdateUpgradeLabels();
 			});
 			m_hud.m_weaponFields.push_back(&socketField);
 
@@ -113,7 +132,6 @@ namespace GameStates
 
 	InventoryState::~InventoryState()
 	{
-		const int OTHER_FIELDS = 2;
 		// update changed weapons
 		// the first field is the inventory, second the sell field
 		for (size_t i = OTHER_FIELDS; i < m_hud.m_weaponFields.size(); ++i)
