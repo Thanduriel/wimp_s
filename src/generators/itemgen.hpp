@@ -4,6 +4,7 @@
 #include "ei/vector.hpp"
 
 #include "gameplay/elements/shipsystems/item.hpp"
+#include "random.hpp"
 
 namespace Generators {
 	
@@ -43,4 +44,25 @@ namespace Generators {
 	};
 
 	typedef std::pair<float, float> Range;
+
+	class ItemGenerator
+	{
+	public:	
+		ItemGenerator(uint32_t _seed = 0x0);
+		
+		std::string GetName(const std::string& _baseName);
+
+	protected:
+		void AddTrait(const TraitDescription& _trait);
+
+		std::string m_name;
+		std::string m_baseStats;
+		std::string m_description;
+
+		DefaultRandomGen m_rng;
+		RandomSampler<> m_randomSampler;
+	private:
+		std::vector<const std::string*> m_prefixes;
+		std::vector<const std::string*> m_suffixes;
+	};
 }

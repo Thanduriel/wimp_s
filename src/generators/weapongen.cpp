@@ -27,10 +27,10 @@ namespace Generators {
 	{ {
 		{"Burst", "cd increases with continues fire", true},
 		{"Twin", "fires additional projectile", true },
-		{"[EX_R]", "10% increased rate of fire", false},
-		{"[EX_D]", "12% increased damage", false},
-		{"[EX_C]", "15% reduced power consumption", false},
-		{"[EX_T]", "20% increased life time", false },
+		{"[EXT R]", "10% increased rate of fire", false},
+		{"[EXT D]", "12% increased damage", false},
+		{"[EXT C]", "15% reduced power consumption", false},
+		{"[EXT L]", "20% increased life time", false },
 		{"Short", "40% reduced life time, 50% increased damage", true },
 		{"of High Power", "2x damage, 2x power consumption", false},
 		{"Gatling", "fire rate increases with continues fire", false},
@@ -39,6 +39,14 @@ namespace Generators {
 		{"Ionizing", "deals bonus damage against shields", true},
 		{"Corroding", "deals bonus damage against hulls", true}
 	//	{"Infinite", "can fire even without sufficient energy", true}
+	} };
+
+	const std::array< TraitDescription, 4> EXTRA_NAME_TRAITS = 
+	{ {
+		{"Rapid Fire", "", true},
+		{"Fast Fire", "", true},
+		{"Advanced", "", true },
+		{"Premium", "", true },
 	} };
 
 	enum struct WeaponType {
@@ -75,12 +83,6 @@ namespace Generators {
 		{ 8.f, 24.f }
 	} };
 
-	WeaponGenerator::WeaponGenerator(uint32_t _seed)
-		: m_rng(_seed ? _seed : clock()),
-		m_randomSampler(m_rng)
-	{
-	}
-
 	using namespace Game;
 	using namespace Utils;
 
@@ -104,7 +106,7 @@ namespace Generators {
 		Item::Quality rarity = Item::Quality::Unique;
 		while (float n = m_randomSampler.Uniform() > qVec[(int)rarity]) rarity = Item::Quality((int)rarity - 1);
 		int numTraits = QUALITY_NUM_TRAITS[(int)rarity];
-
+		
 		// roll basic type; -2 since lasers are not implemented
 		WeaponType type = (WeaponType)m_randomSampler.Uniform(0, (int32_t)NAMES.size()-((int)rarity> 0 ? 2 : 3));
 		// decrease chance for rocket launchers; todo: refractory this
@@ -113,12 +115,19 @@ namespace Generators {
 		m_description.clear();
 		m_baseStats.clear();
 
+		if (rarity == Item::Quality::Advanced && type != WeaponType::Rocket) AddTrait(EXTRA_NAME_TRAITS[2]);
+		else if (rarity == Item::Quality::Premium) AddTrait(EXTRA_NAME_TRAITS[3]);
+
 		// attributes
 		Range damageRange = GetDamageRange(DAMAGE_RANGE[(int)type], _power);
 		float damage = m_randomSampler.Uniform(damageRange);
 
 		Range cdRange = GetCooldownRange(COOLDOWN_RANGE[(int)type], _power);
 		float cooldown = m_randomSampler.Uniform(cdRange);
+		// extra name traits
+		float relativeCD = (cooldown - cdRange.first) / (cdRange.second - cdRange.first);
+		if (relativeCD < 0.1f) AddTrait(EXTRA_NAME_TRAITS[0]);
+		else if (relativeCD < 0.25f) AddTrait(EXTRA_NAME_TRAITS[1]);
 
 		float speed = type == WeaponType::Simple ? Projectile::DEFAULT_SPEED : Rocket::DEFAULT_SPEED;
 		float lifeTime = m_randomSampler.Uniform(LIFETIME_RANGE[(int)type]);
@@ -235,10 +244,10 @@ namespace Generators {
 
 		m_description = m_baseStats + "-----" + m_description;
 		// accumulated stats
-		m_description += "\n-----\ndps: " + ToFixPoint(1.f / cooldown * damage,1)
-			+ "\nrange: " + ToFixPoint(speed * lifeTime,1);
+		m_description += "\n-----\ndps:      " + ToConstDigit(1.f / cooldown * damage,1,4)
+			+ "\nrange:   " + ToConstDigit(speed * lifeTime,1,5);
 
-		m_name = Item::QUALITY_COLOR_STR[(int)rarity] + m_name + "</c>";
+		m_name = Item::QUALITY_COLOR_STR[(int)rarity] + GetName(m_name) + "</c>";
 
 		return new Game::Weapon(cooldown,
 			speed * lifeTime,
@@ -272,12 +281,5 @@ namespace Generators {
 	{
 		float f = ei::min(1.f, _power / MAX_POWER);
 		return std::make_pair(ei::lerp(_base.first, MIN_COOLDOWN, f), ei::lerp(_base.second, MAX_COOLDOWN, f));
-	}
-
-	void WeaponGenerator::AddTrait(const TraitDescription& _traitDesrc)
-	{
-		m_name = _traitDesrc.isPrefix ? _traitDesrc.name + " " + m_name
-			: m_name + " " + _traitDesrc.name;
-		m_description += "\n" + _traitDesrc.description;
 	}
 }
