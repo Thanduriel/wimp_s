@@ -4,6 +4,10 @@
 #include <array>
 #include "utils/color.hpp"
 
+namespace Generators {
+	class WeaponGenerator;
+}
+
 namespace Game {
 
 	class Ship;
@@ -55,5 +59,10 @@ namespace Game {
 		// global buffs
 		mutable bool m_isEquiped;
 		float m_maxEnergy;
+		float m_maxShield;
+		float m_maxHealth;
+		float m_energyRecharge;
+
+		friend class Generators::WeaponGenerator;
 	};
 }

@@ -19,6 +19,8 @@ namespace Generators {
 		LowPower,
 		Ionized,
 		Corroding,
+		ShieldMax,
+		EnergyMax,
 	//	Infinite,
 		WTTCOUNT // since this is not in its own name space
 	};
@@ -37,7 +39,9 @@ namespace Generators {
 		{ "Iterative", "every 3rth shot deals 2xdamage", true },
 		{ "of Low Power", "95% reduced consumption, 80% less damage", false },
 		{"Ionizing", "deals bonus damage against shields", true},
-		{"Corroding", "deals bonus damage against hulls", true}
+		{"Corroding", "deals bonus damage against hulls", true},
+		{"", "+ 10 max shield" , false},
+		{ "", "+ 1 max energy" , false }
 	//	{"Infinite", "can fire even without sufficient energy", true}
 	} };
 
@@ -141,6 +145,9 @@ namespace Generators {
 			eCost *= 4.f;
 		}
 
+		float shieldBoost = 0.f;
+		float energyBoost = 0.f;
+
 		Weapon::FireFunction fireFn;
 		Weapon::ReloadFunction reloadFn;
 		DamageType damageType = DamageType::Normal;
@@ -198,6 +205,10 @@ namespace Generators {
 				hasTrait[Ionized] = 1;
 				damageType = DamageType::Physical;
 				break;
+			case WeaponTraitType::ShieldMax: shieldBoost = 3.f;
+				break;
+			case WeaponTraitType::EnergyMax: energyBoost = 1.f;
+				break;
 			default:
 				Assert(false, "Trait not implemented.");
 			}
@@ -249,7 +260,7 @@ namespace Generators {
 
 		m_name = Item::QUALITY_COLOR_STR[(int)rarity] + GetName(m_name) + "</c>";
 
-		return new Game::Weapon(cooldown,
+		Weapon* weapon = new Game::Weapon(cooldown,
 			speed * lifeTime,
 			eCost,
 			std::move(fireFn),
@@ -258,6 +269,11 @@ namespace Generators {
 			type == WeaponType::Simple ? Item::Icon::DefaultWeapon : Item::Icon::Missile,
 			std::move(m_name),
 			std::move(m_description));
+
+		weapon->m_maxEnergy = energyBoost;
+		weapon->m_maxShield = shieldBoost;
+
+		return weapon;
 	}
 
 	Game::Weapon* WeaponGenerator::Generate(uint32_t _seed, float _power, float _qualityFactor)

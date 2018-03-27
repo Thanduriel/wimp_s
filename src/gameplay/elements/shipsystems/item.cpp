@@ -51,12 +51,17 @@ namespace Game {
 		if (m_isEquiped) return;
 		m_isEquiped = true;
 		_ship.SetMaxEnergy(_ship.GetMaxEnergy() + m_maxEnergy);
+		_ship.SetMaxShield(_ship.GetMaxShield() + m_maxShield);
+		_ship.SetMaxHealth(_ship.GetMaxHealth() + m_maxHealth);
 	}
 
 	void Item::UnEquip(Ship& _ship) const
 	{
 		if (!m_isEquiped) return;
+
 		m_isEquiped = false;
 		_ship.SetMaxEnergy(_ship.GetMaxEnergy() - m_maxEnergy);
+		_ship.SetMaxShield(_ship.GetMaxShield() - m_maxShield);
+		_ship.SetMaxHealth(_ship.GetMaxHealth() - m_maxHealth);
 	}
 }
