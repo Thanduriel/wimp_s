@@ -23,7 +23,7 @@ namespace Game {
 			// @param _mod the speed is scaled from _mod and linearly
 			//		interpolated so that the total time required stays the same.
 			// @param _func The function used to order the lines.
-			TransitionInfo(float _speed, float _mod = 1.f, ComparisonFunc&& _func = &closerToCenter)
+			TransitionInfo(float _speed, float _mod = 1.f, ComparisonFunc&& _func = &CloserToCenter)
 				: speed(_speed), comparisonFunction(std::move(_func)), speedModifier(_mod) {}
 
 			float speed; // in lines per second
@@ -31,7 +31,14 @@ namespace Game {
 			ComparisonFunc comparisonFunction;
 		};
 
-		// Create a 2d grid on the xz plane withe given size and resolution.
+		// some comparison functions
+		static bool CloserToCenter(const std::pair<ei::Vec3, ei::Vec3>&,
+			const std::pair<ei::Vec3, ei::Vec3>&);
+		// unique order for different grids
+		static bool Random(const std::pair<ei::Vec3, ei::Vec3>&,
+			const std::pair<ei::Vec3, ei::Vec3>&);
+
+		// Create a 2d grid on the xz plane with given size and resolution.
 		// Pass the transitionInfo as rvalue if copying the function is expensive.
 		GridComponent(const Actor& _actor, const Utils::Color32F& _color,
 			float _resolutionX = 1.f, float _resolutionZ = 1.f,
@@ -62,8 +69,6 @@ namespace Game {
 
 		void AddCircle(int _numSegments, float _radius, const ei::Mat4x4& _transform = ei::identity4x4());
 
-		static bool closerToCenter(const std::pair<ei::Vec3, ei::Vec3>&,
-			const std::pair<ei::Vec3, ei::Vec3>&);
 
 		Graphic::LineRenderer m_lineRenderer;
 		

@@ -101,10 +101,13 @@ namespace GameStates {
 
 	void SettingsState::Process(float _deltaTime)
 	{
+		BasicMenuState<SettingsHud>::Process(_deltaTime);
 	}
 
 	void SettingsState::Draw(float _deltaTime)
 	{
+		BasicMenuState<SettingsHud>::Draw(_deltaTime);
+
 		Graphic::Device::DrawFramebufferToBackbuffer();
 
 		m_hud.Draw(_deltaTime);

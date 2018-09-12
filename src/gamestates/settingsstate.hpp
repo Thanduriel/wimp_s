@@ -1,10 +1,10 @@
 #pragma once
 
-#include "gamestate.hpp"
+#include "basicmenustate.hpp"
 #include "huds/settingshud.hpp"
 
 namespace GameStates {
-	class SettingsState : public GameStateHT<SettingsHud>
+	class SettingsState : public BasicMenuState<SettingsHud>
 	{
 	public:
 		SettingsState();

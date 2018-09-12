@@ -114,8 +114,18 @@ namespace Game {
 		}
 	}
 
-	bool GridComponent::closerToCenter(const std::pair<ei::Vec3,ei::Vec3>& _lhs, const std::pair<ei::Vec3, ei::Vec3>& _rhs)
+	bool GridComponent::CloserToCenter(const std::pair<ei::Vec3,ei::Vec3>& _lhs, const std::pair<ei::Vec3, ei::Vec3>& _rhs)
 	{
 		return ei::dot(_lhs.first, _lhs.first) < ei::dot(_rhs.first, _rhs.first);
+	}
+
+	static uint32_t hashFn(const ei::Vec3& _vec)
+	{
+		return (static_cast<uint32_t>(_vec.x) * 73856093) ^ ((uint32_t)_vec.y * 19349663) ^ (static_cast<uint32_t>(_vec.z) * 83492791);
+	}
+
+	bool GridComponent::Random(const std::pair<ei::Vec3, ei::Vec3>& _lhs, const std::pair<ei::Vec3, ei::Vec3>& _rhs)
+	{
+		return hashFn(_lhs.first) + hashFn(_rhs.second) < hashFn(_rhs.first) + hashFn(_lhs.second);//(_lhs.first.x + _lhs.first.z) < (_rhs.first.x + _rhs.first.z);
 	}
 }

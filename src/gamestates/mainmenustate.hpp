@@ -1,13 +1,13 @@
 #pragma once
 #include "huds/mainmenuhud.hpp"
-#include "gamestate.hpp"
+#include "basicmenustate.hpp"
 
 #include "gameplay/elements/grid.hpp"
 #include "gameplay/elements/blackhole.hpp"
 
 namespace GameStates
 {
-	class MainMenuState : public GameStateHT<MainMenuHud>
+	class MainMenuState : public BasicMenuState<MainMenuHud>
 	{
 	public:
 		MainMenuState();
@@ -26,7 +26,6 @@ namespace GameStates
 		void KeyDoubleClick(int _key) override;
 
 	private:
-		Game::Grid m_grid;
 		Game::BlackHoleVis m_blackHole;
 	};
 }

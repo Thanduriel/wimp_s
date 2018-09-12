@@ -16,11 +16,8 @@ namespace GameStates
 	using namespace ei;
 
 	MainMenuState::MainMenuState()
-		: m_grid(ei::Vec3(0.f,0.f, 30.f), Utils::Color32F(0.f,1.f,0.f, 0.5f), 3.5f, 3.5f, 80.f),
-		m_blackHole(ei::Vec3(1.f), 5.f)
+		: m_blackHole(ei::Vec3(1.f), 5.f)
 	{
-		m_grid.Rotate(ei::Quaternion(ei::normalize(ei::Vec3(1.f, 0.f, 0.f)), ei::PI * 0.5f));
-		m_grid.Process(0.f);
 		m_blackHole.Process(0.f);
 
 		using namespace Graphic;
@@ -36,6 +33,7 @@ namespace GameStates
 
 	void MainMenuState::Process(float _deltaTime)
 	{
+		BasicMenuState<MainMenuHud>::Process(_deltaTime);
 		static float sum = 0.f;
 		sum += _deltaTime * 0.4f;
 		Quaternion rot(normalize(Vec3(0.2f, 0.f, 1.f)), sum);
@@ -44,7 +42,7 @@ namespace GameStates
 
 	void MainMenuState::Draw(float _deltaTime)
 	{
-		m_grid.Draw();
+		BasicMenuState<MainMenuHud>::Draw(_deltaTime);
 		m_hud.Draw(_deltaTime);
 
 		Device::DrawFramebufferToBackbuffer();
@@ -54,14 +52,7 @@ namespace GameStates
 
 	void MainMenuState::OnActivate()
 	{
-		using namespace Control;
-		g_camera.SetPosition(ei::Vec3(0.f, 0.f, -25.f));
-		g_camera.SetRotation(ei::qidentity());
-		g_camera.FixRotation(g_camera.GetRotation(), g_camera.GetPosition());
-		g_camera.Process(0.f);
-
-		// updates the cursor position
-		MouseMove(0.f, 0.f);
+		BasicMenuState<MainMenuHud>::OnActivate();
 	}
 
 	void MainMenuState::Dispose()

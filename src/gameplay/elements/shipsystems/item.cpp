@@ -41,7 +41,6 @@ namespace Game {
 		m_name(_name),
 		m_description(_description),
 		m_value(_value == USE_QUALITY ? QUALITY_VALUE[(int)_quality] : _value),
-		m_maxEnergy(110.f),
 		m_isEquiped(false)
 	{}
 
@@ -53,6 +52,7 @@ namespace Game {
 		_ship.SetMaxEnergy(_ship.GetMaxEnergy() + m_maxEnergy);
 		_ship.SetMaxShield(_ship.GetMaxShield() + m_maxShield);
 		_ship.SetMaxHealth(_ship.GetMaxHealth() + m_maxHealth);
+		_ship.SetEnergyRecharge(_ship.GetEnergyRecharge() + m_energyRecharge);
 	}
 
 	void Item::UnEquip(Ship& _ship) const
@@ -63,5 +63,6 @@ namespace Game {
 		_ship.SetMaxEnergy(_ship.GetMaxEnergy() - m_maxEnergy);
 		_ship.SetMaxShield(_ship.GetMaxShield() - m_maxShield);
 		_ship.SetMaxHealth(_ship.GetMaxHealth() - m_maxHealth);
+		_ship.SetEnergyRecharge(_ship.GetEnergyRecharge() + m_energyRecharge);
 	}
 }

@@ -214,6 +214,11 @@ namespace Control
 				GetShip().Fire();
 			}
 
+			// directly modify the position to not interfere with the forward speed computations
+			if (InputManager::IsVirtualKeyPressed(Control::VirtualKey::ACC_LEFT))
+				m_ship.AddVelocity(m_ship.GetRotationMatrix() * Vec3(_deltaTime * -30.f, 0.f, 0.f));
+			if (InputManager::IsVirtualKeyPressed(Control::VirtualKey::ACC_RIGHT))
+				m_ship.AddVelocity(m_ship.GetRotationMatrix() * Vec3(_deltaTime * 30.f, 0.f, 0.f));
 			bool approximateTargetSpeed = true;
 			if (InputManager::IsVirtualKeyPressed(Control::VirtualKey::ADJUST_TARGET_ACC))
 			{

@@ -58,10 +58,10 @@ namespace Game {
 
 		// global buffs
 		mutable bool m_isEquiped;
-		float m_maxEnergy;
-		float m_maxShield;
-		float m_maxHealth;
-		float m_energyRecharge;
+		float m_maxEnergy = 0.f;
+		float m_maxShield = 0.f;
+		float m_maxHealth = 0.f;
+		float m_energyRecharge = 0.f;
 
 		friend class Generators::WeaponGenerator;
 	};
