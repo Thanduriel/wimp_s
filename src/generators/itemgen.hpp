@@ -54,6 +54,22 @@ namespace Generators {
 
 	protected:
 		void AddTrait(const TraitDescription& _trait);
+		template<typename... Args>
+		void AddTrait(const TraitDescription& _traitDesrc, Args&&... _args)
+		{
+			m_isTraitInfoSet = true;
+
+			if (_traitDesrc.isPrefix) m_prefixes.push_back(&_traitDesrc.name);
+			else m_suffixes.push_back(&_traitDesrc.name);
+
+			if (_traitDesrc.description != "")
+			{
+				m_description += "\n" + Utils::FormatString(_traitDesrc.description.c_str(), 
+					std::forward<Args>(_args)...);
+			}
+		}
+
+		float GenerateValue(float _min, float _max, float _stepSize);
 
 		std::string m_name;
 		std::string m_baseStats;
@@ -61,6 +77,8 @@ namespace Generators {
 
 		DefaultRandomGen m_rng;
 		RandomSampler<> m_randomSampler;
+
+		bool m_isTraitInfoSet = false; // flag to not add a trait description twice
 	private:
 		std::vector<const std::string*> m_prefixes;
 		std::vector<const std::string*> m_suffixes;

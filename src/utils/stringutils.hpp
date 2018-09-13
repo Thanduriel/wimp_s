@@ -37,4 +37,12 @@ namespace Utils
 		return std::move(ret);
 	}
 
+	template< typename... Args>
+	std::string FormatString(const char* _string, Args&&... _args)
+	{
+		char buf[1024];
+		sprintf_s(buf, _string, std::forward<Args>(_args)...);
+		return std::string(buf);
+	}
+
 } 

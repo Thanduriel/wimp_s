@@ -25,4 +25,11 @@ namespace Generators {
 
 		return std::move(name);
 	}
+
+	float ItemGenerator::GenerateValue(float _min, float _max, float _stepSize)
+	{
+		const int steps = static_cast<int>(round((_max - _min) / _stepSize));
+
+		return m_randomSampler.Uniform(0, steps) * _stepSize + _min;
+	}
 }

@@ -40,8 +40,8 @@ namespace Generators {
 		{ "of Low Power", "95% reduced consumption, 80% less damage", false },
 		{"Ionizing", "deals bonus damage against shields", true},
 		{"Corroding", "deals bonus damage against hulls", true},
-		{"", "+ 10 max shield" , false},
-		{ "", "+ 1 max energy" , false }
+		{"", "+ %.1f max shield" , false},
+		{ "", "+ %.1f max energy" , false }
 	//	{"Infinite", "can fire even without sufficient energy", true}
 	} };
 
@@ -163,7 +163,7 @@ namespace Generators {
 
 			// every trait can appear only once
 			hasTrait[trait] = 1;
-			AddTrait(WEAPON_TRAITS[trait]);
+			m_isTraitInfoSet = false;
 			switch (trait)
 			{
 			// reload functions
@@ -205,13 +205,18 @@ namespace Generators {
 				hasTrait[Ionized] = 1;
 				damageType = DamageType::Physical;
 				break;
-			case WeaponTraitType::ShieldMax: shieldBoost = 3.f;
+			case WeaponTraitType::ShieldMax:
+				shieldBoost = GenerateValue(3.f, 10.f, 1.f);
+				AddTrait(WEAPON_TRAITS[trait], shieldBoost);
 				break;
-			case WeaponTraitType::EnergyMax: energyBoost = 1.f;
+			case WeaponTraitType::EnergyMax: 
+				energyBoost = GenerateValue(1.f, 2.5f, 0.1f);
+				AddTrait(WEAPON_TRAITS[trait], energyBoost);
 				break;
 			default:
 				Assert(false, "Trait not implemented.");
 			}
+			if (!m_isTraitInfoSet) AddTrait(WEAPON_TRAITS[trait]);
 		}
 
 		// construct projectile generator
