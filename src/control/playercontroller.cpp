@@ -211,7 +211,12 @@ namespace Control
 			if (InputManager::IsVirtualKeyPressed(Control::VirtualKey::FIRE))
 			{
 				if(m_focus && *m_focus) GetShip().SetWeaponTarget(**m_focus);
-				GetShip().Fire();
+				GetShip().Fire(Game::Ship::WeaponGroup::Primary);
+			}
+			if (InputManager::IsVirtualKeyPressed(Control::VirtualKey::FIREOTHER))
+			{
+				if (m_focus && *m_focus) GetShip().SetWeaponTarget(**m_focus);
+				GetShip().Fire(Game::Ship::WeaponGroup::Secondary);
 			}
 
 			// directly modify the position to not interfere with the forward speed computations

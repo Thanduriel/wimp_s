@@ -90,6 +90,7 @@ namespace Control {
 		ADJUST_TARGET_ACC,
 		BRAKE,
 		FIRE,
+		FIREOTHER,
 		ROLL_CW,
 		ROLL_CCW,
 		INVENTORY,

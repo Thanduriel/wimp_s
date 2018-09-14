@@ -108,6 +108,18 @@ namespace GameStates
 				Assert(it != itemIcons.end(), "The equipped weapon is not found in the inventory.");
 				socketField.DropElement(*it->second);
 			}
+
+			// buttons to change weapon group
+			auto& groupKey = m_hud.CreateScreenElement<Button>("menuBtn", Vec2(0.f), socketField.GetSize() * Vec2(0.5f, 0.33f), DefP::TopLeft,
+				ScreenPosition::Anchor(DefP::BotLeft, &socketField));
+			groupKey.SetOnMouseUp([i, &groupKey, &_ship]()
+			{
+				groupKey.SetCaption(groupKey.GetCaption() == "L" ? "R" : "L");
+				// update happens on button press instead of inventory close
+				_ship.SetWeaponGroup(i, groupKey.GetCaption() == "L" ? Ship::WeaponGroup::Primary
+					: Ship::WeaponGroup::Secondary);
+			});
+			groupKey.SetCaption(_ship.GetWeaponGroup(i) == Ship::WeaponGroup::Primary ? "L" : "R");
 			++i;
 		}
 
@@ -136,14 +148,15 @@ namespace GameStates
 		// the first field is the inventory, second the sell field
 		for (size_t i = OTHER_FIELDS; i < m_hud.m_weaponFields.size(); ++i)
 		{
+			const int index = static_cast<int>(i - OTHER_FIELDS);
 			auto& elements = m_hud.m_weaponFields[i]->GetElements();
 			if (elements.size())
 			{
 				const Game::Weapon* itm = static_cast<const Game::Weapon*>(elements.front()->GetContent());
 				// the inventory does not change the weapon's state; but here full access is required
-				m_ship.SetWeapon(int(i - OTHER_FIELDS), const_cast<Game::Weapon*>(itm));
+				m_ship.SetWeapon(index, const_cast<Game::Weapon*>(itm));
 			}
-			else m_ship.SetWeapon(int(i - OTHER_FIELDS), nullptr);
+			else m_ship.SetWeapon(index, nullptr);
 		}
 		m_ship.GetInventory().SetCredits(m_money);
 

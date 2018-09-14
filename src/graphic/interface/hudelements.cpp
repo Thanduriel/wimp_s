@@ -383,8 +383,8 @@ namespace Graphic
 		
 		ScreenOverlay::KeyUp(_key, _modifiers, _pos);
 		m_btnDefault.SetVisible(false);
-		m_btnOver.SetVisible(false);
-		m_btnDown.SetVisible(IsVisible());
+		m_btnOver.SetVisible(IsVisible());
+		m_btnDown.SetVisible(false);
 		m_btnState = State::MouseOver;
 
 		return true;

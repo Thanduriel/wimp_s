@@ -162,6 +162,7 @@ namespace Graphic {
 			Font* _font = &Graphic::Resources::GetFont(Graphic::Fonts::DEFAULT));
 
 		void SetCaption(const std::string& _caption);
+		const std::string& GetCaption() { return m_caption.GetText(); }
 
 		void Register(Hud& _hud) override;
 		virtual void SetSize(ei::Vec2 _size) override;

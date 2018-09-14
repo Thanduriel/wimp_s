@@ -45,6 +45,7 @@ namespace Game
 		m_shieldComponent(THISACTOR, GetGeometryComponent().GetMesh()),
 		m_drivePositions(_node["DriveSockets"s].Size()),
 		m_weaponSockets(_node["WeaponSockets"s].Size()),
+		m_weaponSocketGroups(m_weaponSockets.capacity()),
 		m_thrustParticles(m_drivePositions.capacity()),
 		m_thrustLights(m_drivePositions.capacity() + _node["Lights"s].Size()),
 		m_particleSpawnCount(0.f),
@@ -54,7 +55,10 @@ namespace Game
 	{
 		auto& weaponsNode = _node["WeaponSockets"s];
 		for (int i = 0; i < m_weaponSockets.capacity(); ++i)
+		{
 			m_weaponSockets.emplace(THISACTOR, GetGeometryComponent().GetMesh().GetSocket(weaponsNode[i]));
+			m_weaponSocketGroups.emplace(WeaponGroup::Primary);
+		}
 
 		auto& drivesNode = _node["DriveSockets"s];
 		for (int i = 0; i < m_drivePositions.capacity(); ++i)
@@ -243,10 +247,14 @@ namespace Game
 	}
 
 	// ***************************************************************************** //
-	void Ship::Fire()
+	void Ship::Fire(WeaponGroup _weaponGroup)
 	{
-		for (auto& socket : m_weaponSockets)
+		for (size_t i = 0; i < m_weaponSockets.size(); ++i)
 		{
+			if (_weaponGroup != WeaponGroup::All && _weaponGroup != m_weaponSocketGroups[i])
+				continue;
+
+			auto& socket = m_weaponSockets[i];
 			Weapon* weapon = static_cast<Weapon*>(socket.GetAttached());
 			float d; // do not fire if the ship is in the line of fire
 			if (!weapon || GetCollisionComponent().RayCast(Ray(weapon->GetPosition(), weapon->GetRotationMatrix() * Vec3(0.f,0.f,1.f)), d)) 

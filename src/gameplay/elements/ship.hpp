@@ -92,9 +92,15 @@ namespace Game
 
 		void RegisterComponents(class SceneGraph& _sceneGraph);
 
+		enum struct WeaponGroup
+		{
+			All,
+			Primary,
+			Secondary
+		};
 		// Fire weapons in their current orientation.
 		// Checks whether they would hit this ship.
-		void Fire();
+		void Fire(WeaponGroup _weaponGroup = WeaponGroup::All);
 
 		// Rotates the weapons to so that when fired the projectile 
 		//has its endpoint on the given ray in front of the ship.
@@ -105,7 +111,9 @@ namespace Game
 		// Activates the given weapon in _slot, overwriting the current one.
 		// When a nullptr is given the slot is just deactivated.
 		void SetWeapon(int _slot, class Weapon* _weapon);
+		void SetWeaponGroup(int _slot, WeaponGroup _group) { m_weaponSocketGroups[_slot] = _group; }
 		const FixedArray<SocketComponent>& GetWeaponSockets() const { return m_weaponSockets; }
+		WeaponGroup GetWeaponGroup(int _slot) const { return m_weaponSocketGroups[_slot]; }
 		const Inventory& GetInventory() const { return m_inventory; }
 		Inventory& GetInventory() { return m_inventory; }
 
@@ -150,6 +158,7 @@ namespace Game
 		FixedArray<ParticleSystemComponent<Graphic::ParticleSystems::BASIC_SYSTEM, true>> m_thrustParticles;
 		FixedArray< PointLightComponent > m_thrustLights;
 		FixedArray<SocketComponent> m_weaponSockets;
+		FixedArray<WeaponGroup> m_weaponSocketGroups; // assign slots and control groups
 		AudioComponent m_audioComponent;
 
 		Inventory m_inventory;
