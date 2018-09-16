@@ -11,6 +11,7 @@ layout(std140) uniform Object
 	vec3 c_vPointOfOrigin;
 	float c_fLocalTime;
 	float c_fSize;
+	float c_fIntensity;
 };
 
 out vec3 vs_out_position;

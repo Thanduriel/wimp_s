@@ -31,6 +31,7 @@ namespace Game {
 
 		float GetLifeTimeLeft() const { return m_lifeTime; }
 		float GetLifeTimeMax() const { return m_lifeTimeMax; }
+		float GetLifeTimeRelative() const { return m_lifeTime / m_lifeTimeMax; }
 	private:
 		bool m_shouldTriggerOnDestroy;
 		float m_lifeTime;

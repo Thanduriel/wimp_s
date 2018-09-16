@@ -196,6 +196,7 @@ namespace Game
 			m_isRecharging = true;
 
 		m_shieldComponent.SetActive(m_shield > 0.f);
+		m_shieldComponent.SetIntensity(0.5f + m_shield / m_maxShield * 0.5f);
 
 		// todo: remove this from here and let SpecialMove be an Actor/Component
 		if (m_specialMove) m_specialMove->Process(_deltaTime);

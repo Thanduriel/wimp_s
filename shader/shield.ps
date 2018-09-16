@@ -14,6 +14,7 @@ layout(std140) uniform Object
 	vec3 c_vPointOfOrigin;
 	float c_fLocalTime;
 	float c_fSize;
+	float c_fIntensity;
 };
 
 const float MAX_ALPHA = 0.7;
@@ -27,7 +28,7 @@ void main()
 	float dy = abs(dif.y * dif.y - c_fLocalTime);
 	float d = abs(dot(dif,dif) - c_fLocalTime);
 	
-	float alpha = texture(noiseTex, (vs_out_texCoords + vec2(c_fLocalTime,c_fLocalTime))*c_fSize).x;
+	float alpha = c_fIntensity * texture(noiseTex, (vs_out_texCoords + vec2(c_fLocalTime,c_fLocalTime))*c_fSize).x;
 	if(alpha < EPSILON) discard;
 //	if(d > c_fSize) discard;
 	vec3 col = texture(diffuseTex, vs_out_texCoords).xyz;//vec3(0.1-1,0.1-1,0.9-1); // a * scale = a + b <=> a * (scale-1) = b

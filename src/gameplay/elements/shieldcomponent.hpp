@@ -14,11 +14,14 @@ namespace Game {
 		void ProcessComponent(float _deltaTime) override;
 
 		void Draw();
+
+		void SetIntensity(float _intensity) { m_intensity = _intensity; }
 	private:
 		float m_localTime;
 		float m_maxTime;
 		float m_size;
 		float m_speedMod;
+		float m_intensity;
 		const Graphic::Mesh& m_mesh;
 	};
 }

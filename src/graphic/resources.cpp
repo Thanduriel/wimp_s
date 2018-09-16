@@ -219,6 +219,7 @@ namespace Graphic {
 			uniformBuffers[ind]->AddAttribute("c_PointOfOrigin", UniformBuffer::ATTRIBUTE_TYPE::VEC3);
 			uniformBuffers[ind]->AddAttribute("c_LocalTime", UniformBuffer::ATTRIBUTE_TYPE::FLOAT);
 			uniformBuffers[ind]->AddAttribute("c_Size", UniformBuffer::ATTRIBUTE_TYPE::FLOAT);
+			uniformBuffers[ind]->AddAttribute("c_Intensity", UniformBuffer::ATTRIBUTE_TYPE::FLOAT);
 			break;
 		case UniformBuffers::DOMINANT_LIGHT:
 			uniformBuffers[ind] = new UniformBuffer("DominantDirectionLight");

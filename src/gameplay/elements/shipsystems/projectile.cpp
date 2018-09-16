@@ -46,12 +46,12 @@ namespace Game {
 	}
 
 	// ********************************************************************** //
-	const float BOLT_SIZE = 1.02f;
+	const float BOLT_SIZE = 0.8f;
 	Bolt::Bolt(const ei::Vec3& _position, const ei::Vec3& _velocity, float _damage, float _lifeTime, DamageType _damageType, const Utils::Color8U& _color)
 		: Projectile(_position, _velocity, _damage, _lifeTime, _damageType, false),
 		m_particles(THISACTOR, Vec3(0.f), Graphic::Resources::GetTexture("bolt")),
 		m_color(_color),
-		m_collisionComponent(THISACTOR, BOLT_SIZE, CollisionComponent::Type::Any 
+		m_collisionComponent(THISACTOR, BOLT_SIZE*0.2f, CollisionComponent::Type::Any 
 			| CollisionComponent::Type::Dynamic | CollisionComponent::Type::Projectile /*, ei::Box(Vec3(sqrt(-BOLT_SIZE/2.f)), Vec3(sqrt(BOLT_SIZE/2.f)))*/)
 	{
 	}
@@ -68,6 +68,9 @@ namespace Game {
 	void Bolt::Process(float _deltaTime)
 	{
 		Projectile::Process(_deltaTime);
+		const float timeLeft = m_lifeTimeComponent.GetLifeTimeRelative();
+		if(timeLeft < 0.95)
+			m_collisionComponent.SetBoundingRadius(BOLT_SIZE * (1.7f - timeLeft));
 		
 		m_particles.AddParticle(Vec3(0.f), //position
 			m_color.RGBA(),
@@ -86,7 +89,7 @@ namespace Game {
 	{
 		static const clunk::Sample& sound = Content::GetSound("small_boom");
 		FactoryActor::GetThreadLocalInstance().MakeP<Explosion>(m_position, m_damage / 4.f, 0.f, m_color, 
-			m_damageType == DamageType::Ion ? "shock" : "mist", sound);
+			m_damageType == DamageType::Ion ? "shock" : "shock", sound);
 	}
 
 	// ********************************************************************** //

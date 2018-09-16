@@ -54,6 +54,9 @@ namespace Game {
 		// ray cast with the bounding mesh
 		bool RayCast(const ei::Ray& _ray, float& _distance) const;
 
+		// Overwrites bounding radius and depended internal structures.
+		// Use only on simple collision components.
+		void SetBoundingRadius(float _radius);
 		float GetBoundingRadius() const { return m_boundingRadius; }
 		float GetBoundingRadiusSq() const { return m_boundingRadiusSq; }
 		const BoundingMesh& GetBoundingMesh() const { return m_boundingMesh; }

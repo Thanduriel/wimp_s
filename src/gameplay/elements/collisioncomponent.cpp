@@ -19,7 +19,6 @@ namespace Game {
 	BoundingMesh::BoundingMesh(const ei::Box& _box)
 	{
 		// create bounding mesh
-		// todo generate this from mesh
 		vertices.reserve(8);
 		const Vec3& min = _box.min;
 		const Vec3& max = _box.max;
@@ -289,6 +288,15 @@ namespace Game {
 		m_boundingMesh(_orig.m_boundingMesh),
 		m_isSimple(_orig.m_isSimple)
 	{}
+
+	// *************************************************************** //
+	void CollisionComponent::SetBoundingRadius(float _radius)
+	{
+		m_boundingRadius = _radius;
+		m_boundingRadiusSq = _radius * _radius;
+		m_AABBOrigin = Box(Vec3(-_radius), Vec3(_radius));
+		m_AABB = m_AABBOrigin;
+	}
 
 	// *************************************************************** //
 	void CollisionComponent::ProcessComponent(float _deltaTime)
