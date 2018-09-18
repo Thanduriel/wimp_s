@@ -69,6 +69,10 @@ namespace Generators {
 			}
 		}
 
+		/* GenerateValue()
+		 * Generate a random number v in [_min, _max]
+		 *  with v = _min + x * _stepSize.
+		 */
 		float GenerateValue(float _min, float _max, float _stepSize);
 
 		std::string m_name;

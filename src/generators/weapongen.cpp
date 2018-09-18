@@ -29,11 +29,11 @@ namespace Generators {
 	{ {
 		{"Burst", "cd increases with continues fire", true},
 		{"Twin", "fires additional projectile", true },
-		{"[EXT R]", "10% increased rate of fire", false},
-		{"[EXT D]", "12% increased damage", false},
-		{"[EXT C]", "15% reduced power consumption", false},
-		{"[EXT L]", "20% increased life time", false },
-		{"Short", "40% reduced life time, 50% increased damage", true },
+		{"[EXT R]", "%.0f%% increased rate of fire", false},
+		{"[EXT D]", "%.0f%% increased damage", false},
+		{"[EXT C]", "%.0f%% reduced power consumption", false},
+		{"[EXT L]", "%.0f%% increased life time", false },
+		{"Short", "40%% reduced life time, 50% increased damage", true },
 		{"of High Power", "2x damage, 2x power consumption", false},
 		{"Gatling", "fire rate increases with continues fire", false},
 		{ "Iterative", "every 3rth shot deals 2xdamage", true },
@@ -147,6 +147,7 @@ namespace Generators {
 
 		float shieldBoost = 0.f;
 		float energyBoost = 0.f;
+		float temp = 0.f;
 
 		Weapon::FireFunction fireFn;
 		Weapon::ReloadFunction reloadFn;
@@ -173,13 +174,25 @@ namespace Generators {
 			case WeaponTraitType::Gatling: lateTraits.push_back(Gatling);
 				hasTrait[Burst] = 1;
 				break;
-			case WeaponTraitType::ExtR: cooldown *= 0.9f;
+			case WeaponTraitType::ExtR: 
+				temp = GenerateValue(0.05f, 0.15f, 0.01f);
+				cooldown *= (1.f-temp);
+				AddTrait(WEAPON_TRAITS[trait], 100.f * temp);
 				break;
 			case WeaponTraitType::ExtD: damage *= 1.12f;
+				temp = GenerateValue(0.10f, 0.25f, 0.01f);
+				damage *= (1.f + temp);
+				AddTrait(WEAPON_TRAITS[trait], 100.f * temp);
 				break;
-			case WeaponTraitType::ExtC: eCost *= 0.85f;
+			case WeaponTraitType::ExtC: 
+				temp = GenerateValue(0.10f, 0.20f, 0.01f);
+				eCost *= (1.f - temp);
+				AddTrait(WEAPON_TRAITS[trait], 100.f * temp);
 				break;
 			case WeaponTraitType::ExtT: lifeTime *= 1.2f;
+				temp = GenerateValue(0.40f, 0.50f, 0.05f);
+				lifeTime *= (1.f + temp);
+				AddTrait(WEAPON_TRAITS[trait], 100.f * temp);
 				break;
 			case WeaponTraitType::Short: lifeTime *= 0.6f; damage *= 1.4f;
 				break;
@@ -206,11 +219,11 @@ namespace Generators {
 				damageType = DamageType::Physical;
 				break;
 			case WeaponTraitType::ShieldMax:
-				shieldBoost = GenerateValue(3.f, 10.f, 1.f);
+				shieldBoost = GenerateValue(3.f, 10.f, 1.f) + _power / 10.f * 2.f;
 				AddTrait(WEAPON_TRAITS[trait], shieldBoost);
 				break;
 			case WeaponTraitType::EnergyMax: 
-				energyBoost = GenerateValue(1.f, 2.5f, 0.1f);
+				energyBoost = GenerateValue(1.f, 2.5f, 0.1f) + _power / 10.f * 1.2f;
 				AddTrait(WEAPON_TRAITS[trait], energyBoost);
 				break;
 			default:
