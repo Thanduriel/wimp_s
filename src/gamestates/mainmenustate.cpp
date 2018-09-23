@@ -22,7 +22,7 @@ namespace GameStates
 
 		using namespace Graphic;
 	
-		m_hud.m_startButton->SetOnMouseUp([&]() { m_newState = new TransitionState(Game::Level::Act01, nullptr); });
+		m_hud.m_startButton->SetOnMouseUp([&]() { m_newState = new TransitionState(Game::Level::Act02, nullptr); });
 		m_hud.m_optionsButton->SetOnMouseUp([&]() {m_newState = new SettingsState();});
 		m_hud.m_exitButton->SetOnMouseUp([&]() { m_isFinished = true; });
 	}

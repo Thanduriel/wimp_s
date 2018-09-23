@@ -6,9 +6,9 @@
 
 namespace Game {
 	
-	GeometryComponent::GeometryComponent(const Actor& _actor, const std::string& _pFile)
+	GeometryComponent::GeometryComponent(const Actor& _actor, const std::string& _pFile, const std::string& _textureName)
 		: ConstActorComponent(_actor),
-		m_mesh(&Graphic::Resources::GetMesh(_pFile))
+		m_mesh(&Graphic::Resources::GetMesh(_pFile, _textureName))
 	{}
 
 	GeometryComponent::GeometryComponent(const Actor& _actor, const GeometryComponent& _orig)
@@ -32,8 +32,8 @@ namespace Game {
 
 	// ********************************************************************** //
 	namespace Details {
-		ModelComponentImpl::ModelComponentImpl(Actor& _actor, const std::string& _meshName)
-			: GeometryComponent(_actor, _meshName),
+		ModelComponentImpl::ModelComponentImpl(const std::string& _meshName, Actor& _actor, const std::string& _textureName)
+			: GeometryComponent(_actor, _meshName, _textureName),
 			CollisionComponent(_actor, GetMesh().GetMeshBounds().boundingRadius,
 				ei::Box(GetMesh().GetMeshBounds().lowerBound, GetMesh().GetMeshBounds().upperBound),
 				CollisionComponent::Type::Any | CollisionComponent::Type::Solid | CollisionComponent::Type::Dynamic)
@@ -53,9 +53,9 @@ namespace Game {
 	}
 
 	// ********************************************************************** //
-	Model::Model(const std::string& _pFile, const ei::Vec3&_position, const ei::Quaternion&_rotation, float _mass)
+	Model::Model(const std::string& _pFile, const ei::Vec3&_position, const ei::Quaternion&_rotation, float _mass, const std::string& _textureName)
 		: DynamicActor(_position, _rotation),
-		m_component(THISACTOR, _pFile)
+		m_component(_pFile, THISACTOR, _textureName)
 	{
 		m_mass = _mass;
 		SetInertiaTensor(m_component.ComputeInertiaTensor(m_mass));

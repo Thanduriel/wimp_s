@@ -15,7 +15,8 @@ namespace Graphic {
 	SamplerState* Resources::samplers[];
 	Font* Resources::fonts[];
 	Jo::Files::MetaFileWrapper* Resources::textureMap;
-	std::unordered_map<std::string, Mesh*> Resources::meshes;
+	std::unordered_map<std::pair<std::string, std::string>, Mesh*> Resources::meshes;
+	std::unordered_map<std::string, RawMesh*> Resources::rawMeshes;
 	std::unordered_map<std::string, Texture*> Resources::textures;
 
 
@@ -296,14 +297,29 @@ namespace Graphic {
 	}
 
 	// ****************************************************** //
-	Mesh& Resources::GetMesh(const std::string& _name)
+	Mesh& Resources::GetMesh(const std::string& _name, const std::string& _textureName)
 	{
-		auto it = meshes.find(_name);
+		auto it = meshes.find(std::pair(_name,_textureName));
 		Mesh* mesh;
 		if (it == meshes.end())
 		{
-			mesh = new Mesh("models/" + _name + ".wim");
-			meshes.emplace(_name, mesh);
+			mesh = new Mesh(_name, _textureName);
+			meshes.emplace(std::pair(_name, _textureName), mesh);
+		}
+		else mesh = it->second;
+
+		return *mesh;
+	}
+
+	// ****************************************************** //
+	RawMesh& Resources::GetRawMesh(const std::string& _name)
+	{
+		auto it = rawMeshes.find(_name);
+		RawMesh* mesh;
+		if (it == rawMeshes.end())
+		{
+			mesh = new RawMesh("models/" + _name + ".wim");
+			rawMeshes.emplace(_name, mesh);
 		}
 		else mesh = it->second;
 
@@ -343,6 +359,9 @@ namespace Graphic {
 		if (textureMap) delete textureMap;
 
 		for (auto& mesh : meshes)
+			delete mesh.second;
+
+		for (auto& mesh : rawMeshes)
 			delete mesh.second;
 
 		for (auto& texture : textures)

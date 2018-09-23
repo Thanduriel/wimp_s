@@ -10,32 +10,15 @@ namespace Graphic {
 
 	using namespace ei;
 
-	
-	Mesh::Mesh(const std::string& _pFile)
+	RawMesh::RawMesh(const std::string& _pFile)
 		: m_vertices(VertexArrayBuffer::PrimitiveType::TRIANGLE_LIST,
-		{ {VertexAttribute::VEC3, 0}, {VertexAttribute::VEC3, 1}, {VertexAttribute::VEC2, 2} })
-		,m_texture(nullptr)
+			{ {VertexAttribute::VEC3, 0}, {VertexAttribute::VEC3, 1}, {VertexAttribute::VEC2, 2} })
 	{
 		Utils::MeshLoader loader;
-		std::string texName;
-		loader.Load(_pFile, m_meshBounds, texName, std::bind(&Mesh::Load, this, std::placeholders::_1, std::placeholders::_2));
-		m_texture = &Resources::GetTexture(texName);
+		loader.Load(_pFile, m_meshBounds, m_textureName, std::bind(&RawMesh::Load, this, std::placeholders::_1, std::placeholders::_2));
 	}
 
-
-	void Mesh::Draw() const
-	{
-		if(m_texture) Device::SetTexture(*m_texture, 0);
-		Device::DrawVertices(m_vertices, 0, m_vertices.GetNumVertices());
-	}
-
-	const ei::Vec3& Mesh::GetSocket(const std::string& _name) const
-	{
-		Assert(m_sockets.find(_name) != m_sockets.end(), "No socket with the name " + _name + " found.");
-		return m_sockets.at(_name);
-	}
-
-	void Mesh::Load(std::istream& _stream, size_t _numVertices)
+	void RawMesh::Load(std::istream& _stream, size_t _numVertices)
 	{
 		using namespace Utils;
 		size_t s = sizeof(Vertex) * _numVertices;
@@ -57,4 +40,23 @@ namespace Graphic {
 			m_sockets.emplace(name, pos);
 		}
 	}
+
+	Mesh::Mesh(const std::string& _name, const std::string& _texture)
+		: m_geometry(Resources::GetRawMesh(_name))
+	{
+		m_texture = &Resources::GetTexture(_texture != "" ? _texture : m_geometry.m_textureName);
+	}
+
+	void Mesh::Draw() const
+	{
+		if (m_texture) Device::SetTexture(*m_texture, 0);
+		Device::DrawVertices(m_geometry.m_vertices, 0, m_geometry.m_vertices.GetNumVertices());
+	}
+
+	const ei::Vec3& Mesh::GetSocket(const std::string& _name) const
+	{
+		Assert(m_geometry.m_sockets.find(_name) != m_geometry.m_sockets.end(), "No socket with the name " + _name + " found.");
+		return m_geometry.m_sockets.at(_name);
+	}
+
 }

@@ -1,6 +1,7 @@
 #pragma once
 
 #include <unordered_map>
+#include "utils/stdextensions.hpp"
 
 #include "predeclarations.hpp"
 
@@ -71,7 +72,9 @@ namespace Graphic {
 		static Font& GetFont(Fonts _font);
 
 		static Jo::Files::MetaFileWrapper& GetTextureMap();
-		static Mesh& GetMesh(const std::string& _name);
+		// the texture can be overwritten
+		static Mesh& GetMesh(const std::string& _name, const std::string& _textureName = "");
+		static RawMesh& GetRawMesh(const std::string& _name);
 		static Texture& GetTexture(const std::string& _name);
 
 		static void Unload();
@@ -81,7 +84,8 @@ namespace Graphic {
 		static SamplerState* samplers[(unsigned)SamplerStates::COUNT];
 		static Font* fonts[(unsigned)Fonts::COUNT];
 		static Jo::Files::MetaFileWrapper* textureMap;
-		static std::unordered_map<std::string, Mesh*> meshes;
+		static std::unordered_map<std::pair<std::string, std::string>, Mesh*> meshes;
+		static std::unordered_map<std::string, RawMesh*> rawMeshes;
 		static std::unordered_map<std::string, Texture*> textures;
 	};
 }

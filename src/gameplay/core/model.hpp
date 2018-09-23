@@ -10,7 +10,7 @@ namespace Game {
 	class GeometryComponent : public ConstActorComponent
 	{
 	public:
-		GeometryComponent(const Actor& _actor, const std::string& _pFile);
+		GeometryComponent(const Actor& _actor, const std::string& _pFile, const std::string& _textureName = "");
 		GeometryComponent(const Actor& _actor, const GeometryComponent& _orig);
 
 		void Draw() const;
@@ -25,7 +25,8 @@ namespace Game {
 		class ModelComponentImpl : public GeometryComponent, public CollisionComponent
 		{
 		public:
-			ModelComponentImpl(Actor& _actor, const std::string& _meshName);
+			// different order as both have the same signature
+			ModelComponentImpl(const std::string& _meshName, Actor& _actor, const std::string& _textureName = "");
 			ModelComponentImpl(Actor& _actor, const std::string& _meshName, const std::string& _boundingMeshName);
 			ModelComponentImpl(Actor& _actor, const ModelComponentImpl& _other);
 		private:
@@ -41,7 +42,7 @@ namespace Game {
 	{
 	public:
 		// @param _pFile is the name of the mesh file without ending
-		Model(const std::string& _pFile, const ei::Vec3&_position, const ei::Quaternion&_rotation, float _mass = 1.f);
+		Model(const std::string& _pFile, const ei::Vec3&_position, const ei::Quaternion&_rotation, float _mass = 1.f, const std::string& _textureName = "");
 		Model(const std::string& _meshName, const std::string& _boundingMeshName, const ei::Vec3&_position, const ei::Quaternion& _rotation, float _mass = 1.f);
 		Model(const Model& _orig);
 

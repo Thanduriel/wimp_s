@@ -16,6 +16,8 @@ namespace Acts {
 
 	const Vec3 PLAYER_SPAWN = Vec3(0.f);
 	const Vec3 MEETING_POSITION = Vec3(100.f, 600.f, 3000.f);
+	const Vec3 PLANET_POSITION = Vec3(1000.f, 3138.f, 15000.f);
+
 	Act02::Act02(SceneGraph& _sceneGraph, Ship& _player, GameStates::MainHud& _hud)
 		: Map(_sceneGraph, _player, _hud),
 		m_finishDescription("You won! There is nothing left to do.")
@@ -27,6 +29,11 @@ namespace Acts {
 		Graphic::LightSystem::SetDominantLight(ei::normalize(Vec3(-3457.f, -1500.f, 20000.f) - PLAYER_SPAWN));
 		Ship& boss = CreateShip("BattleShip", MEETING_POSITION, 7, 13.f);
 		Actor::Handle bossHandle = boss.GetHandle();
+
+		// background
+		Model& planet = *new Model("planet", PLANET_POSITION, ei::qidentity(), 10000.f, "planet1");
+		planet.SetAngularVelocity(Vec3(0.01f, 0.00f, 0.01f));
+		m_sceneGraph.Add(planet);
 
 		auto Aaction = CREATE_ACTION
 		{

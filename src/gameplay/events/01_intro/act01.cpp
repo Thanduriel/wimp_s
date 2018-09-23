@@ -24,6 +24,7 @@ namespace Acts {
 	const Vec3 BASE_POSITON = Vec3(-240.f, 50.f, 820.f);
 	const Vec3 DRONE_SPAWN = Vec3(350.f, 24.f, 600.f);
 	const Vec3 EXIT_POSITION = Vec3(-1800.f, 38.f, 790.f);
+	const Vec3 PLANET_POSITION = Vec3(-18000.f, 1138.f, 17790.f);
 
 	Act01::Act01(SceneGraph& _sceneGraph, Ship& _player, GameStates::MainHud& _hud)
 		: Map(_sceneGraph, _player, _hud),
@@ -37,6 +38,11 @@ namespace Acts {
 		Ship& researchBase = *new Ship("ResearchBase", BASE_POSITON);
 		researchBase.SetTargetAngularVelocity(Vec3(0.f, 0.2f, 0.f));
 		m_sceneGraph.Add(researchBase);
+
+		//test
+		Model& planet = *new Model("planet", PLANET_POSITION, ei::qidentity());
+		planet.SetAngularVelocity(Vec3(0.01f, 0.00f, 0.01f));
+		m_sceneGraph.Add(planet);
 
 		// some simple weapons
 		Inventory inventory;

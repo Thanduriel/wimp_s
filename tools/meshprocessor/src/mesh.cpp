@@ -145,7 +145,7 @@ const std::unordered_map<std::string, Mesh::Format> Mesh::FORMAT_NAMES =
 			}
 		}
 
-		// Texture loading (Diffuse and Specular maps)
+		// Texture loading
 		if (mesh->mMaterialIndex >= 0)
 		{
 			aiMaterial *material = _scene->mMaterials[mesh->mMaterialIndex];
@@ -262,5 +262,5 @@ const std::unordered_map<std::string, Mesh::Format> Mesh::FORMAT_NAMES =
 			}
 		}
 
-		return std::move(vertices);
+		return vertices;
 	}

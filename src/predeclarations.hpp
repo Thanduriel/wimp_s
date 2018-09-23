@@ -28,7 +28,7 @@ namespace Graphic {
 	class DataBuffer;
 	class VertexArrayBuffer;
 	class Mesh;
-
+	class RawMesh;
 } // namespace Graphic
 
 namespace Control {
