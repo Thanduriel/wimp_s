@@ -20,15 +20,19 @@ namespace Game {
 	class AudioSystem
 	{
 	public:
-		static void Initialize();
+		static void Initialize(float _volume);
 		static void Close();
 
 		static clunk::Context& GetContext();
 		static AudioComponent& GetGlobalAudio() { return *s_audioComponent; }
+
+		static void SetVolume(float _volume);
+		static float GetVolume() { return s_masterVolume; }
 	private:
 
 		static clunk::sdl::Backend* s_backend;
 		static AudioComponent* s_audioComponent;
+		static float s_masterVolume;
 
 		friend class AudioComponent;
 		friend class Wimp_s;

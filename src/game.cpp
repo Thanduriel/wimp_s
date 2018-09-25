@@ -64,7 +64,8 @@ Wimp_s::Wimp_s()
 	Control::InputManager::Initialize(Graphic::Device::GetWindow(), m_config[std::string("Input")]);//config[std::string("Input")]
 
 	LightSystem::Initialize();
-	Game::AudioSystem::Initialize();
+	auto& csound = m_config["Sound"];
+	Game::AudioSystem::Initialize(csound["MasterVolume"s].Get(1.f));
 
 	// load other properties
 	auto& cgame = m_config["Game"];
@@ -159,6 +160,7 @@ void Wimp_s::SaveConfig()
 {
 	Control::InputManager::Save(m_config[std::string("Input")]);
 	m_config["Game"s]["AimAssist"s] = Control::PlayerController::HAS_AIM_ASSIST;
+	m_config["Sound"s]["MasterVolume"s] = static_cast<double>(Game::AudioSystem::GetVolume());
 
 	try {
 		Jo::Files::HDDFile file("config.json", Jo::Files::HDDFile::OVERWRITE);
@@ -203,4 +205,7 @@ void Wimp_s::BuildDefaultConfig()
 
 	auto& cgame = m_config[std::string("Game")];
 	cgame["AimAssist"s] = false;
+
+	auto& csound = m_config["Sound"];
+	csound["MasterVolume"s] = 1.0;
 }

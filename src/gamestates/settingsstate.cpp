@@ -4,6 +4,7 @@
 #include "graphic/core/device.hpp"
 #include "control/playercontroller.hpp"
 #include "game.hpp"
+#include "gameplay/elements/audiocomponent.hpp"
 
 namespace GameStates {
 	using namespace Control;
@@ -31,6 +32,11 @@ namespace GameStates {
 		s = std::to_string(InputManager::GetMouseSensitivity());
 		s.resize(7);
 		m_hud.m_mouseSensitivity->SetText(s);
+
+		// volume
+		s = std::to_string(Game::AudioSystem::GetVolume());
+		s.resize(7);
+		m_hud.m_masterVolume->SetText(s);
 
 		// aim assist
 		m_hud.m_aimAssistButton->SetCaption(m_enableAimAssist ? "aim assist: ON " : "aim assist: OFF");
@@ -77,6 +83,9 @@ namespace GameStates {
 			try {
 				float f = std::stof(m_hud.m_mouseSensitivity->GetText());
 				InputManager::SetMouseSensitivtiy(std::clamp(f, 0.1f, 10.f));
+
+				f = std::stof(m_hud.m_masterVolume->GetText());
+				Game::AudioSystem::SetVolume(f);
 
 				f = std::stof(m_hud.m_frameCountTarget->GetText());
 				f = std::clamp(f, 30.f, 10000.f);

@@ -25,5 +25,6 @@ namespace GameStates {
 		bool m_isFullScreen;
 		bool m_enableAimAssist;
 		int m_currentResolution;
+		float m_masterVolume;
 	};
 }

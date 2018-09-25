@@ -30,6 +30,10 @@ namespace GameStates {
 		label2.SetDefaultSize(0.6f);
 	//	label2.SetPosition(Vec2(-label2.GetRectangle().x, 0.f));
 
+		m_masterVolume = &CreateScreenElement<EditField>(PixelOffset(0, -20), PixelOffset(200, 50), DefP::TopLeft, Anchor(DefP::BotLeft, m_frameCountTarget));
+		TextRender& label3 = CreateScreenElement<TextRender>(Vec2(0.f), Anchor(DefP::MidLeft, m_masterVolume), nullptr, "master volume: ", DefP::MidRight);
+		label3.SetDefaultSize(0.6f);
+
 		TextRender& note = CreateScreenElement<TextRender>(Vec2(0.f), Anchor(DefP::TopLeft, m_applyButton), nullptr, "|changes to video settings require a restart", DefP::BotLeft);
 		note.SetDefaultSize(18_px);
 	}

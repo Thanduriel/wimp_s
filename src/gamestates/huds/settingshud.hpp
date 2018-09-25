@@ -18,6 +18,8 @@ namespace GameStates {
 		Graphic::Button* m_fullScreenButton;
 		Graphic::EditField* m_frameCountTarget;
 
+		Graphic::EditField* m_masterVolume;
+
 		friend class SettingsState;
 	};
 }

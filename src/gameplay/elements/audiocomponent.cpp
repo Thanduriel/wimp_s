@@ -11,8 +11,9 @@ namespace Game {
 
 	clunk::sdl::Backend* AudioSystem::s_backend;
 	AudioComponent* AudioSystem::s_audioComponent;
+	float AudioSystem::s_masterVolume;
 
-	void AudioSystem::Initialize()
+	void AudioSystem::Initialize(float _volume)
 	{
 		static clunk::sdl::Backend backend(48000, 2, 2048);
 		s_backend = &backend;
@@ -27,6 +28,9 @@ namespace Game {
 		context.set_distance_model(dm);
 		context.get_listener()->update_view(clunk::v3f(0.f, 0.f, 1.f), clunk::v3f(0.f,1.f, 0.f));
 		context.set_max_sources(16);
+
+		SetVolume(_volume);
+		context.set_fx_volume(_volume);
 
 		backend.start();
 
@@ -43,6 +47,12 @@ namespace Game {
 	{
 		Assert(s_backend, "The audio system needs to be initialized first.");
 		return s_backend->get_context();
+	}
+
+	void AudioSystem::SetVolume(float _volume)
+	{
+		s_masterVolume = _volume;
+		s_backend->get_context().set_fx_volume(s_masterVolume);
 	}
 
 	AudioComponent::AudioComponent(const Actor& _actor, const ei::Vec3& _position)
