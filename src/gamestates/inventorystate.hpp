@@ -35,6 +35,7 @@ namespace GameStates
 		Control::Camera m_oldCamera;
 
 		int m_money;
+		bool m_shouldPlaySounds;
 
 		std::array<int, Upgrades::COUNT>& m_upgradeLvls;
 

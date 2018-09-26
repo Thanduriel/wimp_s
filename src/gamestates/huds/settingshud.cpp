@@ -16,7 +16,7 @@ namespace GameStates {
 
 		m_aimAssistButton = &CreateScreenElement<MenuButton>("menuBtn", PixelOffset(0, 300), Vec2(0.f), DefinitionPoint::BotMid, Anchor(DefinitionPoint::MidMid, this), "aim assist: OFF");
 		m_aimAssistButton->Scale(Vec2(0.5f, 0.5f));
-		m_mouseSensitivity = &CreateScreenElement<EditField>(PixelOffset(0, -20), PixelOffset(200, 50), DefP::TopLeft, Anchor(DefP::BotMid, m_aimAssistButton));
+		m_mouseSensitivity = &CreateScreenElement<EditField>(PixelOffset(0, -20), PixelOffset(140, 50), DefP::TopLeft, Anchor(DefP::BotMid, m_aimAssistButton));
 		TextRender& label = CreateScreenElement<TextRender>(Vec2(0.f), Anchor(DefP::MidLeft, m_mouseSensitivity), nullptr, "mouse sensitivity: ", DefP::MidRight);
 		label.SetDefaultSize(0.6f);
 	//	label.SetPosition(Vec2(-label.GetRectangle().x, 0.f));
@@ -25,12 +25,12 @@ namespace GameStates {
 		m_resolutionButton->Scale(Vec2(0.5f, 0.5f));
 		m_fullScreenButton = &CreateScreenElement<MenuButton>("menuBtn", PixelOffset(0, -20), Vec2(0.f), DefinitionPoint::TopMid, Anchor(DefinitionPoint::BotMid, m_resolutionButton), "fullscreen: OFF");
 		m_fullScreenButton->Scale(Vec2(0.5f, 0.5f));
-		m_frameCountTarget = &CreateScreenElement<EditField>(PixelOffset(0, -20), PixelOffset(200, 50), DefP::TopLeft, Anchor(DefP::BotMid, m_fullScreenButton));
+		m_frameCountTarget = &CreateScreenElement<EditField>(PixelOffset(0, -20), PixelOffset(140, 50), DefP::TopLeft, Anchor(DefP::BotMid, m_fullScreenButton));
 		TextRender& label2 = CreateScreenElement<TextRender>(Vec2(0.f), Anchor(DefP::MidLeft, m_frameCountTarget), nullptr, "target frame rate: ", DefP::MidRight);
 		label2.SetDefaultSize(0.6f);
 	//	label2.SetPosition(Vec2(-label2.GetRectangle().x, 0.f));
 
-		m_masterVolume = &CreateScreenElement<EditField>(PixelOffset(0, -20), PixelOffset(200, 50), DefP::TopLeft, Anchor(DefP::BotLeft, m_frameCountTarget));
+		m_masterVolume = &CreateScreenElement<EditField>(PixelOffset(0, -20), PixelOffset(140, 50), DefP::TopLeft, Anchor(DefP::BotLeft, m_frameCountTarget));
 		TextRender& label3 = CreateScreenElement<TextRender>(Vec2(0.f), Anchor(DefP::MidLeft, m_masterVolume), nullptr, "master volume: ", DefP::MidRight);
 		label3.SetDefaultSize(0.6f);
 

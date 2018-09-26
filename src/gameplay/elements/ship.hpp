@@ -13,6 +13,11 @@
 #include "shieldcomponent.hpp"
 #include "audiocomponent.hpp"
 
+namespace Control
+{
+	class Controller;
+}
+
 namespace Game
 {
 	using namespace std;
@@ -123,6 +128,9 @@ namespace Game
 	private:
 		// actual constructor
 		Ship(const Jo::Files::MetaFileWrapper::Node& _node, const Vec3& _position);
+
+		Control::Controller* m_controller;
+		friend class Control::Controller; // give ability to set m_controller on possesion
 
 		// the power of acceleration
 		float m_thrust;

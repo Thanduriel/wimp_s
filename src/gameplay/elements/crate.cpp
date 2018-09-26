@@ -2,6 +2,8 @@
 #include "gameplay/scenegraph.hpp"
 #include "gameplay/elements/ship.hpp"
 #include "generators/random.hpp"
+#include "gameplay/content.hpp"
+#include "gameplay/elements/audiocomponent.hpp"
 
 namespace Game {
 
@@ -26,6 +28,8 @@ namespace Game {
 	{
 		Crate& crate = static_cast<Crate&>(_self);
 		Ship& ship = static_cast<Ship&>(_other);
+		static const auto& pickUpSound = Content::GetSound("pickup");
+		AudioSystem::GetGlobalAudio().Play(pickUpSound);
 		ship.GetInventory().Transfer(crate.m_inventory);
 		crate.Destroy();
 	}

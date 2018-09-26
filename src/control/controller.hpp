@@ -19,6 +19,9 @@ namespace Control
 
 		Game::Ship& GetShip() const { return m_ship; };
 
+		// controlled ship takes damage
+		virtual void OnDamageTaken(float _amount, Game::Actor& _source, Game::DamageType _type) {};
+
 		static void SetSceneGraph(Game::SceneGraph& _graph) { s_sceneGraph = &_graph; }
 
 		//@return the current angle

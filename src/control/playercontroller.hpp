@@ -37,6 +37,8 @@ namespace Control
 		// The basic processing method called once per frame
 		void ProcessComponent(float _deltaTime, const Game::SceneGraph& _sceneGraph) override;
 
+		void OnDamageTaken(float _amount, Game::Actor& _source, Game::DamageType _type) override;
+
 		void MouseMove(float _dx, float _dy);
 		void KeyClick(int _key);
 		void KeyDown(int _key, int _modifiers);

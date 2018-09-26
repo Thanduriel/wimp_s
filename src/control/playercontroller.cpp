@@ -25,7 +25,9 @@ namespace Control
 	using namespace ei;
 
 	bool PlayerController::HAS_AIM_ASSIST;
+
 	const float TACTICALCAM_DIST = 52.f;
+	constexpr float SCREEN_SHAKE_THRESHOLD = 0.05f;
 
 	PlayerController::PlayerController(Game::Ship& _ship, GameStates::MainHud& _hud, GameTimeControl& _params)
 		: Controller(_ship, _hud),
@@ -114,6 +116,14 @@ namespace Control
 	}
 
 	// ************************************************************ //
+	void PlayerController::OnDamageTaken(float _amount, Game::Actor& _actor, Game::DamageType _type)
+	{
+		const float relativeDam = std::min(1.f, _amount / m_ship.GetMaxHealth());
+		if(relativeDam > SCREEN_SHAKE_THRESHOLD) 
+			Control::g_camera.PlayScreenShake({ 0.4f / 0.38f * relativeDam, 3.f, relativeDam / 2.f });
+	}
+
+	// ************************************************************ //
 	void PlayerController::MouseMove(float _dx, float _dy)
 	{
 		Ray ray = g_camera.GetRay(InputManager::GetCursorPosScreenSpace());
@@ -134,6 +144,7 @@ namespace Control
 	{
 		if (InputManager::IsVirtualKey(_key, VirtualKey::SWITCH_TACTICAL))
 		{
+		//	Control::g_camera.Detach();
 			if (m_targetingMode == TargetingMode::Normal)
 			{
 				Game::SpecialMove* sm = m_ship.GetSpecialMove();

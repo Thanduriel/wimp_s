@@ -11,6 +11,8 @@
 #include "math/extensions.hpp"
 #include "utils/stringutils.hpp"
 #include "GLFW/glfw3.h"
+#include "gameplay/elements/audiocomponent.hpp"
+#include "gameplay/content.hpp"
 
 namespace GameStates
 {
@@ -30,7 +32,8 @@ namespace GameStates
 		: m_ship(_ship),
 		m_oldCamera(Control::g_camera),
 		m_money(_ship.GetInventory().GetCredits()),
-		m_upgradeLvls(_ship.GetUpgradeLevels())
+		m_upgradeLvls(_ship.GetUpgradeLevels()),
+		m_shouldPlaySounds(false)
 	{
 		using namespace Game;
 		using namespace ei;
@@ -75,6 +78,8 @@ namespace GameStates
 			}
 		});
 
+		// one drop field per item socket
+		static const auto& dropSound = Content::GetSound("select_item");
 		int i = 0;
 		ei::Mat4x4 transform = g_camera.GetViewProjection() * m_ship.GetTransformation();
 		for (auto& socket : _ship.GetWeaponSockets())
@@ -87,6 +92,8 @@ namespace GameStates
 			auto& socketField = m_hud.CreateScreenElement<DropField>("box_uncut", Vec2(pos.x, pos.y), PixelOffset(84, 84), DefP::MidMid, ScreenPosition::Anchor(),
 				[&, i](DropField& _this, DraggableTexture& _tex)
 			{
+				// do not play the sound when opening the inventory and displaying the current equiped items
+				if(m_shouldPlaySounds) AudioSystem::GetGlobalAudio().Play(dropSound);
 				// if the field already contains an element put that one back to the main inventory
 				if (_this.GetElements().size())
 				{
@@ -102,6 +109,7 @@ namespace GameStates
 			});
 			m_hud.m_weaponFields.push_back(&socketField);
 
+			// put in currently equiped weapons
 			if (const Weapon* weapon = static_cast<const Weapon*>(socket.GetAttached()))
 			{
 				auto it = itemIcons.find(static_cast<const Item*>(weapon));
@@ -140,6 +148,9 @@ namespace GameStates
 			// money total changed
 			UpdateUpgradeLabels();
 		});
+
+		// now further equips are done by the player
+		m_shouldPlaySounds = true;
 	}
 
 	InventoryState::~InventoryState()

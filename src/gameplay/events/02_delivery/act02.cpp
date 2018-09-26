@@ -32,7 +32,7 @@ namespace Acts {
 
 		// background
 		Model& planet = *new Model("planet", PLANET_POSITION, ei::qidentity(), 10000.f, "planet1");
-		planet.SetAngularVelocity(Vec3(0.01f, 0.00f, 0.01f));
+		planet.SetAngularVelocity(Vec3(0.01f, 0.02f, 0.0f));
 		m_sceneGraph.Add(planet);
 
 		auto Aaction = CREATE_ACTION

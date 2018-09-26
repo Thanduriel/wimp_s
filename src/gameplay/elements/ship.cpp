@@ -8,6 +8,7 @@
 #include "crate.hpp"
 #include "explosion.hpp"
 #include "clunk/clunk.h"
+#include "control/controller.hpp"
 
 namespace Game
 {
@@ -51,7 +52,8 @@ namespace Game
 		m_particleSpawnCount(0.f),
 		m_audioComponent(THISACTOR),
 		m_specialMove(),
-		m_upgradeLevels{}
+		m_upgradeLevels{},
+		m_controller(nullptr)
 	{
 		auto& weaponsNode = _node["WeaponSockets"s];
 		for (int i = 0; i < m_weaponSockets.capacity(); ++i)
@@ -134,7 +136,9 @@ namespace Game
 		m_shieldWait = 0;
 		m_isRecharging = false;
 
-		return (_amount - shieldDam) * (_type == DamageType::Physical ? 1.5f : 1.f);
+		const float finalDamage = (_amount - shieldDam) * (_type == DamageType::Physical ? 1.5f : 1.f);
+		if (m_controller) m_controller->OnDamageTaken(finalDamage, _source, _type);
+		return finalDamage;
 	}
 
 	// ****************************************************************** //

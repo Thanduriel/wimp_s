@@ -59,10 +59,19 @@ namespace Control {
 
 		// Returns the current view frustum.
 		ei::FastFrustum GetViewFrustum() const;
+
+		struct ScreenShake
+		{
+			float duration;
+			float frequency; //< how often the direction changes
+			float strength; //< average angle in radiants  of divergence
+		};
+		void PlayScreenShake(const ScreenShake& _info);
 	private:
 		void ProcessFreeMove(float _deltaTime);
 		void MoveTo(const ei::Vec3& _position, const ei::Quaternion& _rotation, float _time = 0.6f);
 		void SetFollowOrientation(float _deltaTime);
+		void ProcessScreenShake(float _deltaTime);
 
 		float m_fov;
 		ei::Mat4x4 m_projection;
@@ -80,6 +89,11 @@ namespace Control {
 		ei::Vec3 m_currentOffset;
 		float m_speed;
 		float m_acceleration;
+
+		float m_animationTime;
+		ei::Quaternion m_rotationShake;
+		ScreenShake m_screenShakeInfo;
+		float m_sign;
 	};
 
 	extern Camera g_camera; // global default camera used for scene rendering

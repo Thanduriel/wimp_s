@@ -7,13 +7,15 @@ namespace GameStates {
 	using namespace ei;
 
 	TransitionHud::TransitionHud()
-		: m_titleLabel(PixelOffset(0, -20), Anchor(DefP::TopMid, this)),
+		: m_background("loading", Vec2(0.0f, 0.0f), Vec2(2.0f, 2.0f), DefinitionPoint::MidMid, Anchor(DefinitionPoint::MidMid, this)),
+		m_titleLabel(PixelOffset(0, -20), Anchor(DefP::TopMid, this)),
 		m_subtitleLabel(PixelOffset(0, -110), Anchor(DefP::TopMid, this)),
 		m_storyLabel(Vec2(0, -0.6f), Anchor(DefP::TopMid, this)),
 		m_loadBar(Vec2(0.f, 0.3f), PixelOffset(440, 56), DefP::BotMid, Anchor(DefP::BotMid, this), true),
 		m_descriptionLabel(Vec2(0.f), Anchor(DefP::BotLeft, &m_loadBar)),
 		m_finishLabel(Vec2(0.f, 0.2f), Anchor(DefP::BotMid,this))
 	{
+		m_background.Register(*this);
 		m_titleLabel.Register(*this);
 		m_subtitleLabel.Register(*this);
 		m_loadBar.Register(*this);

@@ -11,6 +11,7 @@ namespace GameStates {
 	private:
 		void CenterLabel(Graphic::TextRender& _textRender);
 
+		Graphic::ScreenTexture m_background;
 		Graphic::TextRender m_titleLabel;
 		Graphic::TextRender m_subtitleLabel;
 		Graphic::TextRender m_storyLabel;

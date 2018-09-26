@@ -5,7 +5,7 @@
 #include "graphic/core/uniformbuffer.hpp"
 #include "math/extensions.hpp"
 #include "gameplay/elements/ship.hpp"
-
+#include "generators/random.hpp"
 namespace Control {
 
 	using namespace ei;
@@ -72,6 +72,8 @@ namespace Control {
 		default:
 			break;
 		}
+
+		if (m_animationTime > 0.f) ProcessScreenShake(_deltaTime);
 
 		Game::DynamicActor::Process(_deltaTime);
 
@@ -205,5 +207,30 @@ namespace Control {
 		// normalize for ei asserts
 		return ei::FastFrustum(m_position, ei::normalize(ei::transform(Vec3(0.f, 0.f, 1.f), m_rotation)),
 			ei::normalize(ei::transform(Vec3(0.f, 1.f, 0.f), m_rotation)), -x, x, -y, y, NEAR_PLANE, FAR_PLANE);
+	}
+
+	// ******************************************************************* //
+	
+	thread_local Generators::RandomGenerator rng(0xBF2CC3418);
+	void Camera::PlayScreenShake(const ScreenShake& _info)
+	{
+		m_animationTime = _info.duration;
+		m_rotationShake = rng.Rotation();
+		m_screenShakeInfo = _info;
+		m_sign = 1.f;
+		m_screenShakeInfo.frequency = _info.frequency * ei::PI * 2.f;
+	}
+
+	void Camera::ProcessScreenShake(float _deltaTime)
+	{
+		m_animationTime -= _deltaTime;
+		float f = sin(m_animationTime * m_screenShakeInfo.frequency) * m_screenShakeInfo.strength;
+	//	m_position += rng.Direction() * 0.2f;
+		if (m_sign * f < 0.f)
+		{
+			m_rotationShake = rng.Rotation();
+			m_sign = f;
+		}
+		m_rotation = slerpLess(m_rotation, m_rotationShake, abs(f) * m_screenShakeInfo.strength * rng.Normal(0.15f));
 	}
 }

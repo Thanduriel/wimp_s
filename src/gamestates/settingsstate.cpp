@@ -26,16 +26,16 @@ namespace GameStates {
 
 		// load current values and display
 		std::string s = std::to_string(config["Graphics"s]["TargetFPS"s].Get(144.f));
-		s.resize(7);
+		s.resize(5);
 		m_hud.m_frameCountTarget->SetText(s);
 
 		s = std::to_string(InputManager::GetMouseSensitivity());
-		s.resize(7);
+		s.resize(5);
 		m_hud.m_mouseSensitivity->SetText(s);
 
 		// volume
 		s = std::to_string(Game::AudioSystem::GetVolume());
-		s.resize(7);
+		s.resize(5);
 		m_hud.m_masterVolume->SetText(s);
 
 		// aim assist

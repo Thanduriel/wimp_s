@@ -14,6 +14,7 @@ namespace Control
 	{
 		// if this is changed the creation of controllers in Map needs to be updated
 		m_canTick = false;
+		_ship.m_controller = this;
 	}
 
 	float Controller::RotateTowards(ei::Vec3 _pos)
