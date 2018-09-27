@@ -118,7 +118,7 @@ namespace GameStates
 			}
 
 			// buttons to change weapon group
-			auto& groupKey = m_hud.CreateScreenElement<Button>("menuBtn", Vec2(0.f), socketField.GetSize() * Vec2(0.5f, 0.33f), DefP::TopLeft,
+			auto& groupKey = m_hud.CreateScreenElement<Button>("slotBtn", Vec2(0.f), socketField.GetSize() * Vec2(0.34f, 0.34f), DefP::TopLeft,
 				ScreenPosition::Anchor(DefP::BotLeft, &socketField));
 			groupKey.SetOnMouseUp([i, &groupKey, &_ship]()
 			{

@@ -39,11 +39,6 @@ namespace Acts {
 		researchBase.SetTargetAngularVelocity(Vec3(0.f, 0.2f, 0.f));
 		m_sceneGraph.Add(researchBase);
 
-		//test
-		Model& planet = *new Model("planet", PLANET_POSITION, ei::qidentity());
-		planet.SetAngularVelocity(Vec3(0.01f, 0.00f, 0.01f));
-		m_sceneGraph.Add(planet);
-
 		// some simple weapons
 		Inventory inventory;
 		Generators::WeaponGenerator weaponGen(0x42);
@@ -57,11 +52,17 @@ namespace Acts {
 		m_sceneGraph.Add(*crate);
 		Actor::Handle hndl = crate->GetHandle();
 
-		// background
 		using namespace Generators;
 		m_asteroids.Generate(120, { SpaceConstraint(crate->GetPosition(), 10.f), SpaceConstraint(_player), SpaceConstraint(researchBase) });
+		
+		// background
 		m_sceneGraph.Add(*new Sun(Vec3(777.f, 1500.f, 10000.f), 2000.f));
 		Graphic::LightSystem::SetDominantLight(ei::normalize(Vec3(777.f, 1500.f, 10000.f) - PLAYER_SPAWN));
+
+		Model& planet = *new Model("planet", PLANET_POSITION, ei::qidentity());
+		planet.SetAngularVelocity(Vec3(0.01f, 0.00f, 0.01f));
+		m_sceneGraph.Add(planet);
+
 
 		// --- events --------------------------------------- //
 		auto AfinishAct = CREATE_ACTION

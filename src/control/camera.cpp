@@ -214,6 +214,8 @@ namespace Control {
 	thread_local Generators::RandomGenerator rng(0xBF2CC3418);
 	void Camera::PlayScreenShake(const ScreenShake& _info)
 	{
+		// ignore shorter shakes
+		if (_info.duration < m_animationTime) return;
 		m_animationTime = _info.duration;
 		m_rotationShake = rng.Rotation();
 		m_screenShakeInfo = _info;
