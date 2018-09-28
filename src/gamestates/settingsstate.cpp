@@ -2,6 +2,7 @@
 #include "control/input.hpp"
 #include "GLFW/glfw3.h"
 #include "graphic/core/device.hpp"
+#include "graphic/core/uniformbuffer.hpp"
 #include "control/playercontroller.hpp"
 #include "game.hpp"
 #include "gameplay/elements/audiocomponent.hpp"
@@ -25,13 +26,21 @@ namespace GameStates {
 		auto& cgraphics = config["Graphics"s];
 
 		// load current values and display
-		std::string s = std::to_string(config["Graphics"s]["TargetFPS"s].Get(144.f));
+		std::string s = std::to_string(cgraphics["TargetFPS"s].Get(144.f));
 		s.resize(5);
 		m_hud.m_frameCountTarget->SetText(s);
 
 		s = std::to_string(InputManager::GetMouseSensitivity());
 		s.resize(5);
 		m_hud.m_mouseSensitivity->SetText(s);
+
+		s = std::to_string(cgraphics["Brightness"s].Get(0.f));
+		s.resize(5);
+		m_hud.m_brightness->SetText(s);
+
+		s = std::to_string(cgraphics["Contrast"s].Get(1.f));
+		s.resize(5);
+		m_hud.m_contrast->SetText(s);
 
 		// volume
 		s = std::to_string(Game::AudioSystem::GetVolume());
@@ -86,6 +95,17 @@ namespace GameStates {
 
 				f = std::stof(m_hud.m_masterVolume->GetText());
 				Game::AudioSystem::SetVolume(f);
+
+				// brightness params can be updated live
+				const float brightness = std::stof(m_hud.m_brightness->GetText());
+				cgraphics["Brightness"s] = (double)brightness;
+
+				const float contrast = std::stof(m_hud.m_contrast->GetText());
+				cgraphics["Contrast"s] = (double)contrast;
+
+				Graphic::UniformBuffer& ubo = Graphic::Resources::GetUBO(Graphic::UniformBuffers::BRIGHTNESS_PARAMS);
+				ubo["Brightness"] = brightness;
+				ubo["Contrast"] = contrast;
 
 				f = std::stof(m_hud.m_frameCountTarget->GetText());
 				f = std::clamp(f, 30.f, 10000.f);

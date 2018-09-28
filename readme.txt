@@ -36,12 +36,14 @@ AccBackward [S]
 AdjustTargetAcc[Shift]  - hold in combination with AccForward/AccBackward
                           to change the target speed that will be held
 Brake[Tab]              - Set the target speed to zero
-Fire[LeftMouse]         - fires all weapons targeting the ray of the cursor
+Fire[LeftMouse]         - fires weapons in the first group targeting the ray of the cursor
+FireOther[RightMouse]	- fires weapons in the second group
 RollCW[Q]               - rolls the ship around the forward axis
 RollCCW[E]
 Inventory [I]           - opens/closes the inventory
 SwitchTactical[Space]   - once unlocked switches to the tactical targeting
                           mode that allows usage of special weapons
+LockTarget[R]			- locks on a ship closest to the center of the screen
 Pause[P]                - opens the pause menu
 
 MECHANICS ##############################

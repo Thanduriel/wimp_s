@@ -30,9 +30,17 @@ namespace GameStates {
 		label2.SetDefaultSize(0.6f);
 	//	label2.SetPosition(Vec2(-label2.GetRectangle().x, 0.f));
 
-		m_masterVolume = &CreateScreenElement<EditField>(PixelOffset(0, -20), PixelOffset(140, 50), DefP::TopLeft, Anchor(DefP::BotLeft, m_frameCountTarget));
-		TextRender& label3 = CreateScreenElement<TextRender>(Vec2(0.f), Anchor(DefP::MidLeft, m_masterVolume), nullptr, "master volume: ", DefP::MidRight);
+		m_brightness = &CreateScreenElement<EditField>(PixelOffset(0, -20), PixelOffset(140, 50), DefP::TopLeft, Anchor(DefP::BotLeft, m_frameCountTarget));
+		TextRender& label3 = CreateScreenElement<TextRender>(Vec2(0.f), Anchor(DefP::MidLeft, m_brightness), nullptr, "brightness: ", DefP::MidRight);
 		label3.SetDefaultSize(0.6f);
+
+		m_contrast = &CreateScreenElement<EditField>(PixelOffset(0, -20), PixelOffset(140, 50), DefP::TopLeft, Anchor(DefP::BotLeft, m_brightness));
+		TextRender& label4 = CreateScreenElement<TextRender>(Vec2(0.f), Anchor(DefP::MidLeft, m_contrast), nullptr, "contrast: ", DefP::MidRight);
+		label4.SetDefaultSize(0.6f);
+
+		m_masterVolume = &CreateScreenElement<EditField>(PixelOffset(0, -20), PixelOffset(140, 50), DefP::TopLeft, Anchor(DefP::BotLeft, m_contrast));
+		TextRender& label5 = CreateScreenElement<TextRender>(Vec2(0.f), Anchor(DefP::MidLeft, m_masterVolume), nullptr, "master volume: ", DefP::MidRight);
+		label5.SetDefaultSize(0.6f);
 
 		TextRender& note = CreateScreenElement<TextRender>(Vec2(0.f), Anchor(DefP::TopLeft, m_applyButton), nullptr, "|changes to video settings require a restart", DefP::BotLeft);
 		note.SetDefaultSize(18_px);
