@@ -60,7 +60,8 @@ namespace Game {
 		m_visualComponent(THISACTOR, EVENT_HORIZON * _radius),
 		m_lifeTime(THISACTOR, _duration),
 		m_grid(THISACTOR, BASE_GRID_COLOR, 32, 16, _radius),
-		m_collisionComponent(THISACTOR, EVENT_HORIZON * _radius, CollisionComponent::Type::Any),
+		m_collisionComponent(THISACTOR, EVENT_HORIZON * _radius, 
+			CollisionComponent::Type::Any | CollisionComponent::Type::Zone),
 		m_deltaTime(0.f) // when instantly activated the delta time will not be set otherwise
 	{}
 

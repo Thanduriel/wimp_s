@@ -211,7 +211,7 @@ namespace Control {
 
 	// ******************************************************************* //
 	
-	thread_local Generators::RandomGenerator rng(0xBF2CC3418);
+	thread_local Generators::RandomGenerator rng(0xBF2CC18);
 	void Camera::PlayScreenShake(const ScreenShake& _info)
 	{
 		// ignore shorter shakes

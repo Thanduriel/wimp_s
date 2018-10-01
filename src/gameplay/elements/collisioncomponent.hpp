@@ -5,6 +5,10 @@
 #include "ei/vector.hpp"
 #include "utils/meshloader.hpp"
 
+namespace clunk{
+	class Sample;
+}
+
 namespace Game {
 
 	struct HitInfo
@@ -72,13 +76,27 @@ namespace Game {
 				Solid = 2,
 				Dynamic = 4,
 				Ship = 8,
-				Projectile = 16
+				Projectile = 16,
+				Zone = 32 // trigger volumes that do not cause physical reactions
 			};
 		};
 		CollisionFlags GetType() const { return m_type; }
 		void SetType(CollisionFlags _type) { m_type = _type; }
 
 		ei::Mat3x3 ComputeInertiaTensor(float _mass) const;
+
+		enum struct Material
+		{
+			None,
+			Metal,
+			Rock,
+			COUNT
+		};
+		Material GetMaterial() const { return m_material; }
+		void SetMaterial(Material _material) { m_material = _material; }
+
+		const clunk::Sample* GetMaterialSound(const CollisionComponent& _other);
+
 	private:
 		float m_volume;
 		float m_boundingRadius;
@@ -87,6 +105,7 @@ namespace Game {
 		ei::Box m_AABB; // actual box in world space
 		float m_minOfAllMin; // smallest x value of all CollisionComponents that have a larger x max then this.
 		uint32_t m_type;
+		Material m_material = Material::None;
 		const BoundingMesh& m_boundingMesh;
 		bool m_isSimple = false; // this component can be approximated by its bounding sphere
 

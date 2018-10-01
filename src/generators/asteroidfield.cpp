@@ -57,6 +57,7 @@ namespace Generators {
 			m_canTakeDamage = true;
 			m_maxHealth = ASTEROIDS[_type].health;
 			m_health = m_maxHealth;
+			GetCollisionComponent().SetMaterial(CollisionComponent::Material::Rock);
 		}
 	};
 

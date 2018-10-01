@@ -68,9 +68,12 @@ namespace Control
 		void HandleInput(float _deltaTime);
 
 		void UpdateAimAssist();
+		void LookForTarget(const Game::SceneGraph& _sceneGraph);
 
 		// helpers for special weapon placement
 		Game::Grid& m_referenceGrid;
+		ei::Vec3 m_cameraOffset;
+
 		GameTimeControl& m_controlParams;
 
 		Game::Actor::Handle m_focus;

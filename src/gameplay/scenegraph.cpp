@@ -12,6 +12,7 @@
 #include "elements/collisioncomponent.hpp"
 #include "elements/shieldcomponent.hpp"
 #include "elements/shipsystems/projectile.hpp"
+#include "elements/singlesound.hpp"
 
 using namespace Graphic;
 
@@ -356,7 +357,7 @@ namespace Game {
 					&& static_cast<Projectile*>(&slf)->GetOwner() == static_cast<Projectile*>(&oth)->GetOwner())
 					continue;
 
-				float distSq = ei::lensq(slf.GetPosition()
+				const float distSq = ei::lensq(slf.GetPosition()
 					- oth.GetPosition());
 
 				if (slfComp->GetBoundingRadiusSq() + othComp->GetBoundingRadiusSq() > distSq)
@@ -410,6 +411,13 @@ namespace Game {
 							float damage = impulse * epsilon * 0.11f;
 							slfDyn->Damage(damage, *othDyn);
 							othDyn->Damage(damage, *slfDyn);
+
+							if (damage < 2.f) continue;
+							const clunk::Sample* sound = slfComp->GetMaterialSound(*othComp);
+							if (sound)
+							{
+								FactoryActor::GetThreadLocalInstance().Make<SingleSoundActor>(hitInfo.position, *sound);
+							}
 						}
 					}
 				}

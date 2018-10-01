@@ -27,6 +27,8 @@ namespace Control
 	bool PlayerController::HAS_AIM_ASSIST;
 
 	const float TACTICALCAM_DIST = 52.f;
+	const float TACTICALCAM_ANGLE = PI / 3.2f;
+	const float TACTICALCAM_Z = -TACTICALCAM_DIST / tan(TACTICALCAM_ANGLE);
 	constexpr float SCREEN_SHAKE_THRESHOLD = 0.05f;
 
 	PlayerController::PlayerController(Game::Ship& _ship, GameStates::MainHud& _hud, GameTimeControl& _params)
@@ -66,7 +68,7 @@ namespace Control
 
 		if (m_targetingMode == TargetingMode::Tactical)
 		{
-			Vec3 pos = m_referenceGrid.GetPosition();
+			const Vec3 pos = m_referenceGrid.GetPosition();
 
 			Plane plane(normalize(m_ship.GetRotationMatrix() * Vec3(0.f, 1.f, 0.f)), pos);
 			Ray ray = g_camera.GetRay(InputManager::GetCursorPosScreenSpace());
@@ -78,38 +80,7 @@ namespace Control
 		if (m_lookForTarget)
 		{
 			m_lookForTarget = false;
-			auto hits = _sceneGraph.SphereQuery(ei::Sphere(m_ship.GetPosition(), 1000.f), Game::CollisionComponent::Type::Ship);
-			
-			if (hits.size())
-			{
-				for (auto& hit : hits)
-				{
-					// the player ship should be ignored
-					if (hit.second == 0.f)
-					{
-						hit.second = 2.f;
-						continue;
-					}
-
-					const Vec4 projectedPos = Control::g_camera.GetViewProjection() * Vec4(hit.first->GetPosition());
-					// behind the camera
-					if (projectedPos.z <= 0.f)
-					{
-						hit.second = 2.f;
-						continue;
-					}
-
-					hit.second = lensq(Vec2(projectedPos) / projectedPos.w * Vec2(Graphic::Device::GetAspectRatio(), 1.f));
-				}
-				auto it = std::min_element(hits.begin(), hits.end(), [](const auto& _lhs, const auto& _rhs) {
-					return _lhs.second < _rhs.second;
-				});
-				// maximum tolerance, second condition takes out self as well
-				if (it->second < 0.44f * 0.44f) SetFocus(static_cast<Game::Ship*>(it->first));
-				else SetFocus(nullptr);
-			}
-			else SetFocus(nullptr);
-
+			LookForTarget(_sceneGraph);
 		}
 
 		UpdateAimAssist();
@@ -167,6 +138,16 @@ namespace Control
 			SwitchTargetingMode(TargetingMode::Normal);
 		}
 
+		if (InputManager::IsVirtualKey(_key, VirtualKey::CYCLE_TARGET) 
+			&& m_focus && *m_focus && m_targetingMode == TargetingMode::Tactical)
+		{
+			const Vec3 pos = (*m_focus)->GetPosition() + m_cameraOffset;
+			g_camera.SetPosition(pos);
+			Vec3 refPos = m_referenceGrid.GetPosition();
+			refPos.y = (*m_focus)->GetPosition().y;
+			m_referenceGrid.SetPosition((*m_focus)->GetPosition());
+		}
+
 		if (InputManager::IsVirtualKey(_key, VirtualKey::BRAKE))
 			m_targetSpeed = 0.f;
 
@@ -180,7 +161,7 @@ namespace Control
 			Game::FactoryActor::GetThreadLocalInstance().Add(*w);
 			m_ship.GetInventory().Add(*w);
 		}
-		else if (_key == GLFW_KEY_R)
+		else if (InputManager::IsVirtualKey(_key, VirtualKey::LOCK_TARGET))
 			m_lookForTarget = true;
 	}
 
@@ -192,8 +173,9 @@ namespace Control
 	{
 		if (m_targetingMode == TargetingMode::Tactical)
 		{
-			g_camera.Translate(Vec3(0.f, _dy * 4.f, 0.f));
-			m_referenceGrid.Translate(Vec3(0.f, _dy * 4.f, 0.f));
+			const Vec3 shift = m_ship.GetRotationMatrix() * Vec3(0.f, _dy * 4.f, 0.f);
+			g_camera.Translate(shift);
+			m_referenceGrid.Translate(shift);
 		}
 	}
 
@@ -331,15 +313,14 @@ namespace Control
 		m_targetingMode = _newMode;
 		if (_newMode == TargetingMode::Tactical)
 		{
-			const float angle = PI / 3.2f;
-
 			m_tacticalDirSign = GetShip().GetPosition().y < g_camera.GetPosition().y ? 1.f : -1.f;
 			Quaternion rot = m_tacticalDirSign < 0.f ? Quaternion(Vec3(0.f, 0.f, 1.f), PI) : qidentity();
 			// shift the camera back so that the player is in the center
 	//		g_camera.FixRotation(ei::Quaternion(Vec3(1.f, 0.f, 0.f), m_tacticalDirSign * angle) * rot,
 	//			GetShip().GetPosition() + Vec3(0.f, m_tacticalDirSign * TACTICALCAM_DIST, -TACTICALCAM_DIST / tan(angle)));
 
-			Vec3 camPos = m_ship.GetPosition() + m_ship.GetRotationMatrix() * Vec3(0.f, TACTICALCAM_DIST, -TACTICALCAM_DIST / tan(angle));
+			m_cameraOffset = m_ship.GetRotationMatrix() * Vec3(0.f, TACTICALCAM_DIST, TACTICALCAM_Z);
+			const Vec3 camPos = m_ship.GetPosition() + m_cameraOffset;
 
 			g_camera.FixRotation(Quaternion(m_ship.GetRotationMatrix() * Vec3(0.f, 0.f, 1.f),
 				normalize(m_ship.GetPosition() - camPos)) * m_ship.GetRotation(), camPos);
@@ -383,5 +364,40 @@ namespace Control
 		Vec4 projected = Control::g_camera.GetViewProjection() * Vec4(expectedPos, 1.f);
 		if(projected.z > 0.f) m_hud.ShowAimAssist(true);
 		m_hud.UpdateAimAssist(Vec2(projected) * 1.f / projected.w);
+	}
+
+	void PlayerController::LookForTarget(const Game::SceneGraph& _sceneGraph)
+	{
+		auto hits = _sceneGraph.SphereQuery(ei::Sphere(m_ship.GetPosition(), 1000.f), Game::CollisionComponent::Type::Ship);
+
+		if (hits.size())
+		{
+			for (auto& hit : hits)
+			{
+				// the player ship should be ignored
+				if (hit.second == 0.f)
+				{
+					hit.second = 2.f;
+					continue;
+				}
+
+				const Vec4 projectedPos = Control::g_camera.GetViewProjection() * Vec4(hit.first->GetPosition());
+				// behind the camera
+				if (projectedPos.z <= 0.f)
+				{
+					hit.second = 2.f;
+					continue;
+				}
+
+				hit.second = lensq(Vec2(projectedPos) / projectedPos.w * Vec2(Graphic::Device::GetAspectRatio(), 1.f));
+			}
+			auto it = std::min_element(hits.begin(), hits.end(), [](const auto& _lhs, const auto& _rhs) {
+				return _lhs.second < _rhs.second;
+			});
+			// maximum tolerance, second condition takes out self as well
+			if (it->second < 0.44f * 0.44f) SetFocus(static_cast<Game::Ship*>(it->first));
+			else SetFocus(nullptr);
+		}
+		else SetFocus(nullptr);
 	}
 }

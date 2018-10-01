@@ -193,7 +193,10 @@ void Wimp_s::BuildDefaultConfig()
 	cinput[std::string("SwitchTactical")][0] = GLFW_KEY_SPACE;
 	cinput[std::string("Pause")][0] = GLFW_KEY_P;
 	cinput[std::string("Pause")][1] = GLFW_KEY_ESCAPE;
-	cinput["MouseSensitivity"s] = 1.f;
+	cinput[std::string("LockTarget")][0] = GLFW_KEY_R;
+	cinput[std::string("CycleTarget")][0] = GLFW_KEY_T;
+
+	cinput["MouseSensitivity"s] = 1.0;
 
 	auto& cgraphics = m_config[std::string("Graphics")];
 	cgraphics[std::string("ScreenWidth")] = 1366;

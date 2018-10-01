@@ -3,6 +3,7 @@
 #include "ei/3dintersection.hpp"
 #include "gameplay/content.hpp"
 #include <functional>
+#include <array>
 
 namespace Game {
 
@@ -374,5 +375,23 @@ namespace Game {
 		inertiaTensor.m22 = 1.f / 12.f * _mass * (w + h);
 
 		return inertiaTensor;
+	}
+
+	// *************************************************************** //
+#define SOUND(name) &Content::GetSound(name)
+
+	const clunk::Sample* CollisionComponent::GetMaterialSound(const CollisionComponent& _other)
+	{
+		static const std::array< const clunk::Sample*, static_cast<size_t>(CollisionComponent::Material::COUNT)
+			* static_cast<size_t>(CollisionComponent::Material::COUNT)> SOUNDS =
+		{
+			//			none, metal, rock
+			/*none*/	nullptr, nullptr, nullptr,
+			/*metal*/	nullptr, SOUND("collision01"), SOUND("collision01"),
+			/*rock*/	nullptr, SOUND("collision01"), SOUND("collision01")
+		};
+
+		return SOUNDS[static_cast<size_t>(m_material)
+			+ static_cast<size_t>(_other.m_material) * static_cast<size_t>(CollisionComponent::Material::COUNT)];
 	}
 }

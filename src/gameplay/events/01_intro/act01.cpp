@@ -62,7 +62,7 @@ namespace Acts {
 		Model& planet = *new Model("planet", PLANET_POSITION, ei::qidentity());
 		planet.SetAngularVelocity(Vec3(0.01f, 0.00f, 0.01f));
 		m_sceneGraph.Add(planet);
-
+		_player.SetSpecialMove(*new Game::BlackHoleGenerator(30.f));
 
 		// --- events --------------------------------------- //
 		auto AfinishAct = CREATE_ACTION

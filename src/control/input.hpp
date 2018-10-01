@@ -96,6 +96,8 @@ namespace Control {
 		INVENTORY,
 		SWITCH_TACTICAL,
 		PAUSE,
+		LOCK_TARGET,
+		CYCLE_TARGET,
 		COUNT
 	};
 

@@ -51,6 +51,8 @@ namespace Control {
 		InputManagerInstance.m_keyMap[(int)VirtualKey::INVENTORY] = &_keyConfig[string("Inventory")];
 		InputManagerInstance.m_keyMap[(int)VirtualKey::SWITCH_TACTICAL] = &_keyConfig[string("SwitchTactical")];
 		InputManagerInstance.m_keyMap[(int)VirtualKey::PAUSE] = &_keyConfig[string("Pause")];
+		InputManagerInstance.m_keyMap[(int)VirtualKey::LOCK_TARGET] = &_keyConfig[string("LockTarget")];
+		InputManagerInstance.m_keyMap[(int)VirtualKey::CYCLE_TARGET] = &_keyConfig[string("CycleTarget")];
 
 		// read other params
 		InputManagerInstance.m_mouseSensitivtiy = _keyConfig[string("MouseSensitivity")].Get(1.f);
