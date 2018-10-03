@@ -32,4 +32,15 @@ namespace Generators {
 
 		return m_randomSampler.Uniform(0, steps) * _stepSize + _min;
 	}
+
+	using namespace Game;
+	Item::Quality ItemGenerator::RollRarity(float _rarityFactor)
+	{
+		auto qVec = QUALITY_RARITY * _rarityFactor;
+		qVec.x = 1.f; // everything is at least of normal quality
+		Item::Quality rarity = Item::Quality::Unique;
+		while (float n = m_randomSampler.Uniform() > qVec[(int)rarity]) rarity = Item::Quality((int)rarity - 1);
+
+		return rarity;
+	}
 }

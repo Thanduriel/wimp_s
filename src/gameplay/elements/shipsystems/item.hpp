@@ -30,6 +30,12 @@ namespace Game {
 			Missile,
 			COUNT
 		};
+		enum struct Type : int
+		{
+			Weapon,
+			Shield,
+			 COUNT
+		};
 
 		static const std::array<Utils::Color32F, (size_t)Quality::COUNT> QUALITY_COLOR;
 		static const std::array<std::string, (size_t)Quality::COUNT> QUALITY_COLOR_STR;
@@ -45,8 +51,8 @@ namespace Game {
 		const std::string& GetDescription() const { return m_description; }
 		int GetValue() const { return m_value; }
 
+		virtual Item::Type GetType() const = 0;
 		bool IsEquiped() const { return m_isEquiped; }
-
 		virtual void Equip(Ship& _ship) const;
 		virtual void UnEquip(Ship& _ship) const;
 	protected:
@@ -64,5 +70,17 @@ namespace Game {
 		float m_energyRecharge = 0.f;
 
 		friend class Generators::WeaponGenerator;
+	};
+
+	template<Item::Type _Type>
+	class TypeItem : public Item
+	{
+	public:
+		using Item::Item;
+
+		Item::Type GetType() const final
+		{
+			return _Type;
+		}
 	};
 }

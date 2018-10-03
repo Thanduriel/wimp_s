@@ -75,6 +75,8 @@ namespace Generators {
 		 */
 		float GenerateValue(float _min, float _max, float _stepSize);
 
+		Game::Item::Quality RollRarity(float _rarityFactor);
+
 		std::string m_name;
 		std::string m_baseStats;
 		std::string m_description;

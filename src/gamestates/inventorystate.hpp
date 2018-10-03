@@ -2,6 +2,7 @@
 #include "gamestate.hpp"
 #include "huds/inventoryhud.hpp"
 #include "graphic/interface/hud.hpp"
+#include "gameplay/elements/shipsystems/item.hpp"
 
 namespace Game {
 	class Ship;
@@ -30,7 +31,10 @@ namespace GameStates
 		void UpgradeValue(Upgrades _upgrade);
 
 	private:
+		Graphic::DropField& CreateItemSocket(ei::Vec2 _position, const Game::Item* _item);
+
 		Game::Ship& m_ship;
+		std::unordered_map<const Game::Item*, Graphic::ItemIcon*> m_itemIcons;
 
 		Control::Camera m_oldCamera;
 

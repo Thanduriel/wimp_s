@@ -130,7 +130,7 @@ namespace Game {
 	Weapon::Weapon(float _cooldown, float _range, float _energyCost, FireFunction&& _fireFn, ReloadFunction&& _reloadFn,
 		Item::Quality _quality, Item::Icon _icon, const std::string& _name, const std::string& _description)
 		: Actor(ei::Vec3()),
-		Item(_quality, _icon, _name, _description),
+		TypeItem(_quality, _icon, _name, _description),
 		m_factoryComponent(THISACTOR),
 		m_audioComponent(THISACTOR),
 		m_cooldown(0.f),

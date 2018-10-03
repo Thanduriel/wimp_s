@@ -105,10 +105,7 @@ namespace Generators {
 		memset(&hasTrait.begin(), 0, sizeof(int) * hasTrait.size());
 
 		// decide on quality
-		auto qVec = QUALITY_RARITY * _qualityFactor;
-		qVec.x = 1.f; // everything is at least of normal quality
-		Item::Quality rarity = Item::Quality::Unique;
-		while (float n = m_randomSampler.Uniform() > qVec[(int)rarity]) rarity = Item::Quality((int)rarity - 1);
+		Item::Quality rarity = RollRarity(_qualityFactor);
 		int numTraits = QUALITY_NUM_TRAITS[(int)rarity];
 		
 		// roll basic type; -2 since lasers are not implemented

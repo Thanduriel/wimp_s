@@ -10,7 +10,7 @@
 
 namespace Game {
 
-	class Weapon : public Actor, public Item
+	class Weapon : public Actor, public TypeItem<Item::Type::Weapon>
 	{
 	public:
 		typedef std::function<void(Weapon&)> FireFunction;
