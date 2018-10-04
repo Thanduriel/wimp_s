@@ -31,7 +31,8 @@ namespace GameStates
 		void UpgradeValue(Upgrades _upgrade);
 
 	private:
-		Graphic::DropField& CreateItemSocket(ei::Vec2 _position, const Game::Item* _item);
+		Graphic::DropField& CreateItemSocket(ei::Vec2 _position, const Game::Item* _item,
+			std::vector<Graphic::DropField*>& _dropField);
 
 		Game::Ship& m_ship;
 		std::unordered_map<const Game::Item*, Graphic::ItemIcon*> m_itemIcons;

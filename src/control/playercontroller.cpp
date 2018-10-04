@@ -17,6 +17,7 @@
 
 // test
 #include "generators/weapongen.hpp"
+#include "generators/shieldgen.hpp"
 #include "gameplay/elements/blackhole.hpp"
 #include "gameplay/elements/factorycomponent.hpp"
 
@@ -158,6 +159,13 @@ namespace Control
 			//	++count;
 			Generators::WeaponGenerator gen;
 			Game::Weapon* w = gen.Generate(10.f, 4.f);
+			Game::FactoryActor::GetThreadLocalInstance().Add(*w);
+			m_ship.GetInventory().Add(*w);
+		}
+		else if (_key == GLFW_KEY_F6)
+		{
+			Generators::ShieldGenerator gen;
+			Game::Shield* w = gen.Generate(10.f, 4.f);
 			Game::FactoryActor::GetThreadLocalInstance().Add(*w);
 			m_ship.GetInventory().Add(*w);
 		}

@@ -1,6 +1,7 @@
 #include "ship.hpp"
 #include "../scenegraph.hpp"
 #include "shipsystems/weapon.hpp"
+#include "shipsystems/shield.hpp"
 #include "generators/weapongen.hpp"
 #include "gameplay/content.hpp"
 #include "ei/3dintersection.hpp"
@@ -51,6 +52,7 @@ namespace Game
 		m_thrustLights(m_drivePositions.capacity() + _node["Lights"s].Size()),
 		m_particleSpawnCount(0.f),
 		m_audioComponent(THISACTOR),
+		m_shieldItem(nullptr),
 		m_specialMove(),
 		m_upgradeLevels{},
 		m_controller(nullptr)
@@ -309,6 +311,16 @@ namespace Game
 			m_weaponSockets[_slot].Attach(*_weapon);
 			_weapon->SetOwner(this);
 		}
+	}
+
+	Shield* Ship::GetEquipedShield() const
+	{
+		return m_shieldItem;
+	}
+
+	void Ship::SetEquipedShield(Shield* _shield) 
+	{ 
+		m_shieldItem = _shield; 
 	}
 
 	void Ship::SetSpecialMove(SpecialMove& _sm)

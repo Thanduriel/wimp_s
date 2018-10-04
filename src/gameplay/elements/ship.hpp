@@ -24,6 +24,7 @@ namespace Game
 	using namespace ei;
 
 	class SpecialMove;
+	class Shield;
 
 	class Ship : public Model
 	{
@@ -119,6 +120,8 @@ namespace Game
 		void SetWeaponGroup(int _slot, WeaponGroup _group) { m_weaponSocketGroups[_slot] = _group; }
 		const FixedArray<SocketComponent>& GetWeaponSockets() const { return m_weaponSockets; }
 		WeaponGroup GetWeaponGroup(int _slot) const { return m_weaponSocketGroups[_slot]; }
+		void SetEquipedShield(Shield* _shield);
+		Shield* GetEquipedShield() const;
 		const Inventory& GetInventory() const { return m_inventory; }
 		Inventory& GetInventory() { return m_inventory; }
 
@@ -167,6 +170,7 @@ namespace Game
 		FixedArray< PointLightComponent > m_thrustLights;
 		FixedArray<SocketComponent> m_weaponSockets;
 		FixedArray<WeaponGroup> m_weaponSocketGroups; // assign slots and control groups
+		Shield* m_shieldItem;
 		AudioComponent m_audioComponent;
 
 		Inventory m_inventory;

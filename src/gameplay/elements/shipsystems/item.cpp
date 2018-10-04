@@ -24,7 +24,8 @@ namespace Game {
 	const std::array<std::string, (size_t)Item::Icon::COUNT> Item::ICON_STR =
 	{
 		"weaponIcon",
-		"missileIcon"
+		"missileIcon",
+		"shieldIcon"
 	};
 
 	const std::array<int, (size_t)Item::Quality::COUNT> Item::QUALITY_VALUE = 

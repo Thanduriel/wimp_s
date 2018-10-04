@@ -8,6 +8,7 @@
 #include "graphic/interface/pixelcoords.hpp"
 #include "graphic/interface/hudelements.hpp"
 #include "gameplay/elements/shipsystems/weapon.hpp"
+#include "gameplay/elements/shipsystems/shield.hpp"
 #include "math/extensions.hpp"
 #include "utils/stringutils.hpp"
 #include "GLFW/glfw3.h"
@@ -61,7 +62,12 @@ namespace GameStates
 		{
 			// since Weapon uses multi-inheritance Item has to be casted first to get the actual weapon pointer
 			// do not register here so that they can be in front of the sockets
-			auto& tex = m_hud.CreateScreenElementNoRegister<ItemIcon>(*item, Vec2(0.f), PixelOffset(64, 64), DefP::MidMid, ScreenPosition::Anchor(DefP::MidMid, &m_hud), m_hud.m_weaponFields, static_cast<const Weapon*>(item));
+			auto& tex = m_hud.CreateScreenElementNoRegister<ItemIcon>(*item, Vec2(0.f), 
+				PixelOffset(64, 64), DefP::MidMid, 
+				ScreenPosition::Anchor(DefP::MidMid, &m_hud), 
+				item->GetType() == Item::Type::Weapon ?  m_hud.m_weaponFields : m_hud.m_shieldFields, 
+				static_cast<const Weapon*>(item));
+
 			m_hud.m_inventoryField->DropElement(tex);
 
 			m_itemIcons.emplace(item, &tex);
@@ -87,7 +93,8 @@ namespace GameStates
 			// model space -> ndc
 			ei::Vec4 pos = transform * Vec4(socket.GetPosition(), 1.f);//socket.GetPosition() * r;
 			pos /= pos.w;
-			auto& socketField = CreateItemSocket(Vec2(pos.x, pos.y), static_cast<Weapon*>(socket.GetAttached()));
+			auto& socketField = CreateItemSocket(Vec2(pos.x, pos.y), static_cast<Weapon*>(socket.GetAttached()),
+				m_hud.m_weaponFields);
 
 			// buttons to change weapon group
 			auto& groupKey = m_hud.CreateScreenElement<Button>("slotBtn", Vec2(0.f), socketField.GetSize() * Vec2(0.34f, 0.34f), DefP::TopLeft,
@@ -102,6 +109,10 @@ namespace GameStates
 			groupKey.SetCaption(_ship.GetWeaponGroup(i) == Ship::WeaponGroup::Primary ? "L" : "R");
 			++i;
 		}
+
+		// shield socket
+		m_hud.m_shieldFields.push_back(m_hud.m_inventoryField);
+		CreateItemSocket(Vec2(0.f, 0.f), m_ship.GetEquipedShield(), m_hud.m_shieldFields);
 
 		// register item icons
 		for (auto& itm : m_itemIcons)
@@ -142,6 +153,15 @@ namespace GameStates
 			else m_ship.SetWeapon(index, nullptr);
 		}
 		m_ship.GetInventory().SetCredits(m_money);
+
+		// update shield
+		auto& elements = m_hud.m_shieldFields[1]->GetElements();
+		if (elements.size())
+		{
+			const Game::Shield* itm = static_cast<const Game::Shield*>(elements.front()->GetContent());
+			m_ship.SetEquipedShield(const_cast<Game::Shield*>(itm));
+		}
+		else m_ship.SetEquipedShield(nullptr);
 
 		// restore camera state
 		Control::g_camera = m_oldCamera;
@@ -332,7 +352,8 @@ namespace GameStates
 	}
 
 	// ******************************************************** //
-	DropField& InventoryState::CreateItemSocket(ei::Vec2 _position, const Game::Item* _item)
+	DropField& InventoryState::CreateItemSocket(ei::Vec2 _position, const Game::Item* _item,
+		std::vector<Graphic::DropField*>& _dropField)
 	{
 		using namespace Game;
 		using namespace ei;
@@ -352,15 +373,15 @@ namespace GameStates
 				m_hud.m_inventoryField->DropElement(tex);
 				tex.SetPosition(tex.GetBackupPosition());
 			}
-			const Game::Item* itm = static_cast<const Game::Weapon*>(_tex.GetContent());
+			const Game::Item* itm = static_cast<const Game::Item*>(_tex.GetContent());
 			itm->Equip(m_ship);
 
 			// basic stats may have changed
 			UpdateUpgradeLabels();
 		});
-		m_hud.m_weaponFields.push_back(&socketField);
+		_dropField.push_back(&socketField);
 
-		// put in currently equiped weapons
+		// put in currently equiped item
 		if (_item)
 		{
 			auto it = m_itemIcons.find(static_cast<const Item*>(_item));
