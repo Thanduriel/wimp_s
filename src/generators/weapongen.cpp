@@ -90,6 +90,10 @@ namespace Generators {
 	using namespace Game;
 	using namespace Utils;
 
+	WeaponGenerator::WeaponGenerator(uint32_t _seed)
+		: ItemGenerator(WTTCOUNT, _seed)
+	{}
+
 	Game::Weapon* WeaponGenerator::Generate(float _power, float _qualityFactor)
 	{
 	/*	static bool killer = false;
@@ -101,8 +105,7 @@ namespace Generators {
 				+ "\n" + "cooldown: 0.0";
 			return new Weapon(0.f);
 		}*/
-		std::vector< int > hasTrait(WeaponTraitType::WTTCOUNT);
-		memset(&hasTrait.begin(), 0, sizeof(int) * hasTrait.size());
+		Reset();
 
 		// decide on quality
 		Item::Quality rarity = RollRarity(_qualityFactor);
@@ -113,8 +116,6 @@ namespace Generators {
 		// decrease chance for rocket launchers; todo: refractory this
 		if (type == WeaponType::Rocket && !m_randomSampler.Uniform(0, 2)) type = WeaponType::Simple;
 		m_name = NAMES[(int)type];
-		m_description.clear();
-		m_baseStats.clear();
 
 		if (rarity == Item::Quality::Advanced && type != WeaponType::Rocket) AddTrait(EXTRA_NAME_TRAITS[2]);
 		else if (rarity == Item::Quality::Premium) AddTrait(EXTRA_NAME_TRAITS[3]);
@@ -156,20 +157,20 @@ namespace Generators {
 		while(numTraits)
 		{
 			WeaponTraitType trait = (WeaponTraitType)m_randomSampler.Uniform(0, WTTCOUNT-1);
-			if (hasTrait[trait]) continue; // every trait can only occur once
+			if (m_hasTrait[trait]) continue; // every trait can only occur once
 			--numTraits;
 
 			// every trait can appear only once
-			hasTrait[trait] = 1;
+			m_hasTrait[trait] = 1;
 			m_isTraitInfoSet = false;
 			switch (trait)
 			{
 			// reload functions
 			case WeaponTraitType::Burst: lateTraits.push_back(Burst);
-				hasTrait[Gatling] = 1; // prevent these two traits to appear on the same weapon
+				m_hasTrait[Gatling] = 1; // prevent these two traits to appear on the same weapon
 				break;
 			case WeaponTraitType::Gatling: lateTraits.push_back(Gatling);
-				hasTrait[Burst] = 1;
+				m_hasTrait[Burst] = 1;
 				break;
 			case WeaponTraitType::ExtR: 
 				temp = GenerateValue(0.05f, 0.15f, 0.01f);
@@ -194,25 +195,25 @@ namespace Generators {
 			case WeaponTraitType::Short: lifeTime *= 0.6f; damage *= 1.4f;
 				break;
 			case WeaponTraitType::HighPower: damage *= 2.f; eCost *= 2.f;
-				hasTrait[LowPower] = 1;
+				m_hasTrait[LowPower] = 1;
 				break;
 			case WeaponTraitType::LowPower: eCost *= 0.05f;
 				damage *= 0.1f;
-				hasTrait[HighPower] = 1;
+				m_hasTrait[HighPower] = 1;
 				break;
 			// fire functions
 			case WeaponTraitType::Twin: lateTraits.push_back(Twin);
-				hasTrait[Iterative] = 1;
+				m_hasTrait[Iterative] = 1;
 				break;
 			case WeaponTraitType::Iterative: lateTraits.push_back(Iterative);
-				hasTrait[Twin] = 1;
+				m_hasTrait[Twin] = 1;
 				break;
 			case WeaponTraitType::Ionized:
-				hasTrait[Corroding] = 1;
+				m_hasTrait[Corroding] = 1;
 				damageType = DamageType::Ion;
 				break;
 			case WeaponTraitType::Corroding:
-				hasTrait[Ionized] = 1;
+				m_hasTrait[Ionized] = 1;
 				damageType = DamageType::Physical;
 				break;
 			case WeaponTraitType::ShieldMax:
@@ -273,7 +274,7 @@ namespace Generators {
 		m_description += "\n-----\ndps:      " + ToConstDigit(1.f / cooldown * damage,1,4)
 			+ "\nrange:   " + ToConstDigit(speed * lifeTime,1,5);
 
-		m_name = Item::QUALITY_COLOR_STR[(int)rarity] + GetName(m_name) + "</c>";
+		m_name = GetName(m_name);
 
 		Weapon* weapon = new Game::Weapon(cooldown,
 			speed * lifeTime,

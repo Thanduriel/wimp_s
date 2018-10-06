@@ -7,7 +7,18 @@ using namespace Utils;
 
 namespace Generators {
 
+	enum ShieldTraitType {
+		ExtC,
+		ExtR,
+		ExtD,
+		STTCOUNT
+	};
+
 	using namespace Game;
+
+	ShieldGenerator::ShieldGenerator(uint32_t _seed)
+		: ItemGenerator(STTCOUNT, _seed)
+	{}
 
 	Shield* ShieldGenerator::Generate(uint32_t _seed, float _power, float _qualityFactor)
 	{

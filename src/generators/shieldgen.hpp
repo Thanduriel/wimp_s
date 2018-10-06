@@ -8,7 +8,7 @@ namespace Generators {
 	class ShieldGenerator : public ItemGenerator
 	{
 	public:
-		using ItemGenerator::ItemGenerator;
+		ShieldGenerator(uint32_t _seed = 0x0);
 
 		/* Generate() **********************
 		 * Generates a random weapon.

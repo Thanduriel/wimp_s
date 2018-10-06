@@ -2,10 +2,12 @@
 
 namespace Generators {
 
+	using namespace Game;
 
-	ItemGenerator::ItemGenerator(uint32_t _seed)
+	ItemGenerator::ItemGenerator(size_t _numTraits, uint32_t _seed)
 		: m_rng(_seed ? _seed : clock()),
-		m_randomSampler(m_rng)
+		m_randomSampler(m_rng),
+		m_hasTrait(_numTraits)
 	{
 	}
 
@@ -19,11 +21,11 @@ namespace Generators {
 
 	std::string ItemGenerator::GetName(const std::string& _baseName)
 	{
-		std::string name = (m_prefixes.size() ? *m_prefixes[m_randomSampler.Uniform(0, m_prefixes.size()-1)] + ' ' : "") 
+		std::string name = (m_prefixes.size() ? *m_prefixes[m_randomSampler.Uniform(0, static_cast<int>(m_prefixes.size())-1)] + ' ' : "") 
 			+ _baseName
-			+ (m_suffixes.size() ? ' ' + *m_suffixes[m_randomSampler.Uniform(0, m_suffixes.size()-1)] : "");
+			+ (m_suffixes.size() ? ' ' + *m_suffixes[m_randomSampler.Uniform(0, static_cast<int>(m_suffixes.size())-1)] : "");
 
-		return std::move(name);
+		return Item::QUALITY_COLOR_STR[(int)m_rarity] + name + "</c>";
 	}
 
 	float ItemGenerator::GenerateValue(float _min, float _max, float _stepSize)
@@ -41,6 +43,16 @@ namespace Generators {
 		Item::Quality rarity = Item::Quality::Unique;
 		while (float n = m_randomSampler.Uniform() > qVec[(int)rarity]) rarity = Item::Quality((int)rarity - 1);
 
+		m_rarity = rarity;
 		return rarity;
+	}
+
+	void ItemGenerator::Reset()
+	{
+		m_name.clear();
+		m_baseStats.clear();
+		m_description.clear();
+
+		memset(&m_hasTrait.front(), 0, sizeof(int) * m_hasTrait.size());
 	}
 }

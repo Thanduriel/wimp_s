@@ -8,7 +8,7 @@ namespace Generators{
 	class WeaponGenerator : public ItemGenerator
 	{
 	public:
-		using ItemGenerator::ItemGenerator;
+		WeaponGenerator(uint32_t _seed = 0x0);
 
 		/* Generate() **********************
 		 * Generates a random weapon.

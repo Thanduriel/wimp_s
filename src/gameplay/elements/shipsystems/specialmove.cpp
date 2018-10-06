@@ -3,14 +3,16 @@
 #include "gameplay/elements/blackhole.hpp"
 #include "gameplay/elements/factorycomponent.hpp"
 #include "gameplay/scenegraph.hpp"
+#include "gameplay/elements/ship.hpp"
 
 namespace Game {
 
-	SpecialMove::SpecialMove(float _cooldown)
+	SpecialMove::SpecialMove(float _cooldown, float _range)
 		: m_cooldown(_cooldown),
 		m_cooldownMax(_cooldown),
 		m_state(State::Ready),
-		m_indicator(nullptr)
+		m_indicator(nullptr),
+		m_range(_range)
 	{
 
 	}
@@ -49,11 +51,16 @@ namespace Game {
 		m_indicator->SetRotation(_rotation);
 	}
 
+	bool SpecialMove::IsInRange(const ei::Vec3& _origin) const
+	{
+		return ei::lensq(_origin - m_indicator->GetPosition()) < m_range * m_range;
+	}
+
 	// **************************************************************** //
-	void BlackHoleGenerator::TestPlacement(const SceneGraph& _sceneGraph)
+	void BlackHoleGenerator::TestPlacement(const SceneGraph& _sceneGraph, const Ship& _instigator)
 	{
 		BlackHole& blackHole = *static_cast<Game::BlackHole*>(m_indicator);
-		if (blackHole.IsColliding())
+		if (!IsInRange(_instigator.GetPosition()) || blackHole.IsColliding())
 		{
 			static_cast<Game::BlackHole*>(m_indicator)->SetInvalid(true);
 			m_state = State::Invalid;		

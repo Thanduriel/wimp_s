@@ -48,7 +48,7 @@ namespace Generators {
 	class ItemGenerator
 	{
 	public:	
-		ItemGenerator(uint32_t _seed = 0x0);
+		ItemGenerator(size_t _numTraits, uint32_t _seed = 0x0);
 		
 		std::string GetName(const std::string& _baseName);
 
@@ -76,10 +76,13 @@ namespace Generators {
 		float GenerateValue(float _min, float _max, float _stepSize);
 
 		Game::Item::Quality RollRarity(float _rarityFactor);
+		void Reset();
 
 		std::string m_name;
 		std::string m_baseStats;
 		std::string m_description;
+		std::vector<int> m_hasTrait;
+		Game::Item::Quality m_rarity;
 
 		DefaultRandomGen m_rng;
 		RandomSampler<> m_randomSampler;

@@ -75,7 +75,7 @@ namespace Control
 			Ray ray = g_camera.GetRay(InputManager::GetCursorPosScreenSpace());
 			float d = dot((pos - ray.origin), plane.n) / dot(ray.direction, plane.n);
 			m_ship.GetSpecialMove()->SetIndicator(ray.origin + d * ray.direction);
-			m_ship.GetSpecialMove()->TestPlacement(_sceneGraph);
+			m_ship.GetSpecialMove()->TestPlacement(_sceneGraph, m_ship);
 		}
 
 		if (m_lookForTarget)
@@ -336,7 +336,7 @@ namespace Control
 			m_referenceGrid.SetPosition(GetShip().GetPosition());
 			m_referenceGrid.SetRotation(m_ship.GetRotation());
 			component_cast<Game::GridComponent>(m_referenceGrid).ReverseTransition();
-			m_controlParams.m_timeScale = 0.02f;
+			m_controlParams.m_timeScale = 0.01f;
 		}
 		else
 		{
