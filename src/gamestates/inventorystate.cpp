@@ -281,9 +281,12 @@ namespace GameStates
 			auto& elements = m_hud.m_weaponFields[i]->GetElements();
 			if (elements.size())
 			{
-				const Game::Weapon* itm = static_cast<const Game::Weapon*>(elements.front()->GetContent());
+				Game::Weapon* itm = const_cast<Game::Weapon*>(
+					static_cast<const Game::Weapon*>(elements.front()->GetContent()));
 				// the inventory does not change the weapon's state; but here full access is required
-				m_ship.SetWeapon(index, const_cast<Game::Weapon*>(itm));
+				m_ship.SetWeapon(index, itm);
+				// is off by default, only player weapons can be seen effectively
+				itm->ShowMuzzleParticles(true);
 			}
 			else m_ship.SetWeapon(index, nullptr);
 		}

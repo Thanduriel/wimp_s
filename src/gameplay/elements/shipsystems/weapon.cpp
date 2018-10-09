@@ -2,6 +2,7 @@
 #include "gameplay/scenegraph.hpp"
 #include "projectile.hpp"
 #include "gameplay/content.hpp"
+#include "generators/random.hpp"
 
 namespace Game {
 
@@ -133,6 +134,8 @@ namespace Game {
 		TypeItem(_quality, _icon, _name, _description),
 		m_factoryComponent(THISACTOR),
 		m_audioComponent(THISACTOR),
+		m_muzzleParticles(THISACTOR, ei::Vec3()),
+		m_showMuzzleParticles(false),
 		m_cooldown(0.f),
 		m_cooldownMax(_cooldown),
 		m_range(_range),
@@ -149,6 +152,7 @@ namespace Game {
 	{
 		_sceneGraph.RegisterComponent(m_factoryComponent);
 		_sceneGraph.RegisterComponent(m_audioComponent);
+		_sceneGraph.RegisterComponent(m_muzzleParticles);
 	}
 
 	void Weapon::Process(float _deltaTime)
@@ -169,6 +173,15 @@ namespace Game {
 			static const clunk::Sample& sound = Content::GetSound("shoot_blaster");
 		//	m_audioComponent.Stop();
 			m_audioComponent.Play(sound);
+			for (int i = 0; i < 112; ++i)
+			{
+				static thread_local Generators::RandomGenerator rng(0xF316C);
+				m_muzzleParticles.AddParticle(rng.Direction() * 0.15f, //position
+					_velocity + GetRotationMatrix() * ei::Vec3(0.f, 0.f, rng.Uniform(10.f, 20.f)), //velocity
+					0.05f + rng.Uniform(0.f, 0.2f), //life time
+					Utils::Color8U(0.2f, 1.0f, 0.6f).RGBA(),
+					0.03f);
+			}
 
 			return m_energyCost;
 		}

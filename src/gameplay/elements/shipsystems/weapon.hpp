@@ -5,6 +5,7 @@
 #include "gameplay/core/actor.hpp"
 #include "gameplay/elements/factorycomponent.hpp"
 #include "gameplay/elements/audiocomponent.hpp"
+#include "gameplay/elements/light.hpp"
 #include "projectile.hpp"
 #include "item.hpp"
 
@@ -47,7 +48,9 @@ namespace Game {
 			float sustainedDPS;
 			float sustainedEPS;
 		};
-		const AccumulatedStats& GetAccumulatedStats() { return m_accumulatedStats; }
+		const AccumulatedStats& GetAccumulatedStats() const { return m_accumulatedStats; }
+		// should this weapon spawn particles when firing?
+		void ShowMuzzleParticles(bool _show) { m_showMuzzleParticles = _show; }
 	protected:
 		float m_cooldown;
 		float m_cooldownMax;
@@ -60,7 +63,9 @@ namespace Game {
 
 		FactoryComponent m_factoryComponent;
 		AudioComponent m_audioComponent;
-		
+		ParticleSystemComponent<Graphic::ParticleSystems::BASIC_SYSTEM> m_muzzleParticles;
+		bool m_showMuzzleParticles;
+
 		FireFunction m_fireImpl;
 		ReloadFunction m_reloadImpl;
 
