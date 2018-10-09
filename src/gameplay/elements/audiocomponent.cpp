@@ -12,6 +12,7 @@ namespace Game {
 	clunk::sdl::Backend* AudioSystem::s_backend;
 	AudioComponent* AudioSystem::s_audioComponent;
 	float AudioSystem::s_masterVolume;
+	float AudioSystem::s_fallOffFactor;
 
 	void AudioSystem::Initialize(float _volume)
 	{
@@ -55,11 +56,24 @@ namespace Game {
 		s_backend->get_context().set_fx_volume(s_masterVolume);
 	}
 
+	void AudioSystem::Mute3DSounds()
+	{
+		s_fallOffFactor = GetContext().get_distance_model().rolloff_factor;
+		GetContext().get_distance_model().rolloff_factor = 100.f;
+	}
+
+	void AudioSystem::Enable3DSounds()
+	{
+		GetContext().get_distance_model().rolloff_factor = s_fallOffFactor;
+	}
+
+	// ****************************************************** //
 	AudioComponent::AudioComponent(const Actor& _actor, const ei::Vec3& _position)
 		: ConstActorComponent(_actor),
 		Transformation(_position),
 		m_object(AudioSystem::GetContext().create_object()),
-		m_curId(0)
+		m_curId(0),
+		m_isMute(false)
 	{
 	}
 
@@ -72,6 +86,8 @@ namespace Game {
 
 	clunk::Source* AudioComponent::Play(const clunk::Sample& _sound, int _id, bool _loop, const ei::Vec3& _position)
 	{
+		if (m_isMute) return nullptr;
+
 		clunk::Source* source = new clunk::Source(&_sound, _loop);
 		source->delta_position = clunk::v3f(_position.x, _position.y, _position.z);
 		UpdateSourcePos(); // make sure that the position is already correct when the first sample is heard

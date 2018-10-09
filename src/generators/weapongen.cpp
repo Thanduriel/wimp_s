@@ -38,19 +38,18 @@ namespace Generators {
 		{"Gatling", "fire rate increases with continues fire", false},
 		{ "Iterative", "every 3rth shot deals 2xdamage", true },
 		{ "of Low Power", "95% reduced consumption, 80% less damage", false },
-		{"Ionizing", "deals bonus damage against shields", true},
-		{"Corroding", "deals bonus damage against hulls", true},
+		{"Ionizing", "deals more damage against shields", true},
+		{"Corroding", "deals more damage against hulls", true},
 		{"", "+ %.1f max shield" , false},
 		{ "", "+ %.1f max energy" , false }
 	//	{"Infinite", "can fire even without sufficient energy", true}
 	} };
 
-	const std::array< TraitDescription, 4> EXTRA_NAME_TRAITS = 
+	const std::array< TraitDescription, 3> EXTRA_NAME_TRAITS = 
 	{ {
 		{"Rapid Fire", "", true},
 		{"Fast Fire", "", true},
-		{"Advanced", "", true },
-		{"Premium", "", true },
+		{"Heavy", "", true}
 	} };
 
 	enum struct WeaponType {
@@ -117,21 +116,24 @@ namespace Generators {
 		if (type == WeaponType::Rocket && !m_randomSampler.Uniform(0, 2)) type = WeaponType::Simple;
 		m_name = NAMES[(int)type];
 
-		if (rarity == Item::Quality::Advanced && type != WeaponType::Rocket) AddTrait(EXTRA_NAME_TRAITS[2]);
-		else if (rarity == Item::Quality::Premium) AddTrait(EXTRA_NAME_TRAITS[3]);
+		// since rocket launchers can only be advanced+ this name would always appear
+		if (!(rarity == Item::Quality::Advanced && type == WeaponType::Rocket)) 
+			AddRarityNames(rarity);
 
 		// attributes
-		Range damageRange = GetDamageRange(DAMAGE_RANGE[(int)type], _power);
+		const Range damageRange = GetDamageRange(DAMAGE_RANGE[(int)type], _power);
 		float damage = m_randomSampler.Uniform(damageRange);
+		const float relativeDamage = damageRange.GetRelativePosition(damage);
+		if (relativeDamage > 0.8f) AddTrait(EXTRA_NAME_TRAITS[2]);
 
-		Range cdRange = GetCooldownRange(COOLDOWN_RANGE[(int)type], _power);
+		const Range cdRange = GetCooldownRange(COOLDOWN_RANGE[(int)type], _power);
 		float cooldown = m_randomSampler.Uniform(cdRange);
 		// extra name traits
-		float relativeCD = (cooldown - cdRange.first) / (cdRange.second - cdRange.first);
+		const float relativeCD = cdRange.GetRelativePosition(cooldown);
 		if (relativeCD < 0.1f) AddTrait(EXTRA_NAME_TRAITS[0]);
 		else if (relativeCD < 0.25f) AddTrait(EXTRA_NAME_TRAITS[1]);
 
-		float speed = type == WeaponType::Simple ? Projectile::DEFAULT_SPEED : Rocket::DEFAULT_SPEED;
+		const float speed = type == WeaponType::Simple ? Projectile::DEFAULT_SPEED : Rocket::DEFAULT_SPEED;
 		float lifeTime = m_randomSampler.Uniform(LIFETIME_RANGE[(int)type]);
 
 		float eCost = damage / (cooldown * _power);
@@ -269,10 +271,11 @@ namespace Generators {
 		m_baseStats += "power use: " + ToFixPoint(eCost,1) + " [J]\n";
 		m_baseStats += "lifetime: " + ToConstDigit(lifeTime,1, 4) + " [s]\n";
 
-		m_description = m_baseStats + "-----" + m_description;
+		m_description = m_baseStats 
+			+ "-----\ndps:      " + ToConstDigit(1.f / cooldown * damage, 1, 4)
+			+ "\nrange:   " + ToConstDigit(speed * lifeTime, 1, 5)
+			+ "\n-----" + m_description;
 		// accumulated stats
-		m_description += "\n-----\ndps:      " + ToConstDigit(1.f / cooldown * damage,1,4)
-			+ "\nrange:   " + ToConstDigit(speed * lifeTime,1,5);
 
 		m_name = GetName(m_name);
 

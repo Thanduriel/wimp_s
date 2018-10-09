@@ -4,6 +4,16 @@ namespace Generators {
 
 	using namespace Game;
 
+	const std::array< TraitDescription, 5> RARITY_NAME_TRAITS =
+	{ {
+		{"Basic", "", true},
+		{"Advanced", "", true },
+		{"Premium", "", true },
+		{"Prototype", "", false },
+		{"Unique", "", true }
+	} };
+
+
 	ItemGenerator::ItemGenerator(size_t _numTraits, uint32_t _seed)
 		: m_rng(_seed ? _seed : clock()),
 		m_randomSampler(m_rng),
@@ -44,7 +54,17 @@ namespace Generators {
 		while (float n = m_randomSampler.Uniform() > qVec[(int)rarity]) rarity = Item::Quality((int)rarity - 1);
 
 		m_rarity = rarity;
+
 		return rarity;
+	}
+
+	void ItemGenerator::AddRarityNames(Item::Quality _quality)
+	{
+		if (_quality == Item::Quality::Basic) return;
+		
+		AddTrait(RARITY_NAME_TRAITS[static_cast<size_t>(_quality)]);
+		if (_quality == Item::Quality::Unique)
+			AddTrait(RARITY_NAME_TRAITS[3]);
 	}
 
 	void ItemGenerator::Reset()

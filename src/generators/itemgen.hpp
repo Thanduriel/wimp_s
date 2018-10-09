@@ -43,7 +43,16 @@ namespace Generators {
 		bool isPrefix;
 	};
 
-	typedef std::pair<float, float> Range;
+	class Range : public std::pair<float, float>
+	{
+	public:
+		using pair<float, float>::pair;
+
+		float GetRelativePosition(float _abs) const
+		{
+			return (_abs - first) / (second - first);
+		}
+	};
 
 	class ItemGenerator
 	{
@@ -76,6 +85,7 @@ namespace Generators {
 		float GenerateValue(float _min, float _max, float _stepSize);
 
 		Game::Item::Quality RollRarity(float _rarityFactor);
+		void AddRarityNames(Game::Item::Quality _quality);
 		void Reset();
 
 		std::string m_name;

@@ -142,7 +142,7 @@ namespace Game {
 		m_fireImpl(_fireFn ? std::move(_fireFn) : WeaponTrait::FireDefault(WeaponTrait::CreateProjectileFn(Bolt(ei::Vec3(0.f), ei::Vec3(0.f,0.f,Projectile::DEFAULT_SPEED),5.f, 10.f)))),
 		m_target(nullptr)
 	{
-
+		ComputeStats();
 	}
 
 	void Weapon::RegisterComponents(SceneGraph& _sceneGraph)
@@ -173,5 +173,48 @@ namespace Game {
 			return m_energyCost;
 		}
 		return 0.f;
+	}
+
+	constexpr float BURST_TIME = 1.f;
+	constexpr float SUSTAINED_TIME = 100.f;
+	constexpr float TIME_STEP = 0.01f;
+
+	std::pair<float, float> Weapon::SimulateFire(float _duration)
+	{
+		float damage = 0.f;
+		float energy = 0.f;
+
+		for (float t = 0.f; t < _duration; t += TIME_STEP)
+		{
+			energy += Fire(ei::Vec3(), 10000.f);
+			Process(TIME_STEP);
+		}
+		for (auto& act : m_factoryComponent.m_createdActors)
+		{
+			Projectile& proj = *static_cast<Projectile*>(act.get());
+			damage += proj.GetDamage();
+		}
+
+		return { damage, energy };
+	}
+
+	void Weapon::ComputeStats()
+	{
+		m_audioComponent.Mute(true);
+
+		const auto&[damage, energy] = SimulateFire(BURST_TIME);
+		m_accumulatedStats.burstDPS = damage / BURST_TIME;
+		m_accumulatedStats.burstEPS = energy / BURST_TIME;
+
+		const auto&[damageLong, energyLong] = SimulateFire(SUSTAINED_TIME);
+		m_accumulatedStats.sustainedDPS = damageLong / SUSTAINED_TIME;
+		m_accumulatedStats.sustainedEPS = energyLong / SUSTAINED_TIME;
+
+		// reload
+		Process(20.f);
+
+		// throw away created projectiles
+		m_factoryComponent.Reset();
+		m_audioComponent.Mute(false);
 	}
 }

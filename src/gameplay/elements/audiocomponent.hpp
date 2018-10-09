@@ -28,11 +28,15 @@ namespace Game {
 
 		static void SetVolume(float _volume);
 		static float GetVolume() { return s_masterVolume; }
+
+		static void Mute3DSounds();
+		static void Enable3DSounds();
 	private:
 
 		static clunk::sdl::Backend* s_backend;
 		static AudioComponent* s_audioComponent;
 		static float s_masterVolume;
+		static float s_fallOffFactor;
 
 		friend class AudioComponent;
 		friend class Wimp_s;
@@ -52,10 +56,14 @@ namespace Game {
 		clunk::Source* GetSource(int _id) { return m_source; } // todo allow different sources
 
 		void Stop(float _fadeOut = 0.1f);
+
+		// a muted AudioComponent does not play sounds
+		void Mute(bool _isActive) { m_isMute = _isActive; }
 	private:
 		void UpdateSourcePos();
 		clunk::Object* m_object;
 		clunk::Source* m_source;
 		int m_curId;
+		bool m_isMute;
 	};
 }

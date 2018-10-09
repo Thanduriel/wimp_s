@@ -34,6 +34,9 @@ namespace GameStates
 		Graphic::DropField& CreateItemSocket(ei::Vec2 _position, const Game::Item* _item,
 			std::vector<Graphic::DropField*>& _dropField);
 
+		// put equipment currently found in sockets in the ship
+		void UpdateEquipment();
+
 		Game::Ship& m_ship;
 		std::unordered_map<const Game::Item*, Graphic::ItemIcon*> m_itemIcons;
 

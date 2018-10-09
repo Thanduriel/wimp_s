@@ -38,6 +38,16 @@ namespace Game {
 
 		float GetEnergyCost() const { return m_energyCost; }
 		float GetRange() const { return m_range; }
+		float GetCooldown() const { return m_cooldown; }
+
+		struct AccumulatedStats
+		{
+			float burstDPS;
+			float burstEPS;
+			float sustainedDPS;
+			float sustainedEPS;
+		};
+		const AccumulatedStats& GetAccumulatedStats() { return m_accumulatedStats; }
 	protected:
 		float m_cooldown;
 		float m_cooldownMax;
@@ -45,6 +55,9 @@ namespace Game {
 		float m_range;
 		ei::Vec3 m_beginVelocity;
 	private:
+		void ComputeStats();
+		std::pair<float, float> SimulateFire(float _duration);
+
 		FactoryComponent m_factoryComponent;
 		AudioComponent m_audioComponent;
 		
@@ -53,6 +66,8 @@ namespace Game {
 
 		Actor::ConstHandle m_target;
 		const void* m_owner;
+
+		AccumulatedStats m_accumulatedStats;
 
 		friend class WeaponTrait;
 	};

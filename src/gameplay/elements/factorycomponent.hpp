@@ -16,10 +16,14 @@ namespace Game {
 	public:
 		// Add an actor to this functions internal container to be later registered by the scene.
 		void Add(Actor& _actor) { m_createdActors.emplace_back(&_actor); };
+
+		// Throw away all actors currently held by this SceneRegister
+		void Reset() { m_createdActors.clear(); }
 	protected:
 		std::vector<std::unique_ptr<Actor>> m_createdActors;
 
 		friend class SceneGraph;
+		friend class Weapon; // hack for dps simulations
 	};
 
 	class FactoryComponent : public SceneRegister, public ConstActorComponent

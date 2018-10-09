@@ -28,6 +28,8 @@ namespace Game {
 		
 		void SetOwner(const void* _owner) { m_owner = _owner; }
 		const void* GetOwner() const { return m_owner; }
+
+		float GetDamage() const { return m_damage; }
 	protected:
 		float m_damage;
 		DamageType m_damageType;

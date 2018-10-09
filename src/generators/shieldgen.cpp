@@ -34,7 +34,7 @@ namespace Generators {
 
 		const Item::Quality rarity = RollRarity(_qualityFactor);
 
-		m_name = "shield";
+		m_name = "Shield";
 
 		float maxShield = m_randomSampler.Uniform(5.f, 10.f);
 		float delay = m_randomSampler.Uniform(2.f, 8.f);

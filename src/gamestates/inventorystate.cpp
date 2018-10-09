@@ -14,6 +14,7 @@
 #include "GLFW/glfw3.h"
 #include "gameplay/elements/audiocomponent.hpp"
 #include "gameplay/content.hpp"
+#include "gameplay/elements/audiocomponent.hpp"
 
 namespace GameStates
 {
@@ -39,6 +40,8 @@ namespace GameStates
 		using namespace Game;
 		using namespace ei;
 		using namespace Utils;
+
+		AudioSystem::Mute3DSounds();
 
 		for (int i = 0; i < Upgrades::COUNT; i++)
 			m_hud.m_upgradeBtns[i]->SetOnMouseUp([=]() { UpgradeValue((Upgrades)i); });
@@ -75,10 +78,11 @@ namespace GameStates
 
 		m_hud.m_inventoryField->SetDropEvent([this](DropField&, DraggableTexture& _tex)
 		{
-			const Game::Weapon* itm = static_cast<const Game::Weapon*>(_tex.GetContent());
+			const Game::Item* itm = static_cast<const Game::Item*>(_tex.GetContent());
 			if (itm->IsEquiped())
 			{
 				itm->UnEquip(m_ship);
+				UpdateEquipment();
 				UpdateUpgradeLabels();
 			}
 		});
@@ -129,6 +133,7 @@ namespace GameStates
 			_texture.SetActive(false);
 			_texture.SetVisible(false);
 			// money total changed
+			UpdateEquipment();
 			UpdateUpgradeLabels();
 		});
 
@@ -138,31 +143,11 @@ namespace GameStates
 
 	InventoryState::~InventoryState()
 	{
-		// update changed weapons
-		// the first field is the inventory, second the sell field
-		for (size_t i = OTHER_FIELDS; i < m_hud.m_weaponFields.size(); ++i)
-		{
-			const int index = static_cast<int>(i - OTHER_FIELDS);
-			auto& elements = m_hud.m_weaponFields[i]->GetElements();
-			if (elements.size())
-			{
-				const Game::Weapon* itm = static_cast<const Game::Weapon*>(elements.front()->GetContent());
-				// the inventory does not change the weapon's state; but here full access is required
-				m_ship.SetWeapon(index, const_cast<Game::Weapon*>(itm));
-			}
-			else m_ship.SetWeapon(index, nullptr);
-		}
+		UpdateEquipment();
+
 		m_ship.GetInventory().SetCredits(m_money);
 
-		// update shield
-		auto& elements = m_hud.m_shieldFields[1]->GetElements();
-		if (elements.size())
-		{
-			const Game::Shield* itm = static_cast<const Game::Shield*>(elements.front()->GetContent());
-			m_ship.SetEquipedShield(const_cast<Game::Shield*>(itm));
-		}
-		else m_ship.SetEquipedShield(nullptr);
-
+		Game::AudioSystem::Enable3DSounds();
 		// restore camera state
 		Control::g_camera = m_oldCamera;
 	}
@@ -186,6 +171,19 @@ namespace GameStates
 		using namespace Utils;
 		using namespace Game;
 
+		Weapon::AccumulatedStats accStats{};
+		for (auto& socket : m_ship.GetWeaponSockets())
+		{
+			if (Weapon* w = static_cast<Weapon*>(socket.GetAttached()))
+			{
+				auto& stats = w->GetAccumulatedStats();
+				accStats.burstDPS += stats.burstDPS;
+				accStats.burstEPS += stats.burstEPS;
+				accStats.sustainedDPS += stats.sustainedDPS;
+				accStats.sustainedEPS += stats.sustainedEPS;
+			}
+		}
+
 		// show basic stats
 		m_hud.m_shipInfoLabel->SetText("ship properties\n"s + '\n'
 			+ "energy:   " + ToConstDigit(m_ship.GetEnergy(), 1, 5) + " / " + ToConstDigit(m_ship.GetMaxEnergy(), 1, 5) + '\n'
@@ -193,7 +191,12 @@ namespace GameStates
 			+ "shield:   " + ToConstDigit(m_ship.GetShield(), 1, 5) + " / " + ToConstDigit(m_ship.GetMaxShield(), 1, 5) + '\n'
 			+ "recharge: " + ToConstDigit(m_ship.GetShieldRecharge(), 1, 13) + "\n"
 			+ "delay:    " + ToConstDigit(m_ship.GetShieldDelay(), 1, 13) + "\n\n"
-			+ "hull:     " + ToConstDigit(m_ship.GetHealth(), 1, 5) + " / " + ToConstDigit(m_ship.GetMaxHealth(), 1, 5) + "\n\n");
+			+ "hull:     " + ToConstDigit(m_ship.GetHealth(), 1, 5) + " / " + ToConstDigit(m_ship.GetMaxHealth(), 1, 5) + "\n"
+			+ "-----------\n"
+			+ "burst dps:" + ToConstDigit(accStats.burstDPS, 1, 13) + "\n"
+			+ "burst eps:" + ToConstDigit(accStats.burstEPS, 1, 13) + "\n"
+			+ "dps:      " + ToConstDigit(accStats.sustainedDPS, 1, 13) + "\n"
+			+ "eps:      " + ToConstDigit(accStats.sustainedEPS, 1, 13) + "\n");
 
 		Vec2 margin = PixelOffset(10.0f, 0.0f);
 		float values[Upgrades::COUNT]{
@@ -226,6 +229,80 @@ namespace GameStates
 		m_hud.m_moneyLabel->SetPosition(m_hud.m_shipInfoLabel->GetPosition() + Vec2(0.0f, -m_hud.m_shipInfoLabel->GetRectangle().y));
 	}
 
+	// ******************************************************** //
+	DropField& InventoryState::CreateItemSocket(ei::Vec2 _position, const Game::Item* _item,
+		std::vector<Graphic::DropField*>& _dropField)
+	{
+		using namespace Game;
+		using namespace ei;
+		using namespace Utils;
+
+		static const auto& dropSound = Content::GetSound("select_item");
+
+		auto& socketField = m_hud.CreateScreenElement<DropField>("box_uncut", _position, PixelOffset(84, 84), DefP::MidMid, ScreenPosition::Anchor(),
+			[&](DropField& _this, DraggableTexture& _tex)
+		{
+			// do not play the sound when opening the inventory and displaying the current equiped items
+			if (m_shouldPlaySounds) AudioSystem::GetGlobalAudio().Play(dropSound);
+			// if the field already contains an element put that one back to the main inventory
+			if (_this.GetElements().size() > 1)
+			{
+				DraggableTexture& tex = *_this.GetElements().front();
+				m_hud.m_inventoryField->DropElement(tex);
+				tex.SetPosition(tex.GetBackupPosition());
+			}
+			const Game::Item* itm = static_cast<const Game::Item*>(_tex.GetContent());
+			itm->Equip(m_ship);
+
+			UpdateEquipment();
+			// basic stats may have changed
+			UpdateUpgradeLabels();
+		});
+		_dropField.push_back(&socketField);
+
+		// put in currently equipped item
+		if (_item)
+		{
+			auto it = m_itemIcons.find(static_cast<const Item*>(_item));
+			Assert(it != m_itemIcons.end(), "The equipped weapon is not found in the inventory.");
+			socketField.DropElement(*it->second);
+		}
+
+		return socketField;
+	}
+
+	void InventoryState::UpdateEquipment()
+	{
+		// update changed weapons
+		// the first field is the inventory, second the sell field
+		for (size_t i = OTHER_FIELDS; i < m_hud.m_weaponFields.size(); ++i)
+		{
+			const int index = static_cast<int>(i - OTHER_FIELDS);
+			auto& elements = m_hud.m_weaponFields[i]->GetElements();
+			if (elements.size())
+			{
+				const Game::Weapon* itm = static_cast<const Game::Weapon*>(elements.front()->GetContent());
+				// the inventory does not change the weapon's state; but here full access is required
+				m_ship.SetWeapon(index, const_cast<Game::Weapon*>(itm));
+			}
+			else m_ship.SetWeapon(index, nullptr);
+		}
+
+		// skip if hud is still in creation
+		if (m_hud.m_shieldFields.size() == 2)
+		{
+			// update shield
+			auto& elements = m_hud.m_shieldFields[1]->GetElements();
+			if (elements.size())
+			{
+				const Game::Shield* itm = static_cast<const Game::Shield*>(elements.front()->GetContent());
+				m_ship.SetEquipedShield(const_cast<Game::Shield*>(itm));
+			}
+			else m_ship.SetEquipedShield(nullptr);
+		}
+	}
+
+	// ******************************************************** //
 	int InventoryState::GetUpgradeCost(Upgrades _upgrade)
 	{
 		return 100 + m_upgradeLvls[_upgrade] * 50;
@@ -349,46 +426,5 @@ namespace GameStates
 	void InventoryState::KeyDoubleClick(int _key)
 	{
 
-	}
-
-	// ******************************************************** //
-	DropField& InventoryState::CreateItemSocket(ei::Vec2 _position, const Game::Item* _item,
-		std::vector<Graphic::DropField*>& _dropField)
-	{
-		using namespace Game;
-		using namespace ei;
-		using namespace Utils;
-
-		static const auto& dropSound = Content::GetSound("select_item");
-
-		auto& socketField = m_hud.CreateScreenElement<DropField>("box_uncut", _position, PixelOffset(84, 84), DefP::MidMid, ScreenPosition::Anchor(),
-			[&](DropField& _this, DraggableTexture& _tex)
-		{
-			// do not play the sound when opening the inventory and displaying the current equiped items
-			if (m_shouldPlaySounds) AudioSystem::GetGlobalAudio().Play(dropSound);
-			// if the field already contains an element put that one back to the main inventory
-			if (_this.GetElements().size())
-			{
-				DraggableTexture& tex = *_this.GetElements().back();
-				m_hud.m_inventoryField->DropElement(tex);
-				tex.SetPosition(tex.GetBackupPosition());
-			}
-			const Game::Item* itm = static_cast<const Game::Item*>(_tex.GetContent());
-			itm->Equip(m_ship);
-
-			// basic stats may have changed
-			UpdateUpgradeLabels();
-		});
-		_dropField.push_back(&socketField);
-
-		// put in currently equiped item
-		if (_item)
-		{
-			auto it = m_itemIcons.find(static_cast<const Item*>(_item));
-			Assert(it != m_itemIcons.end(), "The equipped weapon is not found in the inventory.");
-			socketField.DropElement(*it->second);
-		}
-
-		return socketField;
 	}
 }

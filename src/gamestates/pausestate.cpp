@@ -22,13 +22,12 @@ namespace GameStates
 		m_hud.GetOptionsButton().SetOnMouseUp([&]() { m_newState = new SettingsState(); });
 		m_hud.GetMenuButton().SetOnMouseUp([&]() { m_isFinished = true; m_oldState->Finish(); });
 	
-		m_realFalloffFactor = Game::AudioSystem::GetContext().get_distance_model().rolloff_factor;
-		Game::AudioSystem::GetContext().get_distance_model().rolloff_factor = 100.f;
+		Game::AudioSystem::Mute3DSounds();
 	}
 
 	PauseState::~PauseState()
 	{
-		Game::AudioSystem::GetContext().get_distance_model().rolloff_factor = m_realFalloffFactor;
+		Game::AudioSystem::Enable3DSounds();
 	}
 
 	void PauseState::Process(float _deltaTime)

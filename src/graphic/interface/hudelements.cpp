@@ -105,8 +105,8 @@ namespace Graphic
 		else if (_element.GetParentField() != nullptr)
 			_element.GetParentField()->DetachElement(_element);
 
-		if (m_onDrop) m_onDrop(*this, _element);
 		AppendElement(_element);
+		if (m_onDrop) m_onDrop(*this, _element);
 	}
 
 	void DropField::AppendElement(DraggableTexture& _element)
