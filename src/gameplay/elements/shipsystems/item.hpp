@@ -29,6 +29,7 @@ namespace Game {
 			DefaultWeapon,
 			Missile,
 			DefaultShield,
+			StrongShield,
 			COUNT
 		};
 		enum struct Type : int

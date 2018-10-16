@@ -46,7 +46,9 @@ namespace Generators {
 
 		m_description = m_baseStats;
 
-		return new Game::Shield(rarity, Game::Item::Icon::DefaultShield, m_name, m_description,
+		static int count = 0;
+		++count;
+		return new Game::Shield(rarity, count % 2 ? Game::Item::Icon::DefaultShield : Game::Item::Icon::StrongShield, m_name, m_description,
 			maxShield,
 			recharge,
 			delay);
