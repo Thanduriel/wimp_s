@@ -84,6 +84,7 @@ namespace Game
 		float GetMaxEnergy() const { return m_maxEnergy; }
 		float GetEnergyRecharge() const { return m_energyRecharge; }
 
+		void SetEnergy(float _energy) { m_energy = std::min(m_energy + _energy, m_maxEnergy); }
 		void SetMaxEnergy(float _energy) { m_maxEnergy = _energy; }
 		void SetEnergyRecharge(float _recharge) { m_energyRecharge = _recharge; }
 

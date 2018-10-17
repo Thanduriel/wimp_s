@@ -43,14 +43,14 @@ namespace Game {
 		m_name(_name),
 		m_description(_description),
 		m_value(_value == USE_QUALITY ? QUALITY_VALUE[(int)_quality] : _value),
-		m_isEquiped(false)
+		m_ship(nullptr)
 	{}
 
 	// ******************************************************************* //
 	void Item::Equip(Ship& _ship) const
 	{
-		if (m_isEquiped) return;
-		m_isEquiped = true;
+		if (m_ship) return;
+		m_ship = &_ship;
 		_ship.SetMaxEnergy(_ship.GetMaxEnergy() + m_maxEnergy);
 		_ship.SetMaxShield(_ship.GetMaxShield() + m_maxShield);
 		_ship.SetMaxHealth(_ship.GetMaxHealth() + m_maxHealth);
@@ -59,9 +59,9 @@ namespace Game {
 
 	void Item::UnEquip(Ship& _ship) const
 	{
-		if (!m_isEquiped) return;
+		if (!m_ship) return;
 
-		m_isEquiped = false;
+		m_ship = nullptr;
 		_ship.SetMaxEnergy(_ship.GetMaxEnergy() - m_maxEnergy);
 		_ship.SetMaxShield(_ship.GetMaxShield() - m_maxShield);
 		_ship.SetMaxHealth(_ship.GetMaxHealth() - m_maxHealth);

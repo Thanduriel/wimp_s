@@ -78,6 +78,15 @@ namespace Generators {
 			}
 		}
 
+		// groups of traits that can not occur on the same item
+		// does not handle individual traits
+		template<typename T, size_t S>
+		void AddTraitGroup(const std::array<T, S>& _traits)
+		{
+			for (const T& el : _traits)
+				m_hasTrait[static_cast<size_t>(el)] = 1;
+		}
+
 		/* GenerateValue()
 		 * Generate a random number v in [_min, _max]
 		 *  with v = _min + x * _stepSize.

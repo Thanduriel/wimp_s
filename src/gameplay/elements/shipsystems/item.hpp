@@ -54,7 +54,7 @@ namespace Game {
 		int GetValue() const { return m_value; }
 
 		virtual Item::Type GetType() const = 0;
-		bool IsEquiped() const { return m_isEquiped; }
+		bool IsEquiped() const { return m_ship; }
 		virtual void Equip(Ship& _ship) const;
 		virtual void UnEquip(Ship& _ship) const;
 	protected:
@@ -63,9 +63,9 @@ namespace Game {
 		std::string m_name;
 		std::string m_description;
 		int m_value;
+		mutable Ship* m_ship; // ship that currently owns this item, nullptr when not equipped
 
 		// global buffs
-		mutable bool m_isEquiped;
 		float m_maxEnergy = 0.f;
 		float m_maxShield = 0.f;
 		float m_maxHealth = 0.f;
