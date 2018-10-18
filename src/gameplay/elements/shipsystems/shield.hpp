@@ -16,13 +16,16 @@ namespace Game {
 			const std::string& _name = "Default Shield",
 			const std::string& _description = "absorbs some damage",
 			float _maxShield = 10.f, float _recharge = 1.f, float _delay = 4.f,
-			TakeDamageFunction&& _takeDamageFn = TakeDamageFunction()
+			TakeDamageFunction&& _takeDamageFn = TakeDamageFunction(),
+			RechargeFunction&& _rechargeFn = RechargeFunction()
 		);
 
 		void Process(float _deltaTime) override;
 
-		// returns the damage not absorbed by this shield
+		// returns the damage that should actually be dealt
 		float TakeDamage(float _damage);
+
+		float Recharge(float _deltaTime);
 
 		void Equip(Ship& _ship) const override;
 		void UnEquip(Ship& _ship) const override;
@@ -50,5 +53,8 @@ namespace Game {
 		static Shield::TakeDamageFunction ReduceDamageMax(float _damageCap);
 
 		static Shield::TakeDamageFunction AbsorbEnergyRelative(float _energyRatio);
+
+		// health gain in %
+		static Shield::RechargeFunction RechargeRepair(float _amount);
 	};
 }

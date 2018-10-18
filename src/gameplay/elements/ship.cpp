@@ -213,6 +213,7 @@ namespace Game
 			m_shield = ei::min(m_shield + _deltaTime * m_shieldRecharge, m_maxShield);
 		else if (m_shieldWait >= m_shieldDelay)
 			m_isRecharging = true;
+		if (m_shieldItem) m_shieldItem->Recharge(_deltaTime);
 
 		m_shieldComponent.SetActive(m_shield > 0.f);
 		m_shieldComponent.SetIntensity(0.5f + m_shield / m_maxShield * 0.5f);

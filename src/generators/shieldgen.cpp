@@ -27,6 +27,11 @@ namespace Generators {
 		Resistance, Absorb, Deflection
 	};
 
+	constexpr std::array<ShieldTraitType, 1> RECHARGE_TRAITS =
+	{
+		Repair
+	};
+
 	const std::array< TraitDescription, STTCOUNT> SHIELD_TRAITS =
 	{ {
 		{"", "%.0f%% max shield", true},
@@ -34,7 +39,7 @@ namespace Generators {
 		{"", "%.0f%% faster recharge", true},
 		{"Quick Charge", "3x faster recharge, 2x slower start%", true},
 		{"of Resistance", "reduces damage taken by %.0f%%", false },
-		{"Repairing", "regenerates %.0f [health/s]", true },
+		{"Repairing", "regenerates %.1f%% health per second", true },
 		{"of Absorption", "gain %.0f%% of damage taken as energy", false },
 		{"Nova", "releases an explosion when empty", true },
 		{"Adaptive", "reduces damage taken by 5% for 4s when hit", true },
@@ -66,6 +71,7 @@ namespace Generators {
 		float recharge = m_randomSampler.Uniform(0.2f, 3.f);
 
 		Shield::TakeDamageFunction takeDamageFn;
+		Shield::RechargeFunction rechargeFn;
 
 		while (numTraits)
 		{
@@ -116,6 +122,11 @@ namespace Generators {
 				AddTrait(SHIELD_TRAITS[trait], 100.f * temp);
 				AddTraitGroup(TAKE_DAMAGE_TRAITS);
 				break;
+			case Repair:
+				temp = GenerateValue(0.005f, 0.02, 0.01f);
+				rechargeFn = ShieldTrait::RechargeRepair(temp);
+				AddTrait(SHIELD_TRAITS[trait], temp * 100.f);
+				AddTraitGroup(RECHARGE_TRAITS);
 			}
 		}
 
@@ -133,7 +144,8 @@ namespace Generators {
 			maxShield,
 			recharge,
 			delay,
-			std::move(takeDamageFn));
+			std::move(takeDamageFn),
+			std::move(rechargeFn));
 		{}
 	}
 }

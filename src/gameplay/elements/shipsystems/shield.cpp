@@ -8,11 +8,13 @@ namespace Game {
 		const std::string& _name,
 		const std::string& _description,
 		float _maxShield, float _recharge, float _delay,
-		TakeDamageFunction&& _takeDamageFn)
+		TakeDamageFunction&& _takeDamageFn,
+		RechargeFunction&& _rechargeFn)
 		: TypeItem(_quality, _icon, _name, _description),
 		m_shieldRecharge(_recharge),
 		m_shieldDelay(_delay),
-		m_takeDamageImpl(_takeDamageFn ? std::move(_takeDamageFn) : ShieldTrait::TakeDamageDefault)
+		m_takeDamageImpl(_takeDamageFn ? std::move(_takeDamageFn) : ShieldTrait::TakeDamageDefault),
+		m_rechargeImpl(_rechargeFn ? std::move(_rechargeFn) : ShieldTrait::RechargeDefault)
 	{
 		m_maxShield = _maxShield;
 	}
@@ -44,6 +46,11 @@ namespace Game {
 		return m_takeDamageImpl(*this, _damage);
 	}
 
+	float Shield::Recharge(float _deltaTime)
+	{
+		return m_rechargeImpl(*this, _deltaTime);
+	}
+
 	// ********************************************************************* //
 	float ShieldTrait::RechargeDefault(Shield& _this, float _deltaTime)
 	{
@@ -53,6 +60,19 @@ namespace Game {
 	float ShieldTrait::TakeDamageDefault(Shield& _this, float _damage)
 	{
 		return _damage;
+	}
+
+	// ********************************************************************* //
+	Shield::RechargeFunction ShieldTrait::RechargeRepair(float _amount)
+	{
+		return [=](Shield& _this, float _deltaTime)
+		{
+			const float regen = _this.m_ship->GetMaxHealth() * _amount * _deltaTime;
+			_this.m_ship->SetHealth(std::min(_this.m_ship->GetHealth() + regen, 
+				_this.m_ship->GetMaxHealth()));
+
+			return _deltaTime;
+		};
 	}
 
 	// ********************************************************************* //
