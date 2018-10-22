@@ -11,9 +11,9 @@ namespace GameStates {
 	class BasicMenuState : public GameStateHT<HudT, void>
 	{
 	public:
-		BasicMenuState()
+		BasicMenuState(const Utils::Color32F& _color = Utils::Color32F(0.f, 1.f, 0.f, 0.5f))
 			: m_grid(ei::Vec3(0.f, 0.f, 30.f), 
-				Utils::Color32F(0.f, 1.f, 0.f, 0.5f), 3.5f, 3.5f, 80.f,
+				_color, 3.5f, 3.5f, 80.f,
 				Game::GridComponent::TransitionInfo(20000.f, 1.f, &Game::GridComponent::Random)),
 			m_oldCamera(Control::g_camera)
 		{

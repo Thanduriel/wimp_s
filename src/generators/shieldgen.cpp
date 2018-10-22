@@ -63,6 +63,7 @@ namespace Generators {
 
 		const Item::Quality rarity = RollRarity(_qualityFactor);
 		int numTraits = QUALITY_NUM_TRAITS[(int)rarity];
+		AddRarityNames(rarity);
 
 		m_name = "Shield";
 
@@ -123,7 +124,7 @@ namespace Generators {
 				AddTraitGroup(TAKE_DAMAGE_TRAITS);
 				break;
 			case Repair:
-				temp = GenerateValue(0.005f, 0.02, 0.01f);
+				temp = GenerateValue(0.005f, 0.02f, 0.01f);
 				rechargeFn = ShieldTrait::RechargeRepair(temp);
 				AddTrait(SHIELD_TRAITS[trait], temp * 100.f);
 				AddTraitGroup(RECHARGE_TRAITS);

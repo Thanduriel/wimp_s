@@ -35,7 +35,10 @@ namespace GameStates
 		m_oldCamera(Control::g_camera),
 		m_money(_ship.GetInventory().GetCredits()),
 		m_upgradeLvls(_ship.GetUpgradeLevels()),
-		m_shouldPlaySounds(false)
+		m_shouldPlaySounds(false),
+		m_grid(m_ship.GetPosition() - m_ship.GetRotationMatrix() * Vec3(0.f, 100.f, 0.f),
+			Utils::Color32F(0.2f, 0.1f, 0.9f, 0.3f), 3.5f, 3.5f, 130.f,
+			Game::GridComponent::TransitionInfo(20000.f, 1.f, &Game::GridComponent::Random))
 	{
 		using namespace Game;
 		using namespace ei;
@@ -115,7 +118,6 @@ namespace GameStates
 		}
 
 		// shield socket
-		m_hud.m_shieldFields.push_back(m_hud.m_inventoryField);
 		CreateItemSocket(Vec2(0.f, 0.f), m_ship.GetEquipedShield(), m_hud.m_shieldFields);
 
 		// register item icons
@@ -124,18 +126,44 @@ namespace GameStates
 
 		m_hud.m_sellField->SetDropEvent([&](DropField& _this, DraggableTexture& _texture) 
 		{
-			Game::Weapon* itm = const_cast<Game::Weapon*>(static_cast<const Game::Weapon*>(_texture.GetContent()));
-			m_money += itm->GetValue();
-			m_ship.GetInventory().Remove(*itm);
-			itm->Destroy();
-			_this.DetachElement(_texture);
-			// since the inventory hud is rebuild every time they do not need to be actually destroyed here
-			_texture.SetActive(false);
-			_texture.SetVisible(false);
+			Game::Item* itm = const_cast<Game::Item*>(static_cast<const Game::Item*>(_texture.GetContent()));
+			SellItem(*itm, _this, _texture);
 			// money total changed
 			UpdateEquipment();
 			UpdateUpgradeLabels();
 		});
+
+		// sell all option
+		m_hud.m_sellAllButton->SetOnMouseUp([this]() 
+		{
+			// iterate in reverse order so that elements are removed from the end
+			auto& texElements = m_hud.m_inventoryField->GetElements();
+			for(int j = static_cast<int>(texElements.size()) - 1; j >= 0; --j)
+			{
+				DraggableTexture* el = texElements[j];
+				Game::Item* itm = const_cast<Game::Item*>(static_cast<const Game::Item*>(el->GetContent()));
+				SellItem(*itm, *m_hud.m_inventoryField, *el);
+				UpdateEquipment();
+				UpdateUpgradeLabels();
+			}
+		});
+
+		UpdateMoneyDipslay();
+		// after the ship info text has been set and scaled scale the background
+		m_hud.m_shipInfoBackground.SetSize(m_hud.m_shipInfoLabel->GetRectangle() * Vec2(1.144f, 1.0f));
+		m_hud.m_moneyBackground.SetSize(Vec2(m_hud.m_moneyLabel->GetRectangle().x, m_hud.m_moneyLabel->GetRectangle().y * 1.2f));
+		m_hud.m_moneyLabel->SetPosition(Vec2(0.0f, -0.0f));
+		const Vec2 OFFSET = PixelOffset(20, 0);
+		const float lineSize = m_hud.m_shipInfoLabel->GetCharSize().y * m_hud.m_shipInfoLabel->GetDefaultSize();
+		for (int j = 0; j < Upgrades::COUNT; j++)
+		{
+			m_hud.m_upgradeLabels[j]->SetPosition(OFFSET + m_hud.m_shipInfoLabel->GetPosition()
+				+ Vec2(m_hud.m_shipInfoLabel->GetRectangle().x,
+					-m_rows[j] * lineSize));
+			m_hud.m_upgradeBtns[j]->SetPosition(OFFSET + m_hud.m_upgradeLabels[j]->GetPosition()
+				+ Vec2(m_hud.m_upgradeLabels[j]->GetRectangle().x, -lineSize * 0.57f));
+		}
+	//	m_hud.m_shipInfoLabel->SetVisible(false);
 
 		// now further equips are done by the player
 		m_shouldPlaySounds = true;
@@ -154,6 +182,8 @@ namespace GameStates
 
 	void InventoryState::OnActivate()
 	{
+		m_grid.SetRotation(m_ship.GetRotation());
+
 		// update camera again because the ship position might have been updated once
 		const float radius = m_ship.GetGeometryComponent().GetMesh().GetMeshBounds().boundingRadius * 1.1f;
 		float height = radius / tan(g_camera.GetFov() * 0.5f);
@@ -198,8 +228,7 @@ namespace GameStates
 			+ "dps:      " + ToConstDigit(accStats.sustainedDPS, 1, 13) + "\n"
 			+ "eps:      " + ToConstDigit(accStats.sustainedEPS, 1, 13) + "\n");
 
-		Vec2 margin = PixelOffset(10.0f, 0.0f);
-		float values[Upgrades::COUNT]{
+		const float values[Upgrades::COUNT]{
 			m_ship.GetMaxEnergy(),
 			m_ship.GetEnergyRecharge(),
 			m_ship.GetMaxShield(),
@@ -215,18 +244,19 @@ namespace GameStates
 					m_hud.m_upgradeLabels[i]->SetText("(+" + ToConstDigit(NextUpgradeValue((Upgrades)i) - values[i], 1, 5) + ")");
 				else
 					m_hud.m_upgradeLabels[i]->SetText("(" + ToConstDigit(NextUpgradeValue((Upgrades)i) - values[i], 1, 6) + ")");
+				m_hud.m_upgradeLabels[i]->SetVisible(true);
+				m_hud.m_upgradeBtns[i]->SetActive(true);
 				m_hud.m_upgradeBtns[i]->SetVisible(true);
 			}
 			else
 			{
-				m_hud.m_upgradeLabels[i]->SetText("");
+				m_hud.m_upgradeLabels[i]->SetVisible(false);
 				m_hud.m_upgradeBtns[i]->SetVisible(false);
+				m_hud.m_upgradeBtns[i]->SetActive(false);
 			}
-			m_hud.m_upgradeLabels[i]->SetPosition(margin + m_hud.m_shipInfoLabel->GetPosition() + Vec2(m_hud.m_shipInfoLabel->GetRectangle().x, -m_rows[i] * m_hud.m_shipInfoLabel->GetCharSize().y * m_hud.m_shipInfoLabel->GetDefaultSize()));
-			m_hud.m_upgradeBtns[i]->SetPosition(margin + m_hud.m_upgradeLabels[i]->GetPosition() + Vec2(m_hud.m_upgradeLabels[i]->GetRectangle().x, 0.0f));
 		}
 
-		m_hud.m_moneyLabel->SetPosition(m_hud.m_shipInfoLabel->GetPosition() + Vec2(0.0f, -m_hud.m_shipInfoLabel->GetRectangle().y));
+	//	m_hud.m_moneyLabel->SetPosition(m_hud.m_shipInfoLabel->GetPosition() + Vec2(0.0f, -m_hud.m_shipInfoLabel->GetRectangle().y));
 	}
 
 	// ******************************************************** //
@@ -292,10 +322,10 @@ namespace GameStates
 		}
 
 		// skip if hud is still in creation
-		if (m_hud.m_shieldFields.size() == 2)
+		if (m_hud.m_shieldFields.size() == 3)
 		{
 			// update shield
-			auto& elements = m_hud.m_shieldFields[1]->GetElements();
+			auto& elements = m_hud.m_shieldFields[2]->GetElements();
 			if (elements.size())
 			{
 				const Game::Shield* itm = static_cast<const Game::Shield*>(elements.front()->GetContent());
@@ -303,6 +333,22 @@ namespace GameStates
 			}
 			else m_ship.SetEquipedShield(nullptr);
 		}
+	}
+
+	void InventoryState::SellItem(Game::Item& _item, DropField& _source, DraggableTexture& _texture)
+	{
+		using namespace Game;
+		// due to multi-inheritance that Actor part is not in the same location
+		Game::Actor* itmActor = _item.GetType() == Item::Type::Weapon ? static_cast<Actor*>(static_cast<Weapon*>(&_item))
+			: static_cast<Actor*>(static_cast<Shield*>(&_item));
+		m_money += _item.GetValue();
+		m_ship.GetInventory().Remove(_item);
+		itmActor->Destroy();
+		_source.DetachElement(_texture);
+		// since the inventory hud is rebuild every time they do not need to be actually destroyed here
+		_texture.SetActive(false);
+		_texture.SetVisible(false);
+
 	}
 
 	// ******************************************************** //
@@ -372,28 +418,30 @@ namespace GameStates
 		}
 	}
 
-	void InventoryState::Process(float _deltaTime)
+	void InventoryState::UpdateMoneyDipslay()
 	{
 		using namespace Utils;
-
-		std::string text = "money:    " + ToConstDigit(m_money, 0, 6) + " $";
+		std::string text = "money: " + ToConstDigit(m_money, 0, 5) + "$";
 		for (int i = 0; i < Upgrades::COUNT; i++)
 		{
 			if (m_hud.m_upgradeBtns[i]->GetButtonState() == Graphic::Button::State::MouseOver && m_hud.m_upgradeBtns[i]->IsVisible())
 				text += " (-" + ToConstDigit(GetUpgradeCost((Upgrades)i), 0, 6) + "$)";
 		}
 		m_hud.m_moneyLabel->SetText(text);
-		//if (InputManager::IsVirtualKeyPressed(Control::VirtualKey::INVENTORY))
-		//{
-		//	// Change back to main state
-		//	m_newState = new GameStates::MainState();
-		//}
+	}
+
+	void InventoryState::Process(float _deltaTime)
+	{
+		// the preview is based on a mouse over that can change at any moment
+		UpdateMoneyDipslay();
 	}
 
 	void InventoryState::Draw(float _deltaTime)
 	{
 		Graphic::Device::SetEffect(Graphic::Resources::GetEffect(Graphic::Effects::MESH));
 		m_ship.GetGeometryComponent().Draw();
+
+		m_grid.Draw();
 
 		Device::DrawFramebufferToBackbuffer();
 

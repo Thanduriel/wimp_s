@@ -8,47 +8,54 @@ namespace GameStates
 	using namespace ei;
 
 	InventoryHud::InventoryHud()
+		: m_shipInfoBackground("box_uncut", Vec2(0.03f, -0.03f), Vec2(0.f), DefP::TopLeft, Anchor(DefP::TopLeft, this)),
+		m_moneyBackground("box_uncut", Vec2(0.f), Vec2(1.f), DefP::TopLeft, Anchor(DefP::BotLeft, &m_shipInfoBackground)),
+		m_itemBackground("box_uncut", Vec2(0.f), Vec2(1.f))
 	{
-		//m_inventoryBackground = &CreateScreenElement<ScreenTexture>("box_uncut", PixelOffset(0, 0), Vec2(2.0f, 2.0f), DefP::MidMid, Anchor(DefP::MidMid, this));
-/*		std::vector<DropField*> dropFields = std::vector<DropField*>();
-		m_vicinityItems = std::vector<DraggableTexture*>();
-		m_vicinityField = &CreateScreenElement<DropField>("box_uncut", PixelOffset(0, 0), PixelOffset(500, 500), DefP::TopLeft, Anchor(DefP::TopLeft, this));
-		dropFields.push_back(m_vicinityField);
-		dropFields.push_back(m_inventoryField);
-		//Create some items for testing purposes
-		for (int i = 0; i < 10; i++)
-		{
-			DraggableTexture* item = &CreateScreenElement<DraggableTexture>("box_uncut", PixelOffset(0, 0), PixelOffset(100, 100), DefP::MidMid, Anchor(DefP::MidMid, this), dropFields);
-			m_vicinityItems.push_back(item);
-			m_vicinityField->DropElement(*item);
-			item->SetPosition(item->GetBackupPosition());
-		}*/
+	//	m_shipInfoBackground.SetScale(Vec2(1.05f, 1.3f));
+		m_shipInfoBackground.Register(*this);
+		m_moneyBackground.Register(*this);
+	//	m_itemBackground.Register(*this);
 		
 		// weapon related
 		m_inventoryField = &CreateScreenElement<DropField>("box_uncut", PixelOffset(0, 0), PixelOffset(400, 400), DefP::TopRight, Anchor(DefP::TopRight, this));
 		m_weaponFields.push_back(m_inventoryField);
+		m_shieldFields.push_back(m_inventoryField);
 		m_descriptionLabel = &CreateScreenElement<TextRender>(Vec2(0.05f, -0.15f), ScreenPosition::Anchor(DefP::MidLeft, this));
 		m_descriptionLabel->SetDefaultSize(0.5f);
 		m_sellField = &CreateScreenElement<DropField>("box_uncut", Vec2(0.f), PixelOffset(96, 96), DefP::TopMid, Anchor(DefP::BotMid, m_inventoryField));
 		m_weaponFields.push_back(m_sellField);
+		m_shieldFields.push_back(m_sellField);
 
 		m_sellLabel = &CreateScreenElement<TextRender>(Vec2(0.f), ScreenPosition::Anchor(DefP::BotLeft, m_sellField));
 		m_sellLabel->SetText("sell");
 		m_sellLabel->SetDefaultSize(0.8f);
+		const Vec2 labelSize = m_sellLabel->GetRectangle();
+		m_sellLabel->SetPosition(Vec2(-labelSize.x * 1.1f, m_sellField->GetSize().y * 0.5 + labelSize.y * 0.5f));
+
+		m_sellAllButton = &CreateScreenElement<Button>("slotBtn",
+			PixelOffset(25, 0),
+			m_sellField->GetSize() * Vec2(0.7f, 0.7f), DefP::MidLeft, Anchor(DefP::MidRight , m_sellField));
+		m_sellAllButton->SetCaption("all");
 
 		// general information
-		m_shipInfoLabel = &CreateScreenElement<TextRender>(Vec2(0.05f, -0.05f), ScreenPosition::Anchor(DefP::TopLeft, this));
+		m_shipInfoLabel = &CreateScreenElement<TextRender>(Vec2(0.025f, -0.03f), ScreenPosition::Anchor(DefP::TopLeft, &m_shipInfoBackground));
 		m_shipInfoLabel->SetDefaultSize(0.5f);
 
 		// upgrades
 		for (int i = 0; i < Upgrades::COUNT; i++)
 		{
-			m_upgradeBtns[i] = &CreateScreenElement<Button>("upgradeBtn", m_shipInfoLabel->GetPosition() + Vec2(m_shipInfoLabel->GetRectangle().x, 0.0f), PixelOffset(25.0f, 25.0f), DefP::TopLeft, Anchor(DefP::TopLeft, this));
-			m_upgradeLabels[i] = &CreateScreenElement<TextRender>(Vec2(0.0f, 0.0f), ScreenPosition::Anchor(DefP::TopLeft, this));
+			m_upgradeBtns[i] = &CreateScreenElement<Button>("upgradeBtn", 
+				m_shipInfoLabel->GetPosition() + Vec2(m_shipInfoLabel->GetRectangle().x, 0.0f), 
+				PixelOffset(25, 25), DefP::MidLeft, Anchor(DefP::TopLeft, &m_shipInfoBackground));
+			m_upgradeLabels[i] = &CreateScreenElement<TextRender>(Vec2(0.0f, 0.0f), ScreenPosition::Anchor(DefP::TopLeft, &m_shipInfoBackground));
 			m_upgradeLabels[i]->SetDefaultSize(0.5f);
+			// set content to the correct size
+			// so that the buttons can be positioned behind
+			m_upgradeLabels[i]->SetText("12345678"); 
 		}
 
-		m_moneyLabel = &CreateScreenElement<TextRender>(Vec2(0.0f, 0.0f), ScreenPosition::Anchor(DefP::TopLeft, this));
+		m_moneyLabel = &CreateScreenElement<TextRender>(Vec2(0.025f, -0.03f), ScreenPosition::Anchor(DefP::TopLeft, &m_moneyBackground));
 		m_moneyLabel->SetDefaultSize(0.5f);
 	}
 

@@ -3,6 +3,7 @@
 #include "huds/inventoryhud.hpp"
 #include "graphic/interface/hud.hpp"
 #include "gameplay/elements/shipsystems/item.hpp"
+#include "gameplay/elements/grid.hpp"
 
 namespace Game {
 	class Ship;
@@ -36,6 +37,9 @@ namespace GameStates
 
 		// put equipment currently found in sockets in the ship
 		void UpdateEquipment();
+		void UpdateMoneyDipslay();
+
+		void SellItem(Game::Item& _item, Graphic::DropField& _source, Graphic::DraggableTexture& _texture);
 
 		Game::Ship& m_ship;
 		std::unordered_map<const Game::Item*, Graphic::ItemIcon*> m_itemIcons;
@@ -48,11 +52,13 @@ namespace GameStates
 		std::array<int, Upgrades::COUNT>& m_upgradeLvls;
 
 		//The rows in which the upgradeable values of the ship info label are displayed
-		std::array<int, Upgrades::COUNT> m_rows = { 2, 3, 5, 6, 7, 9 };
+		constexpr static std::array<int, Upgrades::COUNT> m_rows = { 2, 3, 5, 6, 7, 9 };
 
 		int GetUpgradeCost(Upgrades _upgrade);
 		float NextUpgradeValue(Upgrades _upgrade);
 
 		void UpdateUpgradeLabels();
+
+		Game::Grid m_grid;
 	};
 }

@@ -16,14 +16,16 @@ namespace Graphic
 		std::function<void()> _OnMouseUp) :
 		ScreenOverlay(_position, _size, _def, _anchor)
 	{
+		using namespace std::string_literals;
+
 		Jo::Files::MetaFileWrapper& posMap = Resources::GetTextureMap();
-		m_vertex.texCoord = Vec2((float)posMap.RootNode[_name][std::string("positionX")], (float)posMap.RootNode[_name][std::string("positionY")]);
-		m_vertex.size = Vec2((float)posMap.RootNode[_name][std::string("sizeX")], (float)posMap.RootNode[_name][std::string("sizeY")]);
+		m_vertex.texCoord = Vec2((float)posMap.RootNode[_name]["positionX"s], (float)posMap.RootNode[_name]["positionY"s]);
+		m_vertex.size = Vec2((float)posMap.RootNode[_name]["sizeX"s], (float)posMap.RootNode[_name]["sizeY"s]);
 		m_textureSize = m_vertex.size;
 		m_texturePosition = m_vertex.texCoord;
 		if (Vec2(0.f) == _size)
 		{
-			Vec2 screenSize(posMap.RootNode[std::string("width")].Get(132), posMap.RootNode[std::string("height")].Get(132));
+			Vec2 screenSize(posMap.RootNode["width"s].Get(132), posMap.RootNode["height"s].Get(132));
 			screenSize *= m_vertex.size; //pixel size of this texture
 			m_vertex.screenSize = PixelOffset(screenSize);
 
@@ -56,7 +58,8 @@ namespace Graphic
 	void ScreenTexture::SetSize(Vec2 _size)
 	{
 		ScreenOverlay::SetSize(_size);
-		m_vertex.screenSize = _size;
+		m_vertex.screenSize = m_size;
+		m_vertex.position = m_position; // position can change due to anchors
 	}
 
 	// ************************************************************************ //
@@ -263,7 +266,8 @@ namespace Graphic
 		m_btnOver(_name + "Over", Vec2(0.f), _size, DefP::TopLeft, Anchor(DefP::TopLeft, this)),
 		m_btnDown(_name + "Down", Vec2(0.f), _size, DefP::TopLeft, Anchor(DefP::TopLeft, this)),
 		m_caption(Vec2(0.f), Anchor(DefinitionPoint::TopLeft, this), _font),
-		m_autoCenter(true)
+		m_autoCenter(true),
+		m_btnState(State::Base)
 	{
 		this->SetSize(m_btnDefault.GetSize());
 		SetActive(true);
@@ -271,8 +275,6 @@ namespace Graphic
 		m_btnDefault.SetVisible(true);
 		m_btnOver.SetVisible(false);
 		m_btnDown.SetVisible(false);
-
-		m_btnState = State::Base;
 
 		m_caption.SetDefaultSize(2.f);
 		SetCaption(_caption);
@@ -329,22 +331,26 @@ namespace Graphic
 
 	void Button::SetVisible(bool _visible)
 	{
+		ScreenOverlay::SetVisible(_visible);
+		// hide parts again that should not be visible in the current state
 		if (_visible)
 		{
 			if (m_btnState == State::Base)
-				m_btnDefault.SetVisible(true);
+			{
+				m_btnOver.SetVisible(false);
+				m_btnDown.SetVisible(false);
+			}
 			else if (m_btnState == State::MouseOver)
-				m_btnOver.SetVisible(true);
+			{
+				m_btnDefault.SetVisible(false);
+				m_btnDown.SetVisible(false);
+			}
 			else
-				m_btnDown.SetVisible(true);
+			{
+				m_btnDefault.SetVisible(false);
+				m_btnOver.SetVisible(false);
+			}
 		}
-		else
-		{
-			m_btnDefault.SetVisible(false);
-			m_btnOver.SetVisible(false);
-			m_btnDown.SetVisible(false);
-		}
-		ScreenOverlay::SetVisible(_visible);
 	}
 
 	void Button::MouseEnter()

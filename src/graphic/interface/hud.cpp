@@ -80,7 +80,7 @@ namespace Graphic
 		ScissorRect scissor(m_position[0], m_position[1]-m_size[1], m_size[0], m_size[1]);
 
 		RenewBuffer();
-		if (m_screenTextures.size())
+		if (m_characters.GetNumVertices())
 		{
 			Device::SetEffect(Resources::GetEffect(Effects::TEXTURE_2DQUAD));
 			Device::SetTexture(m_texContainer, 7);
@@ -141,6 +141,7 @@ namespace Graphic
 		ScreenTexture* screenTex = static_cast<ScreenTexture*>(m_screenOverlays[0]);
 	//	if (screenTex->IsVisible())
 		vbGuard->Add(screenTex->m_vertex);
+		vbGuard->Touch();
 	}
 
 	// ************************************************************************* //

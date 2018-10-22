@@ -22,7 +22,9 @@ namespace GameStates
 
 		void MouseMove(float _dx, float _dy) override;
 	private:
-		//Graphic::ScreenTexture* m_inventoryBackground;
+		Graphic::ScreenTexture m_shipInfoBackground;
+		Graphic::ScreenTexture m_moneyBackground;
+		Graphic::ScreenTexture m_itemBackground;
 
 		Graphic::DropField* m_inventoryField;
 		Graphic::DropField* m_sellField;
@@ -30,6 +32,7 @@ namespace GameStates
 		std::vector<Graphic::DropField*> m_shieldFields;
 		Graphic::TextRender* m_descriptionLabel;
 		Graphic::TextRender* m_sellLabel;
+		Graphic::Button* m_sellAllButton;
 
 		Graphic::TextRender* m_shipInfoLabel;
 

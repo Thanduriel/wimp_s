@@ -20,7 +20,8 @@ namespace GameStates {
 	} };
 
 	SettingsState::SettingsState()
-		: m_enableAimAssist(PlayerController::HAS_AIM_ASSIST)
+		: BasicMenuState(Utils::Color32F(0.f, 1.f, 0.4f, 0.3f)),
+		m_enableAimAssist(PlayerController::HAS_AIM_ASSIST)
 	{
 		Jo::Files::MetaFileWrapper& config = Wimp_s::GetConfig();
 		auto& cgraphics = config["Graphics"s];

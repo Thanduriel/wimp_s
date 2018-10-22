@@ -21,7 +21,7 @@ namespace Graphic {
 		ei::Vec2 screenSize;
 		ei::Vec2 texCoord;	///< Texture position (XY = [0,1]x[0,1]) relative to the lower left corner (0,0)
 		ei::Vec2 size;		///< Width and height relative to the texture size [0,1]x[0,1]
-		Utils::Color8U color;
+		Utils::Color8U color; ///< color that the texture value is multiplied with
 	};
 
 	/// \brief A 2d screen overlay texture 
