@@ -735,7 +735,6 @@ namespace Graphic
 
 		for (size_t i = 0; i < _s.size() + 1; ++i)
 		{
-			curSize += charSize;
 			if (s[i] == '\n')
 			{
 				if (m_isCentered)
@@ -747,10 +746,15 @@ namespace Graphic
 				}
 				curSize = 0.f;
 				newLine = i+1;
+				continue;
 			}
 			else if (s[i] == ' ') lastSpace = i;
 			else if (s[i] == '<') // skip control chars
-				i = _s.find('>', i + 1) + 1;
+			{
+				i = _s.find('>', i + 1);
+				continue;
+			}
+			curSize += charSize;
 			// to large for this box
 			if (curSize > GetSize().x)
 			{
@@ -774,10 +778,10 @@ namespace Graphic
 		{
 			auto& p = spacePadding.back();
 			// this might need more spaces
-			s.insert(p.first, "                                                                                                                     ", p.second);
+			s.insert(p.first, "                                                                                                                                                   ", p.second);
 			spacePadding.pop_back();
 		}
 
-		return std::move(s);
+		return s;
 	}
 };

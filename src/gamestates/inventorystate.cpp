@@ -150,9 +150,10 @@ namespace GameStates
 
 		UpdateMoneyDipslay();
 		// after the ship info text has been set and scaled scale the background
-		m_hud.m_shipInfoBackground.SetSize(m_hud.m_shipInfoLabel->GetRectangle() * Vec2(1.144f, 1.0f));
-		m_hud.m_moneyBackground.SetSize(Vec2(m_hud.m_moneyLabel->GetRectangle().x, m_hud.m_moneyLabel->GetRectangle().y * 1.2f));
-		m_hud.m_moneyLabel->SetPosition(Vec2(0.0f, -0.0f));
+		m_hud.m_shipInfoBackground.SetSize(m_hud.m_shipInfoLabel->GetRectangle() * Vec2(1.12f, 1.0f));
+		m_hud.m_moneyBackground.SetSize(Vec2(m_hud.m_moneyLabel->GetRectangle().x * 1.12f, m_hud.m_moneyLabel->GetRectangle().y * 1.5f));
+		m_hud.m_moneyLabel->SetPosition(m_hud.m_moneyLabel->GetPosition());
+		m_hud.m_shipInfoLabel->SetPosition(m_hud.m_shipInfoLabel->GetPosition());
 		const Vec2 OFFSET = PixelOffset(20, 0);
 		const float lineSize = m_hud.m_shipInfoLabel->GetCharSize().y * m_hud.m_shipInfoLabel->GetDefaultSize();
 		for (int j = 0; j < Upgrades::COUNT; j++)
@@ -163,7 +164,8 @@ namespace GameStates
 			m_hud.m_upgradeBtns[j]->SetPosition(OFFSET + m_hud.m_upgradeLabels[j]->GetPosition()
 				+ Vec2(m_hud.m_upgradeLabels[j]->GetRectangle().x, -lineSize * 0.57f));
 		}
-	//	m_hud.m_shipInfoLabel->SetVisible(false);
+	//	m_hud.m_itemBackground.SetSize(Vec2(0.75f, 
+	//		m_hud.m_moneyBackground.GetScreenSpacePosition().y - m_hud.m_itemBackground.GetScreenSpacePosition().y));
 
 		// now further equips are done by the player
 		m_shouldPlaySounds = true;
@@ -256,7 +258,6 @@ namespace GameStates
 			}
 		}
 
-	//	m_hud.m_moneyLabel->SetPosition(m_hud.m_shipInfoLabel->GetPosition() + Vec2(0.0f, -m_hud.m_shipInfoLabel->GetRectangle().y));
 	}
 
 	// ******************************************************** //
@@ -421,7 +422,7 @@ namespace GameStates
 	void InventoryState::UpdateMoneyDipslay()
 	{
 		using namespace Utils;
-		std::string text = "money: " + ToConstDigit(m_money, 0, 5) + "$";
+		std::string text = "money: " + ToConstDigit(m_money, 0, 6) + "$";
 		for (int i = 0; i < Upgrades::COUNT; i++)
 		{
 			if (m_hud.m_upgradeBtns[i]->GetButtonState() == Graphic::Button::State::MouseOver && m_hud.m_upgradeBtns[i]->IsVisible())

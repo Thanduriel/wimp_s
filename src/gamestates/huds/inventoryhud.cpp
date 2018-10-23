@@ -8,17 +8,20 @@ namespace GameStates
 	using namespace ei;
 
 	InventoryHud::InventoryHud()
-		: m_shipInfoBackground("box_uncut", Vec2(0.03f, -0.03f), Vec2(0.f), DefP::TopLeft, Anchor(DefP::TopLeft, this)),
-		m_moneyBackground("box_uncut", Vec2(0.f), Vec2(1.f), DefP::TopLeft, Anchor(DefP::BotLeft, &m_shipInfoBackground)),
-		m_itemBackground("box_uncut", Vec2(0.f), Vec2(1.f))
+		: m_shipInfoBackground("box_cutout", PixelOffset(15, -15), Vec2(0.f), DefP::TopLeft, Anchor(DefP::TopLeft, this)),
+		m_moneyBackground("box_cutout", PixelOffset(0, -5), Vec2(1.f), DefP::TopLeft, Anchor(DefP::BotLeft, &m_shipInfoBackground)),
+		m_itemBackground("box_cutout", PixelOffset(15,15), Vec2(0.68f, 0.80f), DefP::BotLeft, Anchor(DefP::BotLeft, this)),
+		m_itemDescriptionBox(Vec2(0.f), m_itemBackground.GetSize(), DefP::TopLeft, Anchor(DefP::TopLeft, &m_itemBackground))
 	{
 	//	m_shipInfoBackground.SetScale(Vec2(1.05f, 1.3f));
 		m_shipInfoBackground.Register(*this);
 		m_moneyBackground.Register(*this);
-	//	m_itemBackground.Register(*this);
+		m_itemBackground.Register(*this);
+		m_itemDescriptionBox.Register(*this);
+		m_itemDescriptionBox.SetCentered(true);
 		
 		// weapon related
-		m_inventoryField = &CreateScreenElement<DropField>("box_uncut", PixelOffset(0, 0), PixelOffset(400, 400), DefP::TopRight, Anchor(DefP::TopRight, this));
+		m_inventoryField = &CreateScreenElement<DropField>("box_uncut", PixelOffset(0, 0), PixelOffset(400, 400), DefP::MidRight, Anchor(DefP::MidRight, this));
 		m_weaponFields.push_back(m_inventoryField);
 		m_shieldFields.push_back(m_inventoryField);
 		m_descriptionLabel = &CreateScreenElement<TextRender>(Vec2(0.05f, -0.15f), ScreenPosition::Anchor(DefP::MidLeft, this));
@@ -55,7 +58,7 @@ namespace GameStates
 			m_upgradeLabels[i]->SetText("12345678"); 
 		}
 
-		m_moneyLabel = &CreateScreenElement<TextRender>(Vec2(0.025f, -0.03f), ScreenPosition::Anchor(DefP::TopLeft, &m_moneyBackground));
+		m_moneyLabel = &CreateScreenElement<TextRender>(Vec2(0.015f, -0.02f), ScreenPosition::Anchor(DefP::TopLeft, &m_moneyBackground));
 		m_moneyLabel->SetDefaultSize(0.5f);
 	}
 
@@ -67,7 +70,9 @@ namespace GameStates
 		if (const DraggableTexture* tex = dynamic_cast<DraggableTexture*>(m_preElem))
 		{
 			const Game::Weapon* itm = static_cast<const Game::Weapon*>(tex->GetContent());
-			m_descriptionLabel->SetText(itm->GetName() + "\n--------\n" + itm->GetDescription());
+		//	m_descriptionLabel->SetText(itm->GetName() + "\n--------\n" + itm->GetDescription());
+			m_itemDescriptionBox.Push(itm->GetName() + "\n--------\n" + itm->GetDescription(), 0.1f);
+			m_itemDescriptionBox.Process(1.f);
 		}
 	}
 }
