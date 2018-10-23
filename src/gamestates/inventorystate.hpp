@@ -40,6 +40,8 @@ namespace GameStates
 		void UpdateMoneyDipslay();
 
 		void SellItem(Game::Item& _item, Graphic::DropField& _source, Graphic::DraggableTexture& _texture);
+		int GetRepairCost() const;
+		void UpdateRepairCost();
 
 		Game::Ship& m_ship;
 		std::unordered_map<const Game::Item*, Graphic::ItemIcon*> m_itemIcons;

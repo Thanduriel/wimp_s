@@ -43,6 +43,10 @@ namespace GameStates
 
 		Graphic::TextRender* m_moneyLabel;
 
+		Graphic::FillBar m_healthBar;
+		Graphic::Button m_repairButton;
+		Graphic::TextRender m_repairLabel;
+
 		friend class InventoryState; // state and hud are heavily depended
 	};
 }

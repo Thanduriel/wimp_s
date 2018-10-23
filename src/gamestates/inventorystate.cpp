@@ -148,6 +148,17 @@ namespace GameStates
 			}
 		});
 
+		// repair button
+		m_hud.m_repairButton.SetOnMouseUp([this]()
+		{
+			const float cost = GetRepairCost();
+			const float r = std::min(1.f, static_cast<float>(m_money) / GetRepairCost());
+			m_ship.SetHealth(m_ship.GetHealth() + (m_ship.GetMaxHealth() - m_ship.GetHealth()) * r);
+			UpdateRepairCost();
+			m_money = std::max(0.f, m_money - cost);
+		});
+
+		UpdateRepairCost();
 		UpdateMoneyDipslay();
 		// after the ship info text has been set and scaled scale the background
 		m_hud.m_shipInfoBackground.SetSize(m_hud.m_shipInfoLabel->GetRectangle() * Vec2(1.12f, 1.0f));
@@ -349,7 +360,17 @@ namespace GameStates
 		// since the inventory hud is rebuild every time they do not need to be actually destroyed here
 		_texture.SetActive(false);
 		_texture.SetVisible(false);
+	}
 
+	constexpr float REPAIR_COST_FACTOR = 3.f;
+	int InventoryState::GetRepairCost() const
+	{
+		return static_cast<float>((m_ship.GetMaxHealth() - m_ship.GetHealth()) * REPAIR_COST_FACTOR);
+	}
+
+	void InventoryState::UpdateRepairCost()
+	{
+		m_hud.m_repairLabel.SetText("Cost: " + std::to_string(GetRepairCost()) + "$");
 	}
 
 	// ******************************************************** //
@@ -435,6 +456,8 @@ namespace GameStates
 	{
 		// the preview is based on a mouse over that can change at any moment
 		UpdateMoneyDipslay();
+
+		m_hud.m_healthBar.SetFillLevel(m_ship.GetHealth() / m_ship.GetMaxHealth());
 	}
 
 	void InventoryState::Draw(float _deltaTime)

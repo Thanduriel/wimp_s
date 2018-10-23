@@ -129,24 +129,21 @@ namespace Game
 	{
 		float remainingDmg = _amount;
 		// shield absorbs damage first
-		if (m_shieldItem)
+		remainingDmg = m_shieldItem ? m_shieldItem->TakeDamage(_amount) : _amount;
+		float dmgAbsorbed;
+		if (_type == DamageType::Ion)
 		{
-			remainingDmg = m_shieldItem->TakeDamage(_amount);
-			float dmgAbsorbed;
-			if (_type == DamageType::Ion)
-			{
-				const float shieldDmg = remainingDmg * 1.5f;
-				dmgAbsorbed = std::min(shieldDmg, m_shield);
-				remainingDmg = (shieldDmg - dmgAbsorbed) / 1.5f;
-			}
-			else
-			{
-				dmgAbsorbed = std::min(remainingDmg, m_shield);
-				remainingDmg -= dmgAbsorbed;
-			}
-			m_shield -= dmgAbsorbed;
+			const float shieldDmg = remainingDmg * 1.5f;
+			dmgAbsorbed = std::min(shieldDmg, m_shield);
+			remainingDmg = (shieldDmg - dmgAbsorbed) / 1.5f;
 		}
-
+		else
+		{
+			dmgAbsorbed = std::min(remainingDmg, m_shield);
+			remainingDmg -= dmgAbsorbed;
+		}
+		m_shield -= dmgAbsorbed;
+	
 		// recharge is interrupted
 		m_shieldWait = 0;
 		m_isRecharging = false;

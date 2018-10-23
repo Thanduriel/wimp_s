@@ -7,11 +7,16 @@ namespace GameStates
 	using namespace Graphic;
 	using namespace ei;
 
+	constexpr float BORDER_SIZE = 15;
+
 	InventoryHud::InventoryHud()
-		: m_shipInfoBackground("box_cutout", PixelOffset(15, -15), Vec2(0.f), DefP::TopLeft, Anchor(DefP::TopLeft, this)),
+		: m_shipInfoBackground("box_cutout", PixelOffset(BORDER_SIZE, -BORDER_SIZE), Vec2(0.f), DefP::TopLeft, Anchor(DefP::TopLeft, this)),
 		m_moneyBackground("box_cutout", PixelOffset(0, -5), Vec2(1.f), DefP::TopLeft, Anchor(DefP::BotLeft, &m_shipInfoBackground)),
-		m_itemBackground("box_cutout", PixelOffset(15,15), Vec2(0.68f, 0.80f), DefP::BotLeft, Anchor(DefP::BotLeft, this)),
-		m_itemDescriptionBox(Vec2(0.f), m_itemBackground.GetSize(), DefP::TopLeft, Anchor(DefP::TopLeft, &m_itemBackground))
+		m_itemBackground("box_cutout", PixelOffset(BORDER_SIZE, BORDER_SIZE), Vec2(0.68f, 0.80f), DefP::BotLeft, Anchor(DefP::BotLeft, this)),
+		m_itemDescriptionBox(Vec2(0.f), m_itemBackground.GetSize(), DefP::TopLeft, Anchor(DefP::TopLeft, &m_itemBackground)),
+		m_healthBar(PixelOffset(-36, 20), PixelOffset(220, 28), DefP::BotRight, Anchor(DefP::BotRight, this)),
+		m_repairButton("slotBtn", PixelOffset(5, 0), m_healthBar.GetSize() * Vec2(0.3f, 1.f), DefP::BotRight, Anchor(DefP::TopRight, &m_healthBar), "Repair"),
+		m_repairLabel(Vec2(0.f), ScreenPosition::Anchor(DefP::TopLeft, &m_healthBar))
 	{
 	//	m_shipInfoBackground.SetScale(Vec2(1.05f, 1.3f));
 		m_shipInfoBackground.Register(*this);
@@ -19,9 +24,16 @@ namespace GameStates
 		m_itemBackground.Register(*this);
 		m_itemDescriptionBox.Register(*this);
 		m_itemDescriptionBox.SetCentered(true);
+		m_healthBar.Register(*this);
+		m_healthBar.SetColor(Utils::Color8U(173_uc, 226_uc, 70_uc));
+		m_repairButton.Register(*this);
+		m_repairLabel.Register(*this);
+		m_repairLabel.SetText("trololo");
+		m_repairLabel.SetDefaultSize(0.5f);
+		m_repairLabel.SetPosition(Vec2(0.f, m_repairLabel.GetRectangle().y));
 		
 		// weapon related
-		m_inventoryField = &CreateScreenElement<DropField>("box_uncut", PixelOffset(0, 0), PixelOffset(400, 400), DefP::MidRight, Anchor(DefP::MidRight, this));
+		m_inventoryField = &CreateScreenElement<DropField>("box_uncut", PixelOffset(-BORDER_SIZE, -BORDER_SIZE), PixelOffset(400, 400), DefP::TopRight, Anchor(DefP::TopRight, this));
 		m_weaponFields.push_back(m_inventoryField);
 		m_shieldFields.push_back(m_inventoryField);
 		m_descriptionLabel = &CreateScreenElement<TextRender>(Vec2(0.05f, -0.15f), ScreenPosition::Anchor(DefP::MidLeft, this));
