@@ -54,11 +54,15 @@ namespace Control
 		} m_targetingMode;
 
 		void SwitchTargetingMode(TargetingMode _newMode);
+		void SideThrust(const ei::Vec3& _velocity);
 
 		float m_tacticalDirSign; // -1 when the grid.y > camera.y
 
 		// the target speed
 		float m_targetSpeed;
+
+		float m_sideThrustTimer;
+		bool m_isSideThrustReady;
 
 		// the sensitivity of the target speed slider
 		float m_sliderSensitivity;

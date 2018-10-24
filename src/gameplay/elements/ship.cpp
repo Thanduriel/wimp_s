@@ -118,17 +118,13 @@ namespace Game
 	void Ship::OnCollision(Actor& _other, const HitInfo& _info)
 	{
 		Model::OnCollision(_other, _info);
-
-	/*	static const clunk::Sample& sound = Content::GetSound("collision01");
-		ei::Vec4 localPos = GetInverseTransformation() * ei::Vec4(_info.position,1.f);
-		localPos = ei::invert(m_audioComponent.Get()) * localPos;
-		m_audioComponent.Play(sound, -1, false, ei::Vec3(localPos));*/
 	}
 
 	float Ship::OnDamageTaken(float _amount, Actor& _source, DamageType _type)
 	{
 		float remainingDmg = _amount;
 		// shield absorbs damage first
+
 		remainingDmg = m_shieldItem ? m_shieldItem->TakeDamage(_amount) : _amount;
 		float dmgAbsorbed;
 		if (_type == DamageType::Ion)
@@ -144,6 +140,7 @@ namespace Game
 		}
 		m_shield -= dmgAbsorbed;
 	
+
 		// recharge is interrupted
 		m_shieldWait = 0;
 		m_isRecharging = false;

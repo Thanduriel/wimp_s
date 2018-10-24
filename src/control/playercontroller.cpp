@@ -31,6 +31,7 @@ namespace Control
 	const float TACTICALCAM_ANGLE = PI / 3.2f;
 	const float TACTICALCAM_Z = -TACTICALCAM_DIST / tan(TACTICALCAM_ANGLE);
 	constexpr float SCREEN_SHAKE_THRESHOLD = 0.05f;
+	constexpr float SIDE_THRUST_VELOCITY = 42.f;
 
 	PlayerController::PlayerController(Game::Ship& _ship, GameStates::MainHud& _hud, GameTimeControl& _params)
 		: Controller(_ship, _hud),
@@ -41,7 +42,9 @@ namespace Control
 			Utils::Color32F(0.f, 1.f, 0.f, 0.6f), 2.f, 2.f,
 			50.f, Game::GridComponent::TransitionInfo(4800.f, 0.25f))),
 		m_controlParams(_params),
-		m_lookForTarget(false)
+		m_lookForTarget(false),
+		m_isSideThrustReady(true),
+		m_sideThrustTimer(2.f)
 	{
 		s_sceneGraph->Add(m_referenceGrid);
 	};
@@ -85,6 +88,9 @@ namespace Control
 		}
 
 		UpdateAimAssist();
+
+		m_sideThrustTimer -= _deltaTime;
+		if (m_sideThrustTimer < 0.f) m_isSideThrustReady = true;
 	}
 
 	// ************************************************************ //
@@ -220,11 +226,12 @@ namespace Control
 				GetShip().Fire(Game::Ship::WeaponGroup::Secondary);
 			}
 
-			// directly modify the position to not interfere with the forward speed computations
-			if (InputManager::IsVirtualKeyPressed(Control::VirtualKey::ACC_LEFT))
-				m_ship.AddVelocity(m_ship.GetRotationMatrix() * Vec3(_deltaTime * -30.f, 0.f, 0.f));
-			if (InputManager::IsVirtualKeyPressed(Control::VirtualKey::ACC_RIGHT))
-				m_ship.AddVelocity(m_ship.GetRotationMatrix() * Vec3(_deltaTime * 30.f, 0.f, 0.f));
+			// todo: use physical acceleration
+			if (InputManager::IsVirtualKeyPressed(Control::VirtualKey::ACC_LEFT) && m_isSideThrustReady)
+				SideThrust(Vec3(-SIDE_THRUST_VELOCITY, 0.f, 0.f));
+			if (InputManager::IsVirtualKeyPressed(Control::VirtualKey::ACC_RIGHT) && m_isSideThrustReady)
+				SideThrust(Vec3(SIDE_THRUST_VELOCITY, 0.f, 0.f));
+
 			bool approximateTargetSpeed = true;
 			if (InputManager::IsVirtualKeyPressed(Control::VirtualKey::ADJUST_TARGET_ACC))
 			{
@@ -407,5 +414,12 @@ namespace Control
 			else SetFocus(nullptr);
 		}
 		else SetFocus(nullptr);
+	}
+
+	void PlayerController::SideThrust(const ei::Vec3& _velocity)
+	{
+		m_ship.AddVelocity(m_ship.GetRotationMatrix() * _velocity);
+		m_isSideThrustReady = false;
+		m_sideThrustTimer = 2.f;
 	}
 }

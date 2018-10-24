@@ -124,8 +124,11 @@ namespace GameStates
 		for (auto& itm : m_itemIcons)
 			itm.second->Register(m_hud);
 
+		static const auto& sellSound = Content::GetSound("sell");
 		m_hud.m_sellField->SetDropEvent([&](DropField& _this, DraggableTexture& _texture) 
 		{
+			if (m_shouldPlaySounds) AudioSystem::GetGlobalAudio().Play(sellSound);
+
 			Game::Item* itm = const_cast<Game::Item*>(static_cast<const Game::Item*>(_texture.GetContent()));
 			SellItem(*itm, _this, _texture);
 			// money total changed
@@ -138,6 +141,8 @@ namespace GameStates
 		{
 			// iterate in reverse order so that elements are removed from the end
 			auto& texElements = m_hud.m_inventoryField->GetElements();
+			if (texElements.size() && m_shouldPlaySounds) AudioSystem::GetGlobalAudio().Play(sellSound);
+
 			for(int j = static_cast<int>(texElements.size()) - 1; j >= 0; --j)
 			{
 				DraggableTexture* el = texElements[j];
