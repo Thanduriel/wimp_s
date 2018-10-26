@@ -30,7 +30,7 @@ namespace GameStates
 
 	const float UPGRADES_BASE_VALUE[Upgrades::COUNT] = { 8.0f, 1.5f, 32.0f, 6.0f, 4.0f, 80.0f };
 
-	InventoryState::InventoryState(Game::Ship& _ship)
+	InventoryState::InventoryState(Game::Ship& _ship, bool _canRepair)
 		: m_ship(_ship),
 		m_oldCamera(Control::g_camera),
 		m_money(_ship.GetInventory().GetCredits()),
@@ -154,14 +154,18 @@ namespace GameStates
 		});
 
 		// repair button
-		m_hud.m_repairButton.SetOnMouseUp([this]()
+		if (_canRepair)
 		{
-			const float cost = GetRepairCost();
-			const float r = std::min(1.f, static_cast<float>(m_money) / GetRepairCost());
-			m_ship.SetHealth(m_ship.GetHealth() + (m_ship.GetMaxHealth() - m_ship.GetHealth()) * r);
-			UpdateRepairCost();
-			m_money = std::max(0.f, m_money - cost);
-		});
+			m_hud.m_repairButton.SetOnMouseUp([this]()
+			{
+				const int cost = GetRepairCost();
+				const float r = std::min(1.f, static_cast<float>(m_money) / cost);
+				m_ship.SetHealth(m_ship.GetHealth() + (m_ship.GetMaxHealth() - m_ship.GetHealth()) * r);
+				UpdateRepairCost();
+				m_money = std::max(0, m_money - cost);
+			});
+		}
+		else m_hud.m_repairButton.SetVisible(false);
 
 		UpdateRepairCost();
 		UpdateMoneyDipslay();
@@ -370,12 +374,13 @@ namespace GameStates
 	constexpr float REPAIR_COST_FACTOR = 3.f;
 	int InventoryState::GetRepairCost() const
 	{
-		return static_cast<float>((m_ship.GetMaxHealth() - m_ship.GetHealth()) * REPAIR_COST_FACTOR);
+		return static_cast<int>((m_ship.GetMaxHealth() - m_ship.GetHealth()) * REPAIR_COST_FACTOR);
 	}
 
 	void InventoryState::UpdateRepairCost()
 	{
-		m_hud.m_repairLabel.SetText("Cost: " + std::to_string(GetRepairCost()) + "$");
+		m_hud.m_repairLabel.SetText((m_hud.m_repairButton.IsVisible() ? "Cost: " + std::to_string(GetRepairCost()) + "$"
+		: "can't repair with\nenemies nearby"));
 	}
 
 	// ******************************************************** //

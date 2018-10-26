@@ -15,7 +15,7 @@ namespace GameStates
 		m_itemBackground("box_cutout", PixelOffset(BORDER_SIZE, BORDER_SIZE), Vec2(0.68f, 0.80f), DefP::BotLeft, Anchor(DefP::BotLeft, this)),
 		m_itemDescriptionBox(Vec2(0.f), m_itemBackground.GetSize(), DefP::TopLeft, Anchor(DefP::TopLeft, &m_itemBackground)),
 		m_healthBar(PixelOffset(-36, 20), PixelOffset(220, 28), DefP::BotRight, Anchor(DefP::BotRight, this)),
-		m_repairButton("slotBtn", PixelOffset(5, 0), m_healthBar.GetSize() * Vec2(0.3f, 1.f), DefP::BotRight, Anchor(DefP::TopRight, &m_healthBar), "Repair"),
+		m_repairButton("slotBtn", PixelOffset(0, 5), Vec2(1.f), DefP::BotRight, Anchor(DefP::TopRight, &m_healthBar), "Repair"),
 		m_repairLabel(Vec2(0.f), ScreenPosition::Anchor(DefP::TopLeft, &m_healthBar))
 	{
 	//	m_shipInfoBackground.SetScale(Vec2(1.05f, 1.3f));
@@ -28,8 +28,8 @@ namespace GameStates
 		m_healthBar.SetColor(Utils::Color8U(173_uc, 226_uc, 70_uc));
 		m_repairButton.Register(*this);
 		m_repairLabel.Register(*this);
-		m_repairLabel.SetText("trololo");
-		m_repairLabel.SetDefaultSize(0.5f);
+		m_repairLabel.SetText("trololo\ntrolo");
+		m_repairLabel.SetDefaultSize(0.35f);
 		m_repairLabel.SetPosition(Vec2(0.f, m_repairLabel.GetRectangle().y));
 		
 		// weapon related
@@ -52,6 +52,8 @@ namespace GameStates
 			PixelOffset(25, 0),
 			m_sellField->GetSize() * Vec2(0.7f, 0.7f), DefP::MidLeft, Anchor(DefP::MidRight , m_sellField));
 		m_sellAllButton->SetCaption("all");
+
+		m_repairButton.SetSize(m_sellAllButton->GetSize());
 
 		// general information
 		m_shipInfoLabel = &CreateScreenElement<TextRender>(Vec2(0.025f, -0.03f), ScreenPosition::Anchor(DefP::TopLeft, &m_shipInfoBackground));

@@ -329,7 +329,7 @@ namespace Game {
 				results.emplace_back(&(*it)->GetActor(), dSqr);
 		}
 
-		return std::move(results);
+		return results;
 	}
 
 	// *********************************************************** //

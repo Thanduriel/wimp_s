@@ -14,7 +14,7 @@ namespace GameStates
 	class InventoryState : public GameStateHT<InventoryHud>
 	{
 	public:
-		InventoryState(Game::Ship& _ship);
+		InventoryState(Game::Ship& _ship, bool _canRepair = false);
 		~InventoryState();
 
 		void Process(float _deltaTime) override;

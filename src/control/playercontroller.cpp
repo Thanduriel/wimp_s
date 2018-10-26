@@ -270,23 +270,33 @@ namespace Control
 					GetShip().SetSpeed(max(GetShip().GetSpeed() - (GetShip().GetThrust() / GetShip().GetMass()) * _deltaTime, m_targetSpeed));
 				}
 			}
+
+			// mouse rotation
+			const Vec2 cursor = InputManager::GetCursorPosScreenSpace();
+		/*	const float angle = acos(ei::dot(g_camera.GetRay(cursor).direction, g_camera.GetRay(Vec2(0.f)).direction));
+			if (angle > 0.001f)
+			{
+				const float rot = ei::len(m_ship.GetAngularVelocity());
+				// *2 because there is a 0.5 factor missing in DynamicActor::Process for angular velocity
+				InputManager::SetCursorPos(cursor - cursor * (rot * _deltaTime * 2.f) / angle);
+			}*/
+
+			// constrain movement to a circle to have same behavior in both directions
+			Vec2 movement = cursor;
+			movement.x = clamp(cursor.x * Graphic::Device::GetAspectRatio(), -1.f, 1.f);
+			movement = Vec2(sgn(cursor[0]), sgn(cursor[1])) * cursor * cursor;
+			
+			float z = 0.f;
+			if (InputManager::IsVirtualKeyPressed(Control::VirtualKey::ROLL_CCW))
+				z += 0.8f;
+			if (InputManager::IsVirtualKeyPressed(Control::VirtualKey::ROLL_CW))
+				z -= 0.8f;
+
+			GetShip().SetTargetAngularVelocity(GetShip().GetRotationMatrix() * Vec3(-movement[1], movement[0], z));
+
 		}
 
-		// mouse rotation
-		float z = 0.f;
-		if (InputManager::IsVirtualKeyPressed(Control::VirtualKey::ROLL_CCW))
-			z += 0.8f;
-		if (InputManager::IsVirtualKeyPressed(Control::VirtualKey::ROLL_CW))
-			z -= 0.8f;
-
 		//if (m_mouseMovement.x + m_mouseMovement.y == 0.f) return;
-
-		Vec2 cursor = InputManager::GetCursorPosScreenSpace();
-		// constrain movement to a circle to have same behavior in both directions
-		cursor.x = clamp(cursor.x * Graphic::Device::GetAspectRatio(), -1.f, 1.f);
-		cursor = Vec2(sgn(cursor[0]), sgn(cursor[1])) * cursor * cursor;
-
-		GetShip().SetTargetAngularVelocity(GetShip().GetRotationMatrix() * Vec3(-cursor[1], cursor[0], z));
 
 		// update stats on the hud
 		// this might not be the best place for this

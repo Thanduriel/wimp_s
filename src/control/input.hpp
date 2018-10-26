@@ -49,6 +49,8 @@ namespace Control {
 		/// \brief The cursors position in pixels inside the window.
 		static ei::Vec2 GetCursorPos();
 
+		static void SetCursorPos(ei::Vec2 _pos);
+
 		/// \brief The cursors position in screen space coordinates [-1,1]² inside the window.
 		static ei::Vec2 GetCursorPosScreenSpace();
 

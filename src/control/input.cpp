@@ -255,6 +255,24 @@ namespace Control {
 		return cursorPos;
 	}
 
+	void InputManager::SetCursorPos(ei::Vec2 _pos)
+	{
+		using namespace ei;
+		Vec2 v = Vec2(std::clamp(_pos.x, -1.f, 1.f), -std::clamp(_pos.y, -1.f, 1.f));
+		v = (v + 1.f) * Graphic::Device::GetBackbufferSize() * 0.5f;
+		glfwSetCursorPos(Graphic::Device::GetWindow(), v.x, v.y);
+
+		InputManagerInstance.m_cursorX = v.x;
+		InputManagerInstance.m_cursorY = v.y;
+		InputManagerInstance.m_justEntered = false;
+
+		if (InputManagerInstance.m_gameState)
+		{
+			const Vec2 dif = Vec2(v.x - InputManagerInstance.m_cursorX, v.y - InputManagerInstance.m_cursorX);
+			InputManagerInstance.m_gameState->MouseMove(dif.x, dif.y);
+		}
+	}
+
 
 	// ********************************************************************* //
 	void InputManager::SetMouseSensitivtiy(float _sensitivtiy)

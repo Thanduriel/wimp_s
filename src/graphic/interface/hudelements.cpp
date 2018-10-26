@@ -299,6 +299,8 @@ namespace Graphic
 		m_btnDefault.SetSize(_size);
 		m_btnOver.SetSize(_size);
 		m_btnDown.SetSize(_size);
+
+		SetCaption(m_caption.GetText());
 	}
 
 	// ************************************************************************ //
@@ -332,6 +334,7 @@ namespace Graphic
 	void Button::SetVisible(bool _visible)
 	{
 		ScreenOverlay::SetVisible(_visible);
+		m_caption.SetVisible(_visible);
 		// hide parts again that should not be visible in the current state
 		if (_visible)
 		{
