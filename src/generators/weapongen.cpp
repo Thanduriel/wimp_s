@@ -33,7 +33,7 @@ namespace Generators {
 		{"[EXT D]", "%.0f%% increased damage", false},
 		{"[EXT C]", "%.0f%% reduced power consumption", false},
 		{"[EXT L]", "%.0f%% increased life time", false },
-		{"Short", "40%% reduced life time, 50% increased damage", true },
+		{"Short", "40% reduced life time, 50% increased damage", true },
 		{"of High Power", "2x damage, 2x power consumption", false},
 		{"Gatling", "fire rate increases with continues fire", false},
 		{ "Iterative", "every 3rth shot deals 2xdamage", true },

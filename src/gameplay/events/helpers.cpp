@@ -17,23 +17,45 @@ namespace Game {
 		m_mainHud(_hud),
 		m_playerShip(_playerShip),
 		m_weaponGen(0x0), 
+		m_shieldGen(0x32410015),
 		m_isFinished(false),
 		m_randomGen(0x0)
 	{
 	}
 
+	constexpr float SELLRATIO = 0.5f;
 	Ship& Map::CreateShip(const std::string& _type, const ei::Vec3& _position, int _numWeapons, float _power, float _rarityMod, Drop _drop)
 	{
 		Ship& ship = *new Ship(_type, _position);
 		FactoryActor::GetThreadLocalInstance().Add(ship);
+		auto& inventory = ship.GetInventory();
 
 		for (int i = 0; i < _numWeapons; ++i)
 		{
 			Weapon* w = m_weaponGen.Generate(_power, _rarityMod);
 			FactoryActor::GetThreadLocalInstance().Add(*w);
 			ship.SetWeapon(i, w);
-			if (_drop == Drop::Weapons) ship.GetInventory().Add(*w);
-			else if (_drop == Drop::Credits) ship.GetInventory().AddCredits(w->GetValue());
+			ship.GetInventory().Add(*w);
+		}
+		// shield item
+		Shield* shield = m_shieldGen.Generate(_power, _rarityMod);
+		inventory.Add(*shield);
+		FactoryActor::GetThreadLocalInstance().Add(*shield);
+
+		if (_drop == Drop::NonBasics || _drop == Drop::Credits)
+		{
+			float sellRatio = _drop == Drop::NonBasics ? SELLRATIO : 1.f;
+			std::vector<Item*> sellItems;
+			for (Item* item : inventory)
+			{
+				if (item->GetQuality() == Item::Quality::Basic && Generators::g_random.Uniform(0.f, 1.f) <= 0.5f)
+					sellItems.push_back(item);
+			}
+			for (Item* item : sellItems)
+			{
+				inventory.AddCredits(item->GetValue());
+				inventory.Remove(*item);
+			}
 		}
 
 		return ship;

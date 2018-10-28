@@ -16,7 +16,8 @@ namespace Game {
 	class Crate : public DynamicActor
 	{
 	public:
-		// Create a crate at _position that takes all items form _inventory
+		// Create a crate at _position that takes all items from _inventory
+		// @param _sellBasicRatio basic items are sold at full value with this probability
 		Crate(const ei::Vec3& _position, Inventory& _inventory, float _pickupRadius = 5.f);
 
 		void RegisterComponents(class SceneGraph& _sceneGraph) override;

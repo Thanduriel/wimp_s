@@ -181,4 +181,7 @@ namespace Generators {
 			RandomSampler<DefaultRandomGen>(static_cast<DefaultRandomGen&>(*this))
 		{}
 	};
+
+	// global instance for non repeatable sequences
+	extern thread_local RandomGenerator g_random;
 }

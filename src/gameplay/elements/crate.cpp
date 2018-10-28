@@ -4,13 +4,15 @@
 #include "generators/random.hpp"
 #include "gameplay/content.hpp"
 #include "gameplay/elements/audiocomponent.hpp"
+#include "gameplay/elements/shipsystems/item.hpp"
+#include "gameplay/elements/shipsystems/weapon.hpp"
+#include "gameplay/elements/shipsystems/shield.hpp"
 
 namespace Game {
-
-	static thread_local Generators::RandomGenerator rng(0x3161f);
+	using namespace Generators;
 
 	Crate::Crate(const ei::Vec3& _position, Inventory& _inventory, float _pickupRadius)
-		: DynamicActor(_position, rng.Rotation()),
+		: DynamicActor(_position, g_random.Rotation()),
 		m_pickUp(THISACTOR, _pickupRadius),
 		m_visual(THISACTOR,"crate" )
 	{

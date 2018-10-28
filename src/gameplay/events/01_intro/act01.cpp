@@ -85,7 +85,7 @@ namespace Acts {
 			std::vector<Actor::ConstHandle> targets;
 			for (int i = 0; i < 8; ++i)
 			{
-				Ship& ship = CreateShip("DroneMK1", DRONE_SPAWN + Vec3(0.f,i*2.f,i*2.f), 1, 4.f, 0.f);
+				Ship& ship = CreateShip("DroneMK1", DRONE_SPAWN + Vec3(0.f,i*2.f,i*2.f), 1, 4.f, 0.f, Drop::Credits);
 				CreateController<Control::KamikazeController>(ship, playerHndl, _hud, "Drone");
 				targets.push_back(ship.GetHandle());
 			}
@@ -154,10 +154,10 @@ namespace Acts {
 		// 03
 		auto AbeginDestroyShips = CREATE_ACTION
 		{
-			Ship& ship01 = CreateShip("Dart", m_asteroids.FindPosition(10.f), 1, 8.f, 0.f);
+			Ship& ship01 = CreateShip("Dart", m_asteroids.FindPosition(10.f), 1, 8.f, 0.f, Drop::All);
 			CreateController<Control::WaspController>(ship01, playerHndl, _hud, "Dart");
 			m_asteroids.AddConstraint(ship01);
-			Ship& ship02 = CreateShip("Dart", m_asteroids.FindPosition(10.f), 1, 8.f, 0.f);
+			Ship& ship02 = CreateShip("Dart", m_asteroids.FindPosition(10.f), 1, 8.f, 0.f, Drop::All);
 			CreateController<Control::WaspController>(ship02, playerHndl, _hud, "Dart");
 
 			CREATE_OBJECTIVE4(Conditions::OnDestroy, AdestroySecondWave, "destroy the ships near by",

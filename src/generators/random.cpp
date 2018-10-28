@@ -2,6 +2,7 @@
 
 namespace Generators {
 
+	thread_local RandomGenerator g_random(0xa226bf0f);
 
 	uint32_t Xorshift32Impl::operator()()
 	{

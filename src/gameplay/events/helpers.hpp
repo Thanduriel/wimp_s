@@ -5,6 +5,7 @@
 #include "gameplay/scenegraph.hpp"
 #include "gameplay/elements/ship.hpp"
 #include "generators/weapongen.hpp"
+#include "generators/shieldgen.hpp"
 #include "control/controller.hpp"
 #include "control/input.hpp"
 
@@ -57,12 +58,14 @@ namespace Game {
 		{
 			Weapons,
 			Credits,
+			All,
+			NonBasics, // basics are sold with 50% probability
 			Nothing
 		};
 		// Creates a ship with Controller type T.
 		// Equips it with _numWeapons. Does not check for available sockets.
 		// Additional Arguments are forwarded to the Controller's constructor.
-		Ship& CreateShip(const std::string& _type, const ei::Vec3& _position, int _numWeapons = 0, float _power = 0, float _rarityMod = 1.f, Drop _drop = Drop::Weapons);
+		Ship& CreateShip(const std::string& _type, const ei::Vec3& _position, int _numWeapons = 0, float _power = 0, float _rarityMod = 1.f, Drop _drop = Drop::NonBasics);
 
 		template<typename T, typename... Args>
 		T& CreateController(Args&&... _args)
@@ -91,6 +94,7 @@ namespace Game {
 		GameStates::MainHud& m_mainHud;
 		const Ship& m_playerShip;
 		Generators::WeaponGenerator m_weaponGen;
+		Generators::ShieldGenerator m_shieldGen;
 		Generators::RandomGenerator m_randomGen;
 	private:
 		struct ShipValue

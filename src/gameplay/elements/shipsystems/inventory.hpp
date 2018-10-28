@@ -12,6 +12,9 @@ namespace Game {
 		// @return Has the element been inserted?
 		bool Add(Item& _item);
 		void Remove(Item& _item);
+
+		bool Find(Item& _item) { return m_items.find(&_item) != m_items.end(); }
+
 		// Takes all items from the given inventory and puts them into this.
 		void Transfer(Inventory& _source);
 		size_t GetNumElements() const { return m_items.size(); }
@@ -22,9 +25,6 @@ namespace Game {
 
 		auto begin() { return m_items.begin(); }
 		auto end() { return m_items.end(); }
-
-		auto begin() const { return m_items.begin(); }
-		auto end() const { return m_items.end(); }
 	private:
 		std::unordered_set<Item*> m_items;
 		int m_credits = 0; //< money hold by this state

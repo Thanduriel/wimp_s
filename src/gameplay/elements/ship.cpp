@@ -107,9 +107,16 @@ namespace Game
 
 	void Ship::OnDestroy()
 	{
+		// npcs can have items equipped that are not in there inventory
+		for (auto& socket : m_weaponSockets)
+			if (Weapon* w = static_cast<Weapon*>(socket.GetAttached()); w && m_inventory.Find(*w))
+				w->Destroy();
+		if (m_shieldItem && !m_inventory.Find(*m_shieldItem)) m_shieldItem->Destroy();
 		// leave items behind
-		if(m_inventory.GetNumElements() || m_inventory.GetCredits()) FactoryActor::GetThreadLocalInstance().Make<Crate>(m_position, m_inventory);
+		if(m_inventory.GetNumElements() || m_inventory.GetCredits()) 
+			FactoryActor::GetThreadLocalInstance().Make<Crate>(m_position, m_inventory, 5.f);
 		FactoryActor::GetThreadLocalInstance().Make<Explosion>(m_position, m_maxHealth / 5.f, 0.f, Utils::Color8U(0.8f, 0.67f, 0.42f, 0.5f), "mist");
+
 		Model::OnDestroy();
 		// sounds will otherwise only stop on component destruction
 		m_audioComponent.Stop(0.3f);
