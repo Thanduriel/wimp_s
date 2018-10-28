@@ -1,5 +1,6 @@
 #include "shield.hpp"
 #include "gameplay/elements/ship.hpp"
+#include <limits>
 
 namespace Game {
 
@@ -36,7 +37,7 @@ namespace Game {
 	void Shield::UnEquip(Ship& _ship) const
 	{
 		_ship.SetShieldRecharge(0.f);
-		_ship.SetShieldDelay(100000.f);
+		_ship.SetShieldDelay(std::numeric_limits<float>::infinity());
 
 		Item::UnEquip(_ship);
 	}

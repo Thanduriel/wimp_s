@@ -12,6 +12,7 @@
 #include "gameplay/elements/shipsystems/specialmove.hpp"
 #include "control/kamikazecontroller.hpp"
 #include "control/input.hpp"
+#include "utils/stringutils.hpp"
 
 namespace Game {
 namespace Acts {
@@ -31,6 +32,20 @@ namespace Acts {
 		m_asteroids(BASE_POSITON - Vec3(12.f, -6.f, 110.f), 200.f)
 	{
 		SetupPlayer(_player, PLAYER_SPAWN);
+		// give the player a basic shield
+		const std::string descr = "max shield:       " + ToConstDigit(_player.GetMaxShield(), 1, 4) + "\n"
+			+ "recharge delay:   " + ToConstDigit(_player.GetShieldDelay(), 1, 4) + "\n"
+			+ "recharge speed:   " + ToConstDigit(_player.GetShieldRecharge(), 1, 4) + "\n"
+			+ "-----";
+
+		Shield* playerShield = new Shield(Item::Quality::Basic, Item::Icon::DefaultShield,
+			"Standard Shield", descr, _player.GetMaxShield(), _player.GetShieldRecharge(), _player.GetShieldDelay());
+		// reset player ship shield stats since the shield item gives them instead
+		_player.SetMaxShield(0.f);
+		// equip
+		m_sceneGraph.Add(*playerShield);
+		_player.GetInventory().Add(*playerShield);
+		_player.SetEquipedShield(playerShield);
 
 		Actor::ConstHandle playerHndl = _player.GetHandle();
 

@@ -13,7 +13,7 @@ namespace GameStates
 		: m_shipInfoBackground("box_cutout", PixelOffset(BORDER_SIZE, -BORDER_SIZE), Vec2(0.f), DefP::TopLeft, Anchor(DefP::TopLeft, this)),
 		m_moneyBackground("box_cutout", PixelOffset(0, -5), Vec2(1.f), DefP::TopLeft, Anchor(DefP::BotLeft, &m_shipInfoBackground)),
 		m_itemBackground("box_cutout", PixelOffset(BORDER_SIZE, BORDER_SIZE), Vec2(0.68f, 0.80f), DefP::BotLeft, Anchor(DefP::BotLeft, this)),
-		m_itemDescriptionBox(Vec2(0.f), m_itemBackground.GetSize(), DefP::TopLeft, Anchor(DefP::TopLeft, &m_itemBackground)),
+		m_itemDescriptionBox(PixelOffset(5, -5), m_itemBackground.GetSize() - PixelOffset(5,5).operator ei::Vec2(), DefP::TopLeft, Anchor(DefP::TopLeft, &m_itemBackground)),
 		m_healthBar(PixelOffset(-36, 20), PixelOffset(220, 28), DefP::BotRight, Anchor(DefP::BotRight, this)),
 		m_repairButton("slotBtn", PixelOffset(0, 5), Vec2(1.f), DefP::BotRight, Anchor(DefP::TopRight, &m_healthBar), "Repair"),
 		m_repairLabel(Vec2(0.f), ScreenPosition::Anchor(DefP::TopLeft, &m_healthBar))
@@ -24,6 +24,7 @@ namespace GameStates
 		m_itemBackground.Register(*this);
 		m_itemDescriptionBox.Register(*this);
 		m_itemDescriptionBox.SetCentered(true);
+		m_itemDescriptionBox.SetFontSize(0.44f);
 		m_healthBar.Register(*this);
 		m_healthBar.SetColor(Utils::Color8U(173_uc, 226_uc, 70_uc));
 		m_repairButton.Register(*this);

@@ -318,6 +318,8 @@ namespace Graphic {
 		// should the text be centered?
 		void SetCentered(bool _center) { m_isCentered = _center; }
 		bool IsCentered() const { return m_isCentered; }
+
+		void SetFontSize(float _size) { m_defaultFontSize = _size; m_textRender.SetDefaultSize(_size); }
 	private:
 		void Next(); // advance queue
 		std::string CutString(const std::string& _s) const; // adds line breaks so that the text fits the box
@@ -325,6 +327,7 @@ namespace Graphic {
 		TextRender m_textRender;
 		std::queue<std::pair<std::string, float>> m_messages;
 		float m_timer;
+		float m_defaultFontSize;
 		bool m_isCentered;
 	};
 

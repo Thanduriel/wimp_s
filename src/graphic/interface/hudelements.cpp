@@ -694,6 +694,7 @@ namespace Graphic
 		m_isCentered(false)
 	{
 		m_textRender.SetDefaultSize(24_px);
+		m_defaultFontSize = m_textRender.GetDefaultSize();
 	}
 
 	void MessageBox::Register(Hud& _hud)
@@ -724,6 +725,12 @@ namespace Graphic
 
 		m_textRender.SetVisible(true);
 		m_textRender.SetText(CutString(m_messages.front().first));
+		if (m_textRender.GetRectangle().x > m_size.x || m_textRender.GetRectangle().y > m_size.y)
+		{
+			m_textRender.SetRectangle(m_size);
+		}
+		else m_textRender.SetDefaultSize(m_defaultFontSize);
+		//if(m_isCentered) m_textRender.SetPosition(m_position + )
 		m_messages.pop();
 	}
 
@@ -785,6 +792,8 @@ namespace Graphic
 			spacePadding.pop_back();
 		}
 
+		// remove extra '\n' again
+		s.resize(s.size() - 1);
 		return s;
 	}
 };

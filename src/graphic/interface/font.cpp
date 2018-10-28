@@ -121,12 +121,17 @@ namespace Graphic
 
 	void TextRender::SetRectangle(const Vec2& _rectangle, bool _onlyScaleDown)
 	{
-		int len = (int)m_text.length();
+		const int len = (int)m_text.length();
 		int lineCount = 1;
 		int charCount = 0;
 		int charCountMax = 0;
 		for (int i = 0; i < len; i++)
 		{
+			if (m_text[i] == '<') // skip control chars
+			{
+				i = m_text.find('>', i + 1);
+				continue;
+			}
 			charCount++;
 			if (m_text[i] == '\n')
 			{
@@ -140,7 +145,7 @@ namespace Graphic
 		//if the text contains no linebreaks
 		if (!charCountMax) charCountMax = charCount;
 
-		Vec2 captionDim = GetCharSize();
+		const Vec2 captionDim = GetCharSize();
 
 		// in case that the text is to large in any direction scale it down
 		if (!_onlyScaleDown || (captionDim[0] * charCountMax * GetDefaultSize() >= _rectangle[0] || captionDim[1] * lineCount >= _rectangle[1]))
