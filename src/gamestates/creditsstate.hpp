@@ -1,10 +1,11 @@
 #pragma once
 
 #include "graphic/interface/hud.hpp"
-#include "gamestate.hpp"
+#include "basicmenustate.hpp"
+#include "huds/creditshud.hpp"
 
 namespace GameStates {
-	class CreditsState : public GameStateHT<>
+	class CreditsState : public BasicMenuState<CreditsHud>
 	{
 	public:
 		CreditsState();

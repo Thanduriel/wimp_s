@@ -1,6 +1,7 @@
 #include "mainmenustate.hpp"
 #include "transitionstate.hpp"
 #include "settingsstate.hpp"
+#include "creditsstate.hpp"
 #include "huds/mainmenuhud.hpp"
 #include "graphic/interface/hud.hpp"
 #include "graphic/interface/pixelcoords.hpp"
@@ -24,6 +25,7 @@ namespace GameStates
 	
 		m_hud.m_startButton->SetOnMouseUp([&]() { m_newState = new TransitionState(Game::Level::Act01, nullptr); });
 		m_hud.m_optionsButton->SetOnMouseUp([&]() {m_newState = new SettingsState();});
+		m_hud.m_creditsButton->SetOnMouseUp([&]() {m_newState = new CreditsState(); });
 		m_hud.m_exitButton->SetOnMouseUp([&]() { m_isFinished = true; });
 	}
 

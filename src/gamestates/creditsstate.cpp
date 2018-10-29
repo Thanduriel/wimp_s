@@ -1,12 +1,14 @@
 #include "creditsstate.hpp"
 #include "control/input.hpp"
 #include "graphic/core/device.hpp"
+#include "GLFW/glfw3.h"
 
 namespace GameStates {
 	using namespace Control;
 
 	CreditsState::CreditsState()
 	{
+		m_hud.m_returnButton.SetOnMouseUp([this]() {m_isFinished = true; });
 	}
 
 	void CreditsState::Process(float _deltaTime)
@@ -15,6 +17,8 @@ namespace GameStates {
 
 	void CreditsState::Draw(float _deltaTime)
 	{
+		BasicMenuState<CreditsHud>::Draw(_deltaTime);
+
 		Graphic::Device::DrawFramebufferToBackbuffer();
 
 		m_hud.Draw(_deltaTime);
@@ -35,6 +39,9 @@ namespace GameStates {
 	}
 	void CreditsState::KeyRelease(int _key)
 	{
+		if (_key == GLFW_KEY_ESCAPE)
+			m_isFinished = true;
+
 		if (m_hud.KeyUp(_key, 0)) return;
 	}
 	void CreditsState::KeyClick(int _key)
