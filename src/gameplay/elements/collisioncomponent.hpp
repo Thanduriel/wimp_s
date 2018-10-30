@@ -77,7 +77,8 @@ namespace Game {
 				Dynamic = 4,
 				Ship = 8,
 				Projectile = 16,
-				Zone = 32 // trigger volumes that do not cause physical reactions
+				Zone = 32, // trigger volumes that do not cause physical reactions
+				Hostile = 64
 			};
 		};
 		CollisionFlags GetType() const { return m_type; }

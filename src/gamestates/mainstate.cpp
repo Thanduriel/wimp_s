@@ -154,7 +154,7 @@ namespace GameStates {
 			if (InputManager::IsVirtualKey(_key, Control::VirtualKey::INVENTORY))
 			{
 				// Change to inventory state
-				auto hits = m_sceneGraph.SphereQuery(ei::Sphere(m_playerShip.GetPosition(), 1000.f), CollisionComponent::Type::Ship);
+				auto hits = m_sceneGraph.SphereQuery(ei::Sphere(m_playerShip.GetPosition(), 1000.f), CollisionComponent::Type::Hostile);
 				m_newState = new GameStates::InventoryState(m_playerController->GetShip(), hits.size() < 2);
 			}
 			else if (InputManager::IsVirtualKey(_key, Control::VirtualKey::PAUSE))

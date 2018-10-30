@@ -11,7 +11,8 @@
 	"Shield" 			: 32.0,
 	"ShieldRecharge" 	: 6.0,
 	"ShieldDelay" 		: 4.0,
-	"AngularSpeed"	 	: 1.2
+	"AngularSpeed"	 	: 2.3,
+	"Thrust" 			: 50000.0,
   },
    "Dart": {
     "Mesh"				: "default_ship",

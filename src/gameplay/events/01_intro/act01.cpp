@@ -204,6 +204,14 @@ namespace Acts {
 			+  " to accelerate/decelerate temporarily or additionally " 
 			+ GetColoredKeyName(VirtualKey::ADJUST_TARGET_ACC)
 			+ " to change the target speed.");
+		_hud.ShowMessage("Use "s
+			+ GetColoredKeyName(VirtualKey::ACC_LEFT) + '/'
+			+ GetColoredKeyName(VirtualKey::ACC_RIGHT)
+			+ " for a quick thrust left or right.", 5.5f);
+		_hud.ShowMessage("Use "s
+			+ GetColoredKeyName(VirtualKey::ROLL_CW) + '/'
+			+ GetColoredKeyName(VirtualKey::ROLL_CCW)
+			+ " to roll the ship clock-wise/ counter-clock-wise.", 5.5f);
 	}
 }
 }

@@ -7,6 +7,7 @@ namespace GameStates {
 	using namespace Control;
 
 	CreditsState::CreditsState()
+		: BasicMenuState(Utils::Color32F(0.9f, 0.2f, 0.4f, 0.3f))
 	{
 		m_hud.m_returnButton.SetOnMouseUp([this]() {m_isFinished = true; });
 	}

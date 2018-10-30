@@ -129,7 +129,7 @@ namespace Graphic
 		{
 			if (m_text[i] == '<') // skip control chars
 			{
-				i = m_text.find('>', i + 1);
+				i = static_cast<int>(m_text.find('>', i + 1));
 				continue;
 			}
 			charCount++;

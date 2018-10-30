@@ -313,6 +313,12 @@ namespace Graphic {
 		// Add a string to the back of the queue that will be displayed for _time seconds.
 		void Push(const std::string& _text, float _time = AUTO);
 
+		struct AnimationInfo
+		{
+			float length;
+		};
+		void SetAnimationInfo(const AnimationInfo& _aniInfo) { m_animationInfo = _aniInfo; }
+
 		void Process(float _deltaTime);
 
 		// should the text be centered?
@@ -326,9 +332,12 @@ namespace Graphic {
 
 		TextRender m_textRender;
 		std::queue<std::pair<std::string, float>> m_messages;
+		std::string m_completeMessage; //< used as buffer in animations
 		float m_timer;
 		float m_defaultFontSize;
 		bool m_isCentered;
+		AnimationInfo m_animationInfo;
+		float m_displayTime;
 	};
 
 };

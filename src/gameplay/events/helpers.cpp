@@ -9,7 +9,7 @@ namespace Game {
 
 	std::string GetColoredKeyName(Control::VirtualKey _vkey)
 	{
-		return "<c 0 255 0>" + Control::InputManager::GetBoundKey(_vkey) + "</c>";
+		return /*"<c 0 255 0>" + */Control::InputManager::GetBoundKey(_vkey) /*+ "</c>"*/;
 	}
 
 	Map::Map(SceneGraph& _sceneGraph, const Ship& _playerShip, GameStates::MainHud& _hud)
@@ -27,6 +27,7 @@ namespace Game {
 	Ship& Map::CreateShip(const std::string& _type, const ei::Vec3& _position, int _numWeapons, float _power, float _rarityMod, Drop _drop)
 	{
 		Ship& ship = *new Ship(_type, _position);
+		ship.GetCollisionComponent().SetType(ship.GetCollisionComponent().GetType() | CollisionComponent::Type::Hostile);
 		FactoryActor::GetThreadLocalInstance().Add(ship);
 		auto& inventory = ship.GetInventory();
 

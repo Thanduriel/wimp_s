@@ -691,7 +691,8 @@ namespace Graphic
 		: ScreenOverlay(_position, _size, _def, _anchor),
 		m_textRender(Vec2(0.f), Anchor(DefP::MidLeft, this), nullptr, "", DefP::MidLeft),
 		m_timer(0.f),
-		m_isCentered(false)
+		m_isCentered(false),
+		m_animationInfo{0.f}
 	{
 		m_textRender.SetDefaultSize(24_px);
 		m_defaultFontSize = m_textRender.GetDefaultSize();
@@ -717,6 +718,12 @@ namespace Graphic
 			if(m_messages.size()) Next();
 			else m_textRender.SetVisible(false);
 		}
+		if (m_animationInfo.length != 0.f && m_completeMessage.size() != m_textRender.GetText().size())
+		{
+			const float timePassed = m_displayTime - m_timer;
+			const size_t chars = static_cast<size_t>(m_completeMessage.size() * timePassed / m_animationInfo.length);
+			m_textRender.SetText(m_completeMessage.substr(0, chars));
+		}
 	}
 
 	void MessageBox::Next()
@@ -724,7 +731,8 @@ namespace Graphic
 		m_timer = m_messages.front().second;
 
 		m_textRender.SetVisible(true);
-		m_textRender.SetText(CutString(m_messages.front().first));
+		m_completeMessage = CutString(m_messages.front().first);
+		m_textRender.SetText(m_completeMessage);
 		if (m_textRender.GetRectangle().x > m_size.x || m_textRender.GetRectangle().y > m_size.y)
 		{
 			m_textRender.SetRectangle(m_size);
@@ -732,6 +740,11 @@ namespace Graphic
 		else m_textRender.SetDefaultSize(m_defaultFontSize);
 		//if(m_isCentered) m_textRender.SetPosition(m_position + )
 		m_messages.pop();
+		if (m_animationInfo.length != 0.f)
+		{
+			m_displayTime = m_timer;
+			m_textRender.SetText("");
+		}
 	}
 
 	std::string  MessageBox::CutString(const std::string& _s) const

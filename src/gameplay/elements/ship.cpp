@@ -191,14 +191,6 @@ namespace Game
 
 	void Ship::UpdateAngularVelocity(float _deltaTime)
 	{
-	/*	Vec3 newAngularVelocity(GetAngularVelocity());
-		for (int i = 0; i < 3; i++)
-		{
-			if (GetAngularVelocity()[i] < m_targetAngularVelocity[i])
-				newAngularVelocity[i] = ei::min(lerp(newAngularVelocity[i], m_targetAngularVelocity[i], m_angularAcceleration * _deltaTime), m_targetAngularVelocity[i]);
-			else
-				newAngularVelocity[i] = ei::max(lerp(newAngularVelocity[i], m_targetAngularVelocity[i], m_angularAcceleration * _deltaTime), m_targetAngularVelocity[i]);
-		}*/
 		Vec3 delta = (m_targetAngularVelocity - m_angularVelocity);
 		float l = len(delta);
 		if (l > m_angularAcceleration) delta = delta / l * m_angularAcceleration;
