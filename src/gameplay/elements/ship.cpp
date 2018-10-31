@@ -130,8 +130,12 @@ namespace Game
 	float Ship::OnDamageTaken(float _amount, Actor& _source, DamageType _type)
 	{
 		float remainingDmg = _amount;
-		// shield absorbs damage first
 
+		// recharge is interrupted
+		m_shieldWait = 0;
+		m_isRecharging = false;
+
+		// shield absorbs damage first
 		remainingDmg = m_shieldItem ? m_shieldItem->TakeDamage(_amount) : _amount;
 		float dmgAbsorbed;
 		if (_type == DamageType::Ion)
@@ -146,11 +150,6 @@ namespace Game
 			remainingDmg -= dmgAbsorbed;
 		}
 		m_shield -= dmgAbsorbed;
-	
-
-		// recharge is interrupted
-		m_shieldWait = 0;
-		m_isRecharging = false;
 
 		const float finalDamage = remainingDmg * (_type == DamageType::Physical ? 1.5f : 1.f);
 		if (m_controller) m_controller->OnDamageTaken(finalDamage, _source, _type);

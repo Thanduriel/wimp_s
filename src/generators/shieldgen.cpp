@@ -12,19 +12,21 @@ namespace Generators {
 		ExtMax,
 		ExtDelay,
 		ExtRecharge,
-		FastCharge,
+		PowerCharge,
+		QuickCharge,
 		Resistance,
 		Repair,
 		Absorb,
 		Nova,
 		Adaptive,
 		Deflection,
+		Conversion,
 		STTCOUNT
 	};
 
-	constexpr std::array<ShieldTraitType, 3> TAKE_DAMAGE_TRAITS = 
+	constexpr std::array<ShieldTraitType, 4> TAKE_DAMAGE_TRAITS = 
 	{
-		Resistance, Absorb, Deflection
+		Resistance, Absorb, Deflection, Conversion
 	};
 
 	constexpr std::array<ShieldTraitType, 1> RECHARGE_TRAITS =
@@ -37,13 +39,20 @@ namespace Generators {
 		{"", "%.0f%% max shield", true},
 		{"", "%.0f%% shorter delay", true},
 		{"", "%.0f%% faster recharge", true},
-		{"Quick Charge", "3x faster recharge, 2x slower start%", true},
+		{"Power Charge", "3x faster recharge, 2x slower start%", true},
+		{"Quick Charge", "2x faster start, 0.5x max shield", true},
 		{"of Resistance", "reduces damage taken by %.0f%%", false },
 		{"Repairing", "regenerates %.1f%% health per second", true },
 		{"of Absorption", "gain %.0f%% of damage taken as energy", false },
 		{"Nova", "releases an explosion when empty", true },
 		{"Adaptive", "reduces damage taken by 5% for 4s when hit", true },
-		{"Deflector", "hits can deal no more than %0.f%% of max shield as damage", false}
+		{"Deflector", "hits can deal no more than %0.f%% of max shield as damage", false},
+		{"Conversion", "damage is taken from energy first with on point of energy absorbing %.1f damage", true}
+	} };
+
+	const std::array< TraitDescription, 1> EXTRA_NAME_TRAITS =
+	{ {
+		{"High Capacity", "", true},
 	} };
 
 	ShieldGenerator::ShieldGenerator(uint32_t _seed)
@@ -67,7 +76,11 @@ namespace Generators {
 
 		m_name = "Shield";
 
-		float maxShield = m_randomSampler.Uniform(5.f, 10.f);
+		const Range shieldRange(20.f, 40.f);
+		float maxShield = m_randomSampler.Uniform(shieldRange);
+		const float relativeShield = shieldRange.GetRelativePosition(maxShield);
+		if (relativeShield > 0.8f) AddTrait(EXTRA_NAME_TRAITS[0]);
+
 		float delay = m_randomSampler.Uniform(2.f, 8.f);
 		float recharge = m_randomSampler.Uniform(0.2f, 3.f);
 
@@ -101,10 +114,13 @@ namespace Generators {
 				recharge *= (1.f + temp);
 				AddTrait(SHIELD_TRAITS[trait], 100.f * temp);
 				break;
-			case FastCharge:
+			case PowerCharge:
 				recharge *= 3.f;
 				delay *= 2.f;
 				break;
+			case QuickCharge:
+				delay *= 0.5f;
+				maxShield *= 0.5f;
 			case Resistance:
 				temp = GenerateValue(0.05f, 0.25f, 0.01f);
 				takeDamageFn = ShieldTrait::ReduceDamageRelative(temp);
@@ -128,6 +144,15 @@ namespace Generators {
 				rechargeFn = ShieldTrait::RechargeRepair(temp);
 				AddTrait(SHIELD_TRAITS[trait], temp * 100.f);
 				AddTraitGroup(RECHARGE_TRAITS);
+				break;
+			case Conversion:
+				temp = GenerateValue(1.f, 2.f, 0.1f);
+				rechargeFn = ShieldTrait::TakeDamageEnergy(temp);
+				AddTrait(SHIELD_TRAITS[trait], temp);
+				AddTraitGroup(TAKE_DAMAGE_TRAITS);
+				break;
+			default:
+				Assert(false, "This trait is not implemented.");
 			}
 		}
 

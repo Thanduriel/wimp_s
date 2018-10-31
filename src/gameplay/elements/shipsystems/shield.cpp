@@ -64,19 +64,6 @@ namespace Game {
 	}
 
 	// ********************************************************************* //
-	Shield::RechargeFunction ShieldTrait::RechargeRepair(float _amount)
-	{
-		return [=](Shield& _this, float _deltaTime)
-		{
-			const float regen = _this.m_ship->GetMaxHealth() * _amount * _deltaTime;
-			_this.m_ship->SetHealth(std::min(_this.m_ship->GetHealth() + regen, 
-				_this.m_ship->GetMaxHealth()));
-
-			return _deltaTime;
-		};
-	}
-
-	// ********************************************************************* //
 	Shield::TakeDamageFunction ShieldTrait::ReduceDamageRelative(float _damageReduction)
 	{
 		return [=](Shield& _this, float _damage)
@@ -113,4 +100,30 @@ namespace Game {
 			return _damage;
 		};
 	}
+
+	Shield::TakeDamageFunction ShieldTrait::TakeDamageEnergy(float _conversionRatio)
+	{
+		return [=](Shield& _this, float _damage)
+		{
+			const float damageConverted = std::min(_this.m_ship->GetEnergy() / _conversionRatio, _damage);
+			_this.m_ship->SetEnergy(_this.m_ship->GetEnergy() - damageConverted * _conversionRatio);
+
+			return _damage - damageConverted;
+		};
+	}
+
+	// ********************************************************************* //
+	Shield::RechargeFunction ShieldTrait::RechargeRepair(float _amount)
+	{
+		return [=](Shield& _this, float _deltaTime)
+		{
+			const float regen = _this.m_ship->GetMaxHealth() * _amount * _deltaTime;
+			_this.m_ship->SetHealth(std::min(_this.m_ship->GetHealth() + regen,
+				_this.m_ship->GetMaxHealth()));
+
+			return _deltaTime;
+		};
+	}
+
+	
 }

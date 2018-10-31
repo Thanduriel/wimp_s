@@ -51,10 +51,13 @@ namespace Game {
 		static Shield::TakeDamageFunction ReduceDamageRelative(float _damageReduction);
 		static Shield::TakeDamageFunction ReduceDamageAbsolute(float _damageReduction);
 		static Shield::TakeDamageFunction ReduceDamageMax(float _damageCap);
+		static Shield::TakeDamageFunction TakeDamageEnergy(float _conversionRatio);
 
 		static Shield::TakeDamageFunction AbsorbEnergyRelative(float _energyRatio);
 
 		// health gain in %
 		static Shield::RechargeFunction RechargeRepair(float _amount);
+
+		//static Shield::RechargeFunction RechargeNoInterrupt(float _duration);
 	};
 }
