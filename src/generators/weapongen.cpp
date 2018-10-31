@@ -21,7 +21,9 @@ namespace Generators {
 		Corroding,
 		ShieldMax,
 		EnergyMax,
-	//	Infinite,
+		HealthMax,
+		EnergyReg,
+		Infinite,
 		WTTCOUNT // since this is not in its own name space
 	};
 
@@ -41,8 +43,10 @@ namespace Generators {
 		{"Ionizing", "deals more damage against shields", true},
 		{"Corroding", "deals more damage against hulls", true},
 		{"", "+ %.1f max shield" , false},
-		{ "", "+ %.1f max energy" , false }
-	//	{"Infinite", "can fire even without sufficient energy", true}
+		{ "", "+ %.1f max energy" , false },
+		{"", "+ %.1f max health", false},
+		{"", "+ %.1f energy recharge", false},
+		{"Infinity", "can fire even without sufficient energy", true}
 	} };
 
 	const std::array< TraitDescription, 3> EXTRA_NAME_TRAITS = 
@@ -147,10 +151,13 @@ namespace Generators {
 
 		float shieldBoost = 0.f;
 		float energyBoost = 0.f;
+		float regenBoost = 0.f;
+		float healthBoost = 0.f;
 		float temp = 0.f;
 
 		Weapon::FireFunction fireFn;
 		Weapon::ReloadFunction reloadFn;
+		Weapon::CanFireFunction canFireFn;
 		DamageType damageType = DamageType::Normal;
 
 		// traits that have to be added after projectile generation has finished
@@ -210,6 +217,11 @@ namespace Generators {
 			case WeaponTraitType::Iterative: lateTraits.push_back(Iterative);
 				m_hasTrait[Twin] = 1;
 				break;
+			// can fire functions
+			case Infinite:
+				canFireFn = WeaponTrait::CanFireInfinite;
+				break;
+			// damage type
 			case WeaponTraitType::Ionized:
 				m_hasTrait[Corroding] = 1;
 				damageType = DamageType::Ion;
@@ -218,14 +230,21 @@ namespace Generators {
 				m_hasTrait[Ionized] = 1;
 				damageType = DamageType::Physical;
 				break;
+			// ship stats
 			case WeaponTraitType::ShieldMax:
 				shieldBoost = GenerateValue(3.f, 10.f, 1.f) + _power / 10.f * 2.f;
 				AddTrait(WEAPON_TRAITS[trait], shieldBoost);
 				break;
 			case WeaponTraitType::EnergyMax: 
-				energyBoost = GenerateValue(1.f, 2.5f, 0.1f) + _power / 10.f * 1.2f;
+				energyBoost = GenerateValue(0.f, 2.f, 0.1f) + _power / 10.f * 1.2f;
 				AddTrait(WEAPON_TRAITS[trait], energyBoost);
 				break;
+			case WeaponTraitType::EnergyReg:
+				regenBoost = GenerateValue(0.f, 0.5f, 0.1f) + _power / 10.f * 0.1f;
+				AddTrait(WEAPON_TRAITS[trait], regenBoost);
+			case WeaponTraitType::HealthMax:
+				healthBoost = GenerateValue(0.f, _power, 1.f) + _power / 10.f * 5.f;
+				AddTrait(WEAPON_TRAITS[trait], healthBoost);
 			default:
 				Assert(false, "Trait not implemented.");
 			}
@@ -284,6 +303,7 @@ namespace Generators {
 			eCost,
 			std::move(fireFn),
 			std::move(reloadFn),
+			std::move(canFireFn),
 			rarity,
 			type == WeaponType::Simple ? Item::Icon::DefaultWeapon : Item::Icon::Missile,
 			std::move(m_name),
@@ -291,6 +311,8 @@ namespace Generators {
 
 		weapon->m_maxEnergy = energyBoost;
 		weapon->m_maxShield = shieldBoost;
+		static_cast<Item*>(weapon)->m_maxHealth = healthBoost;
+		weapon->m_energyRecharge = regenBoost;
 
 		return weapon;
 	}

@@ -16,10 +16,12 @@ namespace Game {
 	public:
 		typedef std::function<void(Weapon&)> FireFunction;
 		typedef std::function<void(Weapon&, float)> ReloadFunction;
+		typedef std::function<bool(Weapon&, float)> CanFireFunction;
 
 		Weapon(float _cooldown = 1.f, float _range = 2560.f, float _energyCost = 1.f,
 			FireFunction&& _fireFn = FireFunction(),
 			ReloadFunction&& _reloadFn = ReloadFunction(),
+			CanFireFunction&& _canFireFn = CanFireFunction(),
 			Item::Quality _quality = Item::Quality::Basic,
 			Item::Icon _icon = Item::Icon::DefaultWeapon,
 			const std::string& _name = "Default Weapon",
@@ -68,6 +70,7 @@ namespace Game {
 
 		FireFunction m_fireImpl;
 		ReloadFunction m_reloadImpl;
+		CanFireFunction m_canFireImpl;
 
 		Actor::ConstHandle m_target;
 		const void* m_owner;
@@ -93,6 +96,10 @@ namespace Game {
 		static Weapon::FireFunction FireDouble(GenerationFunction&& _generator);
 	//	static Weapon::FireFunction FireTripple(GenerationFunction&& _generator);
 		static Weapon::FireFunction FireIterative(GenerationFunction&& _generator);
+
+		// fire condition traits
+		static bool CanFireDefault(Weapon& _this, float _energyAvailable);
+		static bool CanFireInfinite(Weapon& _this, float _energyAvailable);
 
 		// Encapsulates the creation of projectiles based on a prototype
 		template<typename T>

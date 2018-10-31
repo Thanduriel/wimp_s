@@ -273,8 +273,8 @@ namespace Game
 			if (!weapon || GetCollisionComponent().RayCast(Ray(weapon->GetPosition(), weapon->GetRotationMatrix() * Vec3(0.f,0.f,1.f)), d)) 
 				continue;
 
-
-			m_energy -= weapon->Fire(m_velocity, m_energy);
+			const float energyUsed = weapon->Fire(m_velocity, m_energy);
+			m_energy = std::max(0.f, m_energy - energyUsed);
 		}
 	}
 

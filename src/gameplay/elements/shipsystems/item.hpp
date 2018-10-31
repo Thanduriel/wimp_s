@@ -6,6 +6,7 @@
 
 namespace Generators {
 	class WeaponGenerator;
+	class ShieldGenerator;
 }
 
 namespace Game {
@@ -72,6 +73,7 @@ namespace Game {
 		float m_energyRecharge = 0.f;
 
 		friend class Generators::WeaponGenerator;
+		friend class Generators::ShieldGenerator;
 	};
 
 	template<Item::Type _Type>

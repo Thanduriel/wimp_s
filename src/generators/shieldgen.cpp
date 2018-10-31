@@ -17,10 +17,13 @@ namespace Generators {
 		Resistance,
 		Repair,
 		Absorb,
-		Nova,
-		Adaptive,
+	//	Nova,
+	//	Adaptive,
 		Deflection,
 		Conversion,
+		EnergyMax,
+		HealthMax,
+		EnergyReg,
 		STTCOUNT
 	};
 
@@ -44,10 +47,13 @@ namespace Generators {
 		{"of Resistance", "reduces damage taken by %.0f%%", false },
 		{"Repairing", "regenerates %.1f%% health per second", true },
 		{"of Absorption", "gain %.0f%% of damage taken as energy", false },
-		{"Nova", "releases an explosion when empty", true },
-		{"Adaptive", "reduces damage taken by 5% for 4s when hit", true },
+	//	{"Nova", "releases an explosion when empty", true },
+	//	{"Adaptive", "reduces damage taken by 5% for 4s when hit", true },
 		{"Deflector", "hits can deal no more than %0.f%% of max shield as damage", false},
-		{"Conversion", "damage is taken from energy first with on point of energy absorbing %.1f damage", true}
+		{"Conversion", "damage is taken from energy first with 1 point of energy absorbing %.1f damage", true},
+		{ "", "+ %.1f max energy" , false },
+		{"", "+ %.1f max health", false},
+		{"", "+ %.1f energy recharge", false},
 	} };
 
 	const std::array< TraitDescription, 1> EXTRA_NAME_TRAITS =
@@ -69,6 +75,7 @@ namespace Generators {
 	Shield* ShieldGenerator::Generate(float _power, float _qualityFactor)
 	{
 		Reset();
+		const float power = _power / 10.f;
 
 		const Item::Quality rarity = RollRarity(_qualityFactor);
 		int numTraits = QUALITY_NUM_TRAITS[(int)rarity];
@@ -76,13 +83,17 @@ namespace Generators {
 
 		m_name = "Shield";
 
-		const Range shieldRange(20.f, 40.f);
+		const Range shieldRange(15.f * power, 40.f * power);
 		float maxShield = m_randomSampler.Uniform(shieldRange);
 		const float relativeShield = shieldRange.GetRelativePosition(maxShield);
 		if (relativeShield > 0.8f) AddTrait(EXTRA_NAME_TRAITS[0]);
 
 		float delay = m_randomSampler.Uniform(2.f, 8.f);
-		float recharge = m_randomSampler.Uniform(0.2f, 3.f);
+		float recharge = m_randomSampler.Uniform(4.0f * power, 8.f * power);
+
+		float energyBoost = 0.f;
+		float regenBoost = 0.f;
+		float healthBoost = 0.f;
 
 		Shield::TakeDamageFunction takeDamageFn;
 		Shield::RechargeFunction rechargeFn;
@@ -147,9 +158,22 @@ namespace Generators {
 				break;
 			case Conversion:
 				temp = GenerateValue(1.f, 2.f, 0.1f);
-				rechargeFn = ShieldTrait::TakeDamageEnergy(temp);
+				takeDamageFn = ShieldTrait::TakeDamageEnergy(temp);
 				AddTrait(SHIELD_TRAITS[trait], temp);
 				AddTraitGroup(TAKE_DAMAGE_TRAITS);
+				break;
+				// ship stats
+			case EnergyMax:
+				energyBoost = GenerateValue(0.f, 2.f, 0.1f) + power * 1.2f;
+				AddTrait(SHIELD_TRAITS[trait], energyBoost);
+				break;
+			case EnergyReg:
+				regenBoost = GenerateValue(0.f, 0.5f, 0.1f) + power * 0.1f;
+				AddTrait(SHIELD_TRAITS[trait], regenBoost);
+				break;
+			case HealthMax:
+				healthBoost = GenerateValue(0.f, _power, 1.f) + power * 5.f;
+				AddTrait(SHIELD_TRAITS[trait], healthBoost);
 				break;
 			default:
 				Assert(false, "This trait is not implemented.");
@@ -166,12 +190,18 @@ namespace Generators {
 
 		static int count = 0;
 		++count;
-		return new Game::Shield(rarity, count % 2 ? Game::Item::Icon::DefaultShield : Game::Item::Icon::StrongShield, m_name, m_description,
+		Shield* shield =  new Game::Shield(rarity, count % 2 ? Game::Item::Icon::DefaultShield : Game::Item::Icon::StrongShield, m_name, m_description,
 			maxShield,
 			recharge,
 			delay,
 			std::move(takeDamageFn),
 			std::move(rechargeFn));
 		{}
+
+		shield->m_maxEnergy = energyBoost;
+		static_cast<Item*>(shield)->m_maxHealth = healthBoost;
+		shield->m_energyRecharge = regenBoost;
+
+		return shield;
 	}
 }

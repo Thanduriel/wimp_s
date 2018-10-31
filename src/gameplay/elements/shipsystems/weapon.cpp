@@ -127,8 +127,20 @@ namespace Game {
 		_proj.SetOwner(_weapon.m_owner);
 	}
 
+	// can fire functions
+	bool WeaponTrait::CanFireDefault(Weapon& _this, float _energyAvailable)
+	{
+		return _this.m_cooldown <= 0.f && _this.m_energyCost < _energyAvailable;
+	}
+
+	bool WeaponTrait::CanFireInfinite(Weapon& _this, float _energyAvailable)
+	{
+		return _this.m_cooldown <= 0.f;
+	}
+
 	// ********************************************************************* //
 	Weapon::Weapon(float _cooldown, float _range, float _energyCost, FireFunction&& _fireFn, ReloadFunction&& _reloadFn,
+		CanFireFunction&& _canFireFn,
 		Item::Quality _quality, Item::Icon _icon, const std::string& _name, const std::string& _description)
 		: Actor(ei::Vec3()),
 		TypeItem(_quality, _icon, _name, _description),
@@ -143,6 +155,7 @@ namespace Game {
 		m_beginVelocity(0.f),
 		m_reloadImpl(_reloadFn ? std::move(_reloadFn) : WeaponTrait::ReloadDefault()),
 		m_fireImpl(_fireFn ? std::move(_fireFn) : WeaponTrait::FireDefault(WeaponTrait::CreateProjectileFn(Bolt(ei::Vec3(0.f), ei::Vec3(0.f,0.f,Projectile::DEFAULT_SPEED),5.f, 10.f)))),
+		m_canFireImpl(_canFireFn ? std::move(_canFireFn) : WeaponTrait::CanFireDefault),
 		m_target(nullptr)
 	{
 		ComputeStats();
@@ -164,7 +177,7 @@ namespace Game {
 
 	float Weapon::Fire(const ei::Vec3& _velocity, float _energyAvailable)
 	{
-		if (m_cooldown <= 0.f && m_energyCost < _energyAvailable)
+		if (m_canFireImpl(*this, _energyAvailable))
 		{
 			m_beginVelocity = _velocity;
 			m_cooldown = m_cooldownMax;
