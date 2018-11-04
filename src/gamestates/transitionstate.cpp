@@ -7,6 +7,7 @@
 #include "gameplay/content.hpp"
 #include "gameplay/events/01_intro/act01.hpp"
 #include "gameplay/events/02_delivery/act02.hpp"
+#include "gameplay/events/03_final/act03.hpp"
 
 namespace GameStates {
 
@@ -20,13 +21,12 @@ namespace GameStates {
 	{ {
 		{"Act I", "business as usual", "You are an elite pilot making money with all kinds of delicate dirty work.\
 			\nCurrently employed by DymonIndustries you are tasked with infiltrating a secret research base and stealing there work.\n\
-			Setup with a fake id and a fitting ship there should be no major complications. To pass the security checks\n\
+			Setup with a fake id and a fitting ship, the \"Doomwhisper\", there should be no major complications. To pass the security checks\n\
 			weapons had to be left behind, so in case of unforeseen complications a suitable replacement needs to be improvised."},
 		{ "Act II", "a change of plan", "Now the only thing left to do is delivering the black-hole generator to the rendezvous \
-			coordinates\n and exchanging it for the not inconsiderable amount of credits that where negotiated.\n\n\
-			Note from the developer: To have the core mechanics of this game play out the vision of this Act had to be compromised\n\
-			to meet the date constraints." },
-		{ "Act III", "getting back in shape", "" },
+			coordinates\n and exchanging it for the not inconsiderable amount of credits that where negotiated." },
+		{ "Act III", "revenge", "After escaping the corporate assassins and gathering some decent equipment it is time \
+		\n to make a statement so that future employers will not forget to pay you." },
 		{ "Act IV", "collecting information", "" },
 		{ "Act V", "revenge", "" }
 	} };
@@ -194,6 +194,8 @@ namespace GameStates {
 		case Level::Act01: map = new Acts::Act01(m_createdState->GetSceneGraph(), *m_playerShip, m_createdState->GetHud());
 			break;
 		case Level::Act02: map = new Acts::Act02(m_createdState->GetSceneGraph(), *m_playerShip, m_createdState->GetHud());
+			break;
+		case Level::Act03: map = new Acts::Act03(m_createdState->GetSceneGraph(), *m_playerShip, m_createdState->GetHud());
 			break;
 		default:
 			Assert(false, "This level is unknown.");

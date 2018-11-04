@@ -2,6 +2,7 @@
 
 #include "../event.hpp"
 #include "../helpers.hpp"
+#include "generators/asteroidfield.hpp"
 
 namespace GameStates {
 	class MainHud;
@@ -18,6 +19,7 @@ namespace Game {
 
 		private:
 			BaseEvent m_finishDescription;
+			Generators::AsteroidField m_asteroids;
 		};
 	}
 }

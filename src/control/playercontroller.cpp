@@ -26,6 +26,7 @@ namespace Control
 	using namespace ei;
 
 	bool PlayerController::HAS_AIM_ASSIST;
+	bool PlayerController::ENABLE_CHEASTS = false;
 
 	const float TACTICALCAM_DIST = 52.f;
 	const float TACTICALCAM_ANGLE = PI / 3.2f;
@@ -158,25 +159,29 @@ namespace Control
 		if (InputManager::IsVirtualKey(_key, VirtualKey::BRAKE))
 			m_targetSpeed = 0.f;
 
-		// test stuff
-		if (_key == GLFW_KEY_F5)
-		{
-			//	static uint32_t count = 2;
-			//	++count;
-			Generators::WeaponGenerator gen;
-			Game::Weapon* w = gen.Generate(10.f, 4.f);
-			Game::FactoryActor::GetThreadLocalInstance().Add(*w);
-			m_ship.GetInventory().Add(*w);
-		}
-		else if (_key == GLFW_KEY_F6)
-		{
-			Generators::ShieldGenerator gen;
-			Game::Shield* w = gen.Generate(10.f, 4.f);
-			Game::FactoryActor::GetThreadLocalInstance().Add(*w);
-			m_ship.GetInventory().Add(*w);
-		}
-		else if (InputManager::IsVirtualKey(_key, VirtualKey::LOCK_TARGET))
+		if (InputManager::IsVirtualKey(_key, VirtualKey::LOCK_TARGET))
 			m_lookForTarget = true;
+
+		// test stuff
+		if (ENABLE_CHEASTS)
+		{
+			if (_key == GLFW_KEY_F5)
+			{
+				//	static uint32_t count = 2;
+				//	++count;
+				Generators::WeaponGenerator gen;
+				Game::Weapon* w = gen.Generate(11.f, 4.f);
+				Game::FactoryActor::GetThreadLocalInstance().Add(*w);
+				m_ship.GetInventory().Add(*w);
+			}
+			else if (_key == GLFW_KEY_F6)
+			{
+				Generators::ShieldGenerator gen;
+				Game::Shield* w = gen.Generate(11.f, 4.f);
+				Game::FactoryActor::GetThreadLocalInstance().Add(*w);
+				m_ship.GetInventory().Add(*w);
+			}
+		}
 	}
 
 	void PlayerController::KeyDown(int _key, int _modifiers)

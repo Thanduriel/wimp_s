@@ -109,7 +109,7 @@ namespace Game
 	{
 		// npcs can have items equipped that are not in there inventory
 		for (auto& socket : m_weaponSockets)
-			if (Weapon* w = static_cast<Weapon*>(socket.GetAttached()); w && m_inventory.Find(*w))
+			if (Weapon* w = static_cast<Weapon*>(socket.GetAttached()); w && !m_inventory.Find(*w))
 				w->Destroy();
 		if (m_shieldItem && !m_inventory.Find(*m_shieldItem)) m_shieldItem->Destroy();
 		// leave items behind
@@ -152,7 +152,7 @@ namespace Game
 		m_shield -= dmgAbsorbed;
 
 		const float finalDamage = remainingDmg * (_type == DamageType::Physical ? 1.5f : 1.f);
-		if (m_controller) m_controller->OnDamageTaken(finalDamage, _source, _type);
+		if (m_controller) m_controller->OnDamageTaken(_amount, _source, _type);
 		return finalDamage;
 	}
 

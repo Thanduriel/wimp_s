@@ -46,6 +46,7 @@ namespace Control
 
 		void SetFocus(Game::Ship* _actor);
 		static bool HAS_AIM_ASSIST;
+		static bool ENABLE_CHEASTS;
 	private:
 		enum struct TargetingMode
 		{

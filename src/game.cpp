@@ -70,6 +70,7 @@ Wimp_s::Wimp_s()
 	// load other properties
 	auto& cgame = m_config["Game"];
 	Control::PlayerController::HAS_AIM_ASSIST = cgame["AimAssist"s];
+	Control::PlayerController::ENABLE_CHEASTS = cgame["Cheats"s];
 	SetTargetFPS(cgraphic["TargetFPS"s].Get(144.f));
 
 	m_gameStates.emplace_back(new GameStates::MainMenuState());
@@ -208,6 +209,7 @@ void Wimp_s::BuildDefaultConfig()
 
 	auto& cgame = m_config[std::string("Game")];
 	cgame["AimAssist"s] = false;
+	cgame["Cheats"s] = false;
 
 	auto& csound = m_config["Sound"];
 	csound["MasterVolume"s] = 1.0;

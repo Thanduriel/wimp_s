@@ -9,7 +9,7 @@ namespace Game {
 
 	std::string GetColoredKeyName(Control::VirtualKey _vkey)
 	{
-		return /*"<c 0 255 0>" + */Control::InputManager::GetBoundKey(_vkey) /*+ "</c>"*/;
+		return "<c 0 255 0>" + Control::InputManager::GetBoundKey(_vkey) + "</c>";
 	}
 
 	Map::Map(SceneGraph& _sceneGraph, const Ship& _playerShip, GameStates::MainHud& _hud)
@@ -68,6 +68,7 @@ namespace Game {
 		_player.SetRotation(_rotation);
 		_player.SetSpeed(_speed);
 		_player.SetVelocity(_player.GetRotationMatrix() * Vec3(0.f, 0.f, _speed));
+		_player.SetHealth(_player.GetMaxHealth());
 		Control::g_camera.SetPosition(_player.GetPosition() - _player.GetVelocity());
 		Control::g_camera.SetRotation(_rotation);
 		Control::g_camera.Attach(_player);
@@ -109,7 +110,7 @@ namespace Game {
 
 			// create ship with 50% chance to drop weapon / credits
 			Ship& ship = CreateShip(SHIP_VALUES[type].typeName, _position, SHIP_VALUES[type].numWeapons, _weaponPower,
-				_rarityMod, m_randomGen() % 2 ? Drop::Weapons : Drop::Credits);
+				_rarityMod, m_randomGen() % 2 ? Drop::All : Drop::Credits);
 			ship.SetRotation(rot);
 
 			// find suitable position that is not occupied

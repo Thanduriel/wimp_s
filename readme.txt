@@ -35,6 +35,7 @@ AccForward [W]          - temporarly accelerate
 AccBackward [S]
 AdjustTargetAcc[Shift]  - hold in combination with AccForward/AccBackward
                           to change the target speed that will be held
+Thrust[A/D]		- make a quick jump left or right
 Brake[Tab]              - Set the target speed to zero
 Fire[LeftMouse]         - fires weapons in the first group targeting the ray of the cursor
 FireOther[RightMouse]	- fires weapons in the second group
@@ -43,7 +44,8 @@ RollCCW[E]
 Inventory [I]           - opens/closes the inventory
 SwitchTactical[Space]   - once unlocked switches to the tactical targeting
                           mode that allows usage of special weapons
-LockTarget[R]			- locks on a ship closest to the center of the screen
+LockTarget[R]		- locks on a ship closest to the center of the screen
+CycleTarget[T]		- in tactical: jump with the camera to the locked ship
 Pause[P]                - opens the pause menu
 
 MECHANICS ##############################
@@ -61,10 +63,10 @@ of the screen is visible.
 
 rocket launchers
 One type of weapon fires homing and accelerating missiles.
-The target is always the last ship that was focused in the center of the screen.
+The target is always the locked ship, marked by a red indicator.
 When something is in the focus the two arrows go outwards.
 
 
 
-If you are having trouble or just want to mess around press F5 to generate weapons
-out of thin air!
+With cheats enabled in the config you can use F5 and F6 to generate some
+random weapons and shields!

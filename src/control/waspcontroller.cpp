@@ -11,10 +11,10 @@ namespace Control
 	{
 		m_target = _target;
 		m_minDistance = 75.0f;
-		m_maxDistance = 250.0f;
+		m_maxDistance = _ship.GetMaxSpeed() * 4.5f;
 		m_maxFollowTime = 5.0f;
 		m_evasionTime = 5.0f;
-		GetShip().SetSpeed(50.0f);
+		GetShip().SetSpeed(120.0f);
 	//	GetShip().SetAngularAcceleration(2.0f);
 		GetShip().SetWeaponTarget(**_target);
 		m_hud.AddIndicator(this->GetShip(), _name);
@@ -115,7 +115,7 @@ namespace Control
 		Vec3 delta = target->GetPosition() - GetShip().GetPosition();
 		Vec3 forward = GetShip().GetRotationMatrix() * Vec3(0.0f, 0.0f, 1.0f);
 
-		if (dot(delta, forward) > 0.0f)
+		if (lensq(delta) < 500.f*500.f && dot(delta, forward) > 0.0f)
 		{
 			float angle = acosf(clamp(dot(normalize(delta), forward), -1.0f, 1.0f));
 			if (angle < ei::PI / 4.0f)

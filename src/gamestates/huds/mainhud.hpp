@@ -37,6 +37,7 @@ namespace GameStates {
 
 		// display message on the main message box
 		void ShowMessage(const std::string& _message, float _time = Graphic::MessageBox::AUTO);
+		void SetMessageAnimation(bool _active);
 		Graphic::FillBar& GetEnergyBar() { return *m_energyBar; }
 		Graphic::FillBar& GetHealthBar() { return *m_healthBar; }
 		Graphic::FillBar& GetShieldBar() { return *m_shieldBar; }

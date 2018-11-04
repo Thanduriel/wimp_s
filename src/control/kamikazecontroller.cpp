@@ -105,7 +105,7 @@ namespace Control
 		Vec3 delta = target->GetPosition() - GetShip().GetPosition();
 		Vec3 forward = GetShip().GetRotationMatrix() * Vec3(0.0f, 0.0f, 1.0f);
 
-		if (dot(delta, forward) > 0.0f)
+		if (lensq(delta) < 500.f*500.f && dot(delta, forward) > 0.0f)
 		{
 			float angle = acosf(clamp(dot(normalize(delta), forward), -1.0f, 1.0f));
 			if (angle < ei::PI / 4.0f)

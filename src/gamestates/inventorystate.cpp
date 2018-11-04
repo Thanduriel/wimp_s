@@ -263,9 +263,9 @@ namespace GameStates
 			if (GetUpgradeCost((Upgrades)i) <= m_money)
 			{
 				if (i != Upgrades::SHIELD_REG_DELAY)
-					m_hud.m_upgradeLabels[i]->SetText("(+" + ToConstDigit(NextUpgradeValue((Upgrades)i) - values[i], 1, 5) + ")");
+					m_hud.m_upgradeLabels[i]->SetText("(+" + ToConstDigit(NextUpgradeValue((Upgrades)i), 1, 5) + ")");
 				else
-					m_hud.m_upgradeLabels[i]->SetText("(" + ToConstDigit(NextUpgradeValue((Upgrades)i) - values[i], 1, 6) + ")");
+					m_hud.m_upgradeLabels[i]->SetText("(" + ToConstDigit(NextUpgradeValue((Upgrades)i), 1, 6) + ")");
 				m_hud.m_upgradeLabels[i]->SetVisible(true);
 				m_hud.m_upgradeBtns[i]->SetActive(true);
 				m_hud.m_upgradeBtns[i]->SetVisible(true);
@@ -386,6 +386,9 @@ namespace GameStates
 	// ******************************************************** //
 	int InventoryState::GetUpgradeCost(Upgrades _upgrade)
 	{
+		// some high value that the player should not reach
+		if (_upgrade == Upgrades::SHIELD || _upgrade == Upgrades::SHIELD_REG || _upgrade == Upgrades::SHIELD_REG_DELAY)
+			return 1000000.f;
 		return 100 + m_upgradeLvls[_upgrade] * 50;
 		/*switch (_upgrade)
 		{
@@ -413,7 +416,7 @@ namespace GameStates
 	float InventoryState::NextUpgradeValue(Upgrades _upgrade)
 	{
 		if (_upgrade != Upgrades::SHIELD_REG_DELAY)
-			return UPGRADES_BASE_VALUE[_upgrade] + (m_upgradeLvls[_upgrade] + 1) * 0.1f * UPGRADES_BASE_VALUE[_upgrade];
+			return (m_upgradeLvls[_upgrade] + 1) * 0.1f * UPGRADES_BASE_VALUE[_upgrade];
 		else
 			return UPGRADES_BASE_VALUE[_upgrade] - (m_upgradeLvls[_upgrade] + 1) * 0.1f * UPGRADES_BASE_VALUE[_upgrade];
 	}
@@ -428,10 +431,10 @@ namespace GameStates
 			switch (_upgrade)
 			{
 			case Upgrades::ENERGY:
-				m_ship.SetMaxEnergy(newVal);
+				m_ship.SetMaxEnergy(m_ship.GetMaxEnergy() + newVal);
 				break;
 			case Upgrades::ENERGY_REG:
-				m_ship.SetEnergyRecharge(newVal);
+				m_ship.SetEnergyRecharge(m_ship.GetEnergyRecharge() + newVal);
 				break;
 			case Upgrades::SHIELD:
 				m_ship.SetMaxShield(newVal);
@@ -443,7 +446,7 @@ namespace GameStates
 				m_ship.SetShieldDelay(newVal);
 				break;
 			case Upgrades::HULL:
-				m_ship.SetMaxHealth(newVal);
+				m_ship.SetMaxHealth(m_ship.GetMaxHealth() + newVal);
 				break;
 			}
 			UpdateUpgradeLabels();

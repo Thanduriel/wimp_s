@@ -40,9 +40,15 @@ namespace Control
 
 		GetShip().SetTargetAngularVelocity(Vec3(0.0f, 0.0f, 0.0f));
 		Vec3 delta = target->GetPosition() - GetShip().GetPosition();
-		if (len(delta) < m_minDistance)
+		const float dist = len(delta);
+		if (dist < m_minDistance)
 			GetShip().SetSpeed(-10.0f);
-		else if (len(delta) > m_maxDistance)
+		else if (dist > 1000.f)
+		{
+			RotateTowards(Vec3(0.f));
+			GetShip().SetSpeed(30.f);
+		}
+		else if (dist > m_maxDistance)
 			GetShip().SetSpeed(10.0f);
 		else
 			GetShip().SetSpeed(0.0f);

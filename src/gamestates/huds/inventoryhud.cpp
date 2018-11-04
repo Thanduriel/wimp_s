@@ -13,7 +13,7 @@ namespace GameStates
 		: m_shipInfoBackground("box_cutout", PixelOffset(BORDER_SIZE, -BORDER_SIZE), Vec2(0.f), DefP::TopLeft, Anchor(DefP::TopLeft, this)),
 		m_moneyBackground("box_cutout", PixelOffset(0, -5), Vec2(1.f), DefP::TopLeft, Anchor(DefP::BotLeft, &m_shipInfoBackground)),
 		m_itemBackground("box_cutout", PixelOffset(BORDER_SIZE, BORDER_SIZE), Vec2(0.68f, 0.80f), DefP::BotLeft, Anchor(DefP::BotLeft, this)),
-		m_itemDescriptionBox(PixelOffset(5, -5), m_itemBackground.GetSize() - PixelOffset(5,5).operator ei::Vec2(), DefP::TopLeft, Anchor(DefP::TopLeft, &m_itemBackground)),
+		m_itemDescriptionBox(PixelOffset(10, -5), m_itemBackground.GetSize() - PixelOffset(10,10).operator ei::Vec2(), DefP::TopLeft, Anchor(DefP::TopLeft, &m_itemBackground)),
 		m_healthBar(PixelOffset(-36, 20), PixelOffset(220, 28), DefP::BotRight, Anchor(DefP::BotRight, this)),
 		m_repairButton("slotBtn", PixelOffset(0, 5), Vec2(1.f), DefP::BotRight, Anchor(DefP::TopRight, &m_healthBar), "Repair"),
 		m_repairLabel(Vec2(0.f), ScreenPosition::Anchor(DefP::TopLeft, &m_healthBar))

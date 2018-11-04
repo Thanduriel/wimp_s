@@ -24,7 +24,7 @@ namespace GameStates {
 			"\nmodels - turbosquid\n"
 			"<c 0 255 0>GrafxBox</c>"
 			"\nmodels - free3d\n"
-			"<c 0 255 0>thomasmattia</c>", -1.f);
+			"<c 0 255 0>thomasmattia, printable_models</c>", -1.f);
 		m_textRender.SetFontSize(0.5f);
 		m_textRender.SetCentered(true);
 		m_textRender.Process(0.f);

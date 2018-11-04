@@ -160,4 +160,11 @@ namespace GameStates {
 	{
 		m_messageBox.Push(_message, _time);
 	}
+
+	void MainHud::SetMessageAnimation(bool _active)
+	{
+		MessageBox::AnimationInfo info;
+		info.length = _active ? 2.f : 0.f;
+		m_messageBox.SetAnimationInfo(info);
+	}
 }

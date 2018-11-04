@@ -242,9 +242,11 @@ namespace Generators {
 			case WeaponTraitType::EnergyReg:
 				regenBoost = GenerateValue(0.f, 0.5f, 0.1f) + _power / 10.f * 0.1f;
 				AddTrait(WEAPON_TRAITS[trait], regenBoost);
+				break;
 			case WeaponTraitType::HealthMax:
 				healthBoost = GenerateValue(0.f, _power, 1.f) + _power / 10.f * 5.f;
 				AddTrait(WEAPON_TRAITS[trait], healthBoost);
+				break;
 			default:
 				Assert(false, "Trait not implemented.");
 			}
