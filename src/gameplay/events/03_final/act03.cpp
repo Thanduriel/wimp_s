@@ -77,7 +77,7 @@ namespace Acts {
 			_hud.AddObjective(m_finishDescription);
 		};
 
-		CREATE_OBJECTIVE4(Conditions::OnDestroy, Awin, "destroy the director's ship and their escort.",
+		CREATE_OBJECTIVE4(Conditions::OnDestroy, Awin, "destroy the director's ship and escort",
 			std::vector<Actor::ConstHandle>({ boss.GetHandle(), wingman.GetHandle() }), 2);
 	}
 }
