@@ -1,5 +1,5 @@
 # wimp_s
-roguelike spaceship battle game with space-time curving weapons using OpenGL 4
+roguelight spaceship battle game with space-time curving weapons using OpenGL 4
 ![ingame example](https://user-images.githubusercontent.com/5833421/31316630-4de61c48-ac31-11e7-93b8-cc1e309d95d6.png)
 ## build
 * clone repo
