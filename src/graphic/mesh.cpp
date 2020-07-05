@@ -1,5 +1,6 @@
 #include <fstream>
 #include <algorithm>
+#include <functional>
 
 #include "mesh.hpp"
 #include "core/device.hpp"

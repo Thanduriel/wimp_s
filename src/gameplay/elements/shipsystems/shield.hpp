@@ -2,6 +2,7 @@
 
 #include "gameplay/core/actor.hpp"
 #include "item.hpp"
+#include <functional>
 
 namespace Game {
 

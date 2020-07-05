@@ -3,7 +3,7 @@
 
 #include "graphic/core/framebuffer.hpp"
 #include "gamestates/gamestate.hpp"
-#include "jofilelib.hpp"
+#include <jofilelib.hpp>
 
 class Wimp_s
 {

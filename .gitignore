@@ -4,6 +4,7 @@
 /x64
 /win32
 /lib
+/build
 /dependencies/SDL
 
 *.suo

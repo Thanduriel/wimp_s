@@ -1,7 +1,6 @@
-cmake_minimum_required (VERSION 3.1)
+cmake_minimum_required (VERSION 3.8)
 project (wimp_s)
 
-# require c++17 since it is finished
 set (CMAKE_CXX_STANDARD 17)
 set (CMAKE_CXX_STANDARD_REQUIRED ON)
 
@@ -27,60 +26,66 @@ endmacro()
 # execute tha macro
 GroupSources(src)
 
+# needs to be known to link with the libraries
+add_executable(wimp_s ${SOURCE_FILES})
+
 # faster compilation with multithreading
-# cmake does not support vs compiler switches for std
 if(MSVC)
 	add_compile_options( /MP )
-	add_compile_options( /std:c++17 )
 	
 	set(OPTIMIZATION_OPTIONS 
-    $<$<CONFIG:Debug>:>
-    $<$<CONFIG:RelWithDebInfo>:>
-    $<$<CONFIG:Release>: /O2 /Ob2 /Oi /Ot /GL > 
-    $<$<CONFIG:MinSizeRel>:>
+		$<$<CONFIG:Debug>:>
+		$<$<CONFIG:RelWithDebInfo>:>
+		$<$<CONFIG:Release>: /O2 /Ob2 /Oi /Ot /GL > 
+		$<$<CONFIG:MinSizeRel>:>
     )
 	
 	add_compile_options( "${OPTIMIZATION_OPTIONS}" )
+	set_property(DIRECTORY ${CMAKE_CURRENT_SOURCE_DIR} PROPERTY VS_STARTUP_PROJECT wimp_s)
 endif(MSVC)
 
-# needs to be known to link with the libraries
-add_executable(wimp_s ${SOURCE_FILES})
 # navigation should always start from root
 include_directories("src")
 
+# glfw
 set(GLFW_BUILD_DOCS OFF CACHE BOOL "" FORCE)
 set(GLFW_BUILD_TESTS OFF CACHE BOOL "" FORCE)
 set(GLFW_BUILD_EXAMPLES OFF CACHE BOOL "" FORCE)
 set(BUILD_SHARED_LIBS OFF CACHE BOOL "" FORCE)
-
 add_subdirectory ("dependencies/glfw")
 include_directories("dependencies/glfw/include")
-target_link_libraries (wimp_s glfw)
+target_link_libraries (wimp_s PUBLIC glfw)
 
+# glew
+set(glew-cmake_BUILD_SHARED OFF CACHE BOOL "" FORCE)
+set(glew-cmake_BUILD_MULTI_CONTEXT OFF CACHE BOOL "" FORCE)
+set(ONLY_LIBS ON CACHE BOOL "" FORCE)
 add_subdirectory ("dependencies/glew/build/cmake")
 include_directories("dependencies/glew/include")
-target_link_libraries (wimp_s glew_s) # use static version
+target_link_libraries (wimp_s PUBLIC glew_s) # use static version
 
+# OpenGL
 find_package(OpenGL REQUIRED)
-target_link_libraries(wimp_s ${OPENGL_gl_LIBRARY})
+target_link_libraries(wimp_s PUBLIC ${OPENGL_gl_LIBRARY})
 
+# epsilon
 include_directories("dependencies/epsilon/include")
 file(GLOB SOURCE_FILES_EPSILON "dependencies/epsilon/src/*.cpp")
 add_library(epsilon STATIC ${SOURCE_FILES_EPSILON})
-target_link_libraries (wimp_s epsilon)
+target_link_libraries (wimp_s PUBLIC epsilon)
 
 # sound engine
 #give hint where to find sdl from inside dependencies/clunk
-set(CMAKE_INCLUDE_PATH "../sdl/include")
-set(CMAKE_FRAMEWORK_PATH "../sdl")
+find_package(SDL2 QUIET)
+if(NOT SDL2_FOUND)
+	set(SDL2_DIR "${CMAKE_CURRENT_SOURCE_DIR}/dependencies/SDL")
+endif(NOT SDL2_FOUND)
 include_directories("dependencies/sdl/include")
 add_subdirectory("dependencies/clunk")
 include_directories("dependencies/clunk")
-target_link_libraries (wimp_s clunk)
+target_link_libraries (wimp_s PUBLIC clunk)
 
-# You can define two import-locations: one for debug and one for release.
-#set_target_properties( jofilelib PROPERTIES IMPORTED_LOCATION dependencies/jofilelib/debug )
-include_directories("dependencies/jofilelib/include")
-target_link_libraries (wimp_s 
-	debug dependencies/JoFileLib/lib/Debug/jofile
-	optimized dependencies/JoFileLib/lib/Release/jofile)
+# JoFileLib
+add_subdirectory("dependencies/JoFileLib")
+#target_include_directories(wimp_s PRIVATE "dependencies/JoFileLib/include")
+target_link_libraries (wimp_s PRIVATE jofile)

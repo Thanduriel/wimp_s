@@ -16,7 +16,7 @@ namespace Game {
 
 	void AudioSystem::Initialize(float _volume)
 	{
-		static clunk::sdl::Backend backend(48000, 2, 2048);
+		static clunk::sdl::Backend backend(44100, 2, 1024);
 		s_backend = &backend;
 
 		clunk::Context &context = backend.get_context();

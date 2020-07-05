@@ -2,15 +2,18 @@
 
 #include <vector>
 
+// note from Thanduriel: Since i could not find the actual implementation
+// this is just a very simple version providing a compatible interface.
+
 namespace Jo{
  namespace Memory{
-	template < typename _T, size_t _NumElements>
+	template < typename T, size_t _NumElements>
 	class PoolAllocator
 	{
-		constexpr static size_t TypeSize = sizeof(_T);
+		constexpr static size_t TypeSize = sizeof(T);
 		constexpr static size_t BlockSize = TypeSize * _NumElements;
 	public:
-		PoolAllocator()
+		PoolAllocator(int)
 		{
 			newBlock();
 			bp = 0;
@@ -23,18 +26,19 @@ namespace Jo{
 		}
 
 		//allocate a block with the given amounts of bytes
-		_T* Alloc()
+		T* Alloc()
 		{
 			if (sp - (char*)memBlocks[bp] + TypeSize > BlockSize) newBlock();
 			
 			auto ptr = sp;
 			sp += TypeSize;
 
-			return reinterpret_cast<_T*>(ptr);
+			return reinterpret_cast<T*>(ptr);
 		}
 
-		void Delete(void* ptr)
+		void Delete(T* ptr)
 		{
+			ptr->~T();
 		}
 
 		//throws away extra blocks and resets to the default state
@@ -44,6 +48,11 @@ namespace Jo{
 				free(memBlocks[i]);
 
 			memBlocks.resize(1);
+		}
+
+		void FreeAll()
+		{
+			Reset();
 		}
 	private:
 		void newBlock()

@@ -8,16 +8,17 @@
 	path = dependencies/glew
 	url = git@github.com:Perlmint/glew-cmake.git
 [submodule "dependencies/assimp"]
-	
 	path = tools/meshprocessor/dependencies/assimp
-
 	url = https://github.com/assimp/assimp
-[submodule "dependencies/glew-cmake"]
-	path = dependencies/glew-cmake
-	url = https://github.com/Perlmint/glew-cmake.git
 [submodule "tools/meshprocessor/dependencies/quickhull"]
 	path = tools/meshprocessor/dependencies/quickhull
 	url = git@github.com:akuukka/quickhull.git
 [submodule "dependencies/clunk"]
 	path = dependencies/clunk
 	url = git@github.com:whoozle/clunk.git
+[submodule "dependencies/JoFileLib/dependencies/libpng"]
+	path = dependencies/JoFileLib/dependencies/libpng
+	url = https://github.com/glennrp/libpng.git
+[submodule "dependencies/JoFileLib/dependencies/zlib"]
+	path = dependencies/JoFileLib/dependencies/zlib
+	url = https://github.com/madler/zlib.git
