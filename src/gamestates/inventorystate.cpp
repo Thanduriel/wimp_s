@@ -57,7 +57,7 @@ namespace GameStates
 		float height = radius / tan(g_camera.GetFov() * 0.5f);
 		g_camera.SetPosition(m_ship.GetPosition() + m_ship.GetRotationMatrix() * Vec3(0.f, height, 0.f));
 		// look down so that the center of the ship is in the center of the camera
-		g_camera.SetRotation(Quaternion(m_ship.GetRotationMatrix() * Vec3(0.f, 0.f, 1.f),
+		g_camera.SetRotation(Quaternion(normalize(m_ship.GetRotationMatrix() * Vec3(0.f, 0.f, 1.f)),
 			normalize(m_ship.GetPosition() - g_camera.GetPosition())) * m_ship.GetRotation());
 		g_camera.FixRotation(g_camera.GetRotation(), g_camera.GetPosition());
 		g_camera.Process(0.f);
@@ -211,7 +211,7 @@ namespace GameStates
 		float height = radius / tan(g_camera.GetFov() * 0.5f);
 		g_camera.SetPosition(m_ship.GetPosition() + m_ship.GetRotationMatrix() * Vec3(0.f, height, 0.f));
 		// look down so that the center of the ship is in the center of the camera
-		g_camera.SetRotation(Quaternion(m_ship.GetRotationMatrix() * Vec3(0.f, 0.f, 1.f),
+		g_camera.SetRotation(Quaternion(normalize(m_ship.GetRotationMatrix() * Vec3(0.f, 0.f, 1.f)),
 			normalize(m_ship.GetPosition() - g_camera.GetPosition())) * m_ship.GetRotation());
 		g_camera.FixRotation(g_camera.GetRotation(), g_camera.GetPosition());
 		g_camera.Process(0.f);
@@ -388,7 +388,7 @@ namespace GameStates
 	{
 		// some high value that the player should not reach
 		if (_upgrade == Upgrades::SHIELD || _upgrade == Upgrades::SHIELD_REG || _upgrade == Upgrades::SHIELD_REG_DELAY)
-			return 1000000.f;
+			return 420000;
 		return 100 + m_upgradeLvls[_upgrade] * 50;
 		/*switch (_upgrade)
 		{

@@ -28,7 +28,7 @@ namespace Game {
 			float t = EXPANSIONTIME * _radius;
 			Vec3 dir = rng.Direction() * rng.Uniform(t - 2.f, t + 2.f);
 		//	float col = rng.Uniform(0.2f, 0.7f);
-			m_particles.AddParticle(Vec3(), //position
+			m_particles.AddParticle(Vec3(0.f), //position
 				dir, //velocity
 				1.2f + rng.Uniform(0.f, 0.7f), //life time
 				_color.RGBA(),

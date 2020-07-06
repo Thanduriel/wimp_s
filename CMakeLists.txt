@@ -32,6 +32,7 @@ add_executable(wimp_s ${SOURCE_FILES})
 # faster compilation with multithreading
 if(MSVC)
 	add_compile_options( /MP )
+	add_compile_options( /wd4996 )
 	
 	set(OPTIMIZATION_OPTIONS 
 		$<$<CONFIG:Debug>:>

@@ -123,7 +123,7 @@ namespace Game {
 	void WeaponTrait::SetUpProjectile(Projectile& _proj, const Weapon& _weapon, const ei::Vec3& _vel)
 	{
 		_proj.SetVelocity(_weapon.GetRotationMatrix() * _vel + _weapon.m_beginVelocity);
-		_proj.SetRotation(ei::Quaternion(ei::Vec3(0.f, 0.f, 1.f), _proj.GetVelocity()));
+		_proj.SetRotation(ei::Quaternion(ei::Vec3(0.f, 0.f, 1.f), ei::normalize(_proj.GetVelocity())));
 		_proj.SetOwner(_weapon.m_owner);
 	}
 
@@ -142,11 +142,11 @@ namespace Game {
 	Weapon::Weapon(float _cooldown, float _range, float _energyCost, FireFunction&& _fireFn, ReloadFunction&& _reloadFn,
 		CanFireFunction&& _canFireFn,
 		Item::Quality _quality, Item::Icon _icon, const std::string& _name, const std::string& _description)
-		: Actor(ei::Vec3()),
+		: Actor(ei::Vec3(0.f)),
 		TypeItem(_quality, _icon, _name, _description),
 		m_factoryComponent(THISACTOR),
 		m_audioComponent(THISACTOR),
-		m_muzzleParticles(THISACTOR, ei::Vec3()),
+		m_muzzleParticles(THISACTOR, ei::Vec3(0.f)),
 		m_showMuzzleParticles(false),
 		m_cooldown(0.f),
 		m_cooldownMax(_cooldown),
@@ -212,7 +212,7 @@ namespace Game {
 
 		for (float t = 0.f; t < _duration; t += TIME_STEP)
 		{
-			energy += Fire(ei::Vec3(), 10000.f);
+			energy += Fire(ei::Vec3(1.f,0.f,0.f), 10000.f);
 			Process(TIME_STEP);
 		}
 		for (auto& act : m_factoryComponent.m_createdActors)

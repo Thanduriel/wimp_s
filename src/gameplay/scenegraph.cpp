@@ -381,23 +381,23 @@ namespace Game {
 							DynamicActor* slfDyn = static_cast<DynamicActor*>(&slf);
 							DynamicActor* othDyn = static_cast<DynamicActor*>(&oth);
 
-							Vec3 radiusSlf = hitInfo.position - slf.GetPosition(); //point
-							Vec3 radiusOth = hitInfo.position - oth.GetPosition();
-							float massSlf = slfDyn->GetMass();
-							float massOth = othDyn->GetMass();
+							const Vec3 radiusSlf = hitInfo.position - slf.GetPosition(); //point
+							const Vec3 radiusOth = hitInfo.position - oth.GetPosition();
+							const float massSlf = slfDyn->GetMass();
+							const float massOth = othDyn->GetMass();
 
-							Vec3 velocitySlf = slfDyn->GetVelocity() + cross(slfDyn->GetAngularVelocity(), radiusSlf);
-							Vec3 velocityOth = othDyn->GetVelocity() + cross(othDyn->GetAngularVelocity(), radiusOth);
+							const Vec3 velocitySlf = slfDyn->GetVelocity() + cross(slfDyn->GetAngularVelocity(), radiusSlf);
+							const Vec3 velocityOth = othDyn->GetVelocity() + cross(othDyn->GetAngularVelocity(), radiusOth);
 
-							Vec3 normal = normalize(hitInfo.normal);
+							const Vec3 normal = normalize(hitInfo.normal);
 
 							//check that they are really closing and not just intersecting from a previous crash
 							if (dot((velocitySlf - velocityOth), normal) >= 0.f) return;
 
 							constexpr float epsilon = 0.04f;
 
-							Vec3 rotInertialSlf = slfDyn->GetInverseInertiaTensor()* cross(radiusSlf, normal);
-							Vec3 rotInertiaOth = othDyn->GetInverseInertiaTensor() * cross(radiusOth, normal);
+							const Vec3 rotInertialSlf = slfDyn->GetInverseInertiaTensor()* cross(radiusSlf, normal);
+							const Vec3 rotInertiaOth = othDyn->GetInverseInertiaTensor() * cross(radiusOth, normal);
 							float impulse = -(1 + epsilon) * dot((velocitySlf - velocityOth), normal);
 							impulse /= (1 / massSlf + 1 / massOth) + dot(normal, cross(rotInertialSlf, radiusSlf)
 								+ cross(rotInertiaOth, radiusOth));

@@ -162,7 +162,7 @@ namespace Game {
 		{
 			float avgDist = 0.f;
 			int c = 0;
-			Vec3 pos{};
+			Vec3 pos(0.f);
 
 			for (const Vec3& p : othVertices)
 			{
@@ -188,7 +188,7 @@ namespace Game {
 		{
 			float avgDist = 0.f;
 			int c = 0;
-			Vec3 pos{};
+			Vec3 pos(0.f);
 
 			for (const Vec3& p : vertices)
 			{

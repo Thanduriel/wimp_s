@@ -644,7 +644,7 @@ namespace Graphic
 
 		//update textRender
 		std::string str = m_content;
-		str.insert(m_cursor, 1, '�');
+		str.insert(m_cursor, 1, '\xCE');
 		m_textRender.SetText(str);
 		//calc pursor pos
 		//take dimensions of the first char, as every 

@@ -13,7 +13,7 @@ namespace Game {
 
 	// ********************************************************************** //
 	Projectile::Projectile(const ei::Vec3& _position, const ei::Vec3& _velocity, float _damage, float _lifeTime, DamageType _damageType, bool _explodeOnTimeOut)
-		: DynamicActor(_position, Quaternion(Vec3(0.f,0.f,1.f), _velocity)),
+		: DynamicActor(_position, Quaternion(Vec3(0.f,0.f,1.f), ei::normalize(_velocity))),
 		m_lifeTimeComponent(THISACTOR, _lifeTime, _explodeOnTimeOut),
 		m_damage(_damage),
 		m_damageType(_damageType)

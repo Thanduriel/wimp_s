@@ -37,7 +37,7 @@ namespace Graphic{
 			ScreenOverlay* parent;
 		};
 
-		ScreenPosition(ei::Vec2 _position = ei::Vec2(), Anchor _anchor = Anchor());
+		ScreenPosition(ei::Vec2 _position = ei::Vec2(0.f), Anchor _anchor = Anchor());
 		virtual ~ScreenPosition(){};
 
 		/// \brief Functions to alter the rectangle in its lifetime
