@@ -1,5 +1,8 @@
 #pragma once
 
+#include <gameplay/scenegraph.hpp>
+#include <algorithm>
+
 namespace Game {
 	/* TriggerVolumeComponent ****************************************
 	* A volume that invokes the given function on the closest Actor inside.

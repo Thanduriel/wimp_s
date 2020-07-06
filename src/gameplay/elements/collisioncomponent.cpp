@@ -342,7 +342,8 @@ namespace Game {
 	{
 		Sphere sphere(m_actor.GetPosition(), m_boundingRadius);
 
-		return intersects(sphere, _ray, _distance);
+		float d2;
+		return intersects(sphere, _ray, _distance, d2);
 	}
 
 	bool CollisionComponent::RayCast(const ei::Ray& _ray, float& _distance) const

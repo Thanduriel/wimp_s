@@ -67,7 +67,7 @@ namespace Graphic {
 	{
 	public:
 		static Effect& GetEffect(Effects _effect);
-		static Graphic::UniformBuffer& Resources::GetUBO(UniformBuffers _ubo);
+		static Graphic::UniformBuffer& GetUBO(UniformBuffers _ubo);
 		static Graphic::SamplerState& GetSamplerState(SamplerStates _state);
 		static Font& GetFont(Fonts _font);
 

@@ -1,21 +1,21 @@
 [submodule "dependencies/glfw"]
 	path = dependencies/glfw
-	url = git@github.com:glfw/glfw.git
+	url = https://github.com/glfw/glfw.git
 [submodule "dependencies/epsilon"]
 	path = dependencies/epsilon
-	url = git@github.com:Jojendersie/Epsilon-Intersection.git
+	url = https://github.com/Jojendersie/Epsilon-Intersection.git
 [submodule "dependencies/glew"]
 	path = dependencies/glew
-	url = git@github.com:Perlmint/glew-cmake.git
+	url = https://github.com/Perlmint/glew-cmake.git
 [submodule "dependencies/assimp"]
 	path = tools/meshprocessor/dependencies/assimp
 	url = https://github.com/assimp/assimp
 [submodule "tools/meshprocessor/dependencies/quickhull"]
 	path = tools/meshprocessor/dependencies/quickhull
-	url = git@github.com:akuukka/quickhull.git
+	url = https://github.com/akuukka/quickhull.git
 [submodule "dependencies/clunk"]
 	path = dependencies/clunk
-	url = git@github.com:whoozle/clunk.git
+	url = https://github.com/whoozle/clunk.git
 [submodule "dependencies/JoFileLib/dependencies/libpng"]
 	path = dependencies/JoFileLib/dependencies/libpng
 	url = https://github.com/glennrp/libpng.git

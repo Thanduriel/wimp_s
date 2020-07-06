@@ -4,6 +4,7 @@
 #include <functional>
 #include "gameplay/core/actor.hpp"
 #include "gameplay/core/component.hpp"
+#include "gameplay/scenegraph.hpp"
 
 namespace Game {
 
@@ -31,7 +32,7 @@ namespace Game {
 			m_actions(std::move(_actions))
 		{}
 
-		void RegisterComponents(class SceneGraph& _sceneGraph) override
+		void RegisterComponents(SceneGraph& _sceneGraph) override
 		{
 			_sceneGraph.RegisterComponent(*this);
 		}

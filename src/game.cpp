@@ -14,7 +14,7 @@
 #include "gameplay/content.hpp"
 #include "graphic/core/uniformbuffer.hpp"
 #include "gameplay/elements/audiocomponent.hpp"
-//#include <Windows.h>
+#include <thread>
 
 #include "utils/loggerinit.hpp"
 

@@ -1,6 +1,7 @@
 #pragma once
 
 #include "ei/vector.hpp"
+#include "ei/quaternion.hpp"
 #include <vector>
 #include <memory>
 

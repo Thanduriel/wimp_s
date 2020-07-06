@@ -6,6 +6,7 @@
 /lib
 /build
 /dependencies/SDL
+/.vscode
 
 *.suo
 *.user

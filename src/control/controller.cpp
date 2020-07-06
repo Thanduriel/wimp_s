@@ -58,7 +58,7 @@ namespace Control
 	{
 		using namespace ei;
 		Vec3 forward = normalize(GetShip().GetRotationMatrix() * Vec3(0.0f, 0.0f, 1.0f));
-		Ray& ray = Ray(GetShip().GetPosition() + forward * 25.0f, forward);
+		Ray ray = Ray(GetShip().GetPosition() + forward * 25.0f, forward);
 		Game::Actor* hitObj = s_sceneGraph->RayCast(ray, m_minDistance);
 		if (hitObj && hitObj != &**m_target)
 			GetShip().SetTargetAngularVelocity(GetShip().GetRotationMatrix() * Vec3(1.0f, 0.0f, 0.0f));

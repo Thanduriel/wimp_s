@@ -113,12 +113,12 @@ namespace Game {
 	void SceneGraph::RegisterComponent(ConstActorComponent& _component)
 	{
 		_component.OnRegister();
-		if(_component.m_canTick) m_constActorComponents.push_back(&_component);
+		if(_component.CanTick()) m_constActorComponents.push_back(&_component);
 	}
 	void SceneGraph::RegisterComponent(ActorComponent& _component)
 	{
 		_component.OnRegister();
-		if (_component.m_canTick) m_actorComponents.push_back(&_component);
+		if (_component.CanTick()) m_actorComponents.push_back(&_component);
 	}
 
 	void SceneGraph::RegisterComponent(SceneComponent& _sceneComponent)
@@ -394,7 +394,7 @@ namespace Game {
 							//check that they are really closing and not just intersecting from a previous crash
 							if (dot((velocitySlf - velocityOth), normal) >= 0.f) return;
 
-							float epsilon = 0.04f;
+							constexpr float epsilon = 0.04f;
 
 							Vec3 rotInertialSlf = slfDyn->GetInverseInertiaTensor()* cross(radiusSlf, normal);
 							Vec3 rotInertiaOth = othDyn->GetInverseInertiaTensor() * cross(radiusOth, normal);

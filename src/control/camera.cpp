@@ -233,6 +233,6 @@ namespace Control {
 			m_rotationShake = rng.Rotation();
 			m_sign = f;
 		}
-		m_rotation = slerpLess(m_rotation, m_rotationShake, abs(f) * m_screenShakeInfo.strength * rng.Normal(0.15f));
+		m_rotation = slerpLess(m_rotation, m_rotationShake, ei::abs(f) * m_screenShakeInfo.strength * rng.Normal(0.15f));
 	}
 }

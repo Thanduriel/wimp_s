@@ -35,6 +35,7 @@ namespace Game {
 			// dynamically change whether the Component should be processed/drawn 
 			void SetActive(bool _isActive) { m_isActive = _isActive; }
 			bool IsActive() const { return m_isActive; }
+			bool CanTick() const { return m_canTick; }
 		protected:
 			T m_actor;
 			bool m_isActive; // should the component be processed (or rendered)

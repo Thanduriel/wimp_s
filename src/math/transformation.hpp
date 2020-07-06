@@ -1,6 +1,7 @@
 #pragma once
 
-#include "ei/vector.hpp"
+#include <ei/vector.hpp>
+#include <ei/quaternion.hpp>
 
 // A simple transformation that combines translation and rotation.
 class Transformation

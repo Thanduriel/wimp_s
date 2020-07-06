@@ -1,5 +1,3 @@
-#pragma once
-
 #include "logger.hpp"
 
 #ifdef _WIN32

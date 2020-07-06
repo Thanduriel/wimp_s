@@ -2,7 +2,8 @@
 #include <random>
 #include <cstdint>
 #include <limits>
-#include "ei/vector.hpp"
+#include <ei/vector.hpp>
+#include <ei/quaternion.hpp>
 #include "utils/assert.hpp"
 
 namespace Generators {
@@ -12,19 +13,19 @@ namespace Generators {
 	class BaseGen : public Impl
 	{
 	public:
-		typedef decltype(Impl::m_seed) result_type;
+		typedef /*decltype(Impl::m_seed)*/ uint32_t result_type;
 		static constexpr result_type default_seed = 0x14bfc13U;
 
 		explicit BaseGen(result_type _seed = default_seed)
 		{
-			m_seed = _seed;
-			init();
+			Impl::m_seed = _seed;
+			Impl::init();
 		}
 
 		void seed(result_type _seed)
 		{
-			m_seed = _seed;
-			init();
+			Impl::m_seed = _seed;
+			Impl::init();
 		}
 
 		static constexpr result_type(min)()

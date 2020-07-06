@@ -48,7 +48,7 @@ namespace GameStates {
 			m_grid.ReverseTransition();
 
 			// updates the cursor position
-			MouseMove(0.f, 0.f);
+			GameStateHT<HudT, void>::MouseMove(0.f, 0.f);
 		}
 	private:
 		Game::Grid m_grid;

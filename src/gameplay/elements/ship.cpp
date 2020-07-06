@@ -217,7 +217,7 @@ namespace Game
 		float currentSpeed = GetCurrentSpeed();
 
 		// Update the speed
-		float n = abs(currentSpeed) * 4.f;
+		float n = ei::abs(currentSpeed) * 4.f;
 	//	if (abs(m_speed - currentSpeed) > 2.0f)
 	//		n += 2048.f;
 		for (auto& thruster : m_thrustParticles)
@@ -287,8 +287,9 @@ namespace Game
 
 			Vec3 pos = socket.GetPosition();
 			float d;
+			float d2;
 			// this should always be true since d >> d(ray.position,socket.GetPosition());
-			bool b = ei::intersects(_targetRay, ei::Sphere(pos, weapon->GetRange()), d);
+			bool b = ei::intersects(_targetRay, ei::Sphere(pos, weapon->GetRange()), d, d2);
 			Vec3 targetPos = _targetRay.origin + _targetRay.direction * d;
 
 			Vec3 targetDir = targetPos - pos;

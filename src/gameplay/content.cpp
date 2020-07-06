@@ -80,12 +80,16 @@ namespace Game {
 
 				// the arrays of string in this file cause leaks
 				// todo: fix this
+				#ifdef _MSC_VER
 				int flags = _CrtSetDbgFlag(_CRTDBG_REPORT_FLAG);
 				_CrtSetDbgFlag(flags & ~_CRTDBG_ALLOC_MEM_DF);
+				#endif
 
 				shipData = new Jo::Files::MetaFileWrapper(file, Jo::Files::Format::JSON);
 				
+				#ifdef _MSC_VER
 				_CrtSetDbgFlag(flags);
+				#endif
 			}
 			catch (std::string _message) {
 				LOG_ERROR("Failed to load ship data file with message:\n" + _message + '\n' + "\n");
