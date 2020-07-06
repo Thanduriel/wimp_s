@@ -5,6 +5,12 @@
 
 #include "predeclarations.hpp"
 
+#ifdef NDEBUG
+#define RESOURCE_PATH ""
+#else
+#define RESOURCE_PATH "../"
+#endif
+
 namespace Jo {
 	namespace Files {
 		class MetaFileWrapper;

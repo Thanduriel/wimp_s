@@ -11,8 +11,8 @@ using namespace ei;
 namespace Graphic
 {
 	Font::Font(const std::string& _fontName) :
-		m_texture("texture/"+_fontName+".png"),
-		m_effect( "shader/font.vs", "shader/font.ps", "shader/font.gs")
+		m_texture(RESOURCE_PATH "texture/"+_fontName+".png"),
+		m_effect(RESOURCE_PATH "shader/font.vs", RESOURCE_PATH "shader/font.ps", RESOURCE_PATH "shader/font.gs")
 	{
 		m_effect.SetRasterizerState(RasterizerState(RasterizerState::CULL_MODE::NONE, RasterizerState::FILL_MODE::SOLID));
 		m_effect.SetBlendState(BlendState(BlendState::BLEND_OPERATION::ADD, BlendState::BLEND::SRC_ALPHA, BlendState::BLEND::INV_SRC_ALPHA));
@@ -20,7 +20,7 @@ namespace Graphic
 		m_effect.BindTexture( "u_characterTex", 7, Graphic::Resources::GetSamplerState(SamplerStates::LINEAR) );
 		m_effect.BindUniformBuffer( Graphic::Resources::GetUBO(UniformBuffers::GLOBAL) );
 
-		Jo::Files::HDDFile file("texture/" + _fontName + ".sraw");
+		Jo::Files::HDDFile file(RESOURCE_PATH "texture/" + _fontName + ".sraw");
 		Jo::Files::MetaFileWrapper reader( file, Jo::Files::Format::SRAW );
 
 		auto& PosX = reader[std::string("positionX")];

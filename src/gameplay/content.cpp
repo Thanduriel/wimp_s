@@ -7,6 +7,13 @@
 
 #include "elements/collisioncomponent.hpp"
 #include "utils/logger.hpp"
+
+#ifdef NDEBUG
+#define RESOURCE_PATH ""
+#else
+#define RESOURCE_PATH "../"
+#endif
+
 namespace Game {
 	std::unordered_map<std::string, BoundingMesh*> Content::boundingMeshes;
 	std::unordered_map<Content::BoundingMeshKeyType, BoundingMesh*> Content::anonymBoundingMeshes;
@@ -20,7 +27,7 @@ namespace Game {
 		BoundingMesh* mesh;
 		if (it == boundingMeshes.end())
 		{
-			mesh = new BoundingMesh("models/" + _name + ".wii");
+			mesh = new BoundingMesh(RESOURCE_PATH "models/" + _name + ".wii");
 			boundingMeshes.emplace(_name, mesh);
 		}
 		else mesh = it->second;
@@ -58,7 +65,7 @@ namespace Game {
 		if (it == sounds.end())
 		{
 			try {
-				sound = WavFile::load(AudioSystem::GetContext(), "sounds/" + _name + ".wav");
+				sound = WavFile::load(AudioSystem::GetContext(), RESOURCE_PATH "sounds/" + _name + ".wav");
 			}
 			catch (std::runtime_error e)
 			{
@@ -76,7 +83,7 @@ namespace Game {
 		if (!shipData)
 		{
 			try {
-				Jo::Files::HDDFile file("ships.json");
+				Jo::Files::HDDFile file(RESOURCE_PATH "ships.json");
 
 				// the arrays of string in this file cause leaks
 				// todo: fix this
