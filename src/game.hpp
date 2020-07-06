@@ -1,9 +1,14 @@
 #pragma once
+
 #include <memory>
 
 #include "graphic/core/framebuffer.hpp"
-#include "gamestates/gamestate.hpp"
 #include <jofilelib.hpp>
+#include <memory>
+
+namespace GameStates{
+	class GameState;
+}
 
 class Wimp_s
 {

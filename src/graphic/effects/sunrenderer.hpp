@@ -1,7 +1,7 @@
 #pragma once
 
 #include "ei/vector.hpp"
-#include "Graphic/core/vertexbuffer.hpp"
+#include "graphic/core/vertexbuffer.hpp"
 
 namespace Graphic {
 

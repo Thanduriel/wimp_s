@@ -262,7 +262,7 @@ namespace Generators {
 				Utils::Color8U(m_randomSampler.Uniform(), m_randomSampler.Uniform(), m_randomSampler.Uniform())));
 			break;
 		case WeaponType::Rocket:
-			projGenerator = WeaponTrait::CreateProjectileFn(Rocket(ei::Vec3(0.f), ei::Vec3(0.f, 0.f, speed), damage, lifeTime));
+			projGenerator = WeaponTrait::CreateProjectileFnRocket(Rocket(ei::Vec3(0.f), ei::Vec3(0.f, 0.f, speed), damage, lifeTime));
 			break;
 		default:
 			Assert(false, "This type is not implemented.");
@@ -330,7 +330,7 @@ namespace Generators {
 	Range WeaponGenerator::GetDamageRange(Range _base, float _power)
 	{
 		float f = 1.f + _power / 10.f;
-		return std::make_pair(_base.first * f, _base.second * f);
+		return {_base.first * f, _base.second * f};
 	}
 
 	const float MAX_POWER = 132.f;
@@ -339,6 +339,6 @@ namespace Generators {
 	Range WeaponGenerator::GetCooldownRange(Range _base, float _power)
 	{
 		float f = ei::min(1.f, _power / MAX_POWER);
-		return std::make_pair(ei::lerp(_base.first, MIN_COOLDOWN, f), ei::lerp(_base.second, MAX_COOLDOWN, f));
+		return {ei::lerp(_base.first, MIN_COOLDOWN, f), ei::lerp(_base.second, MAX_COOLDOWN, f)};
 	}
 }

@@ -9,8 +9,7 @@
 
 #include <cstdint>
 #include <fstream>
-
-
+#include <algorithm>
 #include <memory>
 
 
@@ -233,7 +232,7 @@ namespace Graphic {
 		}
 
 		// Create new program
-		m_programID = GL_RET_CALL(glCreateProgram);
+		m_programID = GL_RET_CALL_NO_ARG(glCreateProgram);
 
 		// Link
 		GL_CALL(glAttachShader, m_programID, m_vertexShader);

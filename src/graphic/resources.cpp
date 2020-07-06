@@ -50,6 +50,7 @@ namespace Graphic {
 			effects[ind] = new Effect(RESOURCE_PATH "shader/light.vs", RESOURCE_PATH "shader/light.ps", RESOURCE_PATH "shader/light.gs");
 			effects[ind]->SetBlendState(BlendState(Graphic::BlendState::BLEND_OPERATION::ADD, Graphic::BlendState::BLEND::SRC_ALPHA, Graphic::BlendState::BLEND::ONE));
 			effects[ind]->SetDepthStencilState(DepthStencilState(Graphic::DepthStencilState::COMPARISON_FUNC::ALWAYS, false));
+			effects[ind]->SetRasterizerState(RasterizerState(RasterizerState::CULL_MODE::NONE, RasterizerState::FILL_MODE::SOLID));
 			effects[ind]->BindTexture("screenTex", 0, Resources::GetSamplerState(SamplerStates::POINT));
 			effects[ind]->BindTexture("depthTex", 1, Resources::GetSamplerState(SamplerStates::POINT));
 			effects[ind]->BindTexture("normalTex", 2, Resources::GetSamplerState(SamplerStates::POINT));
@@ -61,6 +62,7 @@ namespace Graphic {
 			effects[ind] = new Effect(RESOURCE_PATH "shader/fullscreentri.vs", RESOURCE_PATH "shader/dominant_light.ps");
 			effects[ind]->SetBlendState(BlendState(Graphic::BlendState::BLEND_OPERATION::ADD, Graphic::BlendState::BLEND::SRC_ALPHA, Graphic::BlendState::BLEND::ONE));
 			effects[ind]->SetDepthStencilState(DepthStencilState(Graphic::DepthStencilState::COMPARISON_FUNC::ALWAYS, false));
+			effects[ind]->SetRasterizerState(RasterizerState(RasterizerState::CULL_MODE::NONE, RasterizerState::FILL_MODE::SOLID));
 			effects[ind]->BindTexture("screenTex", 0, Resources::GetSamplerState(SamplerStates::POINT));
 			effects[ind]->BindTexture("depthTex", 1, Resources::GetSamplerState(SamplerStates::POINT));
 			effects[ind]->BindTexture("normalTex", 2, Resources::GetSamplerState(SamplerStates::POINT));
@@ -79,6 +81,7 @@ namespace Graphic {
 			effects[ind]->SetBlendState(BlendState(Graphic::BlendState::BLEND_OPERATION::ADD, Graphic::BlendState::BLEND::SRC_ALPHA, Graphic::BlendState::BLEND::INV_SRC_ALPHA));
 			effects[ind]->SetDepthStencilState(DepthStencilState(Graphic::DepthStencilState::COMPARISON_FUNC::ALWAYS, false));
 			effects[ind]->BindTexture("u_screenTex", 7, GetSamplerState(SamplerStates::POINT));
+			effects[ind]->SetRasterizerState(RasterizerState(RasterizerState::CULL_MODE::NONE, RasterizerState::FILL_MODE::SOLID));
 			break;
 		case Effects::BACKGROUNDSTAR:
 			effects[ind] = new Effect(RESOURCE_PATH "shader/backgroundstar.vs", RESOURCE_PATH "shader/backgroundstar.ps", RESOURCE_PATH "shader/backgroundstar.gs");
@@ -91,6 +94,7 @@ namespace Graphic {
 			effects[ind]->SetBlendState(BlendState(BlendState::BLEND_OPERATION::ADD, BlendState::BLEND::SRC_ALPHA, BlendState::BLEND::ONE));
 			effects[ind]->SetDepthStencilState(DepthStencilState(Graphic::DepthStencilState::COMPARISON_FUNC::LESS, false));
 			effects[ind]->BindUniformBuffer(GetUBO(UniformBuffers::OBJECT_LINES));
+			effects[ind]->SetRasterizerState(RasterizerState(RasterizerState::CULL_MODE::NONE, RasterizerState::FILL_MODE::SOLID));
 			break;
 		case Effects::SCREEN_OUTPUT:
 			effects[ind] = new Effect(RESOURCE_PATH "shader/fullscreentri.vs", RESOURCE_PATH "shader/output.ps");
@@ -103,6 +107,7 @@ namespace Graphic {
 			effects[ind] = new Effect(RESOURCE_PATH "shader/postprocessing/blackhole.vs", RESOURCE_PATH "shader/postprocessing/blackhole.ps", RESOURCE_PATH "shader/postprocessing/blackhole.gs");
 			effects[ind]->SetBlendState(BlendState(Graphic::BlendState::BLEND_OPERATION::DISABLE, Graphic::BlendState::BLEND::SRC_ALPHA, Graphic::BlendState::BLEND::ONE));
 			effects[ind]->SetDepthStencilState(DepthStencilState(Graphic::DepthStencilState::COMPARISON_FUNC::ALWAYS, false));
+			effects[ind]->SetRasterizerState(RasterizerState(RasterizerState::CULL_MODE::NONE, RasterizerState::FILL_MODE::SOLID));
 			effects[ind]->BindUniformBuffer(GetUBO(UniformBuffers::SIMPLE_OBJECT));
 			effects[ind]->BindUniformBuffer(GetUBO(UniformBuffers::GLOBAL));
 			effects[ind]->BindTexture("screenTex", 0, Resources::GetSamplerState(SamplerStates::LINEAR));
@@ -111,6 +116,7 @@ namespace Graphic {
 			effects[ind] = new Effect(RESOURCE_PATH "shader/sun.vs", RESOURCE_PATH "shader/sun.ps", RESOURCE_PATH "shader/sun.gs");
 			effects[ind]->SetBlendState(BlendState(Graphic::BlendState::BLEND_OPERATION::ADD, Graphic::BlendState::BLEND::SRC_ALPHA, Graphic::BlendState::BLEND::ONE));
 			effects[ind]->SetDepthStencilState(DepthStencilState(Graphic::DepthStencilState::COMPARISON_FUNC::LESS, true)); //LESS
+			effects[ind]->SetRasterizerState(RasterizerState(RasterizerState::CULL_MODE::NONE, RasterizerState::FILL_MODE::SOLID));
 			effects[ind]->BindUniformBuffer(GetUBO(UniformBuffers::SIMPLE_OBJECT));
 			effects[ind]->BindUniformBuffer(GetUBO(UniformBuffers::GLOBAL));
 			break;
@@ -118,6 +124,7 @@ namespace Graphic {
 			effects[ind] = new Effect(RESOURCE_PATH "shader/particle/blob.vs", RESOURCE_PATH "shader/particle/blob.ps", RESOURCE_PATH "shader/particle/blob.gs");
 			effects[ind]->SetBlendState(BlendState(Graphic::BlendState::BLEND_OPERATION::DISABLE, Graphic::BlendState::BLEND::ZERO, Graphic::BlendState::BLEND::ZERO));
 			effects[ind]->SetDepthStencilState(DepthStencilState(Graphic::DepthStencilState::COMPARISON_FUNC::LESS, true));
+			effects[ind]->SetRasterizerState(RasterizerState(RasterizerState::CULL_MODE::NONE, RasterizerState::FILL_MODE::SOLID));
 			effects[ind]->BindUniformBuffer(GetUBO(UniformBuffers::SIMPLE_OBJECT));
 			effects[ind]->BindUniformBuffer(GetUBO(UniformBuffers::GLOBAL));
 			effects[ind]->BindUniformBuffer(GetUBO(UniformBuffers::CAMERA));
@@ -126,6 +133,7 @@ namespace Graphic {
 			effects[ind] = new Effect(RESOURCE_PATH "shader/particle/ray.vs", RESOURCE_PATH "shader/particle/ray.ps", RESOURCE_PATH "shader/particle/ray.gs");
 			effects[ind]->SetBlendState(BlendState(BlendState::BLEND_OPERATION::MAX, BlendState::BLEND::SRC_ALPHA, BlendState::BLEND::ONE));
 			effects[ind]->SetDepthStencilState(DepthStencilState(Graphic::DepthStencilState::COMPARISON_FUNC::LESS, false));
+			effects[ind]->SetRasterizerState(RasterizerState(RasterizerState::CULL_MODE::NONE, RasterizerState::FILL_MODE::SOLID));
 			effects[ind]->BindUniformBuffer(GetUBO(UniformBuffers::SIMPLE_OBJECT));
 			effects[ind]->BindUniformBuffer(GetUBO(UniformBuffers::GLOBAL));
 			break;
@@ -133,6 +141,7 @@ namespace Graphic {
 			effects[ind] = new Effect(RESOURCE_PATH "shader/particle/texquad.vs", RESOURCE_PATH "shader/particle/texquad.ps", RESOURCE_PATH "shader/particle/texquad.gs");
 			effects[ind]->SetBlendState(BlendState(BlendState::BLEND_OPERATION::ADD, BlendState::BLEND::SRC_ALPHA, BlendState::BLEND::ONE));
 			effects[ind]->SetDepthStencilState(DepthStencilState(Graphic::DepthStencilState::COMPARISON_FUNC::LESS, false));
+			effects[ind]->SetRasterizerState(RasterizerState(RasterizerState::CULL_MODE::NONE, RasterizerState::FILL_MODE::SOLID));
 			effects[ind]->BindUniformBuffer(GetUBO(UniformBuffers::SIMPLE_OBJECT));
 			effects[ind]->BindUniformBuffer(GetUBO(UniformBuffers::GLOBAL));
 			break;

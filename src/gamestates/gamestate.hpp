@@ -1,5 +1,7 @@
 #pragma once
 
+#include "graphic/interface/hud.hpp"
+
 namespace GameStates {
 
 
@@ -39,7 +41,8 @@ namespace GameStates {
 		GameState* m_newState;
 	};
 
-	template<typename HudT = Graphic::Hud, typename = std::enable_if< std::is_base_of<Graphic::Hud, HudT>::value >::type>
+	template<typename HudT = Graphic::Hud, 
+		typename = typename std::enable_if< std::is_base_of<Graphic::Hud, HudT>::value >::type>
 	class GameStateHT : public GameState
 	{
 	public:

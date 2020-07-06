@@ -3,12 +3,13 @@
 #include <ei/3dtypes.hpp>
 #include <vector>
 #include <memory>
+#include <algorithm>
 
 #include "predeclarations.hpp"
 #include "utils/assert.hpp"
 //#include "utilities/flagoperators.hpp"
 #include "graphic/core/vertexbuffer.hpp"
-#include "Math/transformation.hpp"
+#include "math/transformation.hpp"
 
 // The following construct allows to inherit or not, based on a compile time bool.
 // It can be used as:
@@ -191,10 +192,10 @@ namespace Graphic {
 		{
 			void Run(float _deltaTime)
 			{
-				ei::Vec3* positions = (ei::Vec3*)m_positions->GetDirectAccess();
-				for(size_t i = 0; i < m_velocities.size(); ++i)
-					positions[i] += m_velocities[i] * _deltaTime;
-				m_positions->Touch();
+				ei::Vec3* positions = (ei::Vec3*)this->m_positions->GetDirectAccess();
+				for(size_t i = 0; i < this->m_velocities.size(); ++i)
+					positions[i] += this->m_velocities[i] * _deltaTime;
+				this->m_positions->Touch();
 			}
 		};
 
@@ -204,10 +205,10 @@ namespace Graphic {
 		{
 			void Run(float _deltaTime)
 			{
-				for(size_t i = 0; i < m_lifetimes.size(); ++i)
+				for(size_t i = 0; i < this->m_lifetimes.size(); ++i)
 				{
-					m_lifetimes[i] -= _deltaTime;
-					if(m_lifetimes[i] < 0.0f)
+					this->m_lifetimes[i] -= _deltaTime;
+					if(this->m_lifetimes[i] < 0.0f)
 						this->Remove(i--);
 				}
 			}
@@ -228,15 +229,15 @@ namespace Graphic {
 		{
 			void Run(float _deltaTime)
 			{
-				ei::Vec3* positions = (ei::Vec3*)m_positions->GetDirectAccess();
-				for(size_t i = 0; i < m_velocities.size(); ++i)
+				ei::Vec3* positions = (ei::Vec3*)this->m_positions->GetDirectAccess();
+				for(size_t i = 0; i < this->m_velocities.size(); ++i)
 				{
-					ei::Vec3 toCenter = m_gravitationCenter - positions[i];
+					ei::Vec3 toCenter = this->m_gravitationCenter - positions[i];
 					float dSq = lensq(toCenter);
 					// Normalize and scale with gravitation in one step
-					m_velocities[i] += toCenter * (m_gravitation / (dSq * sqrt(dSq)));
+					this->m_velocities[i] += toCenter * (this->m_gravitation / (dSq * sqrt(dSq)));
 				}
-				m_positions->Touch();
+				this->m_positions->Touch();
 			}
 		};
 
@@ -268,7 +269,7 @@ namespace Graphic {
 				static const uint Get = NextFlag<TheFlag << 1, ((TheFlag << 1) & PFlagsWOGlobal) != 0 || TheFlag == 0>::Get;
 			};
 		public:
-			SystemData::SystemData() : m_numParticles(0) {}
+			SystemData() : m_numParticles(0) {}
 
 			template<uint TheFlag, uint RemainingFlags>
 			void AddParticle() // End of recursion
@@ -384,7 +385,7 @@ namespace Graphic {
 				SystemData<PFlags>::Clear();
 			}
 
-			uint32 GetNumParticles() const { return m_numParticles; }
+			uint32 GetNumParticles() const { return this->m_numParticles; }
 
 		private:
 			void Init()

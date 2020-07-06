@@ -58,7 +58,7 @@ void DataBuffer::SetData(void*& _data, int _size)
 	//std::lock_guard<std::mutex> lock(m_dataLock);
 
 	// Remove maybe old content.
-	m_isStatic = true;
+	//m_isStatic = true;
 	free(m_data);
 	m_data = nullptr;
 

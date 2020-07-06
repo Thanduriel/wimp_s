@@ -483,7 +483,7 @@ namespace Graphic
 		if (dot(GetTarget().GetPosition() - Control::g_camera.GetPosition(), Control::g_camera.GetRotationMatrix() * Vec3(0.0f, 0.0f, 1.0f)) > 0)
 		{
 			//If ship is on screen, don't show indicator
-			if (abs(projectedPos.y) <= 1.0f && abs(projectedPos.x) <= 1.0f)
+			if (ei::abs(projectedPos.y) <= 1.0f && ei::abs(projectedPos.x) <= 1.0f)
 				inSight = true;
 		}
 		if (inSight)
@@ -495,9 +495,9 @@ namespace Graphic
 		{
 			Direction dir;
 			//Calculate the intersections of the vector to the projected position with the borders of the screen
-			float factorY = 1.0f / abs(projectedPos.y);
+			float factorY = 1.0f / ei::abs(projectedPos.y);
 			Vec2 yIntersection = factorY * projectedPos;
-			float factorX = 1.0f / abs(projectedPos.x);
+			float factorX = 1.0f / ei::abs(projectedPos.x);
 			Vec2 xIntersection = factorX * projectedPos;
 			//Get closest intersection
 			Vec2 pos = len(yIntersection) <= len(xIntersection) ? yIntersection : xIntersection;
@@ -644,7 +644,7 @@ namespace Graphic
 
 		//update textRender
 		std::string str = m_content;
-		str.insert(m_cursor, 1, 'Î');
+		str.insert(m_cursor, 1, 'ï¿½');
 		m_textRender.SetText(str);
 		//calc pursor pos
 		//take dimensions of the first char, as every 

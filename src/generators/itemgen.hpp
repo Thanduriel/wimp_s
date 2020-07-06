@@ -5,6 +5,7 @@
 
 #include "gameplay/elements/shipsystems/item.hpp"
 #include "random.hpp"
+#include "utils/stringutils.hpp"
 
 namespace Generators {
 	

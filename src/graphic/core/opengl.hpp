@@ -89,3 +89,6 @@ namespace Details
 /// There are a few functions that have a return value (glGet, glIsX, glCreateShader, glCreateProgram). Use this macro for those.
 #define GL_RET_CALL(OpenGLFunction, ...) \
 	Details::CheckedGLCall_Ret(#OpenGLFunction, OpenGLFunction, __VA_ARGS__)
+
+#define GL_RET_CALL_NO_ARG(OpenGLFunction) \
+	Details::CheckedGLCall_Ret(#OpenGLFunction, OpenGLFunction)

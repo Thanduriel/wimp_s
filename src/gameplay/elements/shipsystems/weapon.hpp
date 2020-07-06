@@ -112,8 +112,7 @@ namespace Game {
 		}
 
 		// Specialization for rockets that transmits the current target of the weapon
-		template<>
-		static GenerationFunction CreateProjectileFn(const Rocket& _prototype)
+		static GenerationFunction CreateProjectileFnRocket(const Rocket& _prototype)
 		{
 			return [=](Weapon& _weapon) -> Projectile&
 			{

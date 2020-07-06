@@ -24,7 +24,7 @@ namespace Graphic {
 		/// \brief Creates an 2d element that is registered and managed by this hud.
 		/// \details For parameters required check the corresponding constructors.
 		template< typename _T, typename... _Args, //only ScreenPositions should be made with this
-			typename = std::enable_if< std::is_base_of<ScreenPosition, _T>::value >::type >
+			typename = typename std::enable_if< std::is_base_of<ScreenPosition, _T>::value >::type >
 		_T& CreateScreenElement(_Args&&... _args)
 		{
 			auto ptr = new _T(std::forward<_Args>(_args)...);
@@ -37,7 +37,7 @@ namespace Graphic {
 
 		// Creates an element taking ownership, but does not register it.
 		template< typename _T, typename... _Args,
-			typename = std::enable_if< std::is_base_of<ScreenPosition, _T>::value >::type >
+			typename = typename std::enable_if< std::is_base_of<ScreenPosition, _T>::value >::type >
 			_T& CreateScreenElementNoRegister(_Args&&... _args)
 		{
 			auto ptr = new _T(std::forward<_Args>(_args)...);

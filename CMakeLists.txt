@@ -70,9 +70,9 @@ target_link_libraries(wimp_s PUBLIC ${OPENGL_gl_LIBRARY})
 
 # epsilon
 include_directories("dependencies/epsilon/include")
-file(GLOB SOURCE_FILES_EPSILON "dependencies/epsilon/src/*.cpp")
-add_library(epsilon STATIC ${SOURCE_FILES_EPSILON})
-target_link_libraries (wimp_s PUBLIC epsilon)
+#file(GLOB SOURCE_FILES_EPSILON "dependencies/epsilon/src/*.cpp")
+#add_library(epsilon STATIC ${SOURCE_FILES_EPSILON})
+#target_link_libraries (wimp_s PUBLIC epsilon)
 
 # sound engine
 #give hint where to find sdl from inside dependencies/clunk
@@ -81,7 +81,7 @@ if(NOT SDL2_FOUND)
 	set(SDL2_DIR "${CMAKE_CURRENT_SOURCE_DIR}/dependencies/SDL")
 	find_package(SDL2 REQUIRED)
 endif(NOT SDL2_FOUND)
-include_directories("dependencies/sdl/include")
+include_directories("${SDL2_INCLUDE_DIRS}")
 add_subdirectory("dependencies/clunk")
 #get_target_property(CLUNK_BIN_DIR clunk-static LOCATION)
 #message(${CLUNK_BIN_DIR})

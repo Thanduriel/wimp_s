@@ -1,5 +1,3 @@
-#pragma once
-
 #include "shieldgen.hpp"
 #include "utils/stringutils.hpp"
 
