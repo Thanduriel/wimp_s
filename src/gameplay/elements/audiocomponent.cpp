@@ -2,21 +2,21 @@
 #include "utils/assert.hpp"
 #include "control/camera.hpp"
 
+#include "utils/audiobackend.hpp"
 #include <clunk/context.h>
-#include <clunk/backend/sdl/backend.h>
 #include <clunk/source.h>
 #include <clunk/wav_file.h>
 
 namespace Game {
 
-	clunk::sdl::Backend* AudioSystem::s_backend;
+	clunk::sdl::AudioBackend* AudioSystem::s_backend;
 	AudioComponent* AudioSystem::s_audioComponent;
 	float AudioSystem::s_masterVolume;
 	float AudioSystem::s_fallOffFactor;
 
 	void AudioSystem::Initialize(float _volume)
 	{
-		static clunk::sdl::Backend backend(44100, 2, 1024);
+		static clunk::sdl::AudioBackend backend(44100, 2, 1024);
 		s_backend = &backend;
 
 		clunk::Context &context = backend.get_context();

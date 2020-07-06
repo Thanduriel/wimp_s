@@ -3,8 +3,12 @@
 #include "gameplay/core/component.hpp"
 #include "math/transformation.hpp"
 
+#ifndef CLUNKAPI
+#define		CLUNKAPI 
+#endif
+
 namespace clunk {
-	namespace sdl { class Backend; }
+	namespace sdl { class AudioBackend; }
 
 	class Object;
 	class Sample;
@@ -33,7 +37,7 @@ namespace Game {
 		static void Enable3DSounds();
 	private:
 
-		static clunk::sdl::Backend* s_backend;
+		static clunk::sdl::AudioBackend* s_backend;
 		static AudioComponent* s_audioComponent;
 		static float s_masterVolume;
 		static float s_fallOffFactor;

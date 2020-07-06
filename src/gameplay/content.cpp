@@ -1,12 +1,11 @@
 #include "content.hpp"
 
+#include "elements/audiocomponent.hpp"
 #include <clunk/context.h>
-#include <clunk/backend/sdl/backend.h>
 #include <clunk/source.h>
 #include <clunk/wav_file.h>
 
 #include "elements/collisioncomponent.hpp"
-#include "elements/audiocomponent.hpp"
 #include "utils/logger.hpp"
 namespace Game {
 	std::unordered_map<std::string, BoundingMesh*> Content::boundingMeshes;

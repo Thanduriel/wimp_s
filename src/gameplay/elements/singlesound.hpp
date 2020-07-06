@@ -3,7 +3,8 @@
 #include "audiocomponent.hpp"
 #include "lifetimecomponent.hpp"
 #include "gameplay/core/actor.hpp"
-#include "clunk/sample.h"
+
+#include <clunk/sample.h>
 
 namespace Game {
 
